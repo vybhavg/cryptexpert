@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Prices</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #121212;
+            color: #fff;
+        }
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-top: 20px;
+        }
+        #controls {
+            margin: 20px;
+            text-align: center;
+        }
+        #canvas-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .canvas-wrapper {
+            width: 45%;
+            background-color: #1f1f1f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        select {
+            padding: 5px;
+            margin: 0 10px;
+        }
+        .profit {
+            color: green;
+        }
+        .loss {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cryptocurrency Prices</h1>
+    <div id="controls">
+        <label for="platform-select">Select a Platform:</label>
+        <select id="platform-select" onchange="updateCoins()">
+            <option value="">--Select a Platform--</option>
+            {% for platform in prices.keys() %}
+                <option value="{{ platform }}">{{ platform }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="coin-select">Select Coins:</label>
+        <select id="coin-select" multiple>
+            <!-- Coins will be dynamically populated -->
+        </select>
+        <button onclick="showGraphs()">Show Graphs</button>
+    </div>
+
+    <div id="canvas-container">
+        <!-- Graphs will be dynamically added here -->
+    </div>
+
+    <script>
+        const socket = io();
+        let coinData = {}; // Stores price data for coins
+        let selectedPlatform = '';
+        let selectedCoins = [];
+        let charts = {}; // To store references to the chart objects
+
+        function updateCoins() {
+            const platform = document.getElementById('platform-select').value;
+            selectedPlatform = platform;
+            const coinSelect = document.getElementById('coin-select');
+            coinSelect.innerHTML = ''; // Clear existing options
+
+            if (platform && coinData[platform]) {
+                const coins = Object.keys(coinData[platform]);
+                console.log('Available coins for ' + platform + ':', coins); // Debugging line to check coin data
+
+                if (coins.length > 0) {
+                    coins.forEach(coin => {
+                        const option = document.createElement('option');
+                        option.value = coin;
+                        option.textContent = coin; // Use coin symbol for the option
+                        coinSelect.appendChild(option);
+                    });
+                } else {
+                    console.log('No coins available for ' + platform);
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.textContent = 'No coins available';
+                    coinSelect.appendChild(option);
+                }
+            } else {
+                console.log('No data available for the selected platform:', platform);
+            }
+        }
+
+        function showGraphs() {
+            const coinSelect = document.getElementById('coin-select');
+            selectedCoins = Array.from(coinSelect.selectedOptions).map(option => option.value);
+            const canvasContainer = document.getElementById('canvas-container');
+            canvasContainer.innerHTML = ''; // Clear previous graphs
+
+            if (!selectedPlatform || selectedCoins.length === 0) {
+                alert('Please select a platform and at least one coin.');
+                return;
+            }
+
+            selectedCoins.forEach(coin => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'canvas-wrapper';
+
+                const title = document.createElement('h3');
+                title.textContent = `${selectedPlatform} - ${coin}`;
+                wrapper.appendChild(title);
+
+                const canvas = document.createElement('canvas');
+                canvas.id = `chart-${coin}`;
+                wrapper.appendChild(canvas);
+
+                canvasContainer.appendChild(wrapper);
+
+                renderGraph(canvas.id, selectedPlatform, coin);
+            });
+        }
+
+        function renderGraph(canvasId, platform, coin) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const price = coinData[platform][coin];
+
+            // Create a new chart or update the existing one
+            if (charts[canvasId]) {
+                charts[canvasId].destroy(); // Destroy the old chart if it exists
+            }
+
+            const coinName = coin.split(/(?=[A-Z])/).join(' '); // Split symbol to full name (e.g., "ETHBTC" => "ETH BTC")
+
+            const newChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [new Date().toLocaleTimeString()], // Initial time
+                    datasets: [{
+                        label: `${coinName} Price`, // Display full coin name
+                        data: [parseFloat(price)], // Initial price
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                color: '#ccc'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#ccc'
+                            }
+                        }
+                    },
+                    plugins: {
+                        zoom: {
+                            zoom: {
+                                wheel: {
+                                    enabled: true
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                mode: 'xy'
+                            },
+                            pan: {
+                                enabled: true,
+                                mode: 'xy'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const price = context.raw;
+                                    const change = ((price - parseFloat(coinData[platform][coin])) / parseFloat(coinData[platform][coin])) * 100;
+                                    const sign = change >= 0 ? '📈' : '📉';
+                                    return `${coinName} - ${price.toFixed(4)} (${sign} ${change.toFixed(2)}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            charts[canvasId] = newChart; // Store the reference to the chart
+        }
+
+        // Real-time price updates
+        socket.on('price_update', (data) => {
+            console.log('Price update received:', data); // Debugging line
+            coinData = data; // Update the global data
+            if (selectedPlatform && selectedCoins.length > 0) {
+                selectedCoins.forEach(coin => {
+                    if (charts[`chart-${coin}`]) {
+                        const newPrice = coinData[selectedPlatform][coin];
+                        const chart = charts[`chart-${coin}`];
+                        chart.data.labels.push(new Date().toLocaleTimeString());
+                        chart.data.datasets[0].data.push(parseFloat(newPrice));
+
+                        // Determine profit or loss and update color
+                        const prevPrice = chart.data.datasets[0].data[chart.data.datasets[0].data.length - 2];
+                        const isProfit = newPrice >= prevPrice;
+                        chart.data.datasets[0].borderColor = isProfit ? 'green' : 'red';
+                        chart.data.datasets[0].backgroundColor = isProfit ? 'rgba(75, 192, 75, 0.2)' : 'rgba(255, 99, 132, 0.2)';
+
+                        // Keep only the latest 10 data points
+                        if (chart.data.labels.length > 10) {
+                            chart.data.labels.shift();
+                            chart.data.datasets[0].data.shift();
+                        }
+
+                        chart.update();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

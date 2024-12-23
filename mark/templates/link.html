@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+{%  with messages= get_flashed_messages() %}
+    {% if messages %}
+        {%for msg in messages%}
+            <i>{{msg}}</i>
+        {%endfor%}
+    {% endif %}
+{%endwith%}
+<h1>Market Page</h1>
+<table class="table table-hover">
+    <tr>
+        <th>name</th>
+        <th>Roll</th>
+        <th>Class</th>
+    </tr>
+    {% for item in items%}
+    <tr>
+        <th>{{item.name}}</th>
+        <th>{{item.Roll}}</th>
+        <th>{{item.Class}}</th>
+        </tr>
+    {% endfor %}
+
+</table>
+{%endblock%}
