@@ -11,7 +11,8 @@ class User(db.Model,UserMixin):
     username=db.Column(db.String())
     email=db.Column(db.String())
     password_hash=db.Column(db.String())
-
+    authenticator_secret = db.Column(db.String(32), nullable=True)
+    authenticator_enabled = db.Column(db.Boolean, default=False)
     @property
     def password(self):
         return self.password

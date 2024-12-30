@@ -29,3 +29,7 @@ class otpform(FlaskForm):
 class verifyform(FlaskForm):
     userotp=StringField(label="OTP",validators=[Length(max=6,min=6),DataRequired()])
     submit=SubmitField(label="SUBMIT OTP")
+
+class Authenticationform(FlaskForm):
+    authotp=StringField(label="OTP",validators=[Length(max=6,min=6),DataRequired()])
+    submit=SubmitField(label="SUBMIT OTP")

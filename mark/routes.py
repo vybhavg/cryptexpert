@@ -1,14 +1,17 @@
 from mark import app, db, mail
-from mark.form import RegisterForm, LoginForm, otpform, verifyform
+from mark.form import RegisterForm, LoginForm, otpform, verifyform,Authenticationform
 from mark.models import User, Item
 from flask import render_template, redirect, url_for, flash, session
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 import random, requests
 from flask_mail import Message
 from flask_socketio import SocketIO
 import time
 from threading import Thread
-
+import pyotp
+import qrcode
+import io
+from flask import send_file
 # Initialize SocketIO
 socketio = SocketIO(app)
 
@@ -73,8 +76,6 @@ def register_form():
         user = User(username=form.username.data, email=form.email.data, password=form.password1.data)
         db.session.add(user)
         db.session.commit()
-        login_user(user)
-        flash(f'Successfully registered. You are logged in as {user.username}')
         session['userid'] = user.username
         return redirect(url_for('otp_form'))
     if form.errors:
@@ -128,18 +129,88 @@ def otp_form():
 @app.route('/verifyotp', methods=['GET', 'POST'])
 def verify_form():
     form = verifyform()
+    auth_form=Authenticationform()
+    user = User.query.filter_by(username=session['userid']).first()
     if form.validate_on_submit():
         entered_otp = form.userotp.data
-        if entered_otp and str(session['otp']) == entered_otp:
+        if entered_otp and str(session.get('otp')) == entered_otp:
             session.pop('otp', None)
-            user = User.query.filter_by(username=session['userid']).first()
             if user:
-                login_user(user)
-                flash(f'User logged in successfully: {user.username}')
-                return redirect(url_for('index'))
+                if user.authenticator_enabled !=1:
+                    session.pop('userid', None)
+                    login_user(user)
+                    return redirect(url_for('setup_authenticator')) 
+                else:
+                    return render_template('verify_otp.html', form=auth_form, username=session['userid'], show_auth_form=True)
+                    
         else:
             flash('Incorrect OTP')
+
+    if auth_form.validate_on_submit():
+        entered_code = auth_form.authotp.data
+        totp = pyotp.TOTP(user.authenticator_secret)
+        if totp.verify(entered_code):
+            login_user(user) 
+            flash(f'User logged in successfully: {user.username}') 
+            return redirect(url_for('index'))
+        else:
+            flash("Invalid authenticator code. Please try again.")
+            return render_template('verify_otp.html', form=auth_form, username=session['userid'], show_auth_form=True)
+
+
     if form.errors:
         for err in form.errors.values():
             flash(err)
-    return render_template('verify_otp.html', form=form, username=session['userid'])
+    return render_template('verify_otp.html', form=form, username=session['userid'], show_auth_form=False)
+
+@app.route('/setup-authenticator', methods=['GET', 'POST'])
+def setup_authenticator():
+    user = User.query.filter_by(username=current_user.username).first()
+    if not user.authenticator_secret:
+        user.authenticator_secret = pyotp.random_base32()
+        db.session.commit()
+    
+    otp_uri = pyotp.totp.TOTP(user.authenticator_secret).provisioning_uri(
+        name=user.username,
+        issuer_name="CryptExpert"
+    )
+    qr = qrcode.make(otp_uri)
+    buffer = io.BytesIO()
+    qr.save(buffer)
+    buffer.seek(0)
+
+    form = Authenticationform()  # Define this form with an `auth_code` field
+    if form.validate_on_submit():
+        totp = pyotp.TOTP(user.authenticator_secret)
+        if totp.verify(form.authotp.data):
+            user.authenticator_enabled = True
+            db.session.commit()
+            flash("Authenticator set up successfully!")
+            return redirect(url_for('index'))
+        else:
+            flash("Invalid authenticator code. Please try again.")
+
+    return render_template(
+        'setup_authenticator.html',
+        qr_code=buffer,
+        form=form,
+    )
+
+@app.route('/setup-authenticator/qr')
+@login_required
+def setup_authenticator_qr():
+    user = User.query.filter_by(username=current_user.username).first()
+
+    if not user or not user.authenticator_secret:
+        flash("Invalid access.")
+        return redirect(url_for('index'))
+
+    otp_uri = pyotp.totp.TOTP(user.authenticator_secret).provisioning_uri(
+        name=user.username,
+        issuer_name="CryptExpert"
+    )
+    qr = qrcode.make(otp_uri)
+    buffer = io.BytesIO()
+    qr.save(buffer)
+    buffer.seek(0)
+    return send_file(buffer, mimetype='image/png')

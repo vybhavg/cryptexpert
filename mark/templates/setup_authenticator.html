@@ -16,26 +16,14 @@
     </head>
 
     <body data-sa-theme="5">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul class="flash-messages">
-                {% for message in messages %}
-                    <li class="flash-message">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
         <div class="login">
 
             <!-- Login -->
             <div class="login__block box active" style="background-color: #000000;  " id="l-login">
                 <div class="login__block__header">
                     <i class="zmdi zmdi-account-circle"></i>
-                    {% if show_auth_form %}
-                    <p style="font-size: 18px;">Hi {{username}}! Enter 2FA code</p>
-                    {% else %}
-                    <p style="font-size: 18px;">Hi {{username}}! Enter OTP</p>
-                    {% endif %}
+                    <p style="font-size: 18px;">Hi {{username}}!
+</p>
                     <div class="actions actions--inverse login__block__actions">
                         <div class="dropdown">
                             <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item"></i>
@@ -48,14 +36,14 @@
                     </div>
                 </div>
                 
+                <img src="{{ url_for('setup_authenticator_qr') }}" width="200px" height="200px" alt="QR Code">
 
                 <div class="login__block__body">
-                    {% if show_auth_form %}
                     <form method="POST">
                         {{ form.hidden_tag() }}
 
                         <div class="form-group">
-                            {{form.authotp(class="form-control text-center",placeholder='code')}}                     
+                            {{form.authotp(class="form-control text-center",placeholder='otp')}}                     
                            </div>
 
                     
@@ -64,21 +52,6 @@
                             {{ form.submit(class="btn btn-primary") }}
                         </div>
                     </form>
-                    {% else %}
-                    <form method="POST">
-                        {{ form.hidden_tag() }}
-
-                        <div class="form-group">
-                            {{form.userotp(class="form-control text-center",placeholder='otp')}}                     
-                           </div>
-
-                    
-                        <!-- Submit Button -->
-                        <div class="form-group " >
-                            {{ form.submit(class="btn btn-primary") }}
-                        </div>
-                    </form>
-                    {% endif %}
 
                 </div>
             </div>
