@@ -11,63 +11,112 @@ from threading import Thread
 import pyotp
 import qrcode
 import io
-from flask import send_file
-# Initialize SocketIO
-socketio = SocketIO(app)
+import requests
+from binance.client import Client
+from flask import send_file,jsonify
 
-# Fetch cryptocurrency prices
-def fetch_crypto_prices():
-    prices = {}
-    
-    # Binance API
-    binance_url = "https://api.binance.com/api/v3/ticker/price"
-    binance_response = requests.get(binance_url)
-    if binance_response.status_code == 200:
-        binance_prices = binance_response.json()
-        prices['Binance'] = {item['symbol']: item['price'] for item in binance_prices}
+def get_specific_prices_from_binance():
+    symbols = ['BTCUSDT', 'BNBUSDT', 'LTCUSDT', 'ETHUSDT']  # List of cryptocurrencies to fetch
+    prices = []
 
-    # Coinbase API
-    coinbase_url = "https://api.coinbase.com/v2/exchange-rates"
-    coinbase_response = requests.get(coinbase_url)
-    if coinbase_response.status_code == 200:
-        coinbase_prices = coinbase_response.json().get('data', {}).get('rates', {})
-        prices['Coinbase'] = {symbol: rate for symbol, rate in coinbase_prices.items()}
-    
+    # Request data from Binance API
+    for symbol in symbols:
+        response = requests.get(f'https://api.binance.com/api/v3/ticker/24hr?symbol={symbol}')
+        data = response.json()
+
+        # Extract price and price change data
+        price = data['lastPrice']
+        price_change_percent = data['priceChangePercent']
+
+        prices.append({
+            'symbol': symbol,
+            'price': price,
+            'priceChangePercent': price_change_percent
+        })
+
     return prices
 
-# Function to send price updates using WebSocket
-def send_price_updates():
-    while True:
-        prices = fetch_crypto_prices()
-        socketio.emit('price_update', prices)
-        time.sleep(10)  # Update every 10 seconds
+def get_specific_prices_from_coinmarketcap():
+    symbols = ['BTC', 'ETH', 'LTC', 'BNB']  # List of cryptocurrencies to fetch
+    prices = []
 
-# Start the price update loop in a background thread
-price_thread = Thread(target=send_price_updates)
-price_thread.daemon = True
-price_thread.start()
+    # CoinMarketCap API endpoint and your API key
+    api_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
+    headers = {
+        'Accept': 'application/json',
+        'X-CMC_PRO_API_KEY': '16eb4846-14d3-460f-a807-829071a43a49',  # Replace with your valid API key
+    }
 
-@socketio.on('connect')
-def handle_connect():
-    print("Client connected!")
+    # Request data from CoinMarketCap API
+    params = {
+        'symbol': ','.join(symbols),  # Join the symbols with commas (e.g., 'BTC,ETH,LTC')
+        'convert': 'USD',  # Fetch prices in USD
+    }
+
+    try:
+        response = requests.get(api_url, headers=headers, params=params)
+        response.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx)
+
+        data = response.json()
+
+        # Extracting price and price change data
+        if 'data' in data:
+            for symbol in symbols:
+                if symbol in data['data']:
+                    crypto = data['data'][symbol]
+                    price = crypto['quote']['USD']['price']
+                    price_change_percent = crypto['quote']['USD']['percent_change_24h']
+
+                    prices.append({
+                        'symbol': symbol,
+                        'price': price,
+                        'priceChangePercent': price_change_percent
+                    })
+                else:
+                    print(f"Warning: {symbol} data is not available in the response.")
+        else:
+            print(f"Error: Missing 'data' key in response: {data}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
+    except KeyError as e:
+        print(f"Error processing the response: Missing key {e}")
+
+    return prices
 
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('index.html')
+    binance_prices = get_specific_prices_from_binance()
+    coinmarketcap_prices = get_specific_prices_from_coinmarketcap()
+    for ticker in binance_prices:
+        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
 
-@app.route('/crypto')
-def crypto_prices():
-    prices = fetch_crypto_prices()
-    return render_template('crypto.html', prices=prices)
+    for ticker in coinmarketcap_prices:
+        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
+    print(coinmarketcap_prices) 
+    return render_template('index.html', binance_prices=binance_prices, coinmarketcap_prices=coinmarketcap_prices)
+
+
+@app.route('/binance_prices')
+def binance_prices():
+    binance_prices = get_specific_prices_from_binance()  # Fetch the latest data from Binance
+    return jsonify(binance_prices)  # Return Binance data as JSON
+
+@app.route('/coinmarketcap_prices')
+def coinmarketcap_prices():
+    coinmarketcap_prices = get_specific_prices_from_coinmarketcap()  # Fetch the latest data from CoinMarketCap
+    return jsonify(coinmarketcap_prices)  # Return CoinMarketCap data as JSON
+
+
 
 @app.route('/index')
 @login_required
 def index():
-    items = Item.query.all()
-    name = session.get('userid')
-    email = session.get('email')
-    return render_template('index.html', items=items, name=name, email=email)
+    user = User.query.filter_by(username=current_user.username).first()
+    name = user.username
+    email = user.email
+    return render_template('index.html', name=name, email=email)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_form():
@@ -194,6 +243,7 @@ def setup_authenticator():
         'setup_authenticator.html',
         qr_code=buffer,
         form=form,
+        username=user.username
     )
 
 @app.route('/setup-authenticator/qr')

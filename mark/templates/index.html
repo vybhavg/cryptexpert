@@ -15,6 +15,49 @@
 
         <!-- App styles -->
         <link rel="stylesheet" href="/static/css/app.min.css">
+        <style>
+        .select-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        
+        .price-selection {
+            display: flex;
+            background: #232222;
+            padding: 5px 10px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .price-selection input[type="radio"] {
+            display: none; /* Hide default radio buttons */
+        }
+        
+        .price-selection label {
+            display: inline-block;
+            padding: 5px 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffffff;
+            background: transparent;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .price-selection input[type="radio"]:checked + label {
+            background: #232222;
+            color: #f8bc04;
+        }
+        
+        .price-selection label:hover {
+            background: #111112;
+            color: #f8bc04;
+        }
+</style>
     </head>
 
     <body data-sa-theme="1">
@@ -505,54 +548,97 @@
                 <header class="content__title">
                     <h1>Dashboard</h1>
                     <br>
-                    <span style="color: white; font-size: 25px; text-align: center;">Welcome {{name}}</span>
+                    <span style="color: white; font-size: 25px; text-align: center;">Welcome <i style="color: #f8bc04;">{{name}}</i></span>
                 </header>
+<!-- Dropdown or Radio Buttons to Choose between Binance and CoinMarketCap -->
+<div class="select-container">
+    <div class="price-selection">
+        <input type="radio" id="binance" name="price-source" value="binance" checked>
+        <label for="binance">Binance</label>
 
-                <div class="row quick-stats">
-                    <div class="col-sm-6 col-md-3">
-                        <div class="quick-stats__item">
-                            <div class="quick-stats__info">
-                                <h2>987,459</h2>
-                                <small>Total Leads Recieved</small>
-                            </div>
+        <input type="radio" id="coinmarketcap" name="price-source" value="coinmarketcap">
+        <label for="coinmarketcap">CoinMarketCap</label>
+    </div>
+</div>
 
-                            <div class="quick-stats__chart peity-bar">6,4,8,6,5,6,7,8,3,5,9</div>
-                        </div>
-                    </div>
+<!-- Binance Tickers Section -->
+<div id="binance-section" class="row quick-stats">
+    {% for ticker in binance_prices %}
+    <div class="col-sm-6 col-md-3" id="binance-ticker-{{ loop.index0 }}">
+        <div class="quick-stats__item">
+            <div class="quick-stats__info">
+                <h2 style="color: #fff;">${{ ticker.price }}</h2>
+                <small style="color: #f8bc04;">{{ ticker.symbol }}</small>
+            </div>
+            <div class="quick-stats__info peity">
+                <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span style="color: green;">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span style="color: red;">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span style="color: gray;">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </h5>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 
-                    <div class="col-sm-6 col-md-3">
-                        <div class="quick-stats__item">
-                            <div class="quick-stats__info">
-                                <h2>356,785K</h2>
-                                <small>Total Website Clicks</small>
-                            </div>
+<!-- CoinMarketCap Tickers Section -->
+<div id="coinmarketcap-section" class="row quick-stats" style="display:none;">
+    {% for ticker in coinmarketcap_prices %}
+    <div class="col-sm-6 col-md-3" id="coinmarketcap-ticker-{{ loop.index0 }}">
+        <div class="quick-stats__item">
+            <div class="quick-stats__info">
+                <h2 style="color: #fff;">${{ ticker.price }}</h2>
+                <small style="color: #f8bc04;">{{ ticker.symbol }}</small>
+            </div>
+            <div class="quick-stats__info peity">
+                <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span style="color: green;">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span style="color: red;">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span style="color: gray;">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </h5>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 
-                            <div class="quick-stats__chart peity-bar">4,7,6,2,5,3,8,6,6,4,8</div>
-                        </div>
-                    </div>
+<script>
+// JavaScript to toggle between Binance and CoinMarketCap tickers
+document.addEventListener('DOMContentLoaded', () => {
+    const binanceRadio = document.getElementById('binance');
+    const coinmarketcapRadio = document.getElementById('coinmarketcap');
 
-                    <div class="col-sm-6 col-md-3">
-                        <div class="quick-stats__item">
-                            <div class="quick-stats__info">
-                                <h2>$58,778</h2>
-                                <small>Total Sales Orders</small>
-                            </div>
+    const binanceSection = document.getElementById('binance-section');
+    const coinmarketcapSection = document.getElementById('coinmarketcap-section');
 
-                            <div class="quick-stats__chart peity-bar">9,4,6,5,6,4,5,7,9,3,6</div>
-                        </div>
-                    </div>
+    // Function to update displayed tickers based on the selected radio button
+    function toggleTickers() {
+        if (binanceRadio.checked) {
+            binanceSection.style.display = 'flex';
+            coinmarketcapSection.style.display = 'none';
+        } else if (coinmarketcapRadio.checked) {
+            binanceSection.style.display = 'none';
+            coinmarketcapSection.style.display = 'flex';
+        }
+    }
 
-                    <div class="col-sm-6 col-md-3">
-                        <div class="quick-stats__item">
-                            <div class="quick-stats__info">
-                                <h2>214</h2>
-                                <small>Total Support Tickets</small>
-                            </div>
+    // Set initial display based on default selection (Binance is checked by default)
+    toggleTickers();
 
-                            <div class="quick-stats__chart peity-bar">5,6,3,9,7,5,4,6,5,6,4</div>
-                        </div>
-                    </div>
-                </div>
+    // Add event listeners to radio buttons
+    binanceRadio.addEventListener('change', toggleTickers);
+    coinmarketcapRadio.addEventListener('change', toggleTickers);
+});
+</script>
 
                 <div class="row">
                     <div class="col-lg-6">
@@ -1015,6 +1101,79 @@
 
         <!-- App functions and actions -->
         <script src="/static/js/app.min.js"></script>
+        <script>  
+            
+            async function fetchPrices() {
+    try {
+        const [binanceResponse, coinmarketcapResponse] = await Promise.all([
+            fetch('/binance_prices'),    // Fetch data from your Binance API endpoint
+            fetch('/coinmarketcap_prices')  // Fetch data from your CoinMarketCap API endpoint
+        ]);
+
+        const binancePrices = await binanceResponse.json();
+        const coinmarketcapPrices = await coinmarketcapResponse.json();
+
+        // Update Binance prices
+        binancePrices.forEach((ticker, index) => {
+            const price = parseFloat(ticker.price).toFixed(2);  // Format to 2 decimal places
+            const percentChange = parseFloat(ticker.priceChangePercent).toFixed(2);  // Format to 2 decimal places
+
+            const tickerElement = document.getElementById(`binance-ticker-${index}`);
+            if (tickerElement) {
+                const priceElement = tickerElement.querySelector('.quick-stats__info h2');
+                priceElement.textContent = `$${price}`;
+
+                const percentageElement = tickerElement.querySelector('.percentage-change');
+                let percentageText = `${percentChange}%`;
+                if (percentChange > 0) {
+                    percentageText = `+${percentageText}`;
+                    percentageElement.style.color = 'green';  // Green for positive change
+                } else if (percentChange < 0) {
+                    percentageElement.style.color = 'red';  // Red for negative change
+                } else {
+                    percentageElement.style.color = 'gray';  // Gray for no change
+                }
+                percentageElement.textContent = percentageText;
+            }
+        });
+
+        // Update CoinMarketCap prices
+        coinmarketcapPrices.forEach((ticker, index) => {
+            const price = parseFloat(ticker.price).toFixed(2);  // Format to 2 decimal places
+            const percentChange = parseFloat(ticker.priceChangePercent).toFixed(2);  // Format to 2 decimal places
+
+            const tickerElement = document.getElementById(`coinmarketcap-ticker-${index}`);
+            if (tickerElement) {
+                const priceElement = tickerElement.querySelector('.quick-stats__info h2');
+                priceElement.textContent = `$${price}`;
+
+                const percentageElement = tickerElement.querySelector('.percentage-change');
+                let percentageText = `${percentChange}%`;
+                if (percentChange > 0) {
+                    percentageText = `+${percentageText}`;
+                    percentageElement.style.color = 'green';  // Green for positive change
+                } else if (percentChange < 0) {
+                    percentageElement.style.color = 'red';  // Red for negative change
+                } else {
+                    percentageElement.style.color = 'gray';  // Gray for no change
+                }
+                percentageElement.textContent = percentageText;
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching prices:', error);
+    }
+}
+
+// Call the function once when the page is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    fetchPrices();  // Fetch prices on page load
+    setInterval(fetchPrices, 10000);  // Update prices every 10 seconds
+});
+
+        </script>
+
     </body>
 
 <!--Designed By ALpha-->
