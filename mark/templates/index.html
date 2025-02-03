@@ -5,17 +5,130 @@
 <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Super Admin 2.0</title>
+        <title>CryptExpert</title>
 
         <!-- Vendor styles -->
         <link rel="stylesheet" href="/static/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css">
         <link rel="stylesheet" href="/static/vendors/bower_components/animate.css/animate.min.css">
         <link rel="stylesheet" href="/static/vendors/bower_components/jquery.scrollbar/jquery.scrollbar.css">
         <link rel="stylesheet" href="/static/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css">
-
+        <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
         <!-- App styles -->
+        <link href="https://fonts.googleapis.com/css2?family=Sriracha&display=swap" rel="stylesheet">
+
         <link rel="stylesheet" href="/static/css/app.min.css">
         <style>
+/* Styling the search form */
+.searchh {
+    width: 80%; /* Adjust width */
+    max-width: 400px; /* Limit max width */
+    border-radius: 50px;
+    background-color: #fff; /* White background */
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Input styling */
+.searchh__text {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #d4af37; /* Gold border */
+    border-radius: 50px;
+    font-size: 1rem;
+    color: #333; /* Dark text */
+    background-color: #fff; /* White background */
+}
+
+/* Icon styling */
+.searchh__helper {
+    font-size: 1.5rem;
+    color: #d4af37; /* Gold color for the searchh icon */
+    cursor: pointer;
+}
+
+/* Hover effects */
+.searchh__text:hover {
+    border-color: #c68e17; /* Darker gold border on hover */
+}
+
+.searchh__helper:hover {
+    color: #c68e17; /* Darker gold for icon hover */
+}
+
+            .content {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 20px !important; /* Adjust as needed */
+    box-sizing: border-box;
+}
+
+@media (min-width: 1200px) {
+    .content {
+        padding: 20px !important; /* Removes the extra 280px left padding */
+    }
+}
+
+                    header.b {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* Video Background */
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the video covers the entire header */
+            z-index: -1; /* Places the video behind the text */
+            filter: blur(5px);
+        }
+
+
+            .welcome-text {
+                font-family: "Audiowide", serif;
+                font-weight: 400;
+  font-style: normal;
+            font-size: 32px;
+            color: white;
+            text-align: center;
+        }
+        .sidetext{
+            font-family: "Sriracha", serif;
+  font-weight: 400;
+  font-style: normal;
+            font-size: 20px;
+            color: #f8bc04;
+            text-align: center;
+        }
+        .welcome{
+            font-size: 32px;
+            color: white;
+            text-align: center;
+        }
+        .crypto {
+            font-weight: bold;
+            color: white;
+        }
+        .expert {
+            font-weight: bold;
+            color: #f8bc04; /* Gold color */
+        }
         .select-container {
             display: flex;
             flex-direction: column;
@@ -71,12 +184,12 @@
             </div>
 
             <header class="header">
-                <div class="navigation-trigger hidden-xl-up" data-sa-action="aside-open" data-sa-target=".sidebar">
+                <div class="navigation-trigger" data-sa-action="aside-open" data-sa-target=".sidebar">
                     <i class="zmdi zmdi-menu"></i>
                 </div>
 
                 <div class="logo hidden-sm-down">
-                    <h1><a href="index-2.html" style="font-family: 'Poppins', sans-serif;">CRYPTEX</a></h1>
+                    <h1><a href="index-2.html" style="font-family: 'Poppins', sans-serif;">CRYPTEXPERT</a></h1>
                 </div>
 
                 <form class="search">
@@ -543,13 +656,31 @@
                     </ul>
                 </div>
             </aside>
-
+            <header class="b" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+                <!-- Video Background -->
+                <video class="video-background" autoplay muted loop>
+                    <source src="static/video/header.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            
+                <span class="welcome">Welcome to 
+                    <span class="welcome-text">
+                        <span class="crypto">Crypt</span><span class="expert">Expert</span>
+                    </span><br>
+                    <span class="sidetext">Your Gateway to Decentralized Finance</span>
+                </span>
+            
+                <!-- Search Form -->
+                <form class="searchh" style="position: absolute; bottom: 20px;">
+                    <div class="searchh__inner">
+                        <input type="text" class="searchh__text" placeholder="Search for people, files, documents...">
+                        <i class="zmdi zmdi-search searchh__helper" data-sa-action="searchh-close"></i>
+                    </div>
+                </form>
+            </header>
+            
             <section class="content">
-                <header class="content__title">
-                    <h1>Dashboard</h1>
-                    <br>
-                    <span style="color: white; font-size: 25px; text-align: center;">Welcome <i style="color: #f8bc04;">{{name}}</i></span>
-                </header>
+           
 <!-- Dropdown or Radio Buttons to Choose between Binance and CoinMarketCap -->
 <div class="select-container">
     <div class="price-selection">
@@ -1100,6 +1231,16 @@ document.addEventListener('DOMContentLoaded', () => {
         <script src="/static/demo/js/jqvmap.js"></script>
 
         <!-- App functions and actions -->
+        <script>
+            // Get the navigation trigger and sidebar elements
+            const navTrigger = document.querySelector('.navigation-trigger');
+            const sidebar = document.querySelector('.sidebar');
+        
+            // Add click event listener to the navigation trigger
+            navTrigger.addEventListener('click', function() {
+                sidebar.classList.toggle('toggled'); // Toggle the 'toggled' class on the sidebar
+            });
+        </script>
         <script src="/static/js/app.min.js"></script>
         <script>  
             
