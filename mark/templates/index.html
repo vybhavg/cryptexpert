@@ -21,45 +21,122 @@
 
         <link rel="stylesheet" href="/static/css/app.min.css">
         <style>
+            html {
+    scroll-behavior: smooth;
+}
+
+.quick-stats__item {
+    display: flex;
+    align-items: center; /* Align image and text in one row */
+    background: #1a1a1a;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 30px 0;
+    text-align: left;
+    border: 0.20rem solid rgba(248, 188, 4, 0.7);
+    box-shadow: 0 0 15px #f8bc04;
+}
+.quick-stats__item:hover{
+animation: none; /* Stop the rotation animation */
+    border-image: none; /* Remove the border image */
+    border: 0.35rem solid #f8bc04; /* Set the solid blue border */
+    box-shadow: 0 0 25px #f8bc04; /* Yellow glow effect */
+    cursor: pointer;
+}
+.image-container {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px; /* Space between image and text */
+}
+
+.crypto-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.quick-stats__info {
+    flex-grow: 1; /* Take remaining space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end; /* Align text to the right */
+    color: #fff;
+    margin-left: 20px;
+    text-align: right; /* Ensure text is aligned right */
+}
+
+
+h2 {
+    font-size: 18px;
+    margin: 0;
+    color: #fff;
+}
+
+small {
+    font-size: 14px;
+    color: #f8bc04;
+}
+
+.percentage-change {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.positive {
+    color: green;
+}
+
+.negative {
+    color: red;
+}
+
+.neutral {
+    color: gray;
+}
+
+
+
 /* Styling the search form */
 .searchh {
-    width: 80%; /* Adjust width */
-    max-width: 400px; /* Limit max width */
+    width: 100%;
+    max-width: 1000px;
     border-radius: 50px;
-    background-color: #fff; /* White background */
+    background-color: #fff;
     padding: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    flex-direction: row;
 }
 
 /* Input styling */
 .searchh__text {
     width: 100%;
-    padding: 12px;
-    border: 2px solid #d4af37; /* Gold border */
-    border-radius: 50px;
+    padding: 6px;
     font-size: 1rem;
-    color: #333; /* Dark text */
-    background-color: #fff; /* White background */
+    border: none;
+    color: #333;
+    background-color: #fff;
 }
 
 /* Icon styling */
 .searchh__helper {
-    font-size: 1.5rem;
-    color: #d4af37; /* Gold color for the searchh icon */
+    font-size: 2.5rem;
+    color: #f8bc04;
+    transition: transform 0.3s ease, color 0.3s ease;
     cursor: pointer;
 }
 
-/* Hover effects */
-.searchh__text:hover {
-    border-color: #c68e17; /* Darker gold border on hover */
+.searchh.focused .searchh__helper {
+    transform: rotate(180deg);
+    color: #c68e17; /* Darker gold when active */
 }
 
-.searchh__helper:hover {
-    color: #c68e17; /* Darker gold for icon hover */
-}
 
             .content {
     width: 100%;
@@ -96,10 +173,17 @@
             height: 100%;
             object-fit: cover; /* Ensures the video covers the entire header */
             z-index: -1; /* Places the video behind the text */
-            filter: blur(5px);
+            filter: blur(0px);
         }
 
-
+        .welcome-text2 {
+                font-family: "Audiowide", serif;
+                font-weight: 400;
+  font-style: normal;
+            font-size: 25px;
+            color: white;
+            text-align: center;
+        }
             .welcome-text {
                 font-family: "Audiowide", serif;
                 font-weight: 400;
@@ -189,12 +273,14 @@
                 </div>
 
                 <div class="logo hidden-sm-down">
-                    <h1><a href="index-2.html" style="font-family: 'Poppins', sans-serif;">CRYPTEXPERT</a></h1>
+                    <a href="index-2.html" class="welcome-text2">
+                        <span class="crypto">Crypt</span><span class="expert">Expert</span>                    
+                    </a>
                 </div>
 
                 <form class="search">
                     <div class="search__inner">
-                        <input type="text" class="search__text" placeholder="Search for people, files, documents...">
+                        <input type="text" class="search__text" placeholder="Search for Crypto, Exchanges, Wallets...">
                         <i class="zmdi zmdi-search search__helper" data-sa-action="search-close"></i>
                     </div>
                 </form>
@@ -662,7 +748,7 @@
                     <source src="static/video/header.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
-            
+            <div class="midtxt" style="position: relative;">
                 <span class="welcome">Welcome to 
                     <span class="welcome-text">
                         <span class="crypto">Crypt</span><span class="expert">Expert</span>
@@ -671,12 +757,13 @@
                 </span>
             
                 <!-- Search Form -->
-                <form class="searchh" style="position: absolute; bottom: 20px;">
-                    <div class="searchh__inner">
-                        <input type="text" class="searchh__text" placeholder="Search for people, files, documents...">
+                <form class="searchh" style="position: absolute; top: 105px;">
+                    <div class="searchh__inner" style="display: flex; width: 100%;">
+                        <input type="text" class="searchh__text" placeholder="Search for Crypto, Exchanges, Wallets...">
                         <i class="zmdi zmdi-search searchh__helper" data-sa-action="searchh-close"></i>
                     </div>
                 </form>
+            </div>
             </header>
             
             <section class="content">
@@ -693,22 +780,26 @@
 </div>
 
 <!-- Binance Tickers Section -->
+ 
 <div id="binance-section" class="row quick-stats">
     {% for ticker in binance_prices %}
     <div class="col-sm-6 col-md-3" id="binance-ticker-{{ loop.index0 }}">
         <div class="quick-stats__item">
-            <div class="quick-stats__info">
-                <h2 style="color: #fff;">${{ ticker.price }}</h2>
-                <small style="color: #f8bc04;">{{ ticker.symbol }}</small>
+            <!-- Image on the left -->
+            <div class="image-container">
+                <img class="crypto-image" src="static/img/crypto/{{ ticker.symbol[:-4] }}.png" alt="{{ ticker.symbol }}">
             </div>
-            <div class="quick-stats__info peity">
+            <!-- Text on the right -->
+            <div class="quick-stats__info">
+                <h2>${{ ticker.price }}</h2>
+                <small>{{ ticker.symbol[:-4] }}</small>
                 <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
                     {% if ticker.priceChangePercent > 0 %}
-                    <span style="color: green;">+{{ ticker.priceChangePercent }}%</span>
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
                     {% elif ticker.priceChangePercent < 0 %}
-                    <span style="color: red;">{{ ticker.priceChangePercent }}%</span>
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
                     {% else %}
-                    <span style="color: gray;">{{ ticker.priceChangePercent }}%</span>
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
                     {% endif %}
                 </h5>
             </div>
@@ -717,23 +808,28 @@
     {% endfor %}
 </div>
 
+
+
 <!-- CoinMarketCap Tickers Section -->
 <div id="coinmarketcap-section" class="row quick-stats" style="display:none;">
     {% for ticker in coinmarketcap_prices %}
-    <div class="col-sm-6 col-md-3" id="coinmarketcap-ticker-{{ loop.index0 }}">
-        <div class="quick-stats__item">
-            <div class="quick-stats__info">
-                <h2 style="color: #fff;">${{ ticker.price }}</h2>
-                <small style="color: #f8bc04;">{{ ticker.symbol }}</small>
+    <div class="col-sm-6 col-md-3 " id="coinmarketcap-ticker-{{ loop.index0 }}">
+         <div class="quick-stats__item">
+            <!-- Image on the left -->
+            <div class="image-container">
+                <img class="crypto-image" src="static/img/crypto/{{ ticker.symbol }}.png" alt="{{ ticker.symbol }}">
             </div>
-            <div class="quick-stats__info peity">
+            <!-- Text on the right -->
+            <div class="quick-stats__info">
+                <h2>${{ ticker.price }}</h2>
+                <small>{{ ticker.symbol }}</small>
                 <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
                     {% if ticker.priceChangePercent > 0 %}
-                    <span style="color: green;">+{{ ticker.priceChangePercent }}%</span>
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
                     {% elif ticker.priceChangePercent < 0 %}
-                    <span style="color: red;">{{ ticker.priceChangePercent }}%</span>
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
                     {% else %}
-                    <span style="color: gray;">{{ ticker.priceChangePercent }}%</span>
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
                     {% endif %}
                 </h5>
             </div>

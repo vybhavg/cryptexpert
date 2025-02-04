@@ -116,7 +116,14 @@ def index():
     user = User.query.filter_by(username=current_user.username).first()
     name = user.username
     email = user.email
-    return render_template('index.html', name=name, email=email)
+    binance_prices = get_specific_prices_from_binance()
+    coinmarketcap_prices = get_specific_prices_from_coinmarketcap()
+    for ticker in binance_prices:
+        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
+
+    for ticker in coinmarketcap_prices:
+        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
+    return render_template('index.html', name=name, email=email, binance_prices=binance_prices, coinmarketcap_prices=coinmarketcap_prices)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_form():
