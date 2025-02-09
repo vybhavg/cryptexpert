@@ -16,29 +16,46 @@ from binance.client import Client
 from flask import send_file,jsonify
 
 def get_specific_prices_from_binance():
-    symbols = ['BTCUSDT', 'BNBUSDT', 'LTCUSDT', 'ETHUSDT']  # List of cryptocurrencies to fetch
-    prices = []
+    response = requests.get("https://api.binance.com/api/v3/ticker/24hr")
+    
+    if response.status_code != 200:
+        print("Error fetching data:", response.status_code)
+        return []
+    
+    data = response.json()
 
-    # Request data from Binance API
-    for symbol in symbols:
-        response = requests.get(f'https://api.binance.com/api/v3/ticker/24hr?symbol={symbol}')
-        data = response.json()
+    # List of specific cryptocurrencies to display
+    specific_coins = [
+        "BTCUSDT", "ETHUSDT", "USDTUSDT", "XRPUSDT", "SOLUSDT", "BNBUSDT",
+        "USDCUSDT", "DOGEUSDT", "ADAUSDT", "TRXUSDT", "LINKUSDT"
+    ]
+    dup=[ "AVAXUSDT",
+        "PEPEUSDT", "SUIUSDT", "TONUSDT", "HBARUSDT", "BCHUSDT", "SHIBUSDT",
+        "XMRUSDT", "DOTUSDT", "LTCUSDT"]
 
-        # Extract price and price change data
-        price = data['lastPrice']
-        price_change_percent = data['priceChangePercent']
+    # Filter Binance data for the required symbols
+    filtered_prices = [
+        {
+            'symbol': crypto['symbol'],
+            'price': f"{float(crypto['lastPrice']):,.2f}",
+            'priceChangePercent': crypto['priceChangePercent']
+        }
+        for crypto in data if crypto['symbol'] in specific_coins
+    ]
 
-        prices.append({
-            'symbol': symbol,
-            'price': price,
-            'priceChangePercent': price_change_percent
-        })
-
-    return prices
+    return filtered_prices
+import requests
 
 def get_specific_prices_from_coinmarketcap():
-    symbols = ['BTC', 'ETH', 'LTC', 'BNB']  # List of cryptocurrencies to fetch
-    prices = []
+    # List of specific cryptocurrencies to display
+    specific_coins = [
+        "BTC", "ETH", "USDT", "XRP", "SOL", "BNB",
+        "USDC", "DOGE", "ADA", "TRX", "LINK"
+    ]
+    dup = [
+        "AVAX", "PEPE", "SUI", "TON", "HBAR", "BCH", "SHIB",
+        "XMR", "DOT", "LTC"
+    ]
 
     # CoinMarketCap API endpoint and your API key
     api_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
@@ -49,9 +66,11 @@ def get_specific_prices_from_coinmarketcap():
 
     # Request data from CoinMarketCap API
     params = {
-        'symbol': ','.join(symbols),  # Join the symbols with commas (e.g., 'BTC,ETH,LTC')
+        'symbol': ','.join(specific_coins),  # Join the symbols with commas (e.g., 'BTC,ETH,LTC')
         'convert': 'USD',  # Fetch prices in USD
     }
+
+    prices = []
 
     try:
         response = requests.get(api_url, headers=headers, params=params)
@@ -61,11 +80,11 @@ def get_specific_prices_from_coinmarketcap():
 
         # Extracting price and price change data
         if 'data' in data:
-            for symbol in symbols:
+            for symbol in specific_coins:
                 if symbol in data['data']:
                     crypto = data['data'][symbol]
-                    price = crypto['quote']['USD']['price']
-                    price_change_percent = crypto['quote']['USD']['percent_change_24h']
+                    price = f"{float(crypto['quote']['USD']['price']):,.2f}"
+                    price_change_percent = f"{float(crypto['quote']['USD']['percent_change_24h']):.2f}"
 
                     prices.append({
                         'symbol': symbol,
@@ -84,6 +103,7 @@ def get_specific_prices_from_coinmarketcap():
 
     return prices
 
+
 @app.route('/')
 @app.route('/home')
 def home():
@@ -94,7 +114,6 @@ def home():
 
     for ticker in coinmarketcap_prices:
         ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-    print(coinmarketcap_prices) 
     return render_template('index.html', binance_prices=binance_prices, coinmarketcap_prices=coinmarketcap_prices)
 
 
