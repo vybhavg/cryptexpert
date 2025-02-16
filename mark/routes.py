@@ -104,6 +104,43 @@ def get_specific_prices_from_coinmarketcap():
     return prices
 
 
+def get_specific_prices_from_coinbase():
+    # List of specific cryptocurrencies to display
+    specific_coins = [
+        "BTC-USD", "ETH-USD", "USDT-USD", "XRP-USD", "SOL-USD", "BNB-USD",
+        "USDC-USD", "DOGE-USD", "ADA-USD", "TRX-USD", "LINK-USD"
+    ]
+    dup = [
+        "AVAX-USD", "PEPE-USD", "SUI-USD", "TON-USD", "HBAR-USD", "BCH-USD",
+        "SHIB-USD", "XMR-USD", "DOT-USD", "LTC-USD"
+    ]
+
+    prices = []
+    
+    try:
+        for symbol in specific_coins:
+            response = requests.get(f"https://api.coinbase.com/v2/prices/{symbol}/spot")
+            if response.status_code == 200:
+                data = response.json()
+                price = f"{float(data['data']['amount']):,.2f}"
+
+                # Coinbase doesn't provide percentage change, so we'll set it as "N/A"
+                prices.append({
+                    'symbol': symbol.replace("-USD", ""),  # Remove "-USD" for consistency
+                    'price': price,
+                    'priceChangePercent': "N/A"
+                })
+            else:
+                print(f"Error fetching {symbol}: {response.status_code}")
+            print(f"Response for {symbol}: {response.json()}")
+
+    
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
+
+    return prices
+
+
 @app.route('/')
 @app.route('/home')
 def home():
@@ -127,6 +164,10 @@ def coinmarketcap_prices():
     coinmarketcap_prices = get_specific_prices_from_coinmarketcap()  # Fetch the latest data from CoinMarketCap
     return jsonify(coinmarketcap_prices)  # Return CoinMarketCap data as JSON
 
+@app.route('/coinbase_prices')
+def coinbase_prices():
+    coinbase_prices = get_specific_prices_from_coinbase()  # Fetch the latest data from Coinbase
+    return jsonify(coinbase_prices)  # Return Coinbase data as JSON
 
 
 @app.route('/index')
@@ -290,3 +331,7 @@ def setup_authenticator_qr():
     qr.save(buffer)
     buffer.seek(0)
     return send_file(buffer, mimetype='image/png')
+
+@app.route('/charts')
+def charts():
+    return render_template('charts.html')

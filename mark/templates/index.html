@@ -1706,81 +1706,104 @@ margin-top: 0;
 
         <input type="radio" id="coinmarketcap" name="price-source" value="coinmarketcap">
         <label for="coinmarketcap">CoinMarketCap</label>
+
+        <input type="radio" id="coinbase" name="price-source" value="coinbase">
+        <label for="coinbase">CoinBase</label>
     </div>
 </div>
-
 <!-- Binance Tickers Section -->
 <section id="binance-section">
     <div class="swiper">
-      <div class="swiper-wrapper">
-        {% for ticker in binance_prices %}
-        <div class="swiper-slide swiper-slide--one" id="binance-{{ loop.index0 }}">
-            <div class="image-container">
-                <img class="crypto-image" src="static/img/crypto/{{ ticker.symbol[:-4] }}.png" alt="{{ ticker.symbol }}">
+        <div class="swiper-wrapper">
+            {% for ticker in binance_prices %}
+            <div class="swiper-slide swiper-slide--one" id="binance-{{ loop.index0 }}" data-symbol="{{ ticker.symbol[:-4] }}">
+                <div class="image-container">
+                    <img class="crypto-image" src="static/img/crypto/{{ ticker.symbol[:-4] }}.png" alt="{{ ticker.symbol }}">
+                </div>
+                <span>{{ ticker.symbol[:-4] }}</span>
+                <h2>${{ ticker.price }}</h2>
+                <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </h5>
             </div>
-          <span>{{ ticker.symbol[:-4] }}</span>
-            <h2>${{ ticker.price }}</h2>
-            <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
-                {% if ticker.priceChangePercent > 0 %}
-                <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                {% elif ticker.priceChangePercent < 0 %}
-                <span class="negative">{{ ticker.priceChangePercent }}%</span>
-                {% else %}
-                <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                {% endif %}
-            </h5>
+            {% endfor %}
         </div>
-
-      <!-- Add Pagination -->
-      {% endfor %}
-    </div>
-<br><br>
-      <div class="swiper-pagination"></div>
-
-    </div>
-  </section>
-
-
-
-<!-- CoinMarketCap Tickers Section -->
-<!-- CoinMarketCap Tickers Section -->
-<section id="coinmarketcap-section" style="display:none;">
-    <div class="swiper">
-      <div class="swiper-wrapper">
-        {% for ticker in coinmarketcap_prices %}
-        <div class="swiper-slide swiper-slide--one" id="coinmarketcap-{{ loop.index0 }}">
-            <div class="image-container">
-                <img class="crypto-image" src="static/img/crypto/{{ ticker.symbol }}.png" alt="{{ ticker.symbol }}">
-            </div>
-            <span>{{ ticker.symbol }}</span>
-            <h2>${{ ticker.price }}</h2>
-            <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
-                {% if ticker.priceChangePercent > 0 %}
-                <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                {% elif ticker.priceChangePercent < 0 %}
-                <span class="negative">{{ ticker.priceChangePercent }}%</span>
-                {% else %}
-                <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                {% endif %}
-            </h5>
-        </div>
-        {% endfor %}
-      </div>
-      <br><br>
-
-      <!-- Swiper Pagination -->
-      <div class="swiper-pagination"></div>
+        <br><br>
+        <div class="swiper-pagination"></div>
     </div>
 </section>
 
+<!-- CoinMarketCap Tickers Section -->
+<section id="coinmarketcap-section" style="display:none;">
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            {% for ticker in coinmarketcap_prices %}
+            <div class="swiper-slide swiper-slide--one" id="coinmarketcap-{{ loop.index0 }}" data-symbol="{{ ticker.symbol }}">
+                <div class="image-container">
+                    <img class="crypto-image" src="static/img/crypto/{{ ticker.symbol }}.png" alt="{{ ticker.symbol }}">
+                </div>
+                <span>{{ ticker.symbol }}</span>
+                <h2>${{ ticker.price }}</h2>
+                <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </h5>
+            </div>
+            {% endfor %}
+        </div>
+        <br><br>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
+
+<!-- Coinbase Tickers Section -->
+<section id="coinbase-section" style="display:none;">
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            {% for ticker in coinbase_prices %}
+            <div class="swiper-slide swiper-slide--one" id="coinbase-{{ loop.index0 }}" data-symbol="{{ ticker.symbol }}">
+                <div class="image-container">
+                    <img class="crypto-image" src="static/img/crypto/{{ ticker.symbol }}.png" alt="{{ ticker.symbol }}">
+                </div>
+                <span>{{ ticker.symbol }}</span>
+                <h2>${{ ticker.price }}</h2>
+                <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </h5>
+            </div>
+            {% endfor %}
+        </div>
+        <br><br>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const binanceRadio = document.getElementById("binance");
     const coinmarketcapRadio = document.getElementById("coinmarketcap");
+    const coinbaseRadio = document.getElementById("coinbase");
 
     const binanceSection = document.getElementById("binance-section");
     const coinmarketcapSection = document.getElementById("coinmarketcap-section");
+    const coinbaseSection = document.getElementById("coinbase-section");
 
     let coinmarketcapSwiper; // Store Swiper instance
 
@@ -1815,6 +1838,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    document.querySelectorAll(".swiper-slide").forEach(slide => {
+                slide.addEventListener("click", function () {
+                    let symbol = this.getAttribute("data-symbol");
+                    if(symbol){
+                        window.location.href = `/charts?symbol=${symbol}USDT`;
+                    }
+                });
+            });
     // Function to update displayed tickers
     function toggleTickers() {
         if (binanceRadio.checked) {
@@ -1825,6 +1856,7 @@ document.addEventListener("DOMContentLoaded", () => {
             coinmarketcapSection.style.display = "flex";
             setTimeout(initSwiper, 100); // Reinitialize Swiper after a short delay
         }
+        
     }
 
     // Set initial display
