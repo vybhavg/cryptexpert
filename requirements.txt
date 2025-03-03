@@ -69,3 +69,6 @@ qrcode
 psycopg2-binary
 tensorflow
 scikit-learn
+matplotlib
+numpy
+pandas
