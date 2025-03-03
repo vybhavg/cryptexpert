@@ -1,0 +1,7 @@
+nohup: ignoring input
+2025/02/23 16:14:30 Authorizing with Application Default Credentials
+2025/02/23 16:14:30 [cryptexpert:asia-southeast1:cryptexpert-db] Listening on /cloudsql/cryptexpert:asia-southeast1:cryptexpert-db/.s.PGSQL.5432
+2025/02/23 16:14:30 The proxy has started successfully and is ready for new connections!
+2025/02/23 16:15:40 [cryptexpert:asia-southeast1:cryptexpert-db] accepted connection from @
+2025/02/23 17:47:47 SIGTERM signal received. Shutting down...
+2025/02/23 17:47:47 [cryptexpert:asia-southeast1:cryptexpert-db] client closed the connection

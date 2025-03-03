@@ -1,8 +1,7 @@
-
 from mark import app, db, mail
 from mark.form import RegisterForm, LoginForm, otpform, verifyform,Authenticationform
 from mark.models import User, Item
-from flask import render_template,request, redirect, url_for, flash, session
+from flask import render_template, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 import random, requests
 from flask_mail import Message
@@ -22,10 +21,6 @@ import matplotlib.pyplot as plt
 import io
 import base64
 from datetime import datetime
-import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-import pandas as pd
-import numpy as np
 
 def get_specific_prices_from_binance():
     response = requests.get("https://api.binance.com/api/v3/ticker/24hr")
@@ -348,7 +343,7 @@ def setup_authenticator_qr():
 def charts():
     return render_template('charts.html')
 
-model = load_model("/home/vybhavguttula/cryptexpert/mark/model.keras")
+model = load_model("model.keras")
 
 # Initialize Binance Client (No API Key Required for Public Data)
 client = Client()
@@ -362,47 +357,21 @@ def plot_to_html(fig):
 
 
 @app.route("/data_fetching", methods=["GET", "POST"])
-def data_fetching():
+def data_fecthing():
     if request.method == "POST":
         stock = request.form.get("stock")
         no_of_days = int(request.form.get("no_of_days"))
         return redirect(url_for("predict", stock=stock, no_of_days=no_of_days))
     return render_template("todo-lists.html")
 
-def get_historical_klines(symbol, interval, start_str, end_str=None):
-    all_data = []
-    start_ts = int(pd.to_datetime(start_str).timestamp() * 1000)
-    end_ts = int(pd.to_datetime(end_str).timestamp() * 1000) if end_str else None
-    
-    while True:
-        # Fetch 1000 candles per request
-        new_klines = client.get_klines(
-            symbol=symbol,
-            interval=interval,
-            startTime=start_ts,
-            endTime=end_ts,
-            limit=1000
-        )
-        
-        if not new_klines:
-            break  # Stop when no more data is returned
 
-        all_data.extend(new_klines)
-        
-        # Update start timestamp for the next batch
-        start_ts = new_klines[-1][0] + 1  # Move to the next timestamp
-        
-        # Prevent exceeding Binance rate limits
-        time.sleep(0.5)  # Wait to avoid API bans
-    
-    return all_data
-@app.route("/predict", methods=["GET", "POST"])
+@app.route("/predict")
 def predict():
     stock = request.args.get("stock", "BTCUSDT")  # Binance uses BTCUSDT instead of BTC-USD
     no_of_days = int(request.args.get("no_of_days", 10))
 
     # Fetch Historical Data from Binance
-    klines = get_historical_klines(symbol=stock, interval=Client.KLINE_INTERVAL_1DAY, start_str="2017-08-17")
+    klines = client.get_klines(symbol=stock, interval=Client.KLINE_INTERVAL_1DAY, limit=1000)
 
     # Convert to DataFrame
     stock_data = pd.DataFrame(klines, columns=[
@@ -415,8 +384,6 @@ def predict():
 
     if stock_data.empty:
         return render_template("result.html", error="Invalid crypto pair or no data available.")
-    candlestick_data = stock_data[['Close Time', 'Open', 'High', 'Low', 'Close', 'Volume']].tail(200)
-    candlestick_json = candlestick_data.to_json(orient="records")
 
     # Data Preparation
     splitting_len = int(len(stock_data) * 0.9)
@@ -489,7 +456,7 @@ def predict():
     return render_template(
         "todos.html",
         stock=stock,
-        candlestick_json=candlestick_json,
+        original_plot=original_plot,
         predicted_plot=predicted_plot,
         future_plot=future_plot,
         enumerate=enumerate,
