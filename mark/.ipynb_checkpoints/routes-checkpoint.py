@@ -1,7 +1,8 @@
+
 from mark import app, db, mail
 from mark.form import RegisterForm, LoginForm, otpform, verifyform,Authenticationform
 from mark.models import User, Item
-from flask import render_template, redirect, url_for, flash, session
+from flask import render_template,request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 import random, requests
 from flask_mail import Message
@@ -21,6 +22,10 @@ import matplotlib.pyplot as plt
 import io
 import base64
 from datetime import datetime
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+import pandas as pd
+import numpy as np
 
 def get_specific_prices_from_binance():
     response = requests.get("https://api.binance.com/api/v3/ticker/24hr")
@@ -33,9 +38,27 @@ def get_specific_prices_from_binance():
 
     # List of specific cryptocurrencies to display
     specific_coins = [
-        "BTCUSDT", "ETHUSDT", "USDTUSDT", "XRPUSDT", "SOLUSDT", "BNBUSDT",
-        "USDCUSDT", "DOGEUSDT", "ADAUSDT", "TRXUSDT", "LINKUSDT"
-    ]
+  "BTCUSDT", "ETHUSDT", "XRPUSDT", "USDTUSDT", "BNBUSDT", "SOLUSDT", 
+  "USDCUSDT", "ADAUSDT", "DOGEUSDT", "TRXUSDT", "LINKUSDT", "HBARUSDT", 
+  "XLMUSDT", "AVAXUSDT", "LEOUSDT", "SUIUSDT", "LTCUSDT", "TONUSDT", 
+  "SHIBUSDT", "DOTUSDT", "OMUSDT", "BCHUSDT", "HYPEUSDT", "USDeUSDT", 
+  "DAIUSDT", "BGBUSDT", "UNIUSDT", "XMRUSDT", "NEARUSDT", "APTUSDT", 
+  "ONDOUSDT", "PEPEUSDT", "ICPUSDT", "ETCUSDT", "AAVEUSDT", "TRUMPUSDT", 
+  "OKBUSDT", "TAOUSDT", "MNTUSDT", "VETUSDT", "POLUSDT", "ALGOUSDT", 
+  "KASUSDT", "CROUSDT", "RENDERUSDT", "FILUSDT", "FDUSDUSDT", "TIAUSDT", 
+  "JUPUSDT", "GTUSDT", "SUSDT", "ARBUSDT", "KNCUSDT", "BALUSDT", "YFIUSDT", 
+  "MKUSDT", "SUSHIUSDT", "ZRXUSDT", "UMAUSDT", "RARIUSDT", "CVCUSDT", 
+  "MITHUSDT", "LOOMUSDT", "GNOUSDT", "GRTUSDT", "1INCHUSDT", "DIAUSDT", 
+  "LRCUSDT", "STMXUSDT", "PERLUSDT", "RENUSDT", "FETUSDT", "DODOUSDT", 
+  "MTAUSDT", "HNTUSDT", "FILUSDT", "RUNEUSDT", "SANDUSDT", "CELOUSDT", 
+  "DASHUSDT", "MITHUSDT", "SKLUSDT", "MBOXUSDT", "TWTUSDT", "MTLUSDT", 
+  "EGLDUSDT", "KSMUSDT", "ICXUSDT", "OXTUSDT", "STPTUSDT", "BNTUSDT", 
+  "LOKAUSDT", "DOGEUSDT", "CKBUSDT", "STRAXUSDT", "BLZUSDT", "CTSIUSDT", 
+  "LENDUSDT", "LENDUSDT", "MITHUSDT", "FARMUSDT", "KP3RUSDT", "COINUSDT", 
+  "RICKUSDT", "TKNUSDT", "OKUSDT", "MOBILEUSDT", "CRVUSDT", "CNSUSDT", 
+  "PAXGUSDT"
+]
+
     dup=[ "AVAXUSDT",
         "PEPEUSDT", "SUIUSDT", "TONUSDT", "HBARUSDT", "BCHUSDT", "SHIBUSDT",
         "XMRUSDT", "DOTUSDT", "LTCUSDT"]
@@ -55,10 +78,14 @@ import requests
 
 def get_specific_prices_from_coinmarketcap():
     # List of specific cryptocurrencies to display
-    specific_coins = [
-        "BTC", "ETH", "USDT", "XRP", "SOL", "BNB",
-        "USDC", "DOGE", "ADA", "TRX", "LINK"
-    ]
+    specific_coins = ['BTC', 'ETH', 'XRP', '', 'BNB', 'SOL', 'USDC', 'ADA', 'DOGE', 'TRX', 'LINK', 'HBAR', 
+ 'XLM', 'AVAX', 'LEO', 'SUI', 'LTC', 'TON', 'SHIB', 'DOT', 'OM', 'BCH', 'HYPE', 'USDe', 
+ 'DAI', 'BGB', 'UNI', 'XMR', 'NEAR', 'APT', 'ONDO', 'PEPE', 'ICP', 'ETC', 'AAVE', 'TRUMP', 
+ 'OKB', 'TAO', 'MNT', 'VET', 'POL', 'ALGO', 'KAS', 'CRO', 'RENDER', 'FIL', 'FDUSD', 'TIA', 
+ 'JUP', 'GT', 'S', 'ARB', 'KNC', 'BAL', 'YFI', 'MK', 'SUSHI', 'ZRX', 'UMA', 'RARI', 'CVC', 
+ 'MITH', 'LOOM', 'GNO', 'GRT', '1INCH', 'DIA', 'LRC', 'STMX', 'PERL', 'REN', 'FET', 'DODO', 
+ 'MTA', 'HNT', 'FIL', 'RUNE', 'SAND', 'CELO', 'DASH']
+
     dup = [
         "AVAX", "PEPE", "SUI", "TON", "HBAR", "BCH", "SHIB",
         "XMR", "DOT", "LTC"
@@ -90,8 +117,15 @@ def get_specific_prices_from_coinmarketcap():
             for symbol in specific_coins:
                 if symbol in data['data']:
                     crypto = data['data'][symbol]
-                    price = f"{float(crypto['quote']['USD']['price']):,.2f}"
-                    price_change_percent = f"{float(crypto['quote']['USD']['percent_change_24h']):.2f}"
+                    price = crypto['quote']['USD']['price']
+                    
+                    # Check if price is None
+                    if price is not None:
+                        price = f"{float(price):,.2f}"
+                    else:
+                        price = "N/A"  # Set to "N/A" if price is None
+
+                    price_change_percent = f"{float(crypto['quote']['USD']['percent_change_24h']):.2f}" if 'percent_change_24h' in crypto['quote']['USD'] else "N/A"
 
                     prices.append({
                         'symbol': symbol,
@@ -343,7 +377,7 @@ def setup_authenticator_qr():
 def charts():
     return render_template('charts.html')
 
-model = load_model("model.keras")
+model = load_model("/home/vybhavguttula/cryptexpert/mark/model.keras")
 
 # Initialize Binance Client (No API Key Required for Public Data)
 client = Client()
@@ -357,21 +391,47 @@ def plot_to_html(fig):
 
 
 @app.route("/data_fetching", methods=["GET", "POST"])
-def data_fecthing():
+def data_fetching():
     if request.method == "POST":
         stock = request.form.get("stock")
         no_of_days = int(request.form.get("no_of_days"))
         return redirect(url_for("predict", stock=stock, no_of_days=no_of_days))
     return render_template("todo-lists.html")
 
+def get_historical_klines(symbol, interval, start_str, end_str=None):
+    all_data = []
+    start_ts = int(pd.to_datetime(start_str).timestamp() * 1000)
+    end_ts = int(pd.to_datetime(end_str).timestamp() * 1000) if end_str else None
+    
+    while True:
+        # Fetch 1000 candles per request
+        new_klines = client.get_klines(
+            symbol=symbol,
+            interval=interval,
+            startTime=start_ts,
+            endTime=end_ts,
+            limit=1000
+        )
+        
+        if not new_klines:
+            break  # Stop when no more data is returned
 
-@app.route("/predict")
+        all_data.extend(new_klines)
+        
+        # Update start timestamp for the next batch
+        start_ts = new_klines[-1][0] + 1  # Move to the next timestamp
+        
+        # Prevent exceeding Binance rate limits
+        time.sleep(0.5)  # Wait to avoid API bans
+    
+    return all_data
+@app.route("/predict", methods=["GET", "POST"])
 def predict():
     stock = request.args.get("stock", "BTCUSDT")  # Binance uses BTCUSDT instead of BTC-USD
     no_of_days = int(request.args.get("no_of_days", 10))
 
     # Fetch Historical Data from Binance
-    klines = client.get_klines(symbol=stock, interval=Client.KLINE_INTERVAL_1DAY, limit=1000)
+    klines = get_historical_klines(symbol=stock, interval=Client.KLINE_INTERVAL_1DAY, start_str="2017-08-17")
 
     # Convert to DataFrame
     stock_data = pd.DataFrame(klines, columns=[
@@ -384,6 +444,8 @@ def predict():
 
     if stock_data.empty:
         return render_template("result.html", error="Invalid crypto pair or no data available.")
+    candlestick_data = stock_data[['Close Time', 'Open', 'High', 'Low', 'Close', 'Volume']].tail(200)
+    candlestick_json = candlestick_data.to_json(orient="records")
 
     # Data Preparation
     splitting_len = int(len(stock_data) * 0.9)
@@ -456,7 +518,7 @@ def predict():
     return render_template(
         "todos.html",
         stock=stock,
-        original_plot=original_plot,
+        candlestick_json=candlestick_json,
         predicted_plot=predicted_plot,
         future_plot=future_plot,
         enumerate=enumerate,

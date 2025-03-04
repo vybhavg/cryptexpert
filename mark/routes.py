@@ -38,9 +38,27 @@ def get_specific_prices_from_binance():
 
     # List of specific cryptocurrencies to display
     specific_coins = [
-        "BTCUSDT", "ETHUSDT", "USDTUSDT", "XRPUSDT", "SOLUSDT", "BNBUSDT",
-        "USDCUSDT", "DOGEUSDT", "ADAUSDT", "TRXUSDT", "LINKUSDT"
-    ]
+  "BTCUSDT", "ETHUSDT", "XRPUSDT", "USDTUSDT", "BNBUSDT", "SOLUSDT", 
+  "USDCUSDT", "ADAUSDT", "DOGEUSDT", "TRXUSDT", "LINKUSDT", "HBARUSDT", 
+  "XLMUSDT", "AVAXUSDT", "LEOUSDT", "SUIUSDT", "LTCUSDT", "TONUSDT", 
+  "SHIBUSDT", "DOTUSDT", "OMUSDT", "BCHUSDT", "HYPEUSDT", "USDeUSDT", 
+  "DAIUSDT", "BGBUSDT", "UNIUSDT", "XMRUSDT", "NEARUSDT", "APTUSDT", 
+  "ONDOUSDT", "PEPEUSDT", "ICPUSDT", "ETCUSDT", "AAVEUSDT", "TRUMPUSDT", 
+  "OKBUSDT", "TAOUSDT", "MNTUSDT", "VETUSDT", "POLUSDT", "ALGOUSDT", 
+  "KASUSDT", "CROUSDT", "RENDERUSDT", "FILUSDT", "FDUSDUSDT", "TIAUSDT", 
+  "JUPUSDT", "GTUSDT", "SUSDT", "ARBUSDT", "KNCUSDT", "BALUSDT", "YFIUSDT", 
+  "MKUSDT", "SUSHIUSDT", "ZRXUSDT", "UMAUSDT", "RARIUSDT", "CVCUSDT", 
+  "MITHUSDT", "LOOMUSDT", "GNOUSDT", "GRTUSDT", "1INCHUSDT", "DIAUSDT", 
+  "LRCUSDT", "STMXUSDT", "PERLUSDT", "RENUSDT", "FETUSDT", "DODOUSDT", 
+  "MTAUSDT", "HNTUSDT", "FILUSDT", "RUNEUSDT", "SANDUSDT", "CELOUSDT", 
+  "DASHUSDT", "MITHUSDT", "SKLUSDT", "MBOXUSDT", "TWTUSDT", "MTLUSDT", 
+  "EGLDUSDT", "KSMUSDT", "ICXUSDT", "OXTUSDT", "STPTUSDT", "BNTUSDT", 
+  "LOKAUSDT", "DOGEUSDT", "CKBUSDT", "STRAXUSDT", "BLZUSDT", "CTSIUSDT", 
+  "LENDUSDT", "LENDUSDT", "MITHUSDT", "FARMUSDT", "KP3RUSDT", "COINUSDT", 
+  "RICKUSDT", "TKNUSDT", "OKUSDT", "MOBILEUSDT", "CRVUSDT", "CNSUSDT", 
+  "PAXGUSDT"
+]
+
     dup=[ "AVAXUSDT",
         "PEPEUSDT", "SUIUSDT", "TONUSDT", "HBARUSDT", "BCHUSDT", "SHIBUSDT",
         "XMRUSDT", "DOTUSDT", "LTCUSDT"]
@@ -60,10 +78,14 @@ import requests
 
 def get_specific_prices_from_coinmarketcap():
     # List of specific cryptocurrencies to display
-    specific_coins = [
-        "BTC", "ETH", "USDT", "XRP", "SOL", "BNB",
-        "USDC", "DOGE", "ADA", "TRX", "LINK"
-    ]
+    specific_coins = ['BTC', 'ETH', 'XRP', '', 'BNB', 'SOL', 'USDC', 'ADA', 'DOGE', 'TRX', 'LINK', 'HBAR', 
+ 'XLM', 'AVAX', 'LEO', 'SUI', 'LTC', 'TON', 'SHIB', 'DOT', 'OM', 'BCH', 'HYPE', 'USDe', 
+ 'DAI', 'BGB', 'UNI', 'XMR', 'NEAR', 'APT', 'ONDO', 'PEPE', 'ICP', 'ETC', 'AAVE', 'TRUMP', 
+ 'OKB', 'TAO', 'MNT', 'VET', 'POL', 'ALGO', 'KAS', 'CRO', 'RENDER', 'FIL', 'FDUSD', 'TIA', 
+ 'JUP', 'GT', 'S', 'ARB', 'KNC', 'BAL', 'YFI', 'MK', 'SUSHI', 'ZRX', 'UMA', 'RARI', 'CVC', 
+ 'MITH', 'LOOM', 'GNO', 'GRT', '1INCH', 'DIA', 'LRC', 'STMX', 'PERL', 'REN', 'FET', 'DODO', 
+ 'MTA', 'HNT', 'FIL', 'RUNE', 'SAND', 'CELO', 'DASH']
+
     dup = [
         "AVAX", "PEPE", "SUI", "TON", "HBAR", "BCH", "SHIB",
         "XMR", "DOT", "LTC"
@@ -95,8 +117,15 @@ def get_specific_prices_from_coinmarketcap():
             for symbol in specific_coins:
                 if symbol in data['data']:
                     crypto = data['data'][symbol]
-                    price = f"{float(crypto['quote']['USD']['price']):,.2f}"
-                    price_change_percent = f"{float(crypto['quote']['USD']['percent_change_24h']):.2f}"
+                    price = crypto['quote']['USD']['price']
+                    
+                    # Check if price is None
+                    if price is not None:
+                        price = f"{float(price):,.2f}"
+                    else:
+                        price = "N/A"  # Set to "N/A" if price is None
+
+                    price_change_percent = f"{float(crypto['quote']['USD']['percent_change_24h']):.2f}" if 'percent_change_24h' in crypto['quote']['USD'] else "N/A"
 
                     prices.append({
                         'symbol': symbol,
