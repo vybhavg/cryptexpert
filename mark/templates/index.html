@@ -31,12 +31,22 @@
         <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/static/css/app.min.css">
         <style>
+
 .swiper {
   width: 100%;
   padding-top: 20px;
   padding-bottom: 20px;
 }
-
+.cmpswiper {
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.csswiper {
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
 .swiper-wrapper {
   display: flex; /* Ensure the slides are displayed in a row */
 }
@@ -408,10 +418,10 @@ small {
 
 
 
-
 /* Styling the search form */
 .searchh {
     width: 100%;
+    position: relative;
     max-width: 1000px;
     border-radius: 50px;
     background-color: #fff;
@@ -421,6 +431,80 @@ small {
     justify-content: space-between;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     flex-direction: row;
+}
+
+/* Updated Search Results Styling */
+#searchResults {
+    position: absolute;
+    top: 140px;
+    left: 0;
+    margin-top: 20px;
+    background: #fff; /* Keep background white */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 100%; /* Ensure it doesn't overflow */
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden; /* Hide horizontal scroll */
+    display: none;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 1000;
+    border-radius: 20px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+    padding: 5px; /* Optional: Prevent right-side cutoff */
+}
+
+/* Ensure child elements don't overflow */
+#searchResults div {
+    white-space: nowrap; /* Prevent wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Show "..." if text is too long */
+    padding: 12px 15px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s, transform 0.2s;
+    border-radius: 20px;
+    max-width: 100%; /* Ensure it doesn't overflow */
+    margin-bottom: 5px;
+}
+
+/* Hover & Active Effect */
+#searchResults div:hover {
+    background-color: rgba(248, 188, 4, 0.2); /* Light gold highlight */
+    transform: scale(1.02);
+}
+
+/* Add subtle gradient for items */
+#searchResults div:nth-child(odd) {
+    background-color:  rgba(245, 245, 245); /* Light grey background for odd items */
+}
+
+#searchResults div:nth-child(even) {
+    background-color: rgba(245, 245, 245); /* Slightly darker grey for even items */
+}
+
+/* Highlight Exact Match */
+#searchResults div.exact-match {
+    background-color: #f8bc04; /* Gold background for exact match */
+    color: white;
+    font-weight: bold;
+}
+
+/* Animate dropdown appearance */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#searchResults.show {
+    animation: fadeIn 0.3s ease-out;
 }
 
 /* Input styling */
@@ -445,7 +529,6 @@ small {
     transform: rotate(180deg);
     color: #c68e17; /* Darker gold when active */
 }
-
 
             .content {
     width: 100%;
@@ -1470,13 +1553,107 @@ margin-top: 0;
                     <span class="sidetext">Your Gateway to Decentralized Finance</span>
                 </span>
             
-                <!-- Search Form -->
-                <form class="searchh" style="position: absolute; top: 105px;">
-                    <div class="searchh__inner" style="display: flex; width: 100%;">
-                        <input type="text" class="searchh__text" placeholder="Search for Crypto, Exchanges, Wallets...">
-                        <i class="zmdi zmdi-search searchh__helper" data-sa-action="searchh-close"></i>
-                    </div>
-                </form>
+               <!-- Search Form -->
+<!-- Search Form -->
+<form class="searchh" style="position: absolute; top: 105px;" onsubmit="return false;">
+    <div class="searchh__inner" style="display: flex; width: 100%; position: relative;">
+        <input type="text" id="searchInput" class="searchh__text" 
+            placeholder="Search for Crypto, Exchanges, Wallets..." 
+            onkeyup="performSearch()"
+            onfocus="performSearch()">  <!-- Trigger search when input is focused -->
+        <i class="zmdi zmdi-search searchh__helper" onclick="performSearch()"></i>
+    </div>
+</form>
+
+<!-- Search Results -->
+<div id="searchResults"></div>
+
+<script>
+    let currentIndex = -1; 
+    async function performSearch() {
+    let query = document.getElementById('searchInput').value.trim();
+    let resultsDiv = document.getElementById('searchResults');
+
+    if (query.length === 0) {
+        resultsDiv.style.display = 'none';
+        resultsDiv.innerHTML = '';
+        return;
+    }
+
+    try {
+        let response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+        let results = await response.json();
+
+        if (results.length > 0) {
+            resultsDiv.style.display = 'block';
+            resultsDiv.classList.add("show"); // Add animation class
+            resultsDiv.innerHTML = results.map((item) => {
+                let regex = new RegExp(`(${query})`, "gi");
+                let highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
+
+                let isExactMatch = item.name.toLowerCase() === query.toLowerCase();
+                return `<div class="${isExactMatch ? 'exact-match' : ''}" onclick="window.location.href='${item.link}'">
+                            ${highlightedName}
+                        </div>`;
+            }).join('');
+        } else {
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center;">No results found</div>';
+        }
+    } catch (error) {
+        console.error("Error fetching search results:", error);
+    }
+}
+
+
+// Navigate to selected result on Enter key press
+document.addEventListener('keydown', function (event) {
+    let resultsDiv = document.getElementById('searchResults');
+    let results = resultsDiv.getElementsByTagName('div');
+    let searchBox = document.getElementById('searchInput');
+
+    if (event.key === 'ArrowDown') {
+        if (currentIndex < results.length - 1) {
+            currentIndex++;
+        }
+        updateHighlight(results);
+    } else if (event.key === 'ArrowUp') {
+        if (currentIndex > 0) {
+            currentIndex--;
+        }
+        updateHighlight(results);
+    } else if (event.key === 'Enter' && currentIndex >= 0 && currentIndex < results.length) {
+        // Redirect to the selected link on Enter
+        window.location.href = results[currentIndex].getAttribute('onclick').replace("window.location.href='", "").replace("'", "");
+    }
+});
+
+function updateHighlight(results) {
+    // Remove highlight from all results
+    for (let i = 0; i < results.length; i++) {
+        results[i].classList.remove('highlighted');
+    }
+
+    // Highlight the current index
+    if (currentIndex >= 0 && currentIndex < results.length) {
+        results[currentIndex].classList.add('highlighted');
+        document.getElementById('searchInput').value = results[currentIndex].innerText; // Set the highlighted text in the search box
+    }
+}
+
+// Hide search results when clicking outside
+document.addEventListener("click", function(event) {
+    let searchBox = document.getElementById("searchInput");
+    let resultsDiv = document.getElementById("searchResults");
+
+    if (!searchBox.contains(event.target) && !resultsDiv.contains(event.target)) {
+        resultsDiv.style.display = 'none';
+    }
+});
+</script>
+
+
+
                 {% if not current_user.is_authenticated %}
                 <a href="{{ url_for('login_form') }}">Login</a>
                 <a href="{{ url_for('register_form') }}">Register</a>
@@ -1718,7 +1895,7 @@ margin-top: 0;
                 {% for ticker in binance_prices %}
                 <div class="swiper-slide swiper-slide--one" id="binance-{{ loop.index0 }}" data-symbol="{{ ticker.symbol[:-4] }}">
                     <div class="image-container">
-                        <img class="crypto-image" src="static/img/crypto/{{ ticker.symbol[:-4] }}.png" alt="{{ ticker.symbol }}">
+        <img class="crypto-image" src="{{ crypto_logos.get(ticker.symbol[:-4], 'static/img/crypto/BTC.png') }}" alt="{{ ticker.symbol[:-4] }}">
                     </div>
                     <span>{{ ticker.symbol[:-4] }}</span>
                     <h2>${{ ticker.price }}</h2>
@@ -1739,12 +1916,12 @@ margin-top: 0;
     </section>
 
     <section id="coinmarketcap-section" style="display:none;">
-        <div class="swiper">
+        <div class="cmpswiper">
             <div class="swiper-wrapper">
                 {% for ticker in coinmarketcap_prices %}
                 <div class="swiper-slide swiper-slide--one" id="coinmarketcap-{{ loop.index0 }}" data-symbol="{{ ticker.symbol }}">
                     <div class="image-container">
-                        <img class="crypto-image" src="static/img/crypto/{{ ticker.symbol }}.png" alt="{{ ticker.symbol }}">
+        <img class="crypto-image" src="{{ crypto_logos.get(ticker.symbol, 'static/img/crypto/BTC.png') }}" alt="{{ ticker.symbol }}">
                     </div>
                     <span>{{ ticker.symbol }}</span>
                     <h2>${{ ticker.price }}</h2>
@@ -1765,12 +1942,12 @@ margin-top: 0;
     </section>
 
     <section id="coinbase-section" style="display:none;">
-        <div class="swiper">
+        <div class="csswiper">
             <div class="swiper-wrapper">
                 {% for ticker in coinbase_prices %}
                 <div class="swiper-slide swiper-slide--one" id="coinbase-{{ loop.index0 }}" data-symbol="{{ ticker.symbol }}">
                     <div class="image-container">
-                        <img class="crypto-image" src="static/img/crypto/{{ ticker.symbol }}.png" alt="{{ ticker.symbol }}">
+        <img class="crypto-image" src="{{ crypto_logos.get(ticker.symbol, 'static/img/crypto/BTC.png') }}" alt="{{ ticker.symbol }}">
                     </div>
                     <span>{{ ticker.symbol }}</span>
                     <h2>${{ ticker.price }}</h2>
@@ -1787,12 +1964,86 @@ margin-top: 0;
                 {% endfor %}
             </div>
             <br><br>
-            <div class="swiper-pagination"></div>
         </div>
     </section>
 
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
+         var swiper = new Swiper(".swiper", {
+                effect: "coverflow",
+                grabCursor: true,
+                centeredSlides: true,
+                slidesPerView: "auto",
+                loopAdditionalSlides: 1,
+                coverflowEffect: {
+                    rotate: 0,
+                    stretch: 0,
+                    depth: 100,
+                    modifier: 2,
+                    slideShadows: true
+                },
+                spaceBetween: 30,
+                loop: true,
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                },
+                speed: 800,
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true
+                }
+            });
+var cmpswiper = new Swiper(".cmpswiper", {
+                effect: "coverflow",
+                grabCursor: true,
+                centeredSlides: true,
+                slidesPerView: "auto",
+                loopAdditionalSlides: 1,
+                coverflowEffect: {
+                    rotate: 0,
+                    stretch: 0,
+                    depth: 100,
+                    modifier: 2,
+                    slideShadows: true
+                },
+                spaceBetween: 30,
+                loop: true,
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                },
+                speed: 800,
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true
+                }
+            });
+        var csswiper = new Swiper(".csswiper", {
+                effect: "coverflow",
+                grabCursor: true,
+                centeredSlides: true,
+                slidesPerView: "auto",
+                loopAdditionalSlides: 1,
+                coverflowEffect: {
+                    rotate: 0,
+                    stretch: 0,
+                    depth: 100,
+                    modifier: 2,
+                    slideShadows: true
+                },
+                spaceBetween: 30,
+                loop: true,
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                },
+                speed: 800,
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true
+                }
+            });
         document.addEventListener("DOMContentLoaded", () => {
             const binanceRadio = document.getElementById("binance");
             const coinmarketcapRadio = document.getElementById("coinmarketcap");
@@ -1829,32 +2080,7 @@ coinbaseRadio.addEventListener("change", () => {
     console.log("Coinbase radio button clicked");
     toggleTickers();
 });
-            var swiper = new Swiper(".swiper", {
-                effect: "coverflow",
-                grabCursor: true,
-                centeredSlides: true,
-                slidesPerView: "auto",
-                loopAdditionalSlides: 1,
-                coverflowEffect: {
-                    rotate: 0,
-                    stretch: 0,
-                    depth: 100,
-                    modifier: 2,
-                    slideShadows: true
-                },
-                spaceBetween: 30,
-                loop: true,
-                autoplay: {
-                    delay: 3000,
-                    disableOnInteraction: false,
-                },
-                speed: 800,
-                pagination: {
-                    el: ".swiper-pagination",
-                    clickable: true
-                }
-            });
-
+           
             async function fetchPrices() {
                 try {
                     const [binanceResponse, coinmarketcapResponse, coinbaseResponse] = await Promise.all([
@@ -1924,7 +2150,6 @@ coinbaseRadio.addEventListener("change", () => {
                         if (tickerElement) {
                             const priceElement = tickerElement.querySelector('h2');
                             priceElement.textContent = `$${price}`;
-
                             const percentageElement = tickerElement.querySelector('.percentage-change');
                             let percentageText = `${percentChange}%`;
                             if (percentChange > 0) {
@@ -1939,9 +2164,7 @@ coinbaseRadio.addEventListener("change", () => {
                         }
                     });
 
-                    console.log('Binance Prices:', binancePrices);
-                    console.log('CoinMarketCap Prices:', coinmarketcapPrices);
-                    console.log('Coinbase Prices:', coinbasePrices);
+                  
 
                 } catch (error) {
                     console.error('Error fetching prices:', error);
@@ -1952,6 +2175,16 @@ coinbaseRadio.addEventListener("change", () => {
             fetchPrices();
             setInterval(fetchPrices, 10000);
         });
+
+        
+    document.querySelectorAll(".swiper-slide").forEach(slide => {
+                slide.addEventListener("click", function () {
+                    let symbol = this.getAttribute("data-symbol");
+                    if(symbol){
+                        window.location.href = `/charts?symbol=${symbol}USDT`;
+                    }
+                });
+            });
     </script>
 
   <br><br>
@@ -2253,143 +2486,8 @@ coinbaseRadio.addEventListener("change", () => {
             });
         </script>
         <script src="/static/js/app.min.js"></script>
-                    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
-        <script>  
-            
-            var swiper = new Swiper(".swiper", {
-  effect: "coverflow",
-  grabCursor: true,
-  centeredSlides: true,
-  slidesPerView: "auto",
-loopAdditionalSlides: 1,  // Automatically duplicate slides for loop functionality
-  coverflowEffect: {
-    rotate: 0,
-    stretch: 0,
-    depth: 100,
-    modifier: 2,
-    slideShadows: true
-  },
-  spaceBetween: 30,
-  loop: true,
-  autoplay: {
-    delay: 3000, // Adjust as needed
-    disableOnInteraction: false,
-  },
-  speed: 800, // Adjust this for smoother transitions
-  pagination: {
-    el: ".swiper-pagination",
-    clickable: true
-  }
-});
-
-      async function fetchPrices() {
-    try {
-        const [binanceResponse, coinmarketcapResponse, coinbaseResponse] = await Promise.all([
-            fetch('/binance_prices'),    // Fetch data from your Binance API endpoint
-            fetch('/coinmarketcap_prices'),  // Fetch data from your CoinMarketCap API endpoint
-            fetch('/coinbase_prices')   // Fetch data from your Coinbase API endpoint
-        ]);
-
-        const binancePrices = await binanceResponse.json();
-        const coinmarketcapPrices = await coinmarketcapResponse.json();
-        const coinbasePrices = await coinbaseResponse.json();
-
-        // Update Binance prices
-        binancePrices.forEach((ticker, index) => {
-            const price = (ticker.price);  // Format to 2 decimal places
-            const percentChange = parseFloat(ticker.priceChangePercent).toFixed(2);  // Format to 2 decimal places
-
-            const tickerElement = document.getElementById(`binance-${index}`);
-            
-            if (tickerElement) {
-                const priceElement = tickerElement.querySelector('h2');
-                priceElement.textContent = `$${price}`;
-
-                const percentageElement = tickerElement.querySelector('.percentage-change');
-                let percentageText = `${percentChange}%`;
-                if (percentChange > 0) {
-                    percentageText = `+${percentageText}`;
-                    percentageElement.style.color = 'green';  // Green for positive change
-                } else if (percentChange < 0) {
-                    percentageElement.style.color = 'red';  // Red for negative change
-                } else {
-                    percentageElement.style.color = 'gray';  // Gray for no change
-                }
-                percentageElement.textContent = percentageText;
-            }
-        });
-
-        // Update CoinMarketCap prices
-        coinmarketcapPrices.forEach((ticker, index) => {
-            const price = (ticker.price);  // Format to 2 decimal places
-            const percentChange = parseFloat(ticker.priceChangePercent).toFixed(2);  // Format to 2 decimal places
-
-            const tickerElement = document.getElementById(`coinmarketcap-ticker-${index}`);
-            if (tickerElement) {
-                const priceElement = tickerElement.querySelector('.quick-stats__info h2');
-                priceElement.textContent = `$${price}`;
-
-                const percentageElement = tickerElement.querySelector('.percentage-change');
-                let percentageText = `${percentChange}%`;
-                if (percentChange > 0) {
-                    percentageText = `+${percentageText}`;
-                    percentageElement.style.color = 'green';  // Green for positive change
-                } else if (percentChange < 0) {
-                    percentageElement.style.color = 'red';  // Red for negative change
-                } else {
-                    percentageElement.style.color = 'gray';  // Gray for no change
-                }
-                percentageElement.textContent = percentageText;
-            }
-        });
-
-        // Update Coinbase prices
-        coinbasePrices.forEach((coin, index) => {
-            const price = coin.price;  // Format to 2 decimal places
-            const percentChange = coin.priceChangePercent;  // "N/A" for Coinbase
-
-            const tickerElement = document.getElementById(`coinbase-ticker-${index}`);
-            if (tickerElement) {
-                const priceElement = tickerElement.querySelector('h2');
-                priceElement.textContent = `$${price}`;
-
-                const percentageElement = tickerElement.querySelector('.percentage-change');
-                let percentageText = percentChange;
-                if (percentChange !== "N/A") {
-                    if (parseFloat(percentChange) > 0) {
-                        percentageText = `+${percentageText}`;
-                        percentageElement.style.color = 'green';  // Green for positive change
-                    } else if (parseFloat(percentChange) < 0) {
-                        percentageText = `-${percentageText}`;
-                        percentageElement.style.color = 'red';  // Red for negative change
-                    } else {
-                        percentageElement.style.color = 'gray';  // Gray for no change
-                    }
-                }
-                percentageElement.textContent = percentageText;
-            }
-        });
-
-        console.log('Binance Prices:', binancePrices);
-        console.log('CoinMarketCap Prices:', coinmarketcapPrices);
-        console.log('Coinbase Prices:', coinbasePrices);
-
-    } catch (error) {
-        console.error('Error fetching prices:', error);
-    }
-}
-
-
-// Call the function once when the page is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    fetchPrices();  // Fetch prices on page load
-    setInterval(fetchPrices, 10000);  // Update prices every 10 seconds
-});
-
-
-
-        </script>
+ 
 
     </body>
 

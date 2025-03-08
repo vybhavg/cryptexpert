@@ -1,7 +1,7 @@
 
 from mark import app, db, mail
 from mark.form import RegisterForm, LoginForm, otpform, verifyform,Authenticationform
-from mark.models import User, Item
+from mark.models import User, Item, CryptoAsset, Exchange, UserAPIKey
 from flask import render_template,request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 import random, requests
@@ -23,9 +23,95 @@ import io
 import base64
 from datetime import datetime
 import os
+from cryptography.fernet import Fernet
+from dotenv import load_dotenv
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import pandas as pd
 import numpy as np
+
+crypto_logos = {
+    "BTC": "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
+    "ETH": "https://cryptologos.cc/logos/ethereum-eth-logo.png",
+    "XRP": "https://cryptologos.cc/logos/xrp-xrp-logo.png",
+    "BNB": "https://cryptologos.cc/logos/binance-coin-bnb-logo.png",
+    "SOL": "https://cryptologos.cc/logos/solana-sol-logo.png",
+    "USDC": "https://cryptologos.cc/logos/usd-coin-usdc-logo.png",
+    "ADA": "https://cryptologos.cc/logos/cardano-ada-logo.png",
+    "DOGE": "https://cryptologos.cc/logos/dogecoin-doge-logo.png",
+    "TRX": "https://cryptologos.cc/logos/tron-trx-logo.png",
+    "LINK": "https://cryptologos.cc/logos/chainlink-link-logo.png",
+    "HBAR": "https://cryptologos.cc/logos/hedera-hbar-logo.png",
+    "XLM": "https://cryptologos.cc/logos/stellar-xlm-logo.svg",
+    "AVAX": "https://cryptologos.cc/logos/avalanche-avax-logo.png",
+    "LEO": "https://cryptologos.cc/logos/unus-sed-leo-leo-logo.png",
+    "SUI": "https://cryptologos.cc/logos/sui-sui-logo.png",
+    "LTC": "https://cryptologos.cc/logos/litecoin-ltc-logo.png",
+    "TON": "https://cryptologos.cc/logos/toncoin-ton-logo.png",
+    "SHIB": "https://cryptologos.cc/logos/shiba-inu-shib-logo.png",
+    "DOT": "https://cryptologos.cc/logos/polkadot-new-dot-logo.png",
+    "BCH": "https://cryptologos.cc/logos/bitcoin-cash-bch-logo.png",
+    "DAI": "https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png",
+    "UNI": "https://cryptologos.cc/logos/uniswap-uni-logo.png",
+    "XMR": "https://cryptologos.cc/logos/monero-xmr-logo.png",
+    "NEAR": "https://cryptologos.cc/logos/near-protocol-near-logo.png",
+    "APT": "https://cryptologos.cc/logos/aptos-apt-logo.png",
+    "ICP": "https://cryptologos.cc/logos/internet-computer-icp-logo.png",
+    "ETC": "https://cryptologos.cc/logos/ethereum-classic-etc-logo.png",
+    "AAVE": "https://cryptologos.cc/logos/aave-aave-logo.png",
+    "OKB": "https://cryptologos.cc/logos/okb-okb-logo.png",
+    "VET": "https://cryptologos.cc/logos/vechain-vet-logo.png",
+    "ALGO": "https://cryptologos.cc/logos/algorand-algo-logo.png",
+    "CRO": "https://cryptologos.cc/logos/crypto-com-coin-cro-logo.png",
+    "FIL": "https://cryptologos.cc/logos/filecoin-fil-logo.png",
+    "ARB": "https://cryptologos.cc/logos/arbitrum-arb-logo.png",
+    "KNC": "https://cryptologos.cc/logos/kyber-network-knc-logo.png",
+    "BAL": "https://cryptologos.cc/logos/balancer-bal-logo.png",
+    "YFI": "https://cryptologos.cc/logos/yearn-finance-yfi-logo.png",
+    "SUSHI": "https://cryptologos.cc/logos/sushiswap-sushi-logo.png",
+    "ZRX": "https://cryptologos.cc/logos/0x-zrx-logo.png",
+    "UMA": "https://cryptologos.cc/logos/uma-uma-logo.png",
+    "GRT": "https://cryptologos.cc/logos/the-graph-grt-logo.png",
+    "1INCH": "https://cryptologos.cc/logos/1inch-1inch-logo.png",
+    "LRC": "https://cryptologos.cc/logos/loopring-lrc-logo.png",
+    "FET": "https://cryptologos.cc/logos/fetch-ai-fet-logo.png",
+    "HNT": "https://cryptologos.cc/logos/helium-hnt-logo.png",
+    "RUNE": "https://cryptologos.cc/logos/thorchain-rune-logo.png",
+    "SAND": "https://cryptologos.cc/logos/the-sandbox-sand-logo.png",
+    "CELO": "https://cryptologos.cc/logos/celo-celo-logo.png",
+    "DASH": "https://cryptologos.cc/logos/dash-dash-logo.png",
+    "REN":"https://cryptologos.cc/logos/ren-ren-logo.png",
+    # Manually added (not found on cryptologos)
+    "OM": "https://assets.coingecko.com/coins/images/12771/large/OM_Logo_CG.png",
+    "HYPE": "https://assets.coingecko.com/coins/images/25215/large/hype-logo.png",
+    "USDe": "https://assets.coingecko.com/coins/images/32945/large/usde.png",
+    "BGB": "https://assets.coingecko.com/coins/images/21144/large/bgb_logo.png",
+    "ONDO": "https://assets.coingecko.com/coins/images/33123/large/ondo.png",
+    "PEPE": "https://assets.coingecko.com/coins/images/29850/large/pepe-token.png",
+    "TRUMP": "https://assets.coingecko.com/coins/images/30904/large/trump.png",
+    "TAO": "https://assets.coingecko.com/coins/images/30603/large/tao.png",
+    "MNT": "https://assets.coingecko.com/coins/images/31608/large/mnt.png",
+    "POL": "https://assets.coingecko.com/coins/images/35489/large/pol-logo.png",
+    "KAS": "https://assets.coingecko.com/coins/images/30343/large/kas-logo.png",
+    "RENDER": "https://assets.coingecko.com/coins/images/11636/large/render.png",
+    "FDUSD": "https://assets.coingecko.com/coins/images/30980/large/fdusd.png",
+    "TIA": "https://assets.coingecko.com/coins/images/31610/large/tia-logo.png",
+    "JUP": "https://assets.coingecko.com/coins/images/28767/large/jup-logo.png",
+    "GT": "https://assets.coingecko.com/coins/images/5305/large/gatechain-token.png",
+    "S": "https://assets.coingecko.com/coins/images/26485/large/s-logo.png",
+    "MK": "https://assets.coingecko.com/coins/images/12860/large/mk-logo.png",
+    "RARI": "https://assets.coingecko.com/coins/images/11845/large/Rarible.png",
+    "CVC": "https://assets.coingecko.com/coins/images/788/large/civic.png",
+    "MITH": "https://assets.coingecko.com/coins/images/3484/large/mith-logo.png",
+    "LOOM": "https://assets.coingecko.com/coins/images/3387/large/loom-logo.png",
+    "GNO": "https://assets.coingecko.com/coins/images/662/large/gnosis-logo.png",
+    "DIA": "https://assets.coingecko.com/coins/images/11948/large/dia-logo.png",
+    "STMX": "https://assets.coingecko.com/coins/images/13670/large/stormx-logo.png",
+    "PERL": "https://assets.coingecko.com/coins/images/4688/large/perlin-logo.png",
+    "REN": "https://assets.coingecko.com/coins/images/31344/large/ren-logo.png",
+    "DODO": "https://assets.coingecko.com/coins/images/12651/large/dodo-logo.png",
+    "MTA": "https://assets.coingecko.com/coins/images/12139/large/meta-logo.png"
+}
 
 def get_specific_prices_from_binance():
     response = requests.get("https://api.binance.com/api/v3/ticker/24hr")
@@ -37,31 +123,19 @@ def get_specific_prices_from_binance():
     data = response.json()
 
     # List of specific cryptocurrencies to display
-    specific_coins = [
-  "BTCUSDT", "ETHUSDT", "XRPUSDT", "USDTUSDT", "BNBUSDT", "SOLUSDT", 
-  "USDCUSDT", "ADAUSDT", "DOGEUSDT", "TRXUSDT", "LINKUSDT", "HBARUSDT", 
-  "XLMUSDT", "AVAXUSDT", "LEOUSDT", "SUIUSDT", "LTCUSDT", "TONUSDT", 
-  "SHIBUSDT", "DOTUSDT", "OMUSDT", "BCHUSDT", "HYPEUSDT", "USDeUSDT", 
-  "DAIUSDT", "BGBUSDT", "UNIUSDT", "XMRUSDT", "NEARUSDT", "APTUSDT", 
-  "ONDOUSDT", "PEPEUSDT", "ICPUSDT", "ETCUSDT", "AAVEUSDT", "TRUMPUSDT", 
-  "OKBUSDT", "TAOUSDT", "MNTUSDT", "VETUSDT", "POLUSDT", "ALGOUSDT", 
-  "KASUSDT", "CROUSDT", "RENDERUSDT", "FILUSDT", "FDUSDUSDT", "TIAUSDT", 
-  "JUPUSDT", "GTUSDT", "SUSDT", "ARBUSDT", "KNCUSDT", "BALUSDT", "YFIUSDT", 
-  "MKUSDT", "SUSHIUSDT", "ZRXUSDT", "UMAUSDT", "RARIUSDT", "CVCUSDT", 
-  "MITHUSDT", "LOOMUSDT", "GNOUSDT", "GRTUSDT", "1INCHUSDT", "DIAUSDT", 
-  "LRCUSDT", "STMXUSDT", "PERLUSDT", "RENUSDT", "FETUSDT", "DODOUSDT", 
-  "MTAUSDT", "HNTUSDT", "FILUSDT", "RUNEUSDT", "SANDUSDT", "CELOUSDT", 
-  "DASHUSDT", "MITHUSDT", "SKLUSDT", "MBOXUSDT", "TWTUSDT", "MTLUSDT", 
-  "EGLDUSDT", "KSMUSDT", "ICXUSDT", "OXTUSDT", "STPTUSDT", "BNTUSDT", 
-  "LOKAUSDT", "DOGEUSDT", "CKBUSDT", "STRAXUSDT", "BLZUSDT", "CTSIUSDT", 
-  "LENDUSDT", "LENDUSDT", "MITHUSDT", "FARMUSDT", "KP3RUSDT", "COINUSDT", 
-  "RICKUSDT", "TKNUSDT", "OKUSDT", "MOBILEUSDT", "CRVUSDT", "CNSUSDT", 
-  "PAXGUSDT"
-]
+    specific_coins_usdt = [
+        'BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'BNBUSDT', 'SOLUSDT', 'USDCUSDT', 'ADAUSDT', 'DOGEUSDT', 'TRXUSDT',
+        'LINKUSDT', 'HBARUSDT', 'XLMUSDT', 'AVAXUSDT', 'LEOUSDT', 'SUIUSDT', 'LTCUSDT', 'TONUSDT', 'SHIBUSDT',
+        'DOTUSDT', 'OMUSDT', 'BCHUSDT', 'HYPEUSDT', 'USDeUSDT', 'DAIUSDT', 'BGBUSDT', 'UNIUSDT', 'XMRUSDT', 'NEARUSDT',
+        'APTUSDT', 'ONDOUSDT', 'PEPEUSDT', 'ICPUSDT', 'ETCUSDT', 'AAVEUSDT', 'TRUMPUSDT', 'OKBUSDT', 'TAOUSDT',
+        'MNTUSDT', 'VETUSDT', 'POLUSDT', 'ALGOUSDT', 'KASUSDT', 'CROUSDT', 'RENDERUSDT', 'FILUSDT', 'FDUSDUSDT',
+        'TIAUSDT', 'JUPUSDT', 'GTUSDT', 'SUSDT', 'ARBUSDT', 'KNCUSDT', 'BALUSDT', 'YFIUSDT', 'MKUSDT', 'SUSHIUSDT',
+        'ZRXUSDT', 'UMAUSDT', 'RARIUSDT', 'CVCUSDT', 'MITHUSDT', 'LOOMUSDT', 'GNOUSDT', 'GRTUSDT', '1INCHUSDT',
+        'DIAUSDT', 'LRCUSDT', 'STMXUSDT', 'PERLUSDT', 'RENUSDT', 'FETUSDT', 'DODOUSDT', 'MTAUSDT', 'HNTUSDT', 'FILUSDT',
+        'RUNEUSDT', 'SANDUSDT', 'CELOUSDT', 'DASHUSDT'
+    ]
 
-    dup=[ "AVAXUSDT",
-        "PEPEUSDT", "SUIUSDT", "TONUSDT", "HBARUSDT", "BCHUSDT", "SHIBUSDT",
-        "XMRUSDT", "DOTUSDT", "LTCUSDT"]
+
 
     # Filter Binance data for the required symbols
     filtered_prices = [
@@ -70,7 +144,7 @@ def get_specific_prices_from_binance():
             'price': f"{float(crypto['lastPrice']):,.2f}",
             'priceChangePercent': crypto['priceChangePercent']
         }
-        for crypto in data if crypto['symbol'] in specific_coins
+        for crypto in data if crypto['symbol'] in specific_coins_usdt
     ]
 
     return filtered_prices
@@ -78,18 +152,13 @@ import requests
 
 def get_specific_prices_from_coinmarketcap():
     # List of specific cryptocurrencies to display
-    specific_coins = ['BTC', 'ETH', 'XRP', '', 'BNB', 'SOL', 'USDC', 'ADA', 'DOGE', 'TRX', 'LINK', 'HBAR', 
+    specific_coins = ['BTC', 'ETH', 'XRP', 'BNB', 'SOL', 'USDC', 'ADA', 'DOGE', 'TRX', 'LINK', 'HBAR', 
  'XLM', 'AVAX', 'LEO', 'SUI', 'LTC', 'TON', 'SHIB', 'DOT', 'OM', 'BCH', 'HYPE', 'USDe', 
  'DAI', 'BGB', 'UNI', 'XMR', 'NEAR', 'APT', 'ONDO', 'PEPE', 'ICP', 'ETC', 'AAVE', 'TRUMP', 
  'OKB', 'TAO', 'MNT', 'VET', 'POL', 'ALGO', 'KAS', 'CRO', 'RENDER', 'FIL', 'FDUSD', 'TIA', 
  'JUP', 'GT', 'S', 'ARB', 'KNC', 'BAL', 'YFI', 'MK', 'SUSHI', 'ZRX', 'UMA', 'RARI', 'CVC', 
  'MITH', 'LOOM', 'GNO', 'GRT', '1INCH', 'DIA', 'LRC', 'STMX', 'PERL', 'REN', 'FET', 'DODO', 
  'MTA', 'HNT', 'FIL', 'RUNE', 'SAND', 'CELO', 'DASH']
-
-    dup = [
-        "AVAX", "PEPE", "SUI", "TON", "HBAR", "BCH", "SHIB",
-        "XMR", "DOT", "LTC"
-    ]
 
     # CoinMarketCap API endpoint and your API key
     api_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
@@ -149,7 +218,8 @@ def get_specific_prices_from_coinbase():
     # List of specific cryptocurrencies to display
     specific_coins = [
         "BTC-USD", "ETH-USD", "USDT-USD", "XRP-USD", "SOL-USD", "BNB-USD",
-        "USDC-USD", "DOGE-USD", "ADA-USD", "TRX-USD", "LINK-USD"
+        "USDC-USD", "DOGE-USD", "ADA-USD", "TRX-USD", "LINK-USD","AVAX-USD", "PEPE-USD", "SUI-USD", "TON-USD", "HBAR-USD", "BCH-USD",
+        "SHIB-USD", "XMR-USD", "DOT-USD", "LTC-USD"
     ]
     dup = [
         "AVAX-USD", "PEPE-USD", "SUI-USD", "TON-USD", "HBAR-USD", "BCH-USD",
@@ -169,7 +239,7 @@ def get_specific_prices_from_coinbase():
                 prices.append({
                     'symbol': symbol.replace("-USD", ""),  # Remove "-USD" for consistency
                     'price': price,
-                    'priceChangePercent': "N/A"
+                    'priceChangePercent': 0
                 })
             else:
                 print(f"Error fetching {symbol}: {response.status_code}")
@@ -187,12 +257,18 @@ def get_specific_prices_from_coinbase():
 def home():
     binance_prices = get_specific_prices_from_binance()
     coinmarketcap_prices = get_specific_prices_from_coinmarketcap()
+    coinbase_prices = get_specific_prices_from_coinbase()
+
     for ticker in binance_prices:
         ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
 
     for ticker in coinmarketcap_prices:
         ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-    return render_template('index.html', binance_prices=binance_prices, coinmarketcap_prices=coinmarketcap_prices)
+        
+    for ticker in coinbase_prices:
+        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
+        
+    return render_template('index.html', binance_prices=binance_prices, coinmarketcap_prices=coinmarketcap_prices, coinbase_prices=coinbase_prices,crypto_logos=crypto_logos)
 
 
 @app.route('/binance_prices')
@@ -219,12 +295,19 @@ def index():
     email = user.email
     binance_prices = get_specific_prices_from_binance()
     coinmarketcap_prices = get_specific_prices_from_coinmarketcap()
+    coinbase_prices = get_specific_prices_from_coinbase()
+
     for ticker in binance_prices:
         ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
 
     for ticker in coinmarketcap_prices:
         ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-    return render_template('index.html', name=name, email=email, binance_prices=binance_prices, coinmarketcap_prices=coinmarketcap_prices)
+        
+    for ticker in coinbase_prices:
+        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
+        
+    return render_template('index.html', binance_prices=binance_prices, coinmarketcap_prices=coinmarketcap_prices, coinbase_prices=coinbase_prices,crypto_logos=crypto_logos)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_form():
@@ -524,3 +607,155 @@ def predict():
         enumerate=enumerate,
         future_predictions=future_predictions
     )
+
+@app.route('/search')
+def search():
+    query = request.args.get('q', '').strip().lower()
+    
+    if not query:
+        return jsonify([])
+
+    # Search for partial matches first
+    results = CryptoAsset.query.filter(
+        (CryptoAsset.name.ilike(f"%{query}%")) | (CryptoAsset.symbol.ilike(f"%{query}%"))
+    ).limit(10).all()
+
+    # Format the results
+    response = [
+        {"name": f"{asset.symbol} - {asset.name}", "link": f"/charts?symbol={asset.symbol}USDT"}
+        for asset in results
+    ]
+
+    return jsonify(response)
+
+@app.route("/submit_api_key", methods=["GET", "POST"])
+@login_required
+def submit_api_key():
+    if request.method == "POST":
+        exchange = request.form.get("exchange")
+        api_key = request.form.get("api_key")
+        api_secret = request.form.get("api_secret")
+
+        if not exchange or not api_key or not api_secret:
+            flash("All fields are required!", "danger")
+            return redirect(url_for("submit_api_key"))
+
+        # Check if API key for this exchange already exists
+        existing_key = UserAPIKey.query.filter_by(user_id=current_user.id, exchange=exchange).first()
+        if existing_key:
+            flash(f"API key for {exchange} already exists!", "warning")
+            return redirect(url_for("submit_api_key"))
+
+        # Encrypt and store API keys
+        new_api_key = UserAPIKey(user_id=current_user.id, exchange=exchange, api_key=api_key, api_secret=api_secret)
+        db.session.add(new_api_key)
+        db.session.commit()
+
+        flash("API key added successfully!", "success")
+        return redirect(url_for("submit_api_key"))
+
+    # Fetch user API keys for display
+    user_api_keys = UserAPIKey.query.filter_by(user_id=current_user.id).all()
+    user_exchanges = {key.exchange for key in user_api_keys}  # Set of exchanges user has keys for
+
+    return render_template("submit_api_key.html", user_api_keys=user_api_keys, user_exchanges=user_exchanges)
+
+
+@app.route("/delete_api_key/<int:api_id>", methods=["POST"])
+@login_required
+def delete_api_key(api_id):
+    api_key_entry = UserAPIKey.query.filter_by(id=api_id, user_id=current_user.id).first()
+
+    if not api_key_entry:
+        flash("API key not found!", "danger")
+        return redirect(url_for("submit_api_key"))
+
+    db.session.delete(api_key_entry)
+    db.session.commit()
+
+    flash("API key removed successfully!", "success")
+    return redirect(url_for("submit_api_key"))
+
+
+
+# Encryption setup
+load_dotenv()
+ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY")
+cipher = Fernet(ENCRYPTION_KEY.encode())
+print(ENCRYPTION_KEY)
+print(cipher)
+
+# Function to decrypt API keys
+def decrypt_data(encrypted_data):
+    return cipher.decrypt(encrypted_data).decode()
+
+def get_wallet_balances(api_key, api_secret, exchange):
+    """Fetches wallet balances from different exchanges."""
+    
+    if exchange.lower() == "binance":
+        return get_binance_balances(api_key, api_secret)
+    
+    elif exchange.lower() == "coinbase":
+        return get_coinbase_balances(api_key, api_secret)
+
+    return None
+
+def get_binance_balances(api_key, api_secret):
+    """Fetches wallet balances from Binance."""
+    try:
+        client = Client(api_key, api_secret)
+        account_info = client.get_account()
+
+        balances = {asset["asset"]: float(asset["free"]) for asset in account_info["balances"] if float(asset["free"]) > 0}
+        return balances
+
+    except Exception as e:
+        print(f"Binance API Error: {e}")
+        return None
+
+def get_coinbase_balances(api_key, api_secret):
+    """Fetches wallet balances from Coinbase."""
+    try:
+        headers = {
+            "Accept": "application/json",
+            "CB-ACCESS-KEY": api_key,
+            "CB-ACCESS-SIGN": api_secret,  
+        }
+        response = requests.get("https://api.coinbase.com/v2/accounts", headers=headers)
+        
+        if response.status_code == 200:
+            data = response.json()
+            balances = {account["currency"]: float(account["balance"]["amount"]) for account in data["data"] if float(account["balance"]["amount"]) > 0}
+            return balances
+        
+        else:
+            print(f"Coinbase API Error: {response.json()}")
+            return None
+
+    except Exception as e:
+        print(f"Coinbase API Error: {e}")
+        return None
+
+@app.route("/wallet_balances", methods=["GET", "POST"])
+@login_required
+def wallet_balances():
+    user_id = current_user.id
+    exchanges = Exchange.query.all()  # Get available exchanges
+
+    if request.method == "POST":
+        exchange_name = request.form.get("exchange")
+        api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange_name).first()
+
+        if not api_key_entry:
+            flash(f"API key for {exchange_name} is missing. Please submit your API key.")
+            return redirect(url_for("submit_api_key"))
+
+        # Decrypt API keys
+        api_key, api_secret = api_key_entry.get_api_keys()
+        balances = get_wallet_balances(api_key, api_secret, exchange_name)
+
+        return render_template("wallet_balances.html", exchanges=exchanges, exchange=exchange_name, balances=balances)
+
+    return render_template("wallet_balances.html", exchanges=exchanges, exchange=None, balances=None)
+
+    
