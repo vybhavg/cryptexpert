@@ -460,7 +460,7 @@ def setup_authenticator_qr():
 def charts():
     return render_template('charts.html')
 
-model = load_model("/cryptexpert/mark/model.keras")
+model = load_model("/home/ec2-user/cryptexpert/mark/model.keras")
 
 # Initialize Binance Client (No API Key Required for Public Data)
 client = Client()
