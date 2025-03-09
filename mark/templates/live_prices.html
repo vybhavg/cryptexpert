@@ -195,42 +195,6 @@
                 updateTable("okx", okxPrices);
                 updateTable("coinbase", coinbasePrices);
 
-                toggleTickers(); // Ensure the correct exchange remains visible
-            } catch (error) {
-                console.error('Error fetching prices:', error);
-            }
-        }
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
-
-        function toggleTickers() {
-            const selectedExchange = document.querySelector('input[name="price-source"]:checked')?.value;
-            document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
-                row.style.display = "none";
-            });
-
-            if (selectedExchange) {
-                document.querySelectorAll(`.${selectedExchange}-row`).forEach(row => row.style.display = "table-row");
-            }
-        }
-
-        async function fetchPrices() {
-            try {
-                const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
-                    fetch('/binance_prices'),
-                    fetch('/okx_prices'),
-                    fetch('/coinbase_prices')
-                ]);
-
-                const binancePrices = await binanceResponse.json();
-                const okxPrices = await okxResponse.json();
-                const coinbasePrices = await coinbaseResponse.json();
-
-                updateTable("binance", binancePrices);
-                updateTable("okx", okxPrices);
-                updateTable("coinbase", coinbasePrices);
-
                 toggleTickers();
             } catch (error) {
                 console.error('Error fetching prices:', error);
