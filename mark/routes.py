@@ -151,7 +151,7 @@ def get_specific_prices_from_binance():
     return filtered_prices
 import requests
 
-def get_specific_prices_from_coinmarketcap_dex():
+def get_specific_prices_from_coinmarketcap():
     # List of specific cryptocurrencies to display
     specific_coins = ['BTC', 'ETH', 'XRP', 'BNB', 'SOL', 'USDC', 'ADA', 'DOGE', 'TRX', 'LINK', 'HBAR', 
                       'XLM', 'AVAX', 'LEO', 'SUI', 'LTC', 'TON', 'SHIB', 'DOT', 'OM', 'BCH', 'HYPE', 'USDe', 
