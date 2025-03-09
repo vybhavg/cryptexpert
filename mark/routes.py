@@ -151,61 +151,59 @@ def get_specific_prices_from_binance():
     return filtered_prices
 import requests
 
-def get_specific_prices_from_coinmarketcap():
+def get_specific_prices_from_coinmarketcap_dex():
     # List of specific cryptocurrencies to display
     specific_coins = ['BTC', 'ETH', 'XRP', 'BNB', 'SOL', 'USDC', 'ADA', 'DOGE', 'TRX', 'LINK', 'HBAR', 
- 'XLM', 'AVAX', 'LEO', 'SUI', 'LTC', 'TON', 'SHIB', 'DOT', 'OM', 'BCH', 'HYPE', 'USDe', 
- 'DAI', 'BGB', 'UNI', 'XMR', 'NEAR', 'APT', 'ONDO', 'PEPE', 'ICP', 'ETC', 'AAVE', 'TRUMP', 
- 'OKB', 'TAO', 'MNT', 'VET', 'POL', 'ALGO', 'KAS', 'CRO', 'RENDER', 'FIL', 'FDUSD', 'TIA', 
- 'JUP', 'GT', 'S', 'ARB', 'KNC', 'BAL', 'YFI', 'MK', 'SUSHI', 'ZRX', 'UMA', 'RARI', 'CVC', 
- 'MITH', 'LOOM', 'GNO', 'GRT', '1INCH', 'DIA', 'LRC', 'STMX', 'PERL', 'REN', 'FET', 'DODO', 
- 'MTA', 'HNT', 'FIL', 'RUNE', 'SAND', 'CELO', 'DASH']
-
-    # CoinMarketCap API endpoint and your API key
-    api_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
-    headers = {
-        'Accept': 'application/json',
-        'X-CMC_PRO_API_KEY': '16eb4846-14d3-460f-a807-829071a43a49',  # Replace with your valid API key
-    }
-
-    # Request data from CoinMarketCap API
+                      'XLM', 'AVAX', 'LEO', 'SUI', 'LTC', 'TON', 'SHIB', 'DOT', 'OM', 'BCH', 'HYPE', 'USDe', 
+                      'DAI', 'BGB', 'UNI', 'XMR', 'NEAR', 'APT', 'ONDO', 'PEPE', 'ICP', 'ETC', 'AAVE', 'TRUMP', 
+                      'OKB', 'TAO', 'MNT', 'VET', 'POL', 'ALGO', 'KAS', 'CRO', 'RENDER', 'FIL', 'FDUSD', 'TIA', 
+                      'JUP', 'GT', 'S', 'ARB', 'KNC', 'BAL', 'YFI', 'MK', 'SUSHI', 'ZRX', 'UMA', 'RARI', 'CVC', 
+                      'MITH', 'LOOM', 'GNO', 'GRT', '1INCH', 'DIA', 'LRC', 'STMX', 'PERL', 'REN', 'FET', 'DODO', 
+                      'MTA', 'HNT', 'FIL', 'RUNE', 'SAND', 'CELO', 'DASH']
+    
+    # CoinMarketCap DEX API endpoint
+    api_url = 'https://api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+    
+    # Parameters for the request (change 'symbol' and 'convert' as needed)
     params = {
-        'symbol': ','.join(specific_coins),  # Join the symbols with commas (e.g., 'BTC,ETH,LTC')
-        'convert': 'USD',  # Fetch prices in USD
+        'symbol': ','.join(specific_coins),  # List of symbols you want to get data for
+        'convert': 'USD',  # We want prices in USD
+        'limit': 100,  # Limit the number of results returned
+        'market_cap': 'true',  # Include market cap data
     }
 
     prices = []
 
     try:
-        response = requests.get(api_url, headers=headers, params=params)
-        response.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx)
+        # Send GET request to the CoinMarketCap DEX API
+        response = requests.get(api_url, params=params)
+        response.raise_for_status()  # Check for errors in the response
 
+        # Parse the JSON data from the response
         data = response.json()
 
-        # Extracting price and price change data
+        # Check if 'data' is in the response (the structure may vary)
         if 'data' in data:
-            for symbol in specific_coins:
-                if symbol in data['data']:
-                    crypto = data['data'][symbol]
-                    price = crypto['quote']['USD']['price']
-                    
-                    # Check if price is None
-                    if price is not None:
-                        price = f"{float(price):,.2f}"
-                    else:
-                        price = "N/A"  # Set to "N/A" if price is None
+            for coin in data['data']:
+                symbol = coin['symbol']
+                if symbol in specific_coins:
+                    price = coin['quote']['USD']['price']
+                    price_change_percent = coin['quote']['USD']['percent_change_24h']
 
-                    price_change_percent = f"{float(crypto['quote']['USD']['percent_change_24h']):.2f}" if 'percent_change_24h' in crypto['quote']['USD'] else "N/A"
+                    # Format the price nicely
+                    formatted_price = f"${price:,.2f}" if price else "N/A"
+                    formatted_change = f"{price_change_percent:,.2f}%" if price_change_percent else "N/A"
 
+                    # Add to results list
                     prices.append({
                         'symbol': symbol,
-                        'price': price,
-                        'priceChangePercent': price_change_percent
+                        'price': formatted_price,
+                        'priceChangePercent': formatted_change
                     })
                 else:
-                    print(f"Warning: {symbol} data is not available in the response.")
+                    print(f"Warning: {symbol} data is not available.")
         else:
-            print(f"Error: Missing 'data' key in response: {data}")
+            print(f"Error: 'data' key not found in response: {data}")
 
     except requests.exceptions.RequestException as e:
         print(f"Request error: {e}")
