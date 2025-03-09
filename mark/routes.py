@@ -598,7 +598,6 @@ def ai_predictor():
             future_predictions=future_predictions
         )
 
-    return render_template("todo-lists.html")
 
 @app.route('/search')
 def search():
