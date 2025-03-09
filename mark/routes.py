@@ -331,7 +331,7 @@ def register_form():
         return redirect(url_for('otp_form'))
     if form.errors:
         for err in form.errors.values():
-            flash(err)
+            flash(err,"warning")
     return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -343,18 +343,18 @@ def login_form():
             session['userid'] = attempted_user.username
             return redirect(url_for('otp_form'))
         else:
-            flash('Username and password are incorrect')
+            flash('Username and password are incorrect',"danger")
     
     if form.errors:
         for err in form.errors.values():
-            flash(err)
+            flash(err,"warning")
     return render_template('login.html', form=form)
 
 @app.route('/logout')
 def logout_page():
     logout_user()
     session.clear()  # Clears all session variables
-    flash('You have been logged out')
+    flash('You have been logged out',"success")
     return redirect(url_for('home'))
 
 def generate_otp():
@@ -371,10 +371,10 @@ def otp_form():
         msg = Message('Your OTP', recipients=[email])
         msg.body = f'Your OTP is {otp}'
         mail.send(msg)
-        flash("OTP sent successfully")
+        flash("OTP sent successfully","success")
         return redirect(url_for('verify_form'))
     except Exception as e:
-        flash(f'Unable to send OTP: {e}')
+        flash(f'Unable to send OTP: {e}',"warning")
         return redirect(url_for('register_form'))
 
 @app.route('/verifyotp', methods=['GET', 'POST'])
@@ -395,23 +395,23 @@ def verify_form():
                     return render_template('verify_otp.html', form=auth_form, username=session['userid'], show_auth_form=True)
                     
         else:
-            flash('Incorrect OTP')
+            flash('Incorrect OTP',"danger")
 
     if auth_form.validate_on_submit():
         entered_code = auth_form.authotp.data
         totp = pyotp.TOTP(user.authenticator_secret)
         if totp.verify(entered_code):
             login_user(user) 
-            flash(f'User logged in successfully: {user.username}') 
+            flash(f'User logged in successfully: {user.username}',"success") 
             return redirect(url_for('index'))
         else:
-            flash("Invalid authenticator code. Please try again.")
+            flash("Invalid authenticator code. Please try again.","warning")
             return render_template('verify_otp.html', form=auth_form, username=session['userid'], show_auth_form=True)
 
 
     if form.errors:
         for err in form.errors.values():
-            flash(err)
+            flash(err,"warning")
     return render_template('verify_otp.html', form=form, username=session['userid'], show_auth_form=False)
 
 @app.route('/setup-authenticator', methods=['GET', 'POST'])
@@ -436,10 +436,10 @@ def setup_authenticator():
         if totp.verify(form.authotp.data):
             user.authenticator_enabled = True
             db.session.commit()
-            flash("Authenticator set up successfully!")
+            flash("Authenticator set up successfully!","success")
             return redirect(url_for('index'))
         else:
-            flash("Invalid authenticator code. Please try again.")
+            flash("Invalid authenticator code. Please try again.","warning")
 
     return render_template(
         'setup_authenticator.html',
@@ -454,7 +454,7 @@ def setup_authenticator_qr():
     user = User.query.filter_by(username=current_user.username).first()
 
     if not user or not user.authenticator_secret:
-        flash("Invalid access.")
+        flash("Invalid access.","danger")
         return redirect(url_for('index'))
 
     otp_uri = pyotp.totp.TOTP(user.authenticator_secret).provisioning_uri(
