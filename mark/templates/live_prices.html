@@ -166,29 +166,18 @@
     
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const binanceRadio = document.getElementById("binance");
-        const okxRadio = document.getElementById("okx");
-        const coinbaseRadio = document.getElementById("coinbase");
+        const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
 
         function toggleTickers() {
+            const selectedExchange = document.querySelector('input[name="price-source"]:checked')?.value;
             document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
                 row.style.display = "none";
             });
 
-            if (binanceRadio.checked) {
-                document.querySelectorAll(".binance-row").forEach(row => row.style.display = "table-row");
-            } else if (okxRadio.checked) {
-                document.querySelectorAll(".okx-row").forEach(row => row.style.display = "table-row");
-            } else if (coinbaseRadio.checked) {
-                document.querySelectorAll(".coinbase-row").forEach(row => row.style.display = "table-row");
+            if (selectedExchange) {
+                document.querySelectorAll(`.${selectedExchange}-row`).forEach(row => row.style.display = "table-row");
             }
         }
-
-        toggleTickers();
-
-        binanceRadio.addEventListener("change", toggleTickers);
-        okxRadio.addEventListener("change", toggleTickers);
-        coinbaseRadio.addEventListener("change", toggleTickers);
 
         async function fetchPrices() {
             try {
@@ -205,31 +194,42 @@
                 updateTable("binance", binancePrices);
                 updateTable("okx", okxPrices);
                 updateTable("coinbase", coinbasePrices);
+
+                toggleTickers(); // Ensure the correct exchange remains visible
             } catch (error) {
                 console.error('Error fetching prices:', error);
             }
         }
 
         function updateTable(exchange, prices) {
+            const tableBody = document.getElementById("table-body");
             document.querySelectorAll(`.${exchange}-row`).forEach(row => row.remove());
 
             prices.forEach(ticker => {
                 const row = document.createElement("tr");
                 row.classList.add(`${exchange}-row`);
-                if (exchange !== "binance") row.style.display = "none";
+                row.style.display = "none"; // Default hidden, will be toggled later
 
-                row.innerHTML = `<td>${ticker.symbol}</td><td>$${ticker.price}</td><td class="percentage-change">
-                    <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
-                        ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
-                    </span></td>`;
+                row.innerHTML = `
+                    <td>${ticker.symbol}</td>
+                    <td>$${ticker.price}</td>
+                    <td class="percentage-change">
+                        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
+                            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
+                        </span>
+                    </td>
+                `;
 
-                document.getElementById("table-body").appendChild(row);
+                tableBody.appendChild(row);
             });
         }
+
+        exchangeRadios.forEach(radio => radio.addEventListener("change", toggleTickers));
 
         fetchPrices();
         setInterval(fetchPrices, 10000);
     });
 </script>
+
 </body>
 </html>
