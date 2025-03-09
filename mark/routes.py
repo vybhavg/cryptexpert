@@ -152,6 +152,7 @@ def get_specific_prices_from_binance():
 import requests
 
 
+
 def get_specific_prices_from_okx():
     # List of specific cryptocurrency pairs (adjust as needed)
     specific_coins = [
@@ -174,7 +175,11 @@ def get_specific_prices_from_okx():
                 if 'data' in data and len(data['data']) > 0:
                     ticker = data['data'][0]
                     price = f"{float(ticker['last']):,.2f}"  # Extract the last price
-                    price_change_percent = f"{float(ticker['changeRate']) * 100:.2f}"  # Change in percentage
+                    
+                    # Try to get the price change percentage using the correct field
+                    price_change_percent = "N/A"
+                    if 'change24h' in ticker:
+                        price_change_percent = f"{float(ticker['change24h']) * 100:.2f}"  # 24h change percentage
                     
                     prices.append({
                         'symbol': symbol.replace("-USDT", ""),  # Remove "-USDT" for consistency
