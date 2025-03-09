@@ -532,7 +532,7 @@ def ai_predictor():
         stock_data.index = pd.to_datetime(stock_data['Close Time'], unit='ms')
 
         if stock_data.empty:
-            return render_template("result.html", error="Invalid crypto pair or no data available.")
+            return render_template("ai_price_predictor.html", error="Invalid crypto pair or no data available.")
 
         # Prepare candlestick data for visualization
         candlestick_data = stock_data[['Close Time', 'Open', 'High', 'Low', 'Close', 'Volume']].tail(200)
