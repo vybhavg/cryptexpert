@@ -1875,14 +1875,14 @@ document.addEventListener("click", function(event) {
             });
         </script>
       
-<!-- Dropdown or Radio Buttons to Choose between Binance, CoinMarketCap, and CoinBase -->
+<!-- Dropdown or Radio Buttons to Choose between Binance, okx, and CoinBase -->
     <div class="select-container">
         <div class="price-selection">
             <input type="radio" id="binance" name="price-source" value="binance" checked>
             <label for="binance">Binance</label>
 
-            <input type="radio" id="coinmarketcap" name="price-source" value="coinmarketcap">
-            <label for="coinmarketcap">CoinMarketCap</label>
+            <input type="radio" id="okx" name="price-source" value="okx">
+            <label for="okx">OKX</label>
 
             <input type="radio" id="coinbase" name="price-source" value="coinbase">
             <label for="coinbase">CoinBase</label>
@@ -1915,11 +1915,11 @@ document.addEventListener("click", function(event) {
         </div>
     </section>
 
-    <section id="coinmarketcap-section" style="display:none;">
+    <section id="okx-section" style="display:none;">
         <div class="cmpswiper">
             <div class="swiper-wrapper">
-                {% for ticker in coinmarketcap_prices %}
-                <div class="swiper-slide swiper-slide--one" id="coinmarketcap-{{ loop.index0 }}" data-symbol="{{ ticker.symbol }}">
+                {% for ticker in okx_prices %}
+                <div class="swiper-slide swiper-slide--one" id="okx-{{ loop.index0 }}" data-symbol="{{ ticker.symbol }}">
                     <div class="image-container">
         <img class="crypto-image" src="{{ crypto_logos.get(ticker.symbol, 'static/img/crypto/BTC.png') }}" alt="{{ ticker.symbol }}">
                     </div>
@@ -2046,26 +2046,26 @@ var cmpswiper = new Swiper(".cmpswiper", {
             });
         document.addEventListener("DOMContentLoaded", () => {
             const binanceRadio = document.getElementById("binance");
-            const coinmarketcapRadio = document.getElementById("coinmarketcap");
+            const okxRadio = document.getElementById("okx");
             const coinbaseRadio = document.getElementById("coinbase");
 
             const binanceSection = document.getElementById("binance-section");
-            const coinmarketcapSection = document.getElementById("coinmarketcap-section");
+            const okxSection = document.getElementById("okx-section");
             const coinbaseSection = document.getElementById("coinbase-section");
 
             // Function to update displayed tickers
             function toggleTickers() {
                 if (binanceRadio.checked) {
                     binanceSection.style.display = "flex";
-                    coinmarketcapSection.style.display = "none";
+                    okxSection.style.display = "none";
                     coinbaseSection.style.display = "none";
-                } else if (coinmarketcapRadio.checked) {
+                } else if (okxRadio.checked) {
                     binanceSection.style.display = "none";
-                    coinmarketcapSection.style.display = "flex";
+                    okxSection.style.display = "flex";
                     coinbaseSection.style.display = "none";
                 } else if (coinbaseRadio.checked) {
                     binanceSection.style.display = "none";
-                    coinmarketcapSection.style.display = "none";
+                    okxSection.style.display = "none";
                     coinbaseSection.style.display = "flex";
                 }
             }
@@ -2075,7 +2075,7 @@ var cmpswiper = new Swiper(".cmpswiper", {
 
             // Add event listeners to radio buttons
             binanceRadio.addEventListener("change", toggleTickers);
-            coinmarketcapRadio.addEventListener("change", toggleTickers);
+            okxRadio.addEventListener("change", toggleTickers);
 coinbaseRadio.addEventListener("change", () => {
     console.log("Coinbase radio button clicked");
     toggleTickers();
@@ -2083,16 +2083,16 @@ coinbaseRadio.addEventListener("change", () => {
            
             async function fetchPrices() {
                 try {
-                    const [binanceResponse, coinmarketcapResponse, coinbaseResponse] = await Promise.all([
+                    const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
                         fetch('/binance_prices'),
-                        fetch('/coinmarketcap_prices'),
+                        fetch('/okx_prices'),
                         fetch('/coinbase_prices')
                     ]);
 
                     const binancePrices = await binanceResponse.json();
-                    const coinmarketcapPrices = await coinmarketcapResponse.json();
+                    const okxPrices = await okxResponse.json();
                     const coinbasePrices = await coinbaseResponse.json();
-                    console.log(coinmarketcapPrices)
+                    console.log(okxPrices)
                     // Update Binance prices
                     binancePrices.forEach((ticker, index) => {
                         const price = (ticker.price);
@@ -2117,12 +2117,12 @@ coinbaseRadio.addEventListener("change", () => {
                         }
                     });
 
-                    // Update CoinMarketCap prices
-                    coinmarketcapPrices.forEach((ticker, index) => {
+                    // Update okx prices
+                    okxPrices.forEach((ticker, index) => {
                         const price = (ticker.price);
                         const percentChange = parseFloat(ticker.priceChangePercent).toFixed(2);
 
-                        const tickerElement = document.getElementById(`coinmarketcap-${index}`);
+                        const tickerElement = document.getElementById(`okx-${index}`);
                         if (tickerElement) {
                             const priceElement = tickerElement.querySelector('h2');
                             priceElement.textContent = `$${price}`;
