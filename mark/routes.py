@@ -693,16 +693,19 @@ def get_wallet_balances(api_key, api_secret, exchange):
 
     return None
 
-# Function to get wallet balances from Binance (Async)
+# Function to get Binance balances (Fixed Async Handling)
 async def get_binance_balances_async(api_key, api_secret):
     """Fetches wallet balances from Binance asynchronously."""
     try:
         client = await AsyncClient.create(api_key, api_secret)  # Async client
         account_info = await client.get_account()
-        await client.close()  # Close the client after fetching data
 
-        # Extracting balances for assets with non-zero free balances
+        # Extract non-zero balances
         balances = {asset["asset"]: float(asset["free"]) for asset in account_info["balances"] if float(asset["free"]) > 0}
+
+        # Fix: Properly close the client session
+        await client.session.close()  
+
         return balances
 
     except Exception as e:
