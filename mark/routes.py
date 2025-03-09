@@ -677,16 +677,6 @@ def delete_api_key(api_id):
     return redirect(url_for("submit_api_key"))
 
 
-# Encryption setup
-load_dotenv()
-ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY")
-cipher = Fernet(ENCRYPTION_KEY.encode())
-print(ENCRYPTION_KEY)  # Print the encryption key (for debugging purposes)
-print(cipher)  # Print cipher (for debugging purposes)
-
-# Function to decrypt API keys
-def decrypt_data(encrypted_data):
-    return cipher.decrypt(encrypted_data).decode()
 
 # Function to get wallet balances based on selected exchange
 def get_wallet_balances(api_key, api_secret, exchange):
@@ -756,11 +746,10 @@ def wallet_balances():
 
         # Decrypt API keys using the `decrypt_data` function
         api_key, api_secret = api_key_entry.get_api_keys()
-        decrypted_api_key = decrypt_data(api_key)  # Decrypt the API key
-        decrypted_api_secret = decrypt_data(api_secret)  # Decrypt the API secret
+        
 
         # Fetch wallet balances based on the selected exchange
-        balances = get_wallet_balances(decrypted_api_key, decrypted_api_secret, exchange_name)
+        balances = get_wallet_balances(api_key, api_secret, exchange_name)
 
         # Render the template with the fetched balances
         return render_template("wallet_balances.html", exchanges=exchanges, exchange=exchange_name, balances=balances)
