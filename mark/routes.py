@@ -302,6 +302,23 @@ def index():
         
     return render_template('index.html', binance_prices=binance_prices, okx_prices=okx_prices, coinbase_prices=coinbase_prices,crypto_logos=crypto_logos)
 
+@app.route('/live_prices')
+def live_prices():
+    binance_prices = get_specific_prices_from_binance()
+    okx_prices = get_specific_prices_from_okx()
+    coinbase_prices = get_specific_prices_from_coinbase()
+
+    for ticker in binance_prices:
+        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
+
+    for ticker in okx_prices:
+        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
+        
+    for ticker in coinbase_prices:
+        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
+        
+    return render_template('live_prices.html', binance_prices=binance_prices, okx_prices=okx_prices, coinbase_prices=coinbase_prices,crypto_logos=crypto_logos)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_form():
