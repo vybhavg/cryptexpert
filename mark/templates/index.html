@@ -2092,7 +2092,7 @@ coinbaseRadio.addEventListener("change", () => {
                     const binancePrices = await binanceResponse.json();
                     const coinmarketcapPrices = await coinmarketcapResponse.json();
                     const coinbasePrices = await coinbaseResponse.json();
-                    console.log(coinmarketcapprices)
+                    console.log(coinmarketcapPrices)
                     // Update Binance prices
                     binancePrices.forEach((ticker, index) => {
                         const price = (ticker.price);
