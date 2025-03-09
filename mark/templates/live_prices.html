@@ -11,9 +11,11 @@
             background-color: #121212;
             color: white;
             text-align: center;
+            margin: 0;
+            padding: 0;
         }
         .container {
-            max-width: 800px;
+            max-width: 90%;
             margin: 20px auto;
             padding: 20px;
             background: #1e1e1e;
@@ -28,37 +30,62 @@
         }
         .price-selection label {
             background: #333;
-            padding: 10px 20px;
+            padding: 12px 25px;
             border-radius: 5px;
             cursor: pointer;
             margin: 5px;
-            transition: 0.3s;
+            transition: 0.3s ease-in-out;
+            display: inline-block;
         }
         .price-selection input:checked + label {
             background: #f39c12;
             color: black;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            overflow-x: auto;
         }
         th, td {
             padding: 12px;
             border-bottom: 1px solid #444;
+            transition: background 0.3s ease-in-out;
         }
         th {
             background: #f39c12;
             color: black;
         }
+        tr:hover {
+            background: rgba(243, 156, 18, 0.2);
+            transform: scale(1.02);
+        }
+        .percentage-change {
+            font-weight: bold;
+        }
         .positive {
-            color: #00c853;
+            color: #4caf50;
         }
         .negative {
-            color: #d50000;
+            color: #e74c3c;
         }
         .neutral {
-            color: #ffffff;
+            color: #ccc;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            .price-selection label {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -76,7 +103,7 @@
         </div>
     </div>
     
-    <table>
+    <table id="prices-table">
         <thead>
             <tr>
                 <th>Symbol</th>
@@ -84,67 +111,119 @@
                 <th>24h Change (%)</th>
             </tr>
         </thead>
-        <tbody id="table-body"></tbody>
+        <tbody id="table-body">
+            {% for ticker in binance_prices %}
+<tr class="binance-row">
+    <td>{{ ticker.symbol.replace(/USDT$/, '') }}</td>  <!-- Remove USDT from Binance symbols -->
+    <td>${{ ticker.price }}</td>
+    <td class="percentage-change">
+        {% if ticker.priceChangePercent > 0 %}
+        <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+        {% elif ticker.priceChangePercent < 0 %}
+        <span class="negative">{{ ticker.priceChangePercent }}%</span>
+        {% else %}
+        <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+
+            
+            {% for ticker in okx_prices %}
+            <tr class="okx-row" style="display:none;">
+                <td>{{ ticker.symbol }}</td>
+                <td>${{ ticker.price }}</td>
+                <td class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            
+            {% for ticker in coinbase_prices %}
+            <tr class="coinbase-row" style="display:none;">
+                <td>{{ ticker.symbol }}</td>
+                <td>${{ ticker.price }}</td>
+                <td class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </div>
     
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const radioButtons = document.querySelectorAll('input[name="price-source"]');
-        const tableBody = document.getElementById("table-body");
-        let currentExchange = "binance";
+        const binanceRadio = document.getElementById("binance");
+        const okxRadio = document.getElementById("okx");
+        const coinbaseRadio = document.getElementById("coinbase");
 
-        function toggleTickers(exchange) {
-            currentExchange = exchange;
-            updateTable(pricesData[currentExchange]);
+        function toggleTickers() {
+            document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
+                row.style.display = "none";
+            });
+
+            if (binanceRadio.checked) {
+                document.querySelectorAll(".binance-row").forEach(row => row.style.display = "table-row");
+            } else if (okxRadio.checked) {
+                document.querySelectorAll(".okx-row").forEach(row => row.style.display = "table-row");
+            } else if (coinbaseRadio.checked) {
+                document.querySelectorAll(".coinbase-row").forEach(row => row.style.display = "table-row");
+            }
         }
 
-        radioButtons.forEach(radio => {
-            radio.addEventListener("change", (event) => toggleTickers(event.target.value));
-        });
+        toggleTickers();
 
-        let pricesData = {
-            binance: [],
-            okx: [],
-            coinbase: []
-        };
+        binanceRadio.addEventListener("change", toggleTickers);
+        okxRadio.addEventListener("change", toggleTickers);
+        coinbaseRadio.addEventListener("change", toggleTickers);
 
         async function fetchPrices() {
             try {
-                const responses = await Promise.all([
+                const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
                     fetch('/binance_prices'),
                     fetch('/okx_prices'),
                     fetch('/coinbase_prices')
                 ]);
 
-                const [binancePrices, okxPrices, coinbasePrices] = await Promise.all(responses.map(res => res.json()));
+                const binancePrices = await binanceResponse.json();
+                const okxPrices = await okxResponse.json();
+                const coinbasePrices = await coinbaseResponse.json();
 
-                pricesData.binance = binancePrices;
-                pricesData.okx = okxPrices;
-                pricesData.coinbase = coinbasePrices;
-
-                updateTable(pricesData[currentExchange]);
+                updateTable("binance", binancePrices);
+                updateTable("okx", okxPrices);
+                updateTable("coinbase", coinbasePrices);
             } catch (error) {
                 console.error('Error fetching prices:', error);
             }
         }
 
-        function updateTable(prices) {
-            tableBody.innerHTML = "";
+        function updateTable(exchange, prices) {
+            document.querySelectorAll(`.${exchange}-row`).forEach(row => row.remove());
+
             prices.forEach(ticker => {
                 const row = document.createElement("tr");
+                row.classList.add(`${exchange}-row`);
+                if (exchange !== "binance") row.style.display = "none";
 
-                row.innerHTML = `
-                    <td>${ticker.symbol}</td>
-                    <td>$${ticker.price}</td>
-                    <td class="percentage-change">
-                        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
-                            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
-                        </span>
-                    </td>
-                `;
+                row.innerHTML = `<td>${ticker.symbol}</td><td>$${ticker.price}</td><td class="percentage-change">
+                    <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
+                        ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
+                    </span></td>`;
 
-                tableBody.appendChild(row);
+                document.getElementById("table-body").appendChild(row);
             });
         }
 
