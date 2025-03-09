@@ -677,6 +677,8 @@ def delete_api_key(api_id):
     flash("API key removed successfully!", "success")
     return redirect(url_for("submit_api_key"))
 
+import asyncio
+from binance import AsyncClient  # Use AsyncClient for Binance API
 
 
 # Function to get wallet balances based on selected exchange
@@ -684,19 +686,20 @@ def get_wallet_balances(api_key, api_secret, exchange):
     """Fetches wallet balances from different exchanges."""
     
     if exchange.lower() == "binance":
-        return get_binance_balances(api_key, api_secret)
-    
+        return asyncio.run(get_binance_balances_async(api_key, api_secret))  # Use asyncio.run()
+
     elif exchange.lower() == "coinbase":
         return get_coinbase_balances(api_key, api_secret)
 
     return None
 
-# Function to get wallet balances from Binance
-def get_binance_balances(api_key, api_secret):
-    """Fetches wallet balances from Binance."""
+# Function to get wallet balances from Binance (Async)
+async def get_binance_balances_async(api_key, api_secret):
+    """Fetches wallet balances from Binance asynchronously."""
     try:
-        client = Client(api_key, api_secret)  # Synchronous client
-        account_info = client.get_account()
+        client = await AsyncClient.create(api_key, api_secret)  # Async client
+        account_info = await client.get_account()
+        await client.close()  # Close the client after fetching data
 
         # Extracting balances for assets with non-zero free balances
         balances = {asset["asset"]: float(asset["free"]) for asset in account_info["balances"] if float(asset["free"]) > 0}
@@ -751,7 +754,7 @@ def wallet_balances():
             print(api_key, api_secret)
 
         # Fetch wallet balances based on the selected exchange
-        balances = fetch_balances_async(api_key, api_secret, exchange_name)
+        balances = get_wallet_balances(api_key, api_secret, exchange_name)
 
         # Render the template with the fetched balances
         return render_template("wallet_balances.html", exchanges=exchanges, exchange=exchange_name, balances=balances)
@@ -759,7 +762,4 @@ def wallet_balances():
     return render_template("wallet_balances.html", exchanges=exchanges, exchange=None, balances=None)   
 
 
-def fetch_balances_async(api_key, api_secret, exchange_name):
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    return loop.run_until_complete(get_wallet_balances(api_key, api_secret, exchange_name))
+
