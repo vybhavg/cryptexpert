@@ -267,7 +267,7 @@ def binance_prices():
 
 @app.route('/coinmarketcap_prices')
 def coinmarketcap_prices():
-    coinmarketcap_prices = get_specific_prices_from_coinmarketcap()  # Fetch the latest data from CoinMarketCap
+    coinmarketcap_prices = get_specific_prices_from_okx()  # Fetch the latest data from CoinMarketCap
     return jsonify(coinmarketcap_prices)  # Return CoinMarketCap data as JSON
 
 @app.route('/coinbase_prices')
