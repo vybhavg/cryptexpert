@@ -51,8 +51,14 @@
             background: #f39c12;
             color: black;
         }
-        .hidden {
-            display: none;
+        .positive {
+            color: #00c853;
+        }
+        .negative {
+            color: #d50000;
+        }
+        .neutral {
+            color: #ffffff;
         }
     </style>
 </head>
@@ -70,7 +76,7 @@
         </div>
     </div>
     
-    <table id="prices-table">
+    <table>
         <thead>
             <tr>
                 <th>Symbol</th>
@@ -78,114 +84,55 @@
                 <th>24h Change (%)</th>
             </tr>
         </thead>
-        <tbody id="table-body">
-            {% for ticker in binance_prices %}
-            <tr class="binance-row">
-                <td>{{ ticker.symbol[:-4] }}</td>
-                <td>${{ ticker.price }}</td>
-                <td class="percentage-change">
-                    {% if ticker.priceChangePercent > 0 %}
-                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                    {% elif ticker.priceChangePercent < 0 %}
-                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
-                    {% else %}
-                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-            
-            {% for ticker in okx_prices %}
-            <tr class="okx-row" style="display:none;">
-                <td>{{ ticker.symbol }}</td>
-                <td>${{ ticker.price }}</td>
-                <td class="percentage-change">
-                    {% if ticker.priceChangePercent > 0 %}
-                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                    {% elif ticker.priceChangePercent < 0 %}
-                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
-                    {% else %}
-                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-            
-            {% for ticker in coinbase_prices %}
-            <tr class="coinbase-row" style="display:none;">
-                <td>{{ ticker.symbol }}</td>
-                <td>${{ ticker.price }}</td>
-                <td class="percentage-change">
-                    {% if ticker.priceChangePercent > 0 %}
-                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                    {% elif ticker.priceChangePercent < 0 %}
-                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
-                    {% else %}
-                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+        <tbody id="table-body"></tbody>
     </table>
 </div>
     
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const binanceRadio = document.getElementById("binance");
-        const okxRadio = document.getElementById("okx");
-        const coinbaseRadio = document.getElementById("coinbase");
+        const radioButtons = document.querySelectorAll('input[name="price-source"]');
+        const tableBody = document.getElementById("table-body");
+        let currentExchange = "binance";
 
-        // Function to update displayed tickers
-        function toggleTickers() {
-            document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
-                row.style.display = "none";
-            });
-
-            if (binanceRadio.checked) {
-                document.querySelectorAll(".binance-row").forEach(row => row.style.display = "table-row");
-            } else if (okxRadio.checked) {
-                document.querySelectorAll(".okx-row").forEach(row => row.style.display = "table-row");
-            } else if (coinbaseRadio.checked) {
-                document.querySelectorAll(".coinbase-row").forEach(row => row.style.display = "table-row");
-            }
+        function toggleTickers(exchange) {
+            currentExchange = exchange;
+            updateTable(pricesData[currentExchange]);
         }
 
-        // Set initial display
-        toggleTickers();
+        radioButtons.forEach(radio => {
+            radio.addEventListener("change", (event) => toggleTickers(event.target.value));
+        });
 
-        // Add event listeners to radio buttons
-        binanceRadio.addEventListener("change", toggleTickers);
-        okxRadio.addEventListener("change", toggleTickers);
-        coinbaseRadio.addEventListener("change", toggleTickers);
+        let pricesData = {
+            binance: [],
+            okx: [],
+            coinbase: []
+        };
 
         async function fetchPrices() {
             try {
-                const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
+                const responses = await Promise.all([
                     fetch('/binance_prices'),
                     fetch('/okx_prices'),
                     fetch('/coinbase_prices')
                 ]);
 
-                const binancePrices = await binanceResponse.json();
-                const okxPrices = await okxResponse.json();
-                const coinbasePrices = await coinbaseResponse.json();
+                const [binancePrices, okxPrices, coinbasePrices] = await Promise.all(responses.map(res => res.json()));
 
-                updateTable("binance", binancePrices);
-                updateTable("okx", okxPrices);
-                updateTable("coinbase", coinbasePrices);
+                pricesData.binance = binancePrices;
+                pricesData.okx = okxPrices;
+                pricesData.coinbase = coinbasePrices;
+
+                updateTable(pricesData[currentExchange]);
             } catch (error) {
                 console.error('Error fetching prices:', error);
             }
         }
 
-        function updateTable(exchange, prices) {
-            document.querySelectorAll(`.${exchange}-row`).forEach(row => row.remove());
-
+        function updateTable(prices) {
+            tableBody.innerHTML = "";
             prices.forEach(ticker => {
                 const row = document.createElement("tr");
-                row.classList.add(`${exchange}-row`);
-                if (exchange !== "binance") row.style.display = "none";
 
                 row.innerHTML = `
                     <td>${ticker.symbol}</td>
@@ -197,15 +144,13 @@
                     </td>
                 `;
 
-                document.getElementById("table-body").appendChild(row);
+                tableBody.appendChild(row);
             });
         }
 
-        // Call the function once when the page is loaded
         fetchPrices();
         setInterval(fetchPrices, 10000);
     });
 </script>
 </body>
-
 </html>
