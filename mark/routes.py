@@ -25,6 +25,7 @@ from datetime import datetime
 import os
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
+import asyncio
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import pandas as pd
@@ -750,9 +751,15 @@ def wallet_balances():
             print(api_key, api_secret)
 
         # Fetch wallet balances based on the selected exchange
-        balances = get_wallet_balances(api_key, api_secret, exchange_name)
+        balances = fetch_balances_async(api_key, api_secret, exchange_name)
 
         # Render the template with the fetched balances
         return render_template("wallet_balances.html", exchanges=exchanges, exchange=exchange_name, balances=balances)
 
     return render_template("wallet_balances.html", exchanges=exchanges, exchange=None, balances=None)   
+
+
+def fetch_balances_async(api_key, api_secret, exchange_name):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    return loop.run_until_complete(get_wallet_balances(api_key, api_secret, exchange_name))
