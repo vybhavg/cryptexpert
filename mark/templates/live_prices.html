@@ -31,7 +31,7 @@
         display: inline-block;
     }
     .price-selection input:checked + label {
-        background: #f39c12;
+        background: #f8bc04;
         color: black;
         transform: scale(1.05);
         box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
@@ -100,9 +100,9 @@
  {% block content %} 
 
 <div class="container">
-    <h1 style="color:white;font-size:20px;">Live Crypto Prices</h1>
+    <h1 style="color:white;font-size:20px;">Live Crypto Prices</h1><br><br>
     <div class="select-container">
-        <div class="price-selection">
+        <div class="price-selection" style="font-size:14px;">
             <input type="radio" id="binance" name="price-source" value="binance" checked>
             <label for="binance">Binance</label>
             <input type="radio" id="okx" name="price-source" value="okx">
@@ -113,7 +113,7 @@
     </div>
     
     <table id="prices-table">
-        <thead>
+        <thead style="font-size:15px;">
             <tr>
                 <th>Symbol</th>
                 <th>Price (USD)</th>
