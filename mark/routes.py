@@ -176,15 +176,19 @@ def get_specific_prices_from_okx():
                     ticker = data['data'][0]
                     price = f"{float(ticker['last']):,.2f}"  # Extract the last price
                     
-                    # Try to get the price change percentage using the correct field
-                    price_change_percent = "N/A"
-                    if 'change24h' in ticker:
-                        price_change_percent = f"{float(ticker['change24h']) * 100:.2f}"  # 24h change percentage
+                    # Get the price change percentage, but ensure we handle invalid data correctly
+                    price_change_percent = ticker.get('change24h', "N/A")
                     
+                    # If 'price_change_percent' is 'N/A' or not a number, set it to 0.0
+                    try:
+                        price_change_percent = float(price_change_percent) * 100 if price_change_percent != "N/A" else 0.0
+                    except ValueError:
+                        price_change_percent = 0.0  # Fallback in case of invalid value
+
                     prices.append({
                         'symbol': symbol.replace("-USDT", ""),  # Remove "-USDT" for consistency
                         'price': price,
-                        'priceChangePercent': price_change_percent
+                        'priceChangePercent': f"{price_change_percent:.2f}"
                     })
                 else:
                     print(f"Error: Data not found for {symbol}")
