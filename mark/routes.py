@@ -589,7 +589,7 @@ def ai_predictor():
         future_plot = plot_to_html(fig3)
 
         return render_template(
-            "ai_price_predictor.html",
+            "todos.html",
             stock=stock,
             candlestick_json=candlestick_json,
             predicted_plot=predicted_plot,
@@ -597,7 +597,8 @@ def ai_predictor():
             enumerate=enumerate,
             future_predictions=future_predictions
         )
-
+ return render_template(
+            "ai_price_predictor.html")
 
 @app.route('/search')
 def search():
