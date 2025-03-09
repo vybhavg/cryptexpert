@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Crypto Prices</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+        }
+        .select-container {
+            margin-bottom: 20px;
+        }
+        .price-selection input {
+            display: none;
+        }
+        .price-selection label {
+            background: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: 0.3s;
+        }
+        .price-selection input:checked + label {
+            background: #f39c12;
+            color: black;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #444;
+        }
+        th {
+            background: #f39c12;
+            color: black;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Live Crypto Prices</h2>
+    <div class="select-container">
+        <div class="price-selection">
+            <input type="radio" id="binance" name="price-source" value="binance" checked>
+            <label for="binance">Binance</label>
+            <input type="radio" id="okx" name="price-source" value="okx">
+            <label for="okx">OKX</label>
+            <input type="radio" id="coinbase" name="price-source" value="coinbase">
+            <label for="coinbase">CoinBase</label>
+        </div>
+    </div>
+    
+    <table id="prices-table">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Price (USD)</th>
+                <th>24h Change (%)</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            {% for ticker in binance_prices %}
+            <tr class="binance-row">
+                <td>{{ ticker.symbol[:-4] }}</td>
+                <td>${{ ticker.price }}</td>
+                <td class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            
+            {% for ticker in okx_prices %}
+            <tr class="okx-row" style="display:none;">
+                <td>{{ ticker.symbol }}</td>
+                <td>${{ ticker.price }}</td>
+                <td class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            
+            {% for ticker in coinbase_prices %}
+            <tr class="coinbase-row" style="display:none;">
+                <td>{{ ticker.symbol }}</td>
+                <td>${{ ticker.price }}</td>
+                <td class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+    
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const binanceRadio = document.getElementById("binance");
+        const okxRadio = document.getElementById("okx");
+        const coinbaseRadio = document.getElementById("coinbase");
+
+        // Function to update displayed tickers
+        function toggleTickers() {
+            document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
+                row.style.display = "none";
+            });
+
+            if (binanceRadio.checked) {
+                document.querySelectorAll(".binance-row").forEach(row => row.style.display = "table-row");
+            } else if (okxRadio.checked) {
+                document.querySelectorAll(".okx-row").forEach(row => row.style.display = "table-row");
+            } else if (coinbaseRadio.checked) {
+                document.querySelectorAll(".coinbase-row").forEach(row => row.style.display = "table-row");
+            }
+        }
+
+        // Set initial display
+        toggleTickers();
+
+        // Add event listeners to radio buttons
+        binanceRadio.addEventListener("change", toggleTickers);
+        okxRadio.addEventListener("change", toggleTickers);
+        coinbaseRadio.addEventListener("change", toggleTickers);
+
+        async function fetchPrices() {
+            try {
+                const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
+                    fetch('/binance_prices'),
+                    fetch('/okx_prices'),
+                    fetch('/coinbase_prices')
+                ]);
+
+                const binancePrices = await binanceResponse.json();
+                const okxPrices = await okxResponse.json();
+                const coinbasePrices = await coinbaseResponse.json();
+
+                updateTable("binance", binancePrices);
+                updateTable("okx", okxPrices);
+                updateTable("coinbase", coinbasePrices);
+            } catch (error) {
+                console.error('Error fetching prices:', error);
+            }
+        }
+
+        function updateTable(exchange, prices) {
+            document.querySelectorAll(`.${exchange}-row`).forEach(row => row.remove());
+
+            prices.forEach(ticker => {
+                const row = document.createElement("tr");
+                row.classList.add(`${exchange}-row`);
+                if (exchange !== "binance") row.style.display = "none";
+
+                row.innerHTML = `
+                    <td>${ticker.symbol}</td>
+                    <td>$${ticker.price}</td>
+                    <td class="percentage-change">
+                        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
+                            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
+                        </span>
+                    </td>
+                `;
+
+                document.getElementById("table-body").appendChild(row);
+            });
+        }
+
+        // Call the function once when the page is loaded
+        fetchPrices();
+        setInterval(fetchPrices, 10000);
+    });
+</script>
+</body>
+
+</html>
