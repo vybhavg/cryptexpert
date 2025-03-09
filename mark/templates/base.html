@@ -1,72 +1,573 @@
 <!DOCTYPE html>
 <html lang="en">
+    
+<!--Designed By ALpha-->
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-</head>
-<body class="bg-dark text-white">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-      
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{url_for('link')}}">Link</a>
-            </li>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>CryptExpert</title>
+        <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 
-            {% if current_user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link" >Welcome {{current_user.username}}</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{url_for('logout_page')}}">Log out</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="{{url_for('register_form')}}">register</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{url_for('login_form')}}">Log in</a>
-            </li>
-            {%endif%}
-            <li class="nav-item">
-              <a class="nav-link" href="{{url_for('otp_form')}}">OTP</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Dropdown
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Something else here</a>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link disabled" href="#">Disabled</a>
-            </li>
-          </ul>
-          <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-          </form>
+        <!-- Vendor styles -->
+           <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css'>
+           <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+           <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;display=swap" rel="stylesheet"/>
+           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+        <link rel="stylesheet" href="/static/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css">
+        <link rel="stylesheet" href="/static/vendors/bower_components/animate.css/animate.min.css">
+        <link rel="stylesheet" href="/static/vendors/bower_components/jquery.scrollbar/jquery.scrollbar.css">
+        <link rel="stylesheet" href="/static/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+        <!-- App styles -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Sriracha&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/static/css/app.min.css">
+        <style>
+{% block head %}{% endblock %}
+</style>
+    </head>
+
+    <body data-sa-theme="1">
+        <main class="main">
+            <div class="page-loader">
+                <div class="page-loader__spinner">
+                    <svg viewBox="25 25 50 50">
+                        <circle cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+                    </svg>
+                </div>
+            </div>
+
+            <header class="header">
+                <div class="navigation-trigger" data-sa-action="aside-open" data-sa-target=".sidebar">
+                    <i class="zmdi zmdi-menu"></i>
+                </div>
+
+                <div class="logo hidden-sm-down">
+                    <a href="index-2.html" class="welcome-text2">
+                        <span class="crypto">Crypt</span><span class="expert">Expert</span>                    
+                    </a>
+                </div>
+
+                <form class="search">
+                    <div class="search__inner">
+                        <input type="text" class="search__text" placeholder="Search for Crypto, Exchanges, Wallets...">
+                        <i class="zmdi zmdi-search search__helper" data-sa-action="search-close"></i>
+                    </div>
+                </form>
+
+                <ul class="top-nav">
+                    <li class="hidden-xl-up"><a href="#" data-sa-action="search-open"><i class="zmdi zmdi-search"></i></a></li>
+
+                    <li class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="top-nav__notify"><i class="zmdi zmdi-email"></i></a>
+                        <div class="dropdown-menu dropdown-menu-right dropdown-menu--block">
+                            <div class="dropdown-header">
+                                Messages
+
+                                <div class="actions">
+                                    <a href="messages.html" class="actions__item zmdi zmdi-plus"></a>
+                                </div>
+                            </div>
+
+                            <div class="listview listview--hover">
+                                <a href="#" class="listview__item">
+                                    <img src="/static/demo/img/profile-pics/1.jpg" class="listview__img" alt="">
+
+                                    <div class="listview__content">
+                                        <div class="listview__heading">
+                                            David Belle <small>12:01 PM</small>
+                                        </div>
+                                        <p>Cum sociis natoque penatibus et magnis dis parturient montes</p>
+                                    </div>
+                                </a>
+
+                                <a href="#" class="listview__item">
+                                    <img src="/static/demo/img/profile-pics/2.jpg" class="listview__img" alt="">
+
+                                    <div class="listview__content">
+                                        <div class="listview__heading">
+                                            Jonathan Morris
+                                            <small>02:45 PM</small>
+                                        </div>
+                                        <p>Nunc quis diam diamurabitur at dolor elementum, dictum turpis vel</p>
+                                    </div>
+                                </a>
+
+                                <a href="#" class="listview__item">
+                                    <img src="/static/demo/img/profile-pics/3.jpg" class="listview__img" alt="">
+
+                                    <div class="listview__content">
+                                        <div class="listview__heading">
+                                            Fredric Mitchell Jr.
+                                            <small>08:21 PM</small>
+                                        </div>
+                                        <p>Phasellus a ante et est ornare accumsan at vel magnauis blandit turpis at augue ultricies</p>
+                                    </div>
+                                </a>
+
+                                <a href="#" class="listview__item">
+                                    <img src="/static/demo/img/profile-pics/4.jpg" class="listview__img" alt="">
+
+                                    <div class="listview__content">
+                                        <div class="listview__heading">
+                                            Glenn Jecobs
+                                            <small>08:43 PM</small>
+                                        </div>
+                                        <p>Ut vitae lacus sem ellentesque maximus, nunc sit amet varius dignissim, dui est consectetur neque</p>
+                                    </div>
+                                </a>
+
+                                <a href="#" class="listview__item">
+                                    <img src="/static/demo/img/profile-pics/5.jpg" class="listview__img" alt="">
+
+                                    <div class="listview__content">
+                                        <div class="listview__heading">
+                                            Bill Phillips
+                                            <small>11:32 PM</small>
+                                        </div>
+                                        <p>Proin laoreet commodo eros id faucibus. Donec ligula quam, imperdiet vel ante placerat</p>
+                                    </div>
+                                </a>
+
+                                <a href="#" class="view-more">View all messages</a>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="dropdown top-nav__notifications">
+                        <a href="#" data-toggle="dropdown" class="top-nav__notify">
+                            <i class="zmdi zmdi-notifications"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right dropdown-menu--block">
+                            <div class="dropdown-header">
+                                Notifications
+
+                                <div class="actions">
+                                    <a href="#" class="actions__item zmdi zmdi-check-all" data-sa-action="notifications-clear"></a>
+                                </div>
+                            </div>
+
+                            <div class="listview listview--hover">
+                                <div class="listview__scroll scrollbar-inner">
+                                    <a href="#" class="listview__item">
+                                        <img src="/static/demo/img/profile-pics/1.jpg" class="listview__img" alt="">
+
+                                        <div class="listview__content">
+                                            <div class="listview__heading">David Belle</div>
+                                            <p>Cum sociis natoque penatibus et magnis dis parturient montes</p>
+                                        </div>
+                                    </a>
+
+                                    <a href="#" class="listview__item">
+                                        <img src="/static/demo/img/profile-pics/2.jpg" class="listview__img" alt="">
+
+                                        <div class="listview__content">
+                                            <div class="listview__heading">Jonathan Morris</div>
+                                            <p>Nunc quis diam diamurabitur at dolor elementum, dictum turpis vel</p>
+                                        </div>
+                                    </a>
+
+                                    <a href="#" class="listview__item">
+                                        <img src="/static/demo/img/profile-pics/3.jpg" class="listview__img" alt="">
+
+                                        <div class="listview__content">
+                                            <div class="listview__heading">Fredric Mitchell Jr.</div>
+                                            <p>Phasellus a ante et est ornare accumsan at vel magnauis blandit turpis at augue ultricies</p>
+                                        </div>
+                                    </a>
+
+                                    <a href="#" class="listview__item">
+                                        <img src="/static/demo/img/profile-pics/4.jpg" class="listview__img" alt="">
+
+                                        <div class="listview__content">
+                                            <div class="listview__heading">Glenn Jecobs</div>
+                                            <p>Ut vitae lacus sem ellentesque maximus, nunc sit amet varius dignissim, dui est consectetur neque</p>
+                                        </div>
+                                    </a>
+
+                                    <a href="#" class="listview__item">
+                                        <img src="/static/demo/img/profile-pics/5.jpg" class="listview__img" alt="">
+
+                                        <div class="listview__content">
+                                            <div class="listview__heading">Bill Phillips</div>
+                                            <p>Proin laoreet commodo eros id faucibus. Donec ligula quam, imperdiet vel ante placerat</p>
+                                        </div>
+                                    </a>
+
+                                    <a href="#" class="listview__item">
+                                        <img src="/static/demo/img/profile-pics/1.jpg" class="listview__img" alt="">
+
+                                        <div class="listview__content">
+                                            <div class="listview__heading">David Belle</div>
+                                            <p>Cum sociis natoque penatibus et magnis dis parturient montes</p>
+                                        </div>
+                                    </a>
+
+                                    <a href="#" class="listview__item">
+                                        <img src="/static/demo/img/profile-pics/2.jpg" class="listview__img" alt="">
+
+                                        <div class="listview__content">
+                                            <div class="listview__heading">Jonathan Morris</div>
+                                            <p>Nunc quis diam diamurabitur at dolor elementum, dictum turpis vel</p>
+                                        </div>
+                                    </a>
+
+                                    <a href="#" class="listview__item">
+                                        <img src="/static/demo/img/profile-pics/3.jpg" class="listview__img" alt="">
+
+                                        <div class="listview__content">
+                                            <div class="listview__heading">Fredric Mitchell Jr.</div>
+                                            <p>Phasellus a ante et est ornare accumsan at vel magnauis blandit turpis at augue ultricies</p>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <div class="p-1"></div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="dropdown hidden-xs-down">
+                        <a href="#" data-toggle="dropdown"><i class="zmdi zmdi-check-circle"></i></a>
+
+                        <div class="dropdown-menu dropdown-menu-right dropdown-menu--block" role="menu">
+                            <div class="dropdown-header">Tasks</div>
+
+                            <div class="listview listview--hover">
+                                <a href="#" class="listview__item">
+                                    <div class="listview__content">
+                                        <div class="listview__heading">HTML5 Validation Report</div>
+
+                                        <div class="progress mt-1">
+                                            <div class="progress-bar bg-primary" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <a href="#" class="listview__item">
+                                    <div class="listview__content">
+                                        <div class="listview__heading">Google Chrome Extension</div>
+
+                                        <div class="progress mt-1">
+                                            <div class="progress-bar bg-warning" style="width: 43%" aria-valuenow="43" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <a href="#" class="listview__item">
+                                    <div class="listview__content">
+                                        <div class="listview__heading">Social Intranet Projects</div>
+
+                                        <div class="progress mt-1">
+                                            <div class="progress-bar bg-success" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <a href="#" class="listview__item">
+                                    <div class="listview__content">
+                                        <div class="listview__heading">Bootstrap Admin Template</div>
+
+                                        <div class="progress mt-1">
+                                            <div class="progress-bar bg-info" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <a href="#" class="listview__item">
+                                    <div class="listview__content">
+                                        <div class="listview__heading">Youtube Client App</div>
+
+                                        <div class="progress mt-1">
+                                            <div class="progress-bar bg-danger" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <a href="#" class="view-more">View all Tasks</a>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="dropdown hidden-xs-down">
+                        <a href="#" data-toggle="dropdown"><i class="zmdi zmdi-apps"></i></a>
+
+                        <div class="dropdown-menu dropdown-menu-right dropdown-menu--block" role="menu">
+                            <div class="row app-shortcuts">
+                                <a class="col-4 app-shortcuts__item" href="#">
+                                    <i class="zmdi zmdi-calendar"></i>
+                                    <small class="">Calendar</small>
+                                </a>
+                                <a class="col-4 app-shortcuts__item" href="#">
+                                    <i class="zmdi zmdi-file-text"></i>
+                                    <small class="">Files</small>
+                                </a>
+                                <a class="col-4 app-shortcuts__item" href="#">
+                                    <i class="zmdi zmdi-email"></i>
+                                    <small class="">Email</small>
+                                </a>
+                                <a class="col-4 app-shortcuts__item" href="#">
+                                    <i class="zmdi zmdi-trending-up"></i>
+                                    <small class="">Reports</small>
+                                </a>
+                                <a class="col-4 app-shortcuts__item" href="#">
+                                    <i class="zmdi zmdi-view-headline"></i>
+                                    <small class="">News</small>
+                                </a>
+                                <a class="col-4 app-shortcuts__item" href="#">
+                                    <i class="zmdi zmdi-image"></i>
+                                    <small class="">Gallery</small>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="dropdown hidden-xs-down">
+                        <a href="#" data-toggle="dropdown"><i class="zmdi zmdi-more-vert"></i></a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <div class="dropdown-item theme-switch">
+                                Theme Switch
+
+                                <div class="btn-group btn-group--colors mt-2 d-block" data-toggle="buttons">
+                                    <label class="btn active border-0" style="background-color: #772036; color: goldenrod;"><input type="radio" value="1" autocomplete="off" checked></label>
+                                    <label class="btn border-0" style="background-color: #273C5B; color: goldenrod;"><input type="radio" value="2" autocomplete="off"></label>
+                                    <label class="btn border-0" style="background-color: #174042; color: goldenrod;"><input type="radio" value="3" autocomplete="off"></label>
+                                    <label class="btn border-0" style="background-color: #fff; color: goldenrod; "><input type="radio" value="4" autocomplete="off"></label>
+                                    <label class="btn border-0" style="background-color: #49423F; color: goldenrod;"><input type="radio" value="5" autocomplete="off"></label>
+
+                                    <br>
+
+                                    <label class="btn border-0" style="background-color: #5e3d22; color: goldenrod;"><input type="radio" value="6" autocomplete="off"></label>
+                                    <label class="btn border-0" style="background-color: #234d6d; color: goldenrod;"><input type="radio" value="7" autocomplete="off"></label>
+                                    <label class="btn border-0" style="background-color: #3b5e5e; color: goldenrod;"><input type="radio" value="8" autocomplete="off"></label>
+                                    <label class="btn border-0" style="background-color: #0a4c3e; color: goldenrod;"><input type="radio" value="9" autocomplete="off"></label>
+                                    <label class="btn border-0" style="background-color: #7b3d54; color: goldenrod;"><input type="radio" value="10" autocomplete="off"></label>
+                                </div>
+                            </div>
+                            <a href="#" class="dropdown-item" data-sa-action="fullscreen">Fullscreen</a>
+                            <a href="#" class="dropdown-item">Clear Local Storage</a>
+                        </div>
+                    </li>
+
+                    <li class="dropdown hidden-xs-down">
+                        <a href="#" data-toggle="dropdown">
+                            <img class="user__img" src="static/demo/img/profile-pics/8.jpg" style="margin-left: 8px;" alt="">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right dropdown-menu--block" role="menu">
+                            <div class="row app-shortcuts">
+                                <a class="col-4 app-shortcuts__item" href="#">
+                                    <i class="zmdi zmdi-account-circle"></i>
+                                    <small>View Profile</small>
+                                </a>
+                                <a class="col-4 app-shortcuts__item" href="#">
+                                    <i class="zmdi zmdi-settings"></i>
+                                    <small>Settings</small>
+                                </a>
+                                <a class="col-4 app-shortcuts__item" href="{{url_for('logout_page')}}">
+                                    <i class="zmdi zmdi-power"></i>
+                                    <small>Log Out</small>
+                                </a>
+                                
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="clock hidden-md-down">
+                    <div class="time">
+                        <span class="hours"></span>
+                        <span class="min"></span>
+                        <span class="sec"></span>
+                    </div>
+                </div>
+
+                
+                
+            </header>
+
+            <aside class="sidebar">
+                <div class="scrollbar-inner">
+
+                    <div class="user">
+                        <div class="user__info" data-toggle="dropdown">
+                            <img class="user__img" src="static/demo/img/profile-pics/8.jpg" alt="">
+                            <div>
+                                <div class="user__name">{{name}}</div>
+                                <div class="user__email">{{email}}</div>
+                            </div>
+                        </div>
+
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">View Profile</a>
+                            <a class="dropdown-item" href="#">Settings</a>
+                            <a class="dropdown-item" href="{{url_for('logout_page')}}">Logout</a>
+                        </div>
+                    </div>
+
+                    <ul class="navigation">
+                        <li class="navigation__active"><a href="index-2.html"><i class="zmdi zmdi-home"></i> Home</a></li>
+
+                        <li class="navigation__sub @@variantsactive">
+                            <a href="#"><i class="zmdi zmdi-view-week"></i> Wallets</a>
+                        </li>
+
+                        <li class="@@typeactive"><a href="typography.html"><i class="zmdi zmdi-format-underlined"></i> Live Prices</a></li>
+
+                        <li class="@@widgetactive"><a href="widgets.html"><i class="zmdi zmdi-widgets"></i> Price Predictor AI</a></li>
+
+                    </ul>
+                </div>
+            </aside>
+          
+ <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+{% block content %}
+            
+{% endblock %}
+        <div class="container mx-auto p-8 bg-gray-900">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Logo and Social Media -->
+                <div>
+                    <div class="flex items-center mb-6">
+                        <img alt="Logo" class="w-16 h-16 mr-4" height="64" src="https://storage.googleapis.com/a1aa/image/_2ZnesKffljB9iDV0dqzTs-Eb58-AEe5Y2BcgdpLd-Q.jpg" width="64"/>
+                        <h1 class="text-3xl font-bold text-[#f8bc04]">DeFi X</h1>
+                    </div>
+                    <p class="mb-6 text-lg text-[#f8bc04]">Lorem ipsum dolor sit amet consectetur adipiscing elit am dolor sit.</p>
+                    <div class="flex space-x-6 text-2xl">
+                        <a class="text-gray-400 hover:text-[#f8bc04]" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="text-gray-400 hover:text-[#f8bc04]" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="text-gray-400 hover:text-[#f8bc04]" href="#"><i class="fab fa-instagram"></i></a>
+                        <a class="text-gray-400 hover:text-[#f8bc04]" href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="text-gray-400 hover:text-[#f8bc04]" href="#"><i class="fab fa-youtube"></i></a>
+                        <a class="text-gray-400 hover:text-[#f8bc04]" href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <!-- Menu -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-6 text-[#f8bc04]">Menu</h2>
+                    <ul class="space-y-3 text-lg">
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Sales Home</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Home</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">About</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Blog</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Blog Post</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Integrations</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Integrations Single</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Pricing</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Single Pricing</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <!-- Utility Pages -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-6 text-[#f8bc04]">Utility Pages</h2>
+                    <ul class="space-y-3 text-lg">
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Start Here</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Styleguide</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Password Protected</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">404 Not Found</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Licenses</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04]" href="#">Changelog</a></li>
+                        <li><a class="text-gray-400 hover:text-[#f8bc04] underline" href="#">More Webflow Templates</a></li>
+                    </ul>
+                </div>
+                <!-- Newsletter -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-6 text-[#f8bc04]">Subscribe to our newsletter</h2>
+                    <p class="mb-6 text-lg text-[#f8bc04]">Lorem ipsum dolor sit amet consectetur adipiscing elit am dolor sit.</p>
+                    <div class="flex mb-6">
+                        <input class="p-3 rounded-l bg-gray-800 text-gray-400 focus:outline-none" placeholder="Enter your email" type="email"/>
+                        <button class="p-3 bg-[#f8bc04] text-black rounded-r">Subscribe</button>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded flex items-center">
+                        <img alt="Webflow Templates" class="w-16 h-16 mr-4" height="64" src="https://storage.googleapis.com/a1aa/image/sU4Y6bOGlkH-Wu2IHddG5BVzt9_giahlKT0sJzOe6PU.jpg" width="64"/>
+                        <div>
+                            <p class="text-lg text-[#f8bc04]">Explore our collection of 200+ <a class="text-blue-400 underline" href="#">Premium Webflow Templates</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </nav>
-      {% block content %}
-      
-      {%endblock%}
-</body>
+    
+        <!-- Older IE warning message -->
+            <!--[if IE]>
+                <div class="ie-warning">
+                    <h1>Warning!!</h1>
+                    <p>You are using an outdated version of Internet Explorer, please upgrade to any of the following web browsers to access this website.</p>
+
+                    <div class="ie-warning__downloads">
+                        <a href="http://www.google.com/chrome">
+                            <img src="img/browsers/chrome.png" alt="">
+                        </a>
+
+                        <a href="https://www.mozilla.org/en-US/firefox/new">
+                            <img src="img/browsers/firefox.png" alt="">
+                        </a>
+
+                        <a href="http://www.opera.com">
+                            <img src="img/browsers/opera.png" alt="">
+                        </a>
+
+                        <a href="https://support.apple.com/downloads/safari">
+                            <img src="img/browsers/safari.png" alt="">
+                        </a>
+
+                        <a href="https://www.microsoft.com/en-us/windows/microsoft-edge">
+                            <img src="img/browsers/edge.png" alt="">
+                        </a>
+
+                        <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
+                            <img src="img/browsers/ie.png" alt="">
+                        </a>
+                    </div>
+                    <p>Sorry for the inconvenience!</p>
+                </div>
+            <![endif]-->
+
+        <!-- Javascript -->
+        <!-- Vendors -->
+        <script src="/static/vendors/bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="/static/vendors/bower_components/popper.js/dist/umd/popper.min.js"></script>
+        <script src="/static/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="/static/vendors/bower_components/jquery.scrollbar/jquery.scrollbar.min.js"></script>
+        <script src="/static/vendors/bower_components/jquery-scrollLock/jquery-scrollLock.min.js"></script>
+
+     
+
+        <!-- App functions and actions -->
+        <script>
+            // Get the navigation trigger and sidebar elements
+            const navTrigger = document.querySelector('.navigation-trigger');
+            const sidebar = document.querySelector('.sidebar');
+        
+            // Add click event listener to the navigation trigger
+            navTrigger.addEventListener('click', function() {
+                sidebar.classList.toggle('toggled'); // Toggle the 'toggled' class on the sidebar
+            });
+        </script>
+        <script src="/static/js/app.min.js"></script>
+
+ 
+
+    </body>
+
+<!--Designed By ALpha-->
 </html>
