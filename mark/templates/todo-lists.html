@@ -3,7 +3,7 @@
 <h1 class="text-center">Cryptocurrency (Bitcoin) Price Predictor</h1>
 
 <!-- Prediction Form -->
-<form method="post" action="/crypto_analysis" class="mt-4">
+<form id="prediction-form" method="post" action="/crypto_analysis" class="mt-4">
     <div class="mb-3">
         <label for="stock" class="form-label">Stock Ticker</label>
         <input type="text" class="form-control" id="stock" name="stock" placeholder="e.g., BTC-USD" required>
@@ -14,6 +14,14 @@
     </div>
     <button type="submit" class="btn btn-primary">Predict</button>
 </form>
+
+<!-- Loading Spinner (Initially Hidden) -->
+<div id="loading-spinner" class="text-center mt-4" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Predicting prices... Please wait.</p>
+</div>
 
 {% if stock %}
     <h2 class="text-center mt-5">Results for {{ stock }}</h2>
@@ -67,4 +75,13 @@
         });
     </script>
 {% endif %}
+
+<!-- JavaScript to Show Loading Spinner -->
+<script>
+    document.getElementById("prediction-form").addEventListener("submit", function() {
+        document.getElementById("prediction-form").style.display = "none"; // Hide form
+        document.getElementById("loading-spinner").style.display = "block"; // Show spinner
+    });
+</script>
+
 {% endblock %}
