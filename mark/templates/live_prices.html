@@ -13,6 +13,7 @@
         border-radius: 10px;
         box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
         text-align: center; /* Center child elements */
+        
     }
     .select-container {
         margin-bottom: 20px;
@@ -99,7 +100,7 @@
  {% block content %} 
 
 <div class="container">
-    <h1>Live Crypto Prices</h1>
+    <h1 style="color:white;font-size:20px;">Live Crypto Prices</h1>
     <div class="select-container">
         <div class="price-selection">
             <input type="radio" id="binance" name="price-source" value="binance" checked>
@@ -119,7 +120,7 @@
                 <th>24h Change (%)</th>
             </tr>
         </thead>
-        <tbody id="table-body">
+        <tbody id="table-body"style="color:white;font-size:14px;">
             {% for ticker in binance_prices %}
 <tr class="binance-row">
 <td>{{ ticker.symbol[:-4]}}</td>
