@@ -496,7 +496,7 @@ def get_historical_klines(symbol, interval, start_str, end_str=None):
     return all_data
 
 
-@app.route("/crypto_analysis", methods=["GET", "POST"])
+@app.route("/AI_Predictor", methods=["GET", "POST"])
 def crypto_analysis():
     if request.method == "POST":
         stock = request.form.get("stock", "BTCUSDT")
@@ -589,7 +589,7 @@ def crypto_analysis():
         future_plot = plot_to_html(fig3)
 
         return render_template(
-            "todos.html",
+            "ai_price_predictor.html",
             stock=stock,
             candlestick_json=candlestick_json,
             predicted_plot=predicted_plot,
