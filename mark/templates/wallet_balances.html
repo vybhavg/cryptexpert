@@ -26,6 +26,10 @@
 
             {% if balances %}
                 <h3 class="mt-4">Balances for {{ exchange }}</h3>
+                    {% if total_balance_usd %}
+                        <h3 class="mt-4">Total Balance: {{ total_balance_usd }}</h3>
+                    {% endif %}
+            
                 <table class="table table-bordered mt-3">
                     <thead class="table-dark">
                         <tr>
