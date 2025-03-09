@@ -606,7 +606,7 @@ def ai_predictor():
         future_plot = plot_to_html(fig3)
 
         return render_template(
-            "todos.html",
+            "ai_price_predictor.html",
             stock=stock,
             candlestick_json=candlestick_json,
             predicted_plot=predicted_plot,
