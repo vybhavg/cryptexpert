@@ -496,7 +496,7 @@ def get_historical_klines(symbol, interval, start_str, end_str=None):
     return all_data
 
 
-@app.route("/AI_Predictor", methods=["GET", "POST"])
+@app.route("/ai_predictor", methods=["GET", "POST"])
 def crypto_analysis():
     if request.method == "POST":
         stock = request.form.get("stock", "BTCUSDT")
