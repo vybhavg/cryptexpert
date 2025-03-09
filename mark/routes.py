@@ -597,7 +597,7 @@ def ai_predictor():
             enumerate=enumerate,
             future_predictions=future_predictions
         )
-        return render_template("ai_price_predictor.html")
+    return render_template("ai_price_predictor.html")
 
 @app.route('/search')
 def search():
