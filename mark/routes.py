@@ -151,64 +151,45 @@ def get_specific_prices_from_binance():
     return filtered_prices
 import requests
 
-def get_specific_prices_from_coinmarketcap():
-    # List of specific cryptocurrencies to display
-    specific_coins = ['BTC', 'ETH', 'XRP', 'BNB', 'SOL', 'USDC', 'ADA', 'DOGE', 'TRX', 'LINK', 'HBAR', 
-                      'XLM', 'AVAX', 'LEO', 'SUI', 'LTC', 'TON', 'SHIB', 'DOT', 'OM', 'BCH', 'HYPE', 'USDe', 
-                      'DAI', 'BGB', 'UNI', 'XMR', 'NEAR', 'APT', 'ONDO', 'PEPE', 'ICP', 'ETC', 'AAVE', 'TRUMP', 
-                      'OKB', 'TAO', 'MNT', 'VET', 'POL', 'ALGO', 'KAS', 'CRO', 'RENDER', 'FIL', 'FDUSD', 'TIA', 
-                      'JUP', 'GT', 'S', 'ARB', 'KNC', 'BAL', 'YFI', 'MK', 'SUSHI', 'ZRX', 'UMA', 'RARI', 'CVC', 
-                      'MITH', 'LOOM', 'GNO', 'GRT', '1INCH', 'DIA', 'LRC', 'STMX', 'PERL', 'REN', 'FET', 'DODO', 
-                      'MTA', 'HNT', 'FIL', 'RUNE', 'SAND', 'CELO', 'DASH']
-    
-    # CoinMarketCap DEX API endpoint
-    api_url = 'https://api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
-    
-    # Parameters for the request (change 'symbol' and 'convert' as needed)
-    params = {
-        'symbol': ','.join(specific_coins),  # List of symbols you want to get data for
-        'convert': 'USD',  # We want prices in USD
-        'limit': 100,  # Limit the number of results returned
-        'market_cap': 'true',  # Include market cap data
-    }
 
+def get_specific_prices_from_okx():
+    # List of specific cryptocurrency pairs (adjust as needed)
+    specific_coins = [
+        "BTC-USDT", "ETH-USDT", "USDT-USDT", "XRP-USDT", "SOL-USDT", "BNB-USDT",
+        "USDC-USDT", "DOGE-USDT", "ADA-USDT", "TRX-USDT", "LINK-USDT", "AVAX-USDT", 
+        "PEPE-USDT", "SUI-USDT", "TON-USDT", "HBAR-USDT", "BCH-USDT", "SHIB-USDT", 
+        "XMR-USDT", "DOT-USDT", "LTC-USDT"
+    ]
+    
     prices = []
-
+    
     try:
-        # Send GET request to the CoinMarketCap DEX API
-        response = requests.get(api_url, params=params)
-        response.raise_for_status()  # Check for errors in the response
+        for symbol in specific_coins:
+            # Make the API request to fetch price data from OKX
+            url = f"https://www.okx.com/api/v5/market/ticker?instId={symbol}"
+            response = requests.get(url)
 
-        # Parse the JSON data from the response
-        data = response.json()
-
-        # Check if 'data' is in the response (the structure may vary)
-        if 'data' in data:
-            for coin in data['data']:
-                symbol = coin['symbol']
-                if symbol in specific_coins:
-                    price = coin['quote']['USD']['price']
-                    price_change_percent = coin['quote']['USD']['percent_change_24h']
-
-                    # Format the price nicely
-                    formatted_price = f"${price:,.2f}" if price else "N/A"
-                    formatted_change = f"{price_change_percent:,.2f}%" if price_change_percent else "N/A"
-
-                    # Add to results list
+            if response.status_code == 200:
+                data = response.json()
+                if 'data' in data and len(data['data']) > 0:
+                    ticker = data['data'][0]
+                    price = f"{float(ticker['last']):,.2f}"  # Extract the last price
+                    price_change_percent = f"{float(ticker['changeRate']) * 100:.2f}"  # Change in percentage
+                    
                     prices.append({
-                        'symbol': symbol,
-                        'price': formatted_price,
-                        'priceChangePercent': formatted_change
+                        'symbol': symbol.replace("-USDT", ""),  # Remove "-USDT" for consistency
+                        'price': price,
+                        'priceChangePercent': price_change_percent
                     })
                 else:
-                    print(f"Warning: {symbol} data is not available.")
-        else:
-            print(f"Error: 'data' key not found in response: {data}")
+                    print(f"Error: Data not found for {symbol}")
+            else:
+                print(f"Error fetching {symbol}: {response.status_code}")
+                
+            print(f"Response for {symbol}: {response.json()}")
 
     except requests.exceptions.RequestException as e:
         print(f"Request error: {e}")
-    except KeyError as e:
-        print(f"Error processing the response: Missing key {e}")
 
     return prices
 
@@ -255,7 +236,7 @@ def get_specific_prices_from_coinbase():
 @app.route('/home')
 def home():
     binance_prices = get_specific_prices_from_binance()
-    coinmarketcap_prices = get_specific_prices_from_coinmarketcap()
+    coinmarketcap_prices = get_specific_prices_from_okx()
     coinbase_prices = get_specific_prices_from_coinbase()
 
     for ticker in binance_prices:
