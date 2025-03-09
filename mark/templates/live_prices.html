@@ -1,19 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Crypto Prices</title>
+{% extends "base.html" %}
+
+    {% block title %}Live Crypto Prices{% endblock %}
+ {% block head %} 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: white;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
+ {% block style %} 
+
         .container {
             max-width: 90%;
             margin: 20px auto;
@@ -87,9 +78,10 @@
                 font-size: 14px;
             }
         }
-    </style>
-</head>
-<body>
+{% endblock %}
+{% endblock %}
+ {% block content %} 
+
 <div class="container">
     <h2>Live Crypto Prices</h2>
     <div class="select-container">
@@ -236,7 +228,5 @@
         setInterval(fetchPrices, 10000);
     });
 </script>
+{% endblock %}
 
-
-</body>
-</html>
