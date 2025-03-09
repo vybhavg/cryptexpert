@@ -693,9 +693,11 @@ def get_wallet_balances(api_key, api_secret, exchange):
 
     return None
 
-# Function to get Binance balances (Fixed Async Handling)
+import asyncio
+from binance import AsyncClient
+
 async def get_binance_balances_async(api_key, api_secret):
-    """Fetches wallet balances from Binance asynchronously."""
+    """Fetches wallet balances from Binance asynchronously and calculates total balance in USD."""
     try:
         client = await AsyncClient.create(api_key, api_secret)  # Async client
         account_info = await client.get_account()
@@ -703,14 +705,26 @@ async def get_binance_balances_async(api_key, api_secret):
         # Extract non-zero balances
         balances = {asset["asset"]: float(asset["free"]) for asset in account_info["balances"] if float(asset["free"]) > 0}
 
-        # Fix: Properly close the client session
-        await client.session.close()  
+        # Fetch USD prices for all assets
+        total_balance_usd = 0.0
+        for asset, amount in balances.items():
+            symbol = f"{asset}USDT"
+            try:
+                price_info = await client.get_symbol_ticker(symbol=symbol)
+                asset_price = float(price_info["price"])
+                total_balance_usd += amount * asset_price
+            except:
+                continue  # Skip if price fetch fails (e.g., some tokens don't have direct USDT pairs)
 
-        return balances
+        # Fix: Properly close the client session
+        await client.close_connection()
+
+        return balances, total_balance_usd
 
     except Exception as e:
         print(f"Binance API Error: {e}")
-        return None
+        return None, 0.0
+
 
 # Function to get wallet balances from Coinbase
 def get_coinbase_balances(api_key, api_secret):
@@ -757,10 +771,10 @@ def wallet_balances():
             print(api_key, api_secret)
 
         # Fetch wallet balances based on the selected exchange
-        balances = get_wallet_balances(api_key, api_secret, exchange_name)
+        balances,total_balance_usd = get_wallet_balances(api_key, api_secret, exchange_name)
 
         # Render the template with the fetched balances
-        return render_template("wallet_balances.html", exchanges=exchanges, exchange=exchange_name, balances=balances)
+        return render_template("wallet_balances.html", exchanges=exchanges, exchange=exchange_name, balances=balances, total_balance_usd=total_balance_usd)
 
     return render_template("wallet_balances.html", exchanges=exchanges, exchange=None, balances=None)   
 
