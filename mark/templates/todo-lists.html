@@ -3,7 +3,7 @@
 <h1 class="text-center">Cryptocurrency (Bitcoin) Price Predictor</h1>
 
 <!-- Prediction Form -->
-<form method="post" action="/data_fetching" class="mt-4">
+<form method="post" action="/crypto_analysis" class="mt-4">
     <div class="mb-3">
         <label for="stock" class="form-label">Stock Ticker</label>
         <input type="text" class="form-control" id="stock" name="stock" placeholder="e.g., BTC-USD" required>
@@ -45,7 +45,7 @@
             </tbody>
         </table>
     {% endif %}
-    <a href="/data_fetching" class="btn btn-secondary mt-4">Back to Home</a>
+    <a href="/crypto_analysis" class="btn btn-secondary mt-4">Back to Home</a>
 
     <!-- TradingView Widget Script -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
