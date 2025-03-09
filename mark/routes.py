@@ -454,11 +454,15 @@ def setup_authenticator_qr():
 def charts():
     return render_template('charts.html')
 
+# Load the trained model
 model = load_model("/home/ec2-user/cryptexpert/mark/model.keras")
 
 # Initialize Binance Client (No API Key Required for Public Data)
 client = Client()
+
+
 def plot_to_html(fig):
+    """Convert Matplotlib figure to HTML image."""
     buf = io.BytesIO()
     fig.savefig(buf, format="png")
     buf.seek(0)
@@ -467,21 +471,13 @@ def plot_to_html(fig):
     return f"data:image/png;base64,{data}"
 
 
-@app.route("/data_fetching", methods=["GET", "POST"])
-def data_fetching():
-    if request.method == "POST":
-        stock = request.form.get("stock")
-        no_of_days = int(request.form.get("no_of_days"))
-        return redirect(url_for("predict", stock=stock, no_of_days=no_of_days))
-    return render_template("todo-lists.html")
-
 def get_historical_klines(symbol, interval, start_str, end_str=None):
+    """Fetch historical candlestick data from Binance API."""
     all_data = []
     start_ts = int(pd.to_datetime(start_str).timestamp() * 1000)
     end_ts = int(pd.to_datetime(end_str).timestamp() * 1000) if end_str else None
-    
+
     while True:
-        # Fetch 1000 candles per request
         new_klines = client.get_klines(
             symbol=symbol,
             interval=interval,
@@ -489,118 +485,120 @@ def get_historical_klines(symbol, interval, start_str, end_str=None):
             endTime=end_ts,
             limit=1000
         )
-        
+
         if not new_klines:
             break  # Stop when no more data is returned
 
         all_data.extend(new_klines)
-        
-        # Update start timestamp for the next batch
         start_ts = new_klines[-1][0] + 1  # Move to the next timestamp
-        
-        # Prevent exceeding Binance rate limits
-        time.sleep(0.5)  # Wait to avoid API bans
-    
+        time.sleep(0.5)  # Avoid exceeding Binance rate limits
+
     return all_data
-@app.route("/predict", methods=["GET", "POST"])
-def predict():
-    stock = request.args.get("stock", "BTCUSDT")  # Binance uses BTCUSDT instead of BTC-USD
-    no_of_days = int(request.args.get("no_of_days", 10))
 
-    # Fetch Historical Data from Binance
-    klines = get_historical_klines(symbol=stock, interval=Client.KLINE_INTERVAL_1DAY, start_str="2017-08-17")
 
-    # Convert to DataFrame
-    stock_data = pd.DataFrame(klines, columns=[
-        'Open Time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close Time',
-        'Quote Asset Volume', 'Number of Trades', 'Taker Buy Base Asset Volume',
-        'Taker Buy Quote Asset Volume', 'Ignore'
-    ])
-    stock_data['Close'] = stock_data['Close'].astype(float)
-    stock_data.index = pd.to_datetime(stock_data['Close Time'], unit='ms')
+@app.route("/crypto_analysis", methods=["GET", "POST"])
+def crypto_analysis():
+    if request.method == "POST":
+        stock = request.form.get("stock", "BTCUSDT")
+        no_of_days = int(request.form.get("no_of_days", 10))
 
-    if stock_data.empty:
-        return render_template("result.html", error="Invalid crypto pair or no data available.")
-    candlestick_data = stock_data[['Close Time', 'Open', 'High', 'Low', 'Close', 'Volume']].tail(200)
-    candlestick_json = candlestick_data.to_json(orient="records")
+        # Fetch Historical Data from Binance
+        klines = get_historical_klines(symbol=stock, interval=Client.KLINE_INTERVAL_1DAY, start_str="2017-08-17")
 
-    # Data Preparation
-    splitting_len = int(len(stock_data) * 0.9)
-    x_test = stock_data[['Close']][splitting_len:]
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    scaled_data = scaler.fit_transform(x_test)
+        # Convert to DataFrame
+        stock_data = pd.DataFrame(klines, columns=[
+            'Open Time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close Time',
+            'Quote Asset Volume', 'Number of Trades', 'Taker Buy Base Asset Volume',
+            'Taker Buy Quote Asset Volume', 'Ignore'
+        ])
+        stock_data['Close'] = stock_data['Close'].astype(float)
+        stock_data.index = pd.to_datetime(stock_data['Close Time'], unit='ms')
 
-    x_data = []
-    y_data = []
-    for i in range(100, len(scaled_data)):
-        x_data.append(scaled_data[i - 100:i])
-        y_data.append(scaled_data[i])
+        if stock_data.empty:
+            return render_template("result.html", error="Invalid crypto pair or no data available.")
 
-    x_data = np.array(x_data)
-    y_data = np.array(y_data)
+        # Prepare candlestick data for visualization
+        candlestick_data = stock_data[['Close Time', 'Open', 'High', 'Low', 'Close', 'Volume']].tail(200)
+        candlestick_json = candlestick_data.to_json(orient="records")
 
-    # Predictions
-    predictions = model.predict(x_data)
-    inv_predictions = scaler.inverse_transform(predictions)
-    inv_y_test = scaler.inverse_transform(y_data)
+        # Data Preparation for Prediction
+        splitting_len = int(len(stock_data) * 0.9)
+        x_test = stock_data[['Close']][splitting_len:]
 
-    # Prepare Data for Plotting
-    plotting_data = pd.DataFrame({
-        'Original Test Data': inv_y_test.flatten(),
-        'Predicted Test Data': inv_predictions.flatten()
-    }, index=x_test.index[100:])
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        scaled_data = scaler.fit_transform(x_test)
 
-    # Generate Plots
-    # Plot 1: Original Closing Prices
-    fig1 = plt.figure(figsize=(15, 6))
-    plt.plot(stock_data['Close'], 'b', label='Close Price')
-    plt.title("Closing Prices Over Time")
-    plt.xlabel("Date")
-    plt.ylabel("Close Price")
-    plt.legend()
-    original_plot = plot_to_html(fig1)
+        x_data, y_data = [], []
+        for i in range(100, len(scaled_data)):
+            x_data.append(scaled_data[i - 100:i])
+            y_data.append(scaled_data[i])
 
-    # Plot 2: Original vs Predicted Test Data
-    fig2 = plt.figure(figsize=(15, 6))
-    plt.plot(plotting_data['Original Test Data'], label="Original Test Data")
-    plt.plot(plotting_data['Predicted Test Data'], label="Predicted Test Data", linestyle="--")
-    plt.legend()
-    plt.title("Original vs Predicted Closing Prices")
-    plt.xlabel("Date")
-    plt.ylabel("Close Price")
-    predicted_plot = plot_to_html(fig2)
+        x_data, y_data = np.array(x_data), np.array(y_data)
 
-    # Plot 3: Future Predictions
-    last_100 = stock_data[['Close']].tail(100)
-    last_100_scaled = scaler.transform(last_100)
+        # Make Predictions
+        predictions = model.predict(x_data)
+        inv_predictions = scaler.inverse_transform(predictions)
+        inv_y_test = scaler.inverse_transform(y_data)
 
-    future_predictions = []
-    last_100_scaled = last_100_scaled.reshape(1, -1, 1)
-    for _ in range(no_of_days):
-        next_day = model.predict(last_100_scaled)
-        future_predictions.append(scaler.inverse_transform(next_day))
-        last_100_scaled = np.append(last_100_scaled[:, 1:, :], next_day.reshape(1, 1, -1), axis=1)
+        # Prepare Data for Plotting
+        plotting_data = pd.DataFrame({
+            'Original Test Data': inv_y_test.flatten(),
+            'Predicted Test Data': inv_predictions.flatten()
+        }, index=x_test.index[100:])
 
-    future_predictions = np.array(future_predictions).flatten()
+        # Generate Plots
+        # Plot 1: Original Closing Prices
+        fig1 = plt.figure(figsize=(15, 6))
+        plt.plot(stock_data['Close'], 'b', label='Close Price')
+        plt.title("Closing Prices Over Time")
+        plt.xlabel("Date")
+        plt.ylabel("Close Price")
+        plt.legend()
+        original_plot = plot_to_html(fig1)
 
-    fig3 = plt.figure(figsize=(15, 6))
-    plt.plot(range(1, no_of_days + 1), future_predictions, marker='o', label="Predicted Future Prices", color="purple")
-    plt.title("Future Close Price Predictions")
-    plt.xlabel("Days Ahead")
-    plt.ylabel("Predicted Close Price")
-    plt.grid(alpha=0.3)
-    plt.legend()
-    future_plot = plot_to_html(fig3)
+        # Plot 2: Original vs Predicted Test Data
+        fig2 = plt.figure(figsize=(15, 6))
+        plt.plot(plotting_data['Original Test Data'], label="Original Test Data")
+        plt.plot(plotting_data['Predicted Test Data'], label="Predicted Test Data", linestyle="--")
+        plt.legend()
+        plt.title("Original vs Predicted Closing Prices")
+        plt.xlabel("Date")
+        plt.ylabel("Close Price")
+        predicted_plot = plot_to_html(fig2)
 
-    return render_template(
-        "todos.html",
-        stock=stock,
-        candlestick_json=candlestick_json,
-        predicted_plot=predicted_plot,
-        future_plot=future_plot,
-        enumerate=enumerate,
-        future_predictions=future_predictions
-    )
+        # Plot 3: Future Predictions
+        last_100 = stock_data[['Close']].tail(100)
+        last_100_scaled = scaler.transform(last_100)
+
+        future_predictions = []
+        last_100_scaled = last_100_scaled.reshape(1, -1, 1)
+        for _ in range(no_of_days):
+            next_day = model.predict(last_100_scaled)
+            future_predictions.append(scaler.inverse_transform(next_day))
+            last_100_scaled = np.append(last_100_scaled[:, 1:, :], next_day.reshape(1, 1, -1), axis=1)
+
+        future_predictions = np.array(future_predictions).flatten()
+
+        fig3 = plt.figure(figsize=(15, 6))
+        plt.plot(range(1, no_of_days + 1), future_predictions, marker='o', label="Predicted Future Prices", color="purple")
+        plt.title("Future Close Price Predictions")
+        plt.xlabel("Days Ahead")
+        plt.ylabel("Predicted Close Price")
+        plt.grid(alpha=0.3)
+        plt.legend()
+        future_plot = plot_to_html(fig3)
+
+        return render_template(
+            "todos.html",
+            stock=stock,
+            candlestick_json=candlestick_json,
+            predicted_plot=predicted_plot,
+            future_plot=future_plot,
+            enumerate=enumerate,
+            future_predictions=future_predictions
+        )
+
+    return render_template("todo-lists.html")
 
 @app.route('/search')
 def search():
