@@ -156,11 +156,16 @@ import requests
 def get_specific_prices_from_okx():
     # List of specific cryptocurrency pairs (adjust as needed)
     specific_coins = [
-        "BTC-USDT", "ETH-USDT", "USDT-USDT", "XRP-USDT", "SOL-USDT", "BNB-USDT",
-        "USDC-USDT", "DOGE-USDT", "ADA-USDT", "TRX-USDT", "LINK-USDT", "AVAX-USDT", 
-        "PEPE-USDT", "SUI-USDT", "TON-USDT", "HBAR-USDT", "BCH-USDT", "SHIB-USDT", 
-        "XMR-USDT", "DOT-USDT", "LTC-USDT"
-    ]
+    'BTC-USDT', 'ETH-USDT', 'XRP-USDT', 'BNB-USDT', 'SOL-USDT', 'USDC-USDT', 'ADA-USDT', 'DOGE-USDT', 'TRX-USDT',
+    'LINK-USDT', 'HBAR-USDT', 'XLM-USDT', 'AVAX-USDT', 'LEO-USDT', 'SUI-USDT', 'LTC-USDT', 'TON-USDT', 'SHIB-USDT',
+    'DOT-USDT', 'OM-USDT', 'BCH-USDT', 'HYPE-USDT', 'USDe-USDT', 'DAI-USDT', 'BGB-USDT', 'UNI-USDT', 'XMR-USDT', 'NEAR-USDT',
+    'APT-USDT', 'ONDO-USDT', 'PEPE-USDT', 'ICP-USDT', 'ETC-USDT', 'AAVE-USDT', 'TRUMP-USDT', 'OKB-USDT', 'TAO-USDT',
+    'MNT-USDT', 'VET-USDT', 'POL-USDT', 'ALGO-USDT', 'KAS-USDT', 'CRO-USDT', 'RENDER-USDT', 'FIL-USDT', 'FDUSD-USDT',
+    'TIA-USDT', 'JUP-USDT', 'GT-USDT', 'SU-USDT', 'ARB-USDT', 'KNC-USDT', 'BAL-USDT', 'YFI-USDT', 'MK-USDT', 'SUSHI-USDT',
+    'ZRX-USDT', 'UMA-USDT', 'RARI-USDT', 'CVC-USDT', 'MITH-USDT', 'LOOM-USDT', 'GNO-USDT', 'GRT-USDT', '1INCH-USDT',
+    'DIA-USDT', 'LRC-USDT', 'STMX-USDT', 'PERL-USDT', 'REN-USDT', 'FET-USDT', 'DODO-USDT', 'MTA-USDT', 'HNT-USDT', 'FIL-USDT',
+    'RUNE-USDT', 'SAND-USDT', 'CELO-USDT', 'DASH-USDT'
+]
     
     prices = []
     
