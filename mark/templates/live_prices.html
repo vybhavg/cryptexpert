@@ -114,7 +114,7 @@
         <tbody id="table-body">
             {% for ticker in binance_prices %}
 <tr class="binance-row">
-<td>{{ ticker.symbol[:-4] if ticker.symbol.endswith('USDT') else ticker.symbol }}</td>
+<td>{{ ticker.symbol[:-4]}}</td>
     <td>${{ ticker.price }}</td>
     <td class="percentage-change">
         {% if ticker.priceChangePercent > 0 %}
