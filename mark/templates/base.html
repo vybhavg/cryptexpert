@@ -760,13 +760,14 @@ html {
      
 
         <!-- App functions and actions -->
-        <script>
+<script>
     // Get the navigation trigger and sidebar elements
     const navTrigger = document.querySelector('.navigation-trigger');
     const sidebar = document.querySelector('.sidebar');
 
     // Add click event listener to the navigation trigger
-    navTrigger.addEventListener('click', function() {
+    navTrigger.addEventListener('click', function(event) {
+        event.stopPropagation(); // Stop the event from propagating to the document
         sidebar.classList.toggle('toggled'); // Toggle the 'toggled' class on the sidebar
     });
 
