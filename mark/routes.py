@@ -370,8 +370,19 @@ def otp_form():
     session['email'] = email
     session['otp'] = otp
     try:
-        msg = Message('Your OTP', recipients=[email])
-        msg.body = f'Your OTP is {otp}'
+        msg = Message('Cryptexpert OTP Verification', recipients=[email])
+msg.body = f'''
+Dear Valued User,
+
+Your One-Time Password (OTP) for Cryptexpert authentication is: **{otp}**  
+This OTP is valid for a limited time. Please do not share it with anyone.
+
+If you did not request this OTP, please ignore this email.  
+
+Best regards,  
+**Cryptexpert Team**  
+Secure Your Crypto Investments with Confidence.
+'''
         mail.send(msg)
         flash("OTP sent successfully","success")
         return redirect(url_for('verify_form'))
@@ -440,10 +451,28 @@ def forgot_password():
             token = generate_reset_token(email)
             reset_url = url_for('reset_password', token=token, _external=True)
 
-            # Send email
-            msg = Message('Password Reset', recipients=[email])
-            msg.body = f'Click the link to reset your password: {reset_url}'
+            #Send email
+            msg = Message(
+                subject="Cryptexpert - Password Reset Request",
+                recipients=[email]
+            )
+            
+            msg.body = f"""
+            Dear {user.username},
+            
+            We received a request to reset the password for your Cryptexpert account.
+            To proceed, please click the link below:
+            
+            {reset_url}
+            
+            If you did not request this reset, please ignore this email. Your account security is important to us.
+            
+            Best regards,  
+            Cryptexpert Team  
+            """
+            
             mail.send(msg)
+
 
             flash('Password reset link has been sent to your email.', 'success')
             return redirect(url_for('login_form'))
