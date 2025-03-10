@@ -484,13 +484,13 @@ plt.style.use("dark_background")  # Apply dark mode
 sns.set_palette("coolwarm")       # Use a stylish color scheme
 
 def plot_to_html(fig):
-    """Convert Matplotlib figure to a responsive HTML image."""
+    """Convert Matplotlib figure to HTML image."""
     buf = io.BytesIO()
-    fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
+    fig.savefig(buf, format="png")
     buf.seek(0)
-    encoded = base64.b64encode(buf.getvalue()).decode("utf-8")
+    data = base64.b64encode(buf.getbuffer()).decode("ascii")
     buf.close()
-    return f'<img src="data:image/png;base64,{encoded}" class="img-fluid" style="max-width:100%;">'
+    return f"data:image/png;base64,{data}"
 
 
 
@@ -517,9 +517,6 @@ def get_historical_klines(symbol, interval, start_str, end_str=None):
         time.sleep(0.5)  # Avoid exceeding Binance rate limits
 
     return all_data
-import plotly.express as px
-import plotly.graph_objects as go
-
 @app.route("/ai_predictor", methods=["GET", "POST"])
 def ai_predictor():
     if request.method == "POST":
@@ -569,8 +566,9 @@ def ai_predictor():
             'Original Test Data': inv_y_test.flatten(),
             'Predicted Test Data': inv_predictions.flatten()
         }, index=x_test.index[100:])
+        plt.style.use('dark_background')
 
-# Generate Plots
+        # Generate Plots
         # Plot 1: Original Closing Prices
         fig1 = plt.figure(figsize=(15, 6))
         plt.plot(stock_data['Close'], 'b', label='Close Price')
@@ -579,8 +577,7 @@ def ai_predictor():
         plt.ylabel("Close Price")
         plt.legend()
         original_plot = plot_to_html(fig1)
-        
-   
+
         # Plot 2: Original vs Predicted Test Data
         fig2 = plt.figure(figsize=(15, 6))
         plt.plot(plotting_data['Original Test Data'], label="Original Test Data")
@@ -622,7 +619,7 @@ def ai_predictor():
             enumerate=enumerate,
             future_predictions=future_predictions
         )
-    return render_template("ai_price_predictor.html") 
+    return render_template("ai_price_predictor.html")
     
 @app.route('/search')
 def search():
