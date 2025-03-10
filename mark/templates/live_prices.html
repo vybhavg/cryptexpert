@@ -240,10 +240,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         prices.forEach(ticker => {
             let row = document.getElementById(`${exchange}-${ticker.symbol}`);
-            let displaySymbol = ticker.symbol.replace("USDT", ""); // Remove "USDT" from Binance
+            let displaySymbol = ticker.symbol.replace("USDT", ""); // Remove "USDT" from Binance symbols
 
             if (!row) {
-                // Create row if not exists
+                // Create new row if it doesn't exist
                 row = document.createElement("tr");
                 row.id = `${exchange}-${ticker.symbol}`;
                 row.classList.add(`${exchange}-row`);
@@ -257,21 +257,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 row.innerHTML = `
-                    <td><img src="${imageCache[ticker.symbol]}" alt="${displaySymbol}" width="20"> ${displaySymbol}</td>
-                    <td class="crypto-price">$${ticker.price}</td>
+                    <td>
+                        <img src="${imageCache[ticker.symbol]}" alt="${displaySymbol}" width="20"> ${displaySymbol}
+                    </td>
+                    <td class="crypto-price">$${parseFloat(ticker.price).toFixed(2)}</td>
                     <td class="percentage-change">
                         <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
-                            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
+                            ${ticker.priceChangePercent > 0 ? "+" : ""}${parseFloat(ticker.priceChangePercent).toFixed(2)}%
                         </span>
                     </td>
                 `;
 
                 tableBody.appendChild(row);
             } else {
-                // Update only price and percentage change
-                row.querySelector(".crypto-price").textContent = `$${ticker.price}`;
-                row.querySelector(".percentage-change span").textContent = `${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%`;
-                row.querySelector(".percentage-change span").className = ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral";
+                // **Update only price and percentage change without recreating row**
+                const priceCell = row.querySelector(".crypto-price");
+                const changeCell = row.querySelector(".percentage-change span");
+
+                priceCell.textContent = `$${parseFloat(ticker.price).toFixed(2)}`;
+                changeCell.textContent = `${ticker.priceChangePercent > 0 ? "+" : ""}${parseFloat(ticker.priceChangePercent).toFixed(2)}%`;
+
+                // Update class based on price movement
+                changeCell.className = ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral";
             }
         });
     }
