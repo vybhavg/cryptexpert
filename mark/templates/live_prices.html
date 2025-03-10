@@ -115,6 +115,7 @@
     <table id="prices-table">
         <thead style="font-size:15px;">
             <tr>
+                <th>Logo</th>
                 <th>Symbol</th>
                 <th>Price (USD)</th>
                 <th>24h Change (%)</th>
@@ -123,6 +124,7 @@
         <tbody id="table-body"style="color:white;font-size:14px;">
             {% for ticker in binance_prices %}
 <tr class="binance-row">
+<td><img src="{{ crypto_logos.get(ticker.symbol[:-4]) }}" alt="{{ symbol }} logo" width="30"></td>
 <td>{{ ticker.symbol[:-4]}}</td>
     <td>${{ ticker.price }}</td>
     <td class="percentage-change">
@@ -140,7 +142,7 @@
             
             {% for ticker in okx_prices %}
             <tr class="okx-row" style="display:none;">
-                <td>{{ ticker.symbol }}</td>
+ <td><img src="{{ crypto_logos.get(ticker.symbol) }}" alt="{{ symbol }} logo" width="30"></td>                <td>{{ ticker.symbol }}</td>
                 <td>${{ ticker.price }}</td>
                 <td class="percentage-change">
                     {% if ticker.priceChangePercent > 0 %}
@@ -156,6 +158,7 @@
             
             {% for ticker in coinbase_prices %}
             <tr class="coinbase-row" style="display:none;">
+                <td><img src="{{ crypto_logos.get(ticker.symbol) }}" alt="{{ symbol }} logo" width="30"></td>
                 <td>{{ ticker.symbol }}</td>
                 <td>${{ ticker.price }}</td>
                 <td class="percentage-change">
