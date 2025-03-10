@@ -6,54 +6,104 @@
 {% endblock %}
 
 {% block style %}
-    body{
-    color:white;
+    body {
+    color: white;
+    background-color: #121212;
 }
-    .predictor-container {
-        margin: 80px auto;
-        max-width: 900px;
-        padding: 30px;
-        background: #1a1a1a;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
-    }
-    .form-container {
-        padding: 20px;
-        background: #2a2a2a;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
-    }
-    .form-control {
-        background: #333;
-        color: white;
-        border: 1px solid #555;
-    }
-    .form-control::placeholder {
-        color: #bbb;
-    }
-    .btn-primary {
-        background: linear-gradient(45deg, #ff7e5f, #feb47b);
-        border: none;
-        border-radius: 8px;
-        font-size: 18px;
-        transition: 0.3s;
-    }
-    .btn-primary:hover {
-        background: linear-gradient(45deg, #ff6a5f, #fe9b7b);
-        transform: scale(1.05);
-    }
-    .loading-spinner {
-        display: none;
-        text-align: center;
-        margin-top: 20px;
-    }
-    .table {
-        background: #222;
-        color: white;
-    }
-    .table th, .table td {
-        border-color: #444;
-    }
+
+.predictor-container {
+    margin: 80px auto;
+    max-width: 900px;
+    padding: 30px;
+    background: #1a1a1a;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+}
+
+.form-container {
+    padding: 20px;
+    background: #2a2a2a;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+}
+
+.form-control {
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+}
+
+.form-control::placeholder {
+    color: #bbb;
+}
+
+/* Enhanced Button Styling */
+.btn-primary {
+    background: linear-gradient(45deg, #f8bc04, #f89f04);
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #222;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #f89f04, #f87e04);
+    transform: scale(1.05);
+    color: #000;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Tables */
+.table {
+    background: #222;
+    color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+}
+
+.table th {
+    background: #444;
+    color: #f8bc04;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding: 12px;
+}
+
+.table td {
+    border-color: #555;
+    padding: 10px;
+}
+
+/* Enhancing Charts */
+.plot-container {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+}
+
+.plot-container img {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+}
+
+/* TradingView Chart */
+#tradingview-chart {
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
 {% endblock %}
 
 {% block content %}
