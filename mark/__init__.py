@@ -25,9 +25,9 @@ app.config['SECRET_KEY'] = os.urandom(24)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'vybhavguttula@gmail.com'
-app.config['MAIL_PASSWORD'] = 'urjmmxbrryifniiy'
-app.config['MAIL_DEFAULT_SENDER'] = 'vybhavguttula@gmail.com'
+app.config['MAIL_USERNAME'] = 'cryptexpert.v@gmail.com'
+app.config['MAIL_PASSWORD'] = 'ovhbnjemwicoqbf'
+app.config['MAIL_DEFAULT_SENDER'] = 'cryptexpert.v@gmail.com'
 
 # Initializing Extensions
 mail = Mail(app)
