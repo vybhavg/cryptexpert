@@ -374,7 +374,7 @@ def otp_form():
         flash("OTP sent successfully","success")
         return redirect(url_for('verify_form'))
     except Exception as e:
-        flash(f'Unable to send OTP: {e}',"warning")
+        flash(f'Unable to send OTP: {e}',"danger")
         return redirect(url_for('register_form'))
 
 @app.route('/verifyotp', methods=['GET', 'POST'])
@@ -439,7 +439,7 @@ def setup_authenticator():
             flash("Authenticator set up successfully!","success")
             return redirect(url_for('index'))
         else:
-            flash("Invalid authenticator code. Please try again.","warning")
+            flash("Invalid authenticator code. Please try again.","danger")
 
     return render_template(
         'setup_authenticator.html',
