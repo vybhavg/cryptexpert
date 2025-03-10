@@ -4,52 +4,43 @@
 
 {% block style %}
 <style>
-  .converter {
+.converter {
     margin-top: 30px;
     padding: 25px;
-    background: rgba(42, 42, 42, 0.8); /* Glass effect */
-    backdrop-filter: blur(10px);
+    background: linear-gradient(135deg, #1e1e1e, #292929);
     border-radius: 15px;
     text-align: center;
-    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
-    transition: transform 0.3s ease-in-out;
-}
-
-.converter:hover {
-    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
 }
 
 .converter h2 {
-    color: white;
+    color: #f8bc04;
     font-size: 22px;
     font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    margin-bottom: 15px;
 }
 
-.converter select,
+.converter select, 
 .converter input {
+    width: 90%;
     padding: 12px;
-    margin: 8px;
-    width: 80%;
-    border: none;
+    margin: 10px 0;
+    border: 2px solid transparent;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    background: #333;
     color: white;
     font-size: 16px;
-    text-align: center;
     transition: all 0.3s ease-in-out;
-    outline: none;
+    text-align: center;
 }
 
-.converter input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.converter select:focus,
+.converter select:hover, 
+.converter input:hover, 
+.converter select:focus, 
 .converter input:focus {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 8px rgba(248, 188, 4, 0.5);
+    border-color: #f8bc04;
+    outline: none;
+    box-shadow: 0 0 10px rgba(248, 188, 4, 0.5);
 }
 
 .converter button {
@@ -351,6 +342,9 @@
                 updateTable("okx", okxPrices);
                 updateTable("coinbase", coinbasePrices);
 
+                // Log the cryptoPrices object for debugging
+                console.log("cryptoPrices:", cryptoPrices);
+
                 // Populate the crypto select dropdown (only if the coin list has changed)
                 populateCryptoSelect();
 
@@ -377,7 +371,7 @@
                 }
 
                 // Store the price for the converter
-                cryptoPrices[displaySymbol] = ticker.price;
+                cryptoPrices[displaySymbol] = parseFloat(ticker.price); // Ensure the price is a number
 
                 const logoSrc = cryptoLogos[displaySymbol] || "/static/img/crypto/BTC.png";
                 row.innerHTML = `
@@ -401,10 +395,14 @@
             const selectedCrypto = document.getElementById("crypto-select").value;
             const amount = parseFloat(document.getElementById("crypto-amount").value);
             const result = document.getElementById("conversion-result");
-            if (!cryptoPrices[selectedCrypto] || isNaN(amount) || amount <= 0) {
-                result.textContent = "Invalid input. Please enter a valid amount.";
+
+            // Validate input
+            if (!selectedCrypto || !cryptoPrices[selectedCrypto] || isNaN(amount) || amount <= 0) {
+                result.textContent = "Invalid input. Please enter a valid amount and select a cryptocurrency.";
                 return;
             }
+
+            // Perform the conversion
             const convertedValue = (amount * cryptoPrices[selectedCrypto]).toFixed(2);
             result.textContent = `${amount} ${selectedCrypto} = $${convertedValue} USD`;
         }
@@ -413,5 +411,4 @@
         setInterval(fetchPrices, 10000);
     });
 </script>
-
 {% endblock %}
