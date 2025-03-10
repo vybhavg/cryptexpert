@@ -223,6 +223,7 @@
         const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
         const cryptoSelect = document.getElementById("crypto-select");
         let cryptoPrices = {};
+        let previousCoinList = []; // Track the previous list of coins
 
         function toggleTickers() {
             const selectedExchange = document.querySelector('input[name="price-source"]:checked')?.value;
@@ -236,16 +237,32 @@
         }
 
         function populateCryptoSelect() {
-            // Clear existing options
-            cryptoSelect.innerHTML = "";
+            const currentCoinList = Object.keys(cryptoPrices);
 
-            // Add new options based on available cryptocurrencies
-            Object.keys(cryptoPrices).forEach(symbol => {
-                const option = document.createElement("option");
-                option.value = symbol;
-                option.textContent = symbol;
-                cryptoSelect.appendChild(option);
-            });
+            // Check if the coin list has changed
+            if (JSON.stringify(currentCoinList) !== JSON.stringify(previousCoinList)) {
+                // Save the current selection
+                const selectedCrypto = cryptoSelect.value;
+
+                // Clear existing options
+                cryptoSelect.innerHTML = "";
+
+                // Add new options based on available cryptocurrencies
+                currentCoinList.forEach(symbol => {
+                    const option = document.createElement("option");
+                    option.value = symbol;
+                    option.textContent = symbol;
+                    cryptoSelect.appendChild(option);
+                });
+
+                // Restore the previous selection if it still exists
+                if (currentCoinList.includes(selectedCrypto)) {
+                    cryptoSelect.value = selectedCrypto;
+                }
+
+                // Update the previous coin list
+                previousCoinList = currentCoinList;
+            }
         }
 
         async function fetchPrices() {
@@ -266,7 +283,7 @@
                 updateTable("okx", okxPrices);
                 updateTable("coinbase", coinbasePrices);
 
-                // Populate the crypto select dropdown
+                // Populate the crypto select dropdown (only if the coin list has changed)
                 populateCryptoSelect();
 
                 // Toggle rows based on the selected exchange
