@@ -761,15 +761,26 @@ html {
 
         <!-- App functions and actions -->
         <script>
-            // Get the navigation trigger and sidebar elements
-            const navTrigger = document.querySelector('.navigation-trigger');
-            const sidebar = document.querySelector('.sidebar');
-        
-            // Add click event listener to the navigation trigger
-            navTrigger.addEventListener('click', function() {
-                sidebar.classList.toggle('toggled'); // Toggle the 'toggled' class on the sidebar
-            });
-        </script>
+    // Get the navigation trigger and sidebar elements
+    const navTrigger = document.querySelector('.navigation-trigger');
+    const sidebar = document.querySelector('.sidebar');
+
+    // Add click event listener to the navigation trigger
+    navTrigger.addEventListener('click', function() {
+        sidebar.classList.toggle('toggled'); // Toggle the 'toggled' class on the sidebar
+    });
+
+    // Add click event listener to the document to close the sidebar when clicking outside
+    document.addEventListener('click', function(event) {
+        const isClickInsideSidebar = sidebar.contains(event.target);
+        const isClickOnNavTrigger = navTrigger.contains(event.target);
+
+        // If the click is outside the sidebar and not on the nav trigger, close the sidebar
+        if (!isClickInsideSidebar && !isClickOnNavTrigger) {
+            sidebar.classList.remove('toggled');
+        }
+    });
+</script>
         <script src="/static/js/app.min.js"></script>
 
  
