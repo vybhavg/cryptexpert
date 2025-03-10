@@ -518,17 +518,6 @@ def get_historical_klines(symbol, interval, start_str, end_str=None):
 
     return all_data
 
-from flask import Flask, render_template, request
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import plotly.graph_objects as go
-import io, base64
-from sklearn.preprocessing import MinMaxScaler
-from binance.client import Client
-
-app = Flask(__name__)
 
 @app.route("/ai_predictor", methods=["GET", "POST"])
 def ai_predictor():
