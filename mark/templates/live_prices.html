@@ -4,36 +4,101 @@
 
 {% block style %}
 <style>
-    .converter {
-        margin-top: 30px;
-        padding: 20px;
-        background: #2a2a2a;
-        border-radius: 10px;
-        text-align: center;
-    }
-    .converter select, .converter input {
-        padding: 10px;
-        margin: 5px;
-        border: none;
-        border-radius: 5px;
-    }
-    .converter button {
-        background: #f8bc04;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-    .converter button:hover {
-        background: #ffcc00;
-    }
-    .converter-output {
-        margin-top: 10px;
-        font-size: 18px;
-        font-weight: bold;
-        color: white;
-    }
+  .converter {
+    margin-top: 30px;
+    padding: 25px;
+    background: rgba(42, 42, 42, 0.8); /* Glass effect */
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.converter:hover {
+    transform: scale(1.02);
+}
+
+.converter h2 {
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.converter select,
+.converter input {
+    padding: 12px;
+    margin: 8px;
+    width: 80%;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    outline: none;
+}
+
+.converter input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.converter select:focus,
+.converter input:focus {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 8px rgba(248, 188, 4, 0.5);
+}
+
+.converter button {
+    background: linear-gradient(135deg, #f8bc04, #ff9c00);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    color: black;
+    font-size: 16px;
+    text-transform: uppercase;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.converter button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease-in-out;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+}
+
+.converter button:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+}
+
+.converter button:hover {
+    background: linear-gradient(135deg, #ffcc00, #ff8c00);
+    box-shadow: 0 0 15px rgba(248, 188, 4, 0.5);
+    transform: scale(1.05);
+}
+
+.converter-output {
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3);
+}
+
     .container {
         max-width: 90%;
         margin: 80px auto;
