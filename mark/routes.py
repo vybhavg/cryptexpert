@@ -416,6 +416,61 @@ def verify_form():
             flash(err,"warning")
     return render_template('verify_otp.html', form=form, username=session['userid'], show_auth_form=False)
 
+from itsdangerous import URLSafeTimedSerializer
+from werkzeug.security import generate_password_hash
+
+def generate_reset_token(email):
+    serializer = URLSafeTimedSerializer(app.secret_key)
+    return serializer.dumps(email, salt="password-reset")
+
+def verify_reset_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.secret_key)
+    try:
+        email = serializer.loads(token, salt="password-reset", max_age=expiration)
+        return email
+    except:
+        return None
+
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+        if user:
+            token = generate_reset_token(email)
+            reset_url = url_for('reset_password', token=token, _external=True)
+
+            # Send email
+            msg = Message('Password Reset', recipients=[email])
+            msg.body = f'Click the link to reset your password: {reset_url}'
+            mail.send(msg)
+
+            flash('Password reset link has been sent to your email.', 'success')
+        else:
+            flash('No account found with this email.', 'danger')
+
+    return render_template('forgot_password.html')
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    email = verify_reset_token(token)
+    if not email:
+        flash('Invalid or expired token.', 'danger')
+        return redirect(url_for('forgot_password'))
+
+    user = User.query.filter_by(email=email).first()
+    if request.method == 'POST':
+        new_password = request.form.get('password')
+        hashed_password = generate_password_hash(new_password)
+        user.password = hashed_password
+        db.session.commit()
+        
+        flash('Your password has been updated!', 'success')
+        return redirect(url_for('login_form'))
+
+    return render_template('reset_password.html')
+
+
 @app.route('/setup-authenticator', methods=['GET', 'POST'])
 def setup_authenticator():
     user = User.query.filter_by(username=current_user.username).first()
