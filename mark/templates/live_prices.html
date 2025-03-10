@@ -248,11 +248,8 @@
                 if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
                     displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
                 }
-            const imageUrl = crypto_logos[displaySymbol];
 
-            row.innerHTML = `
-            <td><img src="${imageUrl}" alt="${displaySymbol} logo" width="30"></td>
-
+                row.innerHTML = 
                     <td>${displaySymbol}</td>
                     <td>$${ticker.price}</td>
                     <td class="percentage-change">
