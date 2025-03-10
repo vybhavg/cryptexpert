@@ -6,27 +6,28 @@
 {% endblock %}
 
 {% block style %}
+
     .predictor-container {
         margin: 80px auto;
         max-width: 900px;
         padding: 30px;
-        background: #fff;
+        background: #1a1a1a;
         border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    .predictor img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
     }
     .form-container {
         padding: 20px;
-        background: #f8f9fa;
+        background: #2a2a2a;
         border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
     }
     .form-control {
-        border-radius: 8px;
+        background: #333;
+        color: white;
+        border: 1px solid #555;
+    }
+    .form-control::placeholder {
+        color: #bbb;
     }
     .btn-primary {
         background: linear-gradient(45deg, #ff7e5f, #feb47b);
@@ -43,6 +44,13 @@
         display: none;
         text-align: center;
         margin-top: 20px;
+    }
+    .table {
+        background: #222;
+        color: white;
+    }
+    .table th, .table td {
+        border-color: #444;
     }
 {% endblock %}
 
@@ -83,41 +91,50 @@
         document.querySelector(".predictor-container").style.display = "none";
         document.getElementById("loading-spinner").style.display = "block";
     });
+
+    function scrollToResults() {
+        document.getElementById("results").scrollIntoView({ behavior: "smooth" });
+    }
 </script>
 
-
-
 {% if stock %}
-    <h2 class="text-center mt-5">Results for {{ stock }}</h2>
-    {% if error %}
-        <div class="alert alert-danger">{{ error }}</div>
-    {% else %}
-        <h3>Original Closing Prices Over Time</h3>
-        <div id="tradingview-chart" class="mb-4" style="height: 500px;"></div>
+    <div id="results">
+        <h2 class="text-center mt-5">Results for {{ stock }}</h2>
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% else %}
+            <h3>Original Closing Prices Over Time</h3>
+            <div id="tradingview-chart" class="mb-4" style="height: 500px;"></div>
 
-        <h3>Original vs Predicted Test Data</h3>
-        <img src="{{ predicted_plot }}" class="img-fluid">
+            <h3>Original vs Predicted Test Data</h3>
+            <img src="{{ predicted_plot }}" class="img-fluid">
 
-        <h3>Future Close Price Predictions</h3>
-        <img src="{{ future_plot }}" class="img-fluid">
-        <table class="table table-striped mt-4">
-            <thead>
-                <tr>
-                    <th>Day</th>
-                    <th>Predicted Close Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for day, price in enumerate(future_predictions, start=1) %}
-                <tr>
-                    <td>{{ day }}</td>
-                    <td>{{ price | round(2) }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-    <a href="/ai_predictor" class="btn btn-secondary mt-4">Back to Home</a>
+            <h3>Future Close Price Predictions</h3>
+            <img src="{{ future_plot }}" class="img-fluid">
+            <table class="table table-striped mt-4">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Predicted Close Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for day, price in enumerate(future_predictions, start=1) %}
+                    <tr>
+                        <td>{{ day }}</td>
+                        <td>{{ price | round(2) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <a href="/ai_predictor" class="btn btn-secondary mt-4">Back to Home</a>
+    </div>
+
+    <!-- Auto-scroll to results after loading -->
+    <script>
+        scrollToResults();
+    </script>
 
     <!-- TradingView Widget Script -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
@@ -129,7 +146,7 @@
             symbol: "{{ stock }}",
             interval: "D",
             timezone: "Etc/UTC",
-            theme: "light",
+            theme: "dark",  // Ensures dark mode for the chart
             style: "1",
             locale: "en",
             enable_publishing: false,
@@ -139,7 +156,4 @@
         });
     </script>
 {% endif %}
-
-
-
 {% endblock %}
