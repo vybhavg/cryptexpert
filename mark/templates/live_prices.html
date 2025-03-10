@@ -103,7 +103,13 @@ td img {
 
 {% endblock %}
  {% block content %} 
-
+<div class="converter">
+        <h2 style="color:white;">Crypto Converter</h2>
+        <select id="crypto-select"></select>
+        <input type="number" id="crypto-amount" placeholder="Enter amount">
+        <button onclick="convertCrypto()">Convert</button>
+        <p class="converter-output" id="conversion-result"></p>
+    </div>
 <div class="container">
     <h1 style="color:white;font-size:24px;font-weight:bold;">Live Crypto Prices</h1><br>
     <div class="select-container">
@@ -189,7 +195,7 @@ td img {
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
-
+    let cryptoPrices = {};
         function toggleTickers() {
             const selectedExchange = document.querySelector('input[name="price-source"]:checked')?.value;
             document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
@@ -212,7 +218,7 @@ td img {
                 const binancePrices = await binanceResponse.json();
                 const okxPrices = await okxResponse.json();
                 const coinbasePrices = await coinbaseResponse.json();
-
+                cryptoPrices = {};
                 updateTable("binance", binancePrices);
                 updateTable("okx", okxPrices);
                 updateTable("coinbase", coinbasePrices);
@@ -237,6 +243,7 @@ td img {
                 if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
                     displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
                 }
+                cryptoPrices[displaySymbol] =ticker.price;
 const logoSrc = cryptoLogos[displaySymbol] || "/static/img/crypto/BTC.png";
 row.innerHTML = `
     <td><img src="${logoSrc}" alt="${displaySymbol}" width="35px" height="35px"></td>
@@ -255,7 +262,17 @@ row.innerHTML = `
         }
 
         exchangeRadios.forEach(radio => radio.addEventListener("change", toggleTickers));
-
+ window.convertCrypto = function () {
+        const selectedCrypto = document.getElementById("crypto-select").value;
+        const amount = parseFloat(document.getElementById("crypto-amount").value);
+        const result = document.getElementById("conversion-result");
+        if (!cryptoPrices[selectedCrypto] || isNaN(amount) || amount <= 0) {
+            result.textContent = "Invalid input. Please enter a valid amount.";
+            return;
+        }
+        const convertedValue = (amount * cryptoPrices[selectedCrypto]).toFixed(2);
+        result.textContent = `${amount} ${selectedCrypto} = $${convertedValue} USD`;
+    }
         fetchPrices();
         setInterval(fetchPrices, 10000);
     });
