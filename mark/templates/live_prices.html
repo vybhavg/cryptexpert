@@ -395,7 +395,6 @@ body {
         const cryptoAmountInput = document.getElementById("crypto-amount");
         const fiatAmountInput = document.getElementById("fiat-amount");
         const conversionResult = document.getElementById("conversion-result");
-        const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
 
         let cryptoPrices = {}; // Stores crypto prices in USD
         const fiatRates = { USD: 1, EUR: 0.85, GBP: 0.73 }; // Example fiat rates (1 USD = X EUR, etc.)
@@ -480,7 +479,7 @@ body {
                 conversionResult.innerHTML = `<span class="error">Please enter a valid crypto amount.</span>`;
                 return;
             }
-            if (!cryptoPrices[selectedCrypto]) {
+            if (!cryptoPrices[selectedCrypto] || cryptoPrices[selectedCrypto].isNaN()) {
                 conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
                 return;
             }
@@ -512,7 +511,7 @@ body {
                 conversionResult.innerHTML = `<span class="error">Please enter a valid fiat amount.</span>`;
                 return;
             }
-            if (!cryptoPrices[selectedCrypto]) {
+            if (!cryptoPrices[selectedCrypto] || cryptoPrices[selectedCrypto].isNaN()) {
                 conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
                 return;
             }
@@ -532,6 +531,8 @@ body {
                 <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span>
             `;
         }
+
+       
 
         // Toggle tickers based on selected exchange
         function toggleTickers() {
