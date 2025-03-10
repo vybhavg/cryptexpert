@@ -604,7 +604,7 @@ def ai_predictor():
 
         future_predictions = np.array(future_predictions).flatten()
 
-          fig3 = plt.figure(figsize=(15, 6))
+        fig3 = plt.figure(figsize=(15, 6))
         plt.plot(range(1, no_of_days + 1), future_predictions, marker='o', label="Predicted Future Prices", color="purple")
         plt.title("Future Close Price Predictions")
         plt.xlabel("Days Ahead")
