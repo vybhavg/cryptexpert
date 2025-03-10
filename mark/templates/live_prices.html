@@ -471,7 +471,7 @@ body {
 
         // Convert crypto to fiat
         function convertCryptoToFiat() {
-            const cryptoAmount = new BigNumber(cryptoAmountInput.value || 0); // Use BigNumber for precision
+            const cryptoAmount = new BigNumber(cryptoAmountInput.value.replace(/,/g, '') || 0); // Remove commas and use BigNumber
             const selectedCrypto = cryptoSelect.value;
             const selectedFiat = fiatSelect.value;
 
@@ -480,7 +480,7 @@ body {
                 conversionResult.innerHTML = `<span class="error">Please enter a valid crypto amount.</span>`;
                 return;
             }
-            if (!cryptoPrices[selectedCrypto]) {
+            if (!cryptoPrices[selectedCrypto] || cryptoPrices[selectedCrypto].isNaN()) {
                 conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
                 return;
             }
@@ -503,7 +503,7 @@ body {
 
         // Convert fiat to crypto
         function convertFiatToCrypto() {
-            const fiatAmount = new BigNumber(fiatAmountInput.value || 0); // Use BigNumber for precision
+            const fiatAmount = new BigNumber(fiatAmountInput.value.replace(/,/g, '') || 0); // Remove commas and use BigNumber
             const selectedCrypto = cryptoSelect.value;
             const selectedFiat = fiatSelect.value;
 
@@ -512,7 +512,7 @@ body {
                 conversionResult.innerHTML = `<span class="error">Please enter a valid fiat amount.</span>`;
                 return;
             }
-            if (!cryptoPrices[selectedCrypto]) {
+            if (!cryptoPrices[selectedCrypto] || cryptoPrices[selectedCrypto].isNaN()) {
                 conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
                 return;
             }
