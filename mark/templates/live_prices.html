@@ -22,9 +22,9 @@
 
 .converter select, 
 .converter input {
-    width: 90%;
+    width: 45%;
     padding: 12px;
-    margin: 10px 0;
+    margin: 10px;
     border: 2px solid transparent;
     border-radius: 8px;
     background: #333;
@@ -193,11 +193,10 @@
     <div class="converter">
     <h2 style="color:white;">Crypto Converter</h2>
     <select id="crypto-select"></select>
-    <input type="number" id="crypto-amount" placeholder="Enter amount">
+    <input type="number" id="crypto-amount" placeholder="Enter amount"><br>
     <button onclick="convertCrypto()">Convert</button>
     <p class="converter-output" id="conversion-result"></p>
 </div><br>
-    <h1 style="color:white;font-size:24px;font-weight:bold;">Live Crypto Prices</h1><br>
     <div class="select-container">
         <div class="price-selection" style="font-size:14px; font-weight:600;">
             <input type="radio" id="binance" name="price-source" value="binance" checked>
