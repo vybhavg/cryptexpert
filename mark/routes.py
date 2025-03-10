@@ -437,26 +437,20 @@ def forgot_password():
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
         if user:
-            token = generate_reset_token(user)  # Function to generate a unique reset token
+            token = generate_reset_token(email)
             reset_url = url_for('reset_password', token=token, _external=True)
-            
-            # Send the email
-            try:
-                msg = Message('Password Reset Request', recipients=[email])
-                msg.body = f'Click the link to reset your password: {reset_url}'
-                mail.send(msg)
-                flash("A password reset link has been sent to your email.", "success")
-                return redirect(url_for('login_form'))  # Redirect to login after success
-            except Exception as e:
-                flash(f"Error sending email: {e}", "danger")
-                return redirect(url_for('forgot_password'))
 
+            # Send email
+            msg = Message('Password Reset', recipients=[email])
+            msg.body = f'Click the link to reset your password: {reset_url}'
+            mail.send(msg)
+
+            flash('Password reset link has been sent to your email.', 'success')
+            return redirect(url_for('login_form'))
         else:
-            flash("Email not found. Please check again.", "danger")
+            flash('No account found with this email.', 'danger')
 
     return render_template('forgot_password.html')
-
-
 
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
