@@ -177,6 +177,9 @@
         </tbody>
     </table>
 </div>
+<script>
+    const cryptoLogos = {{ crypto_logos | tojson }};
+</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -229,17 +232,18 @@
                 if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
                     displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
                 }
+const logoSrc = cryptoLogos[displaySymbol] || "/static/img/crypto/BTC.png";
+row.innerHTML = `
+    <td><img src="${logoSrc}" alt="${displaySymbol}" width="50px" height="50px"></td>
+    <td>${displaySymbol}</td>
+    <td>$${ticker.price}</td>
+    <td class="percentage-change">
+        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
+            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
+        </span>
+    </td>
+`;
 
-                row.innerHTML = `
-                <td><img src="{{ crypto_logos[displaySymbol] }}"></td>
-                    <td>${displaySymbol}</td>
-                    <td>$${ticker.price}</td>
-                    <td class="percentage-change">
-                        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
-                            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
-                        </span>
-                    </td>
-                `;
 
                 tableBody.appendChild(row);
             });
@@ -251,4 +255,5 @@
         setInterval(fetchPrices, 10000);
     });
 </script>
+
 {% endblock %}
