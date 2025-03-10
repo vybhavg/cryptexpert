@@ -457,6 +457,8 @@ def forgot_password():
     return render_template('forgot_password.html')
 
 
+
+
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     email = verify_reset_token(token)
