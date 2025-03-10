@@ -221,7 +221,6 @@ body {
     font-weight: 600;
     color: #fff;
     text-shadow: 0px 0px 8px rgba(255, 204, 0, 0.8);
-    animation: pulse 2s infinite;
     letter-spacing: 0.5px;
 }
 
@@ -253,12 +252,6 @@ body {
     box-shadow: 0px 10px 20px rgba(255, 204, 0, 0.7);
 }
 
-/* Bounce Animation */
-@keyframes pulse {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(5px); }
-    100% { transform: translateY(0px); }
-}
 
 
 </style>
@@ -278,7 +271,7 @@ body {
     <p class="converter-output" id="conversion-result"></p>
 </div><br>
 <div class="scroll-to-prices">
-    <p>Scroll down to see Live Crypto Prices</p>
+    <p>Live Crypto Prices</p>
     <button onclick="scrollToPrices()">
         ⬇
     </button>
