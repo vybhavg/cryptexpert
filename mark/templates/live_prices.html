@@ -235,53 +235,37 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function updateTable(exchange, prices) {
-        const tableBody = document.getElementById("table-body");
+function updateTable(exchange, prices) {
+    const tableBody = document.getElementById("table-body");
+    document.querySelectorAll(`.${exchange}-row`).forEach(row => row.remove());
 
-        prices.forEach(ticker => {
-            let row = document.getElementById(`${exchange}-${ticker.symbol}`);
-            let displaySymbol = ticker.symbol.replace("USDT", ""); // Remove "USDT" from Binance symbols
+    prices.forEach(ticker => {
+        const row = document.createElement("tr");
+        row.classList.add(`${exchange}-row`);
+        row.style.display = "none"; // Default hidden, will be toggled later
 
-            if (!row) {
-                // Create new row if it doesn't exist
-                row = document.createElement("tr");
-                row.id = `${exchange}-${ticker.symbol}`;
-                row.classList.add(`${exchange}-row`);
-                row.style.display = "none"; // Initially hidden
+        let displaySymbol = ticker.symbol;
+        if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
+            displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
+        }
 
-                // Preload images once
-                if (!imageCache[ticker.symbol]) {
-                    const img = new Image();
-                    img.src = `https://crypto-icons.com/${ticker.symbol.toLowerCase()}.png`; // Example image URL
-                    imageCache[ticker.symbol] = img.src;
-                }
+        // Construct the image URL using crypto_logos object from Flask
+        const imageUrl = crypto_logos[displaySymbol] || "default_logo.png";
 
-                row.innerHTML = `
-                    <td>
-                        <img src="${imageCache[ticker.symbol]}" alt="${displaySymbol}" width="20"> ${displaySymbol}
-                    </td>
-                    <td class="crypto-price">$${parseFloat(ticker.price).toFixed(2)}</td>
-                    <td class="percentage-change">
-                        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
-                            ${ticker.priceChangePercent > 0 ? "+" : ""}${parseFloat(ticker.priceChangePercent).toFixed(2)}%
-                        </span>
-                    </td>
-                `;
+        row.innerHTML = `
+            <td><img src="${imageUrl}" alt="${displaySymbol} logo" width="30"></td>
+            <td>${displaySymbol}</td>
+            <td>$${ticker.price}</td>
+            <td class="percentage-change">
+                <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
+                    ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
+                </span>
+            </td>
+        `;
 
-                tableBody.appendChild(row);
-            } else {
-                // **Update only price and percentage change without recreating row**
-                const priceCell = row.querySelector(".crypto-price");
-                const changeCell = row.querySelector(".percentage-change span");
-
-                priceCell.textContent = `$${parseFloat(ticker.price).toFixed(2)}`;
-                changeCell.textContent = `${ticker.priceChangePercent > 0 ? "+" : ""}${parseFloat(ticker.priceChangePercent).toFixed(2)}%`;
-
-                // Update class based on price movement
-                changeCell.className = ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral";
-            }
-        });
-    }
+        tableBody.appendChild(row);
+    });
+}
 
     exchangeRadios.forEach(radio => radio.addEventListener("change", toggleTickers));
 
