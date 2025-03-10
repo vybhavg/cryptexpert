@@ -198,81 +198,79 @@
 </div>
     
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
-    const imageCache = {}; // Store images to avoid reloading
+    document.addEventListener("DOMContentLoaded", () => {
+        const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
 
-    function toggleTickers() {
-        const selectedExchange = document.querySelector('input[name="price-source"]:checked')?.value;
-        document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
-            row.style.display = "none";
-        });
+        function toggleTickers() {
+            const selectedExchange = document.querySelector('input[name="price-source"]:checked')?.value;
+            document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
+                row.style.display = "none";
+            });
 
-        if (selectedExchange) {
-            document.querySelectorAll(`.${selectedExchange}-row`).forEach(row => row.style.display = "table-row");
-        }
-    }
-
-    async function fetchPrices() {
-        try {
-            const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
-                fetch('/binance_prices'),
-                fetch('/okx_prices'),
-                fetch('/coinbase_prices')
-            ]);
-
-            const binancePrices = await binanceResponse.json();
-            const okxPrices = await okxResponse.json();
-            const coinbasePrices = await coinbaseResponse.json();
-
-            updateTable("binance", binancePrices);
-            updateTable("okx", okxPrices);
-            updateTable("coinbase", coinbasePrices);
-
-            toggleTickers();
-        } catch (error) {
-            console.error('Error fetching prices:', error);
-        }
-    }
-
-function updateTable(exchange, prices) {
-    const tableBody = document.getElementById("table-body");
-    document.querySelectorAll(`.${exchange}-row`).forEach(row => row.remove());
-
-    prices.forEach(ticker => {
-        const row = document.createElement("tr");
-        row.classList.add(`${exchange}-row`);
-        row.style.display = "none"; // Default hidden, will be toggled later
-
-        let displaySymbol = ticker.symbol;
-        if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
-            displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
+            if (selectedExchange) {
+                document.querySelectorAll(.${selectedExchange}-row).forEach(row => row.style.display = "table-row");
+            }
         }
 
-        // Construct the image URL using crypto_logos object from Flask
-        const imageUrl = crypto_logos[displaySymbol] || "default_logo.png";
+        async function fetchPrices() {
+            try {
+                const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
+                    fetch('/binance_prices'),
+                    fetch('/okx_prices'),
+                    fetch('/coinbase_prices')
+                ]);
 
-        row.innerHTML = `
+                const binancePrices = await binanceResponse.json();
+                const okxPrices = await okxResponse.json();
+                const coinbasePrices = await coinbaseResponse.json();
+
+                updateTable("binance", binancePrices);
+                updateTable("okx", okxPrices);
+                updateTable("coinbase", coinbasePrices);
+
+                toggleTickers();
+            } catch (error) {
+                console.error('Error fetching prices:', error);
+            }
+        }
+
+        function updateTable(exchange, prices) {
+            const tableBody = document.getElementById("table-body");
+            document.querySelectorAll(.${exchange}-row).forEach(row => row.remove());
+
+            prices.forEach(ticker => {
+                const row = document.createElement("tr");
+                row.classList.add(${exchange}-row);
+                row.style.display = "none"; // Default hidden, will be toggled later
+
+                // Remove "USDT" from Binance symbols if present
+                let displaySymbol = ticker.symbol;
+                if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
+                    displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
+                }
+            const imageUrl = crypto_logos[displaySymbol] || "default_logo.png";
+
+            row.innerHTML = `
             <td><img src="${imageUrl}" alt="${displaySymbol} logo" width="30"></td>
-            <td>${displaySymbol}</td>
-            <td>$${ticker.price}</td>
-            <td class="percentage-change">
-                <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
-                    ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
-                </span>
-            </td>
-        `;
 
-        tableBody.appendChild(row);
+                    <td>${displaySymbol}</td>
+                    <td>$${ticker.price}</td>
+                    <td class="percentage-change">
+                        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
+                            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
+                        </span>
+                    </td>
+                ;
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        exchangeRadios.forEach(radio => radio.addEventListener("change", toggleTickers));
+
+        fetchPrices();
+        setInterval(fetchPrices, 10000);
     });
-}
-
-    exchangeRadios.forEach(radio => radio.addEventListener("change", toggleTickers));
-
-    fetchPrices();
-    setInterval(fetchPrices, 10000);
-});
-
 </script>
 {% endblock %}
 
