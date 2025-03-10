@@ -97,7 +97,8 @@
     }
 
 {% endblock %}
-{% block content %}
+ {% block content %} 
+
 <div class="container">
     <h1 style="color:white;font-size:24px;font-weight:bold;">Live Crypto Prices</h1><br>
     <div class="select-container">
@@ -120,27 +121,29 @@
                 <th>24h Change (%)</th>
             </tr>
         </thead>
-        <tbody id="table-body" style="color:white;font-size:14px;">
+        <tbody id="table-body"style="color:white;font-size:14px;">
             {% for ticker in binance_prices %}
-            <tr class="binance-row">
-                <td><img src="{{ crypto_logos[ticker.symbol[:-4]] }}" alt="{{ ticker.symbol[:-4] }} logo" style="width: 24px; height: 24px;"></td>
-                <td>{{ ticker.symbol[:-4] }}</td>
-                <td>${{ ticker.price }}</td>
-                <td class="percentage-change">
-                    {% if ticker.priceChangePercent > 0 %}
-                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                    {% elif ticker.priceChangePercent < 0 %}
-                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
-                    {% else %}
-                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
+<tr class="binance-row">
+<td><img src="{{ crypto_logos[ticker.symbol[:-4]] }}"></td>
+<td>{{ ticker.symbol[:-4]}}</td>
+    <td>${{ ticker.price }}</td>
+    <td class="percentage-change">
+        {% if ticker.priceChangePercent > 0 %}
+        <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+        {% elif ticker.priceChangePercent < 0 %}
+        <span class="negative">{{ ticker.priceChangePercent }}%</span>
+        {% else %}
+        <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+
 
             {% for ticker in okx_prices %}
             <tr class="okx-row" style="display:none;">
-                <td><img src="{{ crypto_logos[ticker.symbol] }}" alt="{{ ticker.symbol }} logo" style="width: 24px; height: 24px;"></td>
+                <td><img src="{{ crypto_logos[ticker.symbol] }}"></td>
+
                 <td>{{ ticker.symbol }}</td>
                 <td>${{ ticker.price }}</td>
                 <td class="percentage-change">
@@ -157,7 +160,7 @@
 
             {% for ticker in coinbase_prices %}
             <tr class="coinbase-row" style="display:none;">
-                <td><img src="{{ crypto_logos[ticker.symbol] }}" alt="{{ ticker.symbol }} logo" style="width: 24px; height: 24px;"></td>
+<td><img src="{{ crypto_logos[ticker.symbol] }}"></td>
                 <td>{{ ticker.symbol }}</td>
                 <td>${{ ticker.price }}</td>
                 <td class="percentage-change">
@@ -228,7 +231,7 @@
                 }
 
                 row.innerHTML = `
-                    <td><img src="${crypto_logos[displaySymbol]}" alt="${displaySymbol} logo" style="width: 24px; height: 24px;"></td>
+                <td><img src="{{ crypto_logos[displaySymbol] }}"></td>
                     <td>${displaySymbol}</td>
                     <td>$${ticker.price}</td>
                     <td class="percentage-change">
