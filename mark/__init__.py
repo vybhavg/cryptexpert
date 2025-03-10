@@ -26,7 +26,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'cryptexpert.v@gmail.com'
-app.config['MAIL_PASSWORD'] = 'ovhbnjemwicoqbf'  # Remove spaces
+app.config['MAIL_PASSWORD'] = 'ujreujuqioixlqga'  # Remove spaces
 app.config['MAIL_DEFAULT_SENDER'] = 'cryptexpert.v@gmail.com'
 
 # Initializing Extensions
