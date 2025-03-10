@@ -1,49 +1,47 @@
 {% extends "base.html" %}
 
-    {% block title %}Live Crypto Prices{% endblock %}
+{% block title %}Live Crypto Prices{% endblock %}
 
-
-{% block style %} 
-
-.converter {
-    margin-top: 30px;
-    padding: 20px;
-    background: #2a2a2a;
-    border-radius: 10px;
-    text-align: center;
-}
-.converter select, .converter input {
-    padding: 10px;
-    margin: 5px;
-    border: none;
-    border-radius: 5px;
-}
-.converter button {
-    background: #f8bc04;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-}
-.converter button:hover {
-    background: #ffcc00;
-}
-.converter-output {
-    margin-top: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    color: white;
-}
+{% block style %}
+<style>
+    .converter {
+        margin-top: 30px;
+        padding: 20px;
+        background: #2a2a2a;
+        border-radius: 10px;
+        text-align: center;
+    }
+    .converter select, .converter input {
+        padding: 10px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+    }
+    .converter button {
+        background: #f8bc04;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .converter button:hover {
+        background: #ffcc00;
+    }
+    .converter-output {
+        margin-top: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+    }
     .container {
         max-width: 90%;
-        margin: 80px auto; /* Center the container */
+        margin: 80px auto;
         padding: 20px;
         background: #1e1e1e;
         border-radius: 10px;
         box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
-        text-align: center; /* Center child elements */
-
+        text-align: center;
     }
     .select-container {
         margin-bottom: 20px;
@@ -66,7 +64,6 @@
         transform: scale(1.05);
         box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
     }
-    /* Centering the table */
     .table-container {
         display: flex;
         justify-content: center;
@@ -75,8 +72,8 @@
         overflow-x: auto;
     }
     table {
-        width: 80%; /* Adjusted width to center properly */
-        margin: 0 auto; /* Centers table horizontally */
+        width: 80%;
+        margin: 0 auto;
         border-collapse: collapse;
         margin-top: 10px;
     }
@@ -86,11 +83,10 @@
         transition: background 0.3s ease-in-out;
         text-align: center;
     }
-td img {
-    display: inline-block; /* Ensures the image respects text alignment */
-    vertical-align: middle; /* Aligns the image properly */
-}
-
+    td img {
+        display: inline-block;
+        vertical-align: middle;
+    }
     th {
         background: rgba(248, 188, 4);
         color: black;
@@ -123,17 +119,17 @@ td img {
             overflow-x: auto;
         }
         table {
-            width: 100%; /* Full width for smaller screens */
+            width: 100%;
         }
         th, td {
             padding: 10px;
             font-size: 14px;
         }
     }
-
+</style>
 {% endblock %}
- {% block content %} 
 
+{% block content %}
 <div class="container">
     <h1 style="color:white;font-size:24px;font-weight:bold;">Live Crypto Prices</h1><br>
     <div class="select-container">
@@ -156,29 +152,27 @@ td img {
                 <th>24h Change (%)</th>
             </tr>
         </thead>
-        <tbody id="table-body"style="color:white;font-size:14px;">
+        <tbody id="table-body" style="color:white;font-size:14px;">
             {% for ticker in binance_prices %}
-<tr class="binance-row">
-<td><img src="{{ crypto_logos[ticker.symbol[:-4]] }}" width="35px" height="35px"></td>
-<td>{{ ticker.symbol[:-4]}}</td>
-    <td>${{ ticker.price }}</td>
-    <td class="percentage-change">
-        {% if ticker.priceChangePercent > 0 %}
-        <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-        {% elif ticker.priceChangePercent < 0 %}
-        <span class="negative">{{ ticker.priceChangePercent }}%</span>
-        {% else %}
-        <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-        {% endif %}
-    </td>
-</tr>
-{% endfor %}
-
+            <tr class="binance-row">
+                <td><img src="{{ crypto_logos[ticker.symbol[:-4]] }}" width="35px" height="35px"></td>
+                <td>{{ ticker.symbol[:-4] }}</td>
+                <td>${{ ticker.price }}</td>
+                <td class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
 
             {% for ticker in okx_prices %}
             <tr class="okx-row" style="display:none;">
                 <td><img src="{{ crypto_logos[ticker.symbol] }}" width="35px" height="35px"></td>
-
                 <td>{{ ticker.symbol }}</td>
                 <td>${{ ticker.price }}</td>
                 <td class="percentage-change">
@@ -195,7 +189,7 @@ td img {
 
             {% for ticker in coinbase_prices %}
             <tr class="coinbase-row" style="display:none;">
-<td><img src="{{ crypto_logos[ticker.symbol] }}"width="35px" height="35px"></td>
+                <td><img src="{{ crypto_logos[ticker.symbol] }}" width="35px" height="35px"></td>
                 <td>{{ ticker.symbol }}</td>
                 <td>${{ ticker.price }}</td>
                 <td class="percentage-change">
@@ -214,12 +208,12 @@ td img {
 </div>
 
 <div class="converter">
-        <h2 style="color:white;">Crypto Converter</h2>
-        <select id="crypto-select"></select>
-        <input type="number" id="crypto-amount" placeholder="Enter amount">
-        <button onclick="convertCrypto()">Convert</button>
-        <p class="converter-output" id="conversion-result"></p>
-    </div>
+    <h2 style="color:white;">Crypto Converter</h2>
+    <select id="crypto-select"></select>
+    <input type="number" id="crypto-amount" placeholder="Enter amount">
+    <button onclick="convertCrypto()">Convert</button>
+    <p class="converter-output" id="conversion-result"></p>
+</div>
 <script>
     const cryptoLogos = {{ crypto_logos | tojson }};
 </script>
@@ -227,7 +221,9 @@ td img {
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
-    let cryptoPrices = {};
+        const cryptoSelect = document.getElementById("crypto-select");
+        let cryptoPrices = {};
+
         function toggleTickers() {
             const selectedExchange = document.querySelector('input[name="price-source"]:checked')?.value;
             document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
@@ -238,6 +234,7 @@ td img {
                 document.querySelectorAll(`.${selectedExchange}-row`).forEach(row => row.style.display = "table-row");
             }
         }
+
         function populateCryptoSelect() {
             // Clear existing options
             cryptoSelect.innerHTML = "";
@@ -263,10 +260,16 @@ td img {
                 const okxPrices = await okxResponse.json();
                 const coinbasePrices = await coinbaseResponse.json();
                 cryptoPrices = {};
+
+                // Update tables and collect all unique symbols
                 updateTable("binance", binancePrices);
                 updateTable("okx", okxPrices);
                 updateTable("coinbase", coinbasePrices);
-                populateCryptoSelect()
+
+                // Populate the crypto select dropdown
+                populateCryptoSelect();
+
+                // Toggle rows based on the selected exchange
                 toggleTickers();
             } catch (error) {
                 console.error('Error fetching prices:', error);
@@ -287,36 +290,40 @@ td img {
                 if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
                     displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
                 }
-                cryptoPrices[displaySymbol] =ticker.price;
-const logoSrc = cryptoLogos[displaySymbol] || "/static/img/crypto/BTC.png";
-row.innerHTML = `
-    <td><img src="${logoSrc}" alt="${displaySymbol}" width="35px" height="35px"></td>
-    <td>${displaySymbol}</td>
-    <td>$${ticker.price}</td>
-    <td class="percentage-change">
-        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
-            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
-        </span>
-    </td>
-`;
 
+                // Store the price for the converter
+                cryptoPrices[displaySymbol] = ticker.price;
+
+                const logoSrc = cryptoLogos[displaySymbol] || "/static/img/crypto/BTC.png";
+                row.innerHTML = `
+                    <td><img src="${logoSrc}" alt="${displaySymbol}" width="35px" height="35px"></td>
+                    <td>${displaySymbol}</td>
+                    <td>$${ticker.price}</td>
+                    <td class="percentage-change">
+                        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
+                            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
+                        </span>
+                    </td>
+                `;
 
                 tableBody.appendChild(row);
             });
         }
 
         exchangeRadios.forEach(radio => radio.addEventListener("change", toggleTickers));
- window.convertCrypto = function () {
-        const selectedCrypto = document.getElementById("crypto-select").value;
-        const amount = parseFloat(document.getElementById("crypto-amount").value);
-        const result = document.getElementById("conversion-result");
-        if (!cryptoPrices[selectedCrypto] || isNaN(amount) || amount <= 0) {
-            result.textContent = "Invalid input. Please enter a valid amount.";
-            return;
+
+        window.convertCrypto = function () {
+            const selectedCrypto = document.getElementById("crypto-select").value;
+            const amount = parseFloat(document.getElementById("crypto-amount").value);
+            const result = document.getElementById("conversion-result");
+            if (!cryptoPrices[selectedCrypto] || isNaN(amount) || amount <= 0) {
+                result.textContent = "Invalid input. Please enter a valid amount.";
+                return;
+            }
+            const convertedValue = (amount * cryptoPrices[selectedCrypto]).toFixed(2);
+            result.textContent = `${amount} ${selectedCrypto} = $${convertedValue} USD`;
         }
-        const convertedValue = (amount * cryptoPrices[selectedCrypto]).toFixed(2);
-        result.textContent = `${amount} ${selectedCrypto} = $${convertedValue} USD`;
-    }
+
         fetchPrices();
         setInterval(fetchPrices, 10000);
     });
