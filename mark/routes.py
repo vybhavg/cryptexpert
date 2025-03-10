@@ -26,7 +26,9 @@ import os
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
 import asyncio
-
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.graph_objects as go
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import pandas as pd
 import numpy as np
