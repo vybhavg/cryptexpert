@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
 {% block title %}Live Crypto Prices{% endblock %}
-
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.0/bignumber.min.js"></script>{% endblock %}
 {% block style %}
 <style>
 .converter {
@@ -386,6 +387,7 @@ body {
 <script>
     const cryptoLogos = {{ crypto_logos | tojson }};
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.0/bignumber.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const cryptoSelect = document.getElementById("crypto-select");
@@ -407,9 +409,10 @@ body {
                 data.forEach(ticker => {
                     if (ticker.symbol.endsWith("USDT")) {
                         const symbol = ticker.symbol.replace("USDT", ""); // Remove USDT suffix
-                        cryptoPrices[symbol] = parseFloat(ticker.price);
+                        cryptoPrices[symbol] = new BigNumber(ticker.price); // Use BigNumber for precision
                     }
                 });
+                console.log("cryptoPrices:", cryptoPrices); // Debugging
                 populateCryptoSelect();
             } catch (error) {
                 console.error('Error fetching crypto prices:', error);
@@ -434,8 +437,8 @@ body {
             cryptoSelect.style.backgroundImage = `url('${logoUrl}')`;
             cryptoSelect.style.backgroundRepeat = "no-repeat";
             cryptoSelect.style.backgroundPosition = "left 10px center";
-            cryptoSelect.style.backgroundSize = "20px 20px";
-            cryptoSelect.style.paddingLeft = "40px"; // Add padding for the logo
+            cryptoSelect.style.backgroundSize = "30px 30px"; // Increased logo size
+            cryptoSelect.style.paddingLeft = "50px"; // Increased padding for the logo
         }
 
         // Populate fiat select dropdown with flags
@@ -456,18 +459,24 @@ body {
             fiatSelect.style.backgroundImage = `url('${flagUrl}')`;
             fiatSelect.style.backgroundRepeat = "no-repeat";
             fiatSelect.style.backgroundPosition = "left 10px center";
-            fiatSelect.style.backgroundSize = "20px 20px";
-            fiatSelect.style.paddingLeft = "40px"; // Add padding for the flag
+            fiatSelect.style.backgroundSize = "30px 30px"; // Increased flag size
+            fiatSelect.style.paddingLeft = "50px"; // Increased padding for the flag
+        }
+
+        // Format numbers without trailing zeros
+        function formatNumber(number, decimals = 8) {
+            const formatted = new BigNumber(number).toFormat(decimals); // Format with decimals
+            return formatted.replace(/\.?0+$/, ""); // Remove trailing zeros
         }
 
         // Convert crypto to fiat
         function convertCryptoToFiat() {
-            const cryptoAmount = parseFloat(cryptoAmountInput.value);
+            const cryptoAmount = new BigNumber(cryptoAmountInput.value || 0); // Use BigNumber for precision
             const selectedCrypto = cryptoSelect.value;
             const selectedFiat = fiatSelect.value;
 
             // Validate input
-            if (isNaN(cryptoAmount) || cryptoAmount <= 0) {
+            if (cryptoAmount.isNaN() || cryptoAmount.lte(0)) {
                 conversionResult.innerHTML = `<span class="error">Please enter a valid crypto amount.</span>`;
                 return;
             }
@@ -481,22 +490,25 @@ body {
             }
 
             // Perform the conversion
-            const fiatAmount = cryptoAmount * cryptoPrices[selectedCrypto] * fiatRates[selectedFiat];
-            fiatAmountInput.value = fiatAmount.toFixed(2); // Format fiat amount
+            const fiatAmount = cryptoAmount
+                .times(cryptoPrices[selectedCrypto]) // Multiply by crypto price
+                .times(fiatRates[selectedFiat]); // Multiply by fiat rate
+
+            fiatAmountInput.value = formatNumber(fiatAmount, 2); // Format fiat amount
             conversionResult.innerHTML = `
-                <span class="crypto-output">${cryptoAmount.toFixed(8)} ${selectedCrypto}</span> = 
-                <span class="usd-output">${fiatAmount.toFixed(2)} ${selectedFiat}</span>
+                <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span> = 
+                <span class="usd-output">${formatNumber(fiatAmount, 2)} ${selectedFiat}</span>
             `;
         }
 
         // Convert fiat to crypto
         function convertFiatToCrypto() {
-            const fiatAmount = parseFloat(fiatAmountInput.value);
+            const fiatAmount = new BigNumber(fiatAmountInput.value || 0); // Use BigNumber for precision
             const selectedCrypto = cryptoSelect.value;
             const selectedFiat = fiatSelect.value;
 
             // Validate input
-            if (isNaN(fiatAmount) || fiatAmount <= 0) {
+            if (fiatAmount.isNaN() || fiatAmount.lte(0)) {
                 conversionResult.innerHTML = `<span class="error">Please enter a valid fiat amount.</span>`;
                 return;
             }
@@ -510,11 +522,14 @@ body {
             }
 
             // Perform the conversion
-            const cryptoAmount = fiatAmount / (cryptoPrices[selectedCrypto] * fiatRates[selectedFiat]);
-            cryptoAmountInput.value = cryptoAmount.toFixed(8); // Format crypto amount
+            const cryptoAmount = fiatAmount
+                .div(cryptoPrices[selectedCrypto]) // Divide by crypto price
+                .div(fiatRates[selectedFiat]); // Divide by fiat rate
+
+            cryptoAmountInput.value = formatNumber(cryptoAmount); // Format crypto amount
             conversionResult.innerHTML = `
-                <span class="usd-output">${fiatAmount.toFixed(2)} ${selectedFiat}</span> = 
-                <span class="crypto-output">${cryptoAmount.toFixed(8)} ${selectedCrypto}</span>
+                <span class="usd-output">${formatNumber(fiatAmount, 2)} ${selectedFiat}</span> = 
+                <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span>
             `;
         }
 
@@ -547,13 +562,13 @@ body {
                 }
 
                 // Store the price for the converter
-                cryptoPrices[displaySymbol] = parseFloat(ticker.price); // Ensure the price is a number
+                cryptoPrices[displaySymbol] = new BigNumber(ticker.price); // Use BigNumber for precision
 
                 const logoSrc = cryptoLogos[displaySymbol] || "/static/img/crypto/BTC.png";
                 row.innerHTML = `
                     <td><img src="${logoSrc}" alt="${displaySymbol}" width="35px" height="35px"></td>
                     <td>${displaySymbol}</td>
-                    <td>$${ticker.price}</td>
+                    <td>$${formatNumber(ticker.price, 2)}</td>
                     <td class="percentage-change">
                         <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
                             ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
