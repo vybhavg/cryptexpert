@@ -60,71 +60,38 @@
     text-align: center;
     margin-top: 230px;
 font-size:20px;
+color:#f8bc04;
 }
 /* Responsive Table Container */
 .table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 10px;
+    display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        overflow-x: auto;
 }
 
 /* Table Styling */
-.table {
-    background: #000; /* Black Background */
-    color: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
-    width: 100%;
-    white-space: nowrap; /* Prevents text wrapping */
-}
-
-/* Table Head */
-.table thead {
-    background: #f8bc04; /* Yellow Background */
-}
-
-.table th {
-    color: #222; /* Dark Text for Contrast */
-    text-transform: uppercase;
-    font-weight: bold;
-    padding: 12px;
-}
-
-/* Table Body */
-.table td {
-    border-color: #555;
-    padding: 10px;
-    text-align: center;
-}
-
-/* Alternating Row Colors */
-.table tbody tr:nth-child(even) {
-    background: #121212; /* Darker Black */
-}
-
-.table tbody tr:nth-child(odd) {
-    background: #1a1a1a; /* Slightly Lighter Black */
-}
-
-/* Responsive Scrollbar */
-.table-responsive::-webkit-scrollbar {
-    height: 6px;
-}
-
-.table-responsive::-webkit-scrollbar-thumb {
-    background: #f8bc04;
-    border-radius: 10px;
-}
-
-/* Responsive Table for Small Screens */
-@media (max-width: 768px) {
-    .table th,
-    .table td {
-        font-size: 14px;
-        padding: 8px;
+ table {
+        width: 80%; /* Adjusted width to center properly */
+        margin: 0 auto; /* Centers table horizontally */
+        border-collapse: collapse;
+        margin-top: 10px;
     }
-}
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #444;
+        transition: background 0.3s ease-in-out;
+        text-align: center;
+    }
+    th {
+        background: rgba(248, 188, 4);
+        color: black;
+    }
+    tr:hover {
+        background: rgba(248, 188, 4, 0.2);
+        transform: scale(1.02);
+    }
 
 
 /* Enhancing Charts */
@@ -158,7 +125,7 @@ font-size:20px;
         </div>
         <div class="col-md-6">
             <div class="form-container">
-                <h2 class="text-center mb-4">Bitcoin Price Predictor</h2>
+                <h2 class="text-center mb-4"style="font-size:22px;font-weight:bold;"><span style="color: rgba(248, 188, 4);font-size:22px;font-weight:bold">Price</span> Predictor</h2>
                 <form id="prediction-form" method="post" action="/ai_predictor">
                     <div class="mb-3">
                         <label for="stock" class="form-label">Stock Ticker</label>
@@ -178,8 +145,8 @@ font-size:20px;
 <div id="loading-spinner" class="loading-spinner">
     <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
-    </div><br>
-    <p>Predicting prices... Please wait.</p>
+    </div><br><br>
+    <p >Predicting prices... Please wait.</p>
 </div>
 
 <script>
@@ -195,7 +162,7 @@ font-size:20px;
 
 {% if stock %}
     <div id="results">
-        <h2 class="text-center mt-5" style="font-size:23px;">Results for {{ stock }}</h2><br>
+        <h2 class="text-center mt-5" style="font-size:23px; font-weight:bold;">Results for {{ stock }}</h2><br>
         {% if error %}
             <div class="alert alert-danger">{{ error }}</div>
         {% else %}
