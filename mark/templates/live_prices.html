@@ -190,29 +190,42 @@
         }
     }
 
-    .scroll-to-prices {
+/* Import Poppins Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Scroll to Prices Section */
+.scroll-to-prices {
     text-align: center;
     margin-top: 20px;
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 600;
     color: #fff;
-    text-shadow: 0px 0px 10px rgba(255, 204, 0, 0.8);
+    text-shadow: 0px 0px 8px rgba(255, 204, 0, 0.8);
     animation: pulse 2s infinite;
+    letter-spacing: 0.5px;
 }
 
 .scroll-to-prices span {
     color: #f8bc04;
     font-size: 20px;
+    font-weight: 700;
 }
 
+/* Scroll Button */
 .scroll-to-prices button {
     display: inline-block;
     margin-top: 10px;
     background: linear-gradient(135deg, #f8bc04, #ff9c00);
-    padding: 12px 20px;
+    padding: 14px 22px;
     border: none;
     border-radius: 50%;
-    font-size: 20px;
+    font-size: 22px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
     cursor: pointer;
     box-shadow: 0px 5px 15px rgba(255, 204, 0, 0.5);
     transition: transform 0.3s ease-in-out, background 0.3s;
@@ -224,11 +237,13 @@
     box-shadow: 0px 10px 20px rgba(255, 204, 0, 0.7);
 }
 
+/* Bounce Animation */
 @keyframes pulse {
     0% { transform: translateY(0px); }
     50% { transform: translateY(5px); }
     100% { transform: translateY(0px); }
 }
+
 
 </style>
 {% endblock %}
@@ -239,7 +254,7 @@
 
 <div class="container">
     <div class="converter"><br>
-                <h2 class="text-center mb-4"style="font-size:22px;font-weight:bold;color: rgba(248, 188, 4)"><span style="color: #fff;font-size:23px;font-weight:bold">Crypto</span> Converter</h2>
+                <h2 class="text-center mb-4"style="font-size:25px;font-weight:bold;color: rgba(248, 188, 4)"><span style="color: #fff;font-size:23px;font-weight:bold">Crypto</span> Converter</h2>
         <br>
     <select id="crypto-select"></select>
     <input type="number" id="crypto-amount" placeholder="Enter amount"><br><br>
@@ -254,12 +269,13 @@
 </div>
 <script>
     function scrollToPrices() {
-    document.getElementById("prices-table").scrollIntoView({
+    document.getElementById("select-container").scrollIntoView({
         behavior: "smooth"
     });
 }
-</script>
-    <div class="select-container">
+</script><br><br>
+    
+    <div class="select-container" id="select-container">
         <div class="price-selection" style="font-size:14px; font-weight:600;">
             <input type="radio" id="binance" name="price-source" value="binance" checked>
             <label for="binance">Binance</label>
