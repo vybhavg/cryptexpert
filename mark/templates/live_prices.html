@@ -80,7 +80,7 @@
     margin-top: 15px;
     font-size: 22px;
     font-weight: bold;
-    color: #f8bc04;
+    color: #fff;
     background: rgba(255, 204, 0, 0.1);
     padding: 12px 20px;
     border-radius: 10px;
@@ -189,6 +189,47 @@
             font-size: 14px;
         }
     }
+
+    .scroll-to-prices {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0px 0px 10px rgba(255, 204, 0, 0.8);
+    animation: pulse 2s infinite;
+}
+
+.scroll-to-prices span {
+    color: #f8bc04;
+    font-size: 20px;
+}
+
+.scroll-to-prices button {
+    display: inline-block;
+    margin-top: 10px;
+    background: linear-gradient(135deg, #f8bc04, #ff9c00);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0px 5px 15px rgba(255, 204, 0, 0.5);
+    transition: transform 0.3s ease-in-out, background 0.3s;
+}
+
+.scroll-to-prices button:hover {
+    background: linear-gradient(135deg, #ffcc00, #ff8c00);
+    transform: scale(1.2);
+    box-shadow: 0px 10px 20px rgba(255, 204, 0, 0.7);
+}
+
+@keyframes pulse {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(5px); }
+    100% { transform: translateY(0px); }
+}
+
 </style>
 {% endblock %}
 
@@ -198,13 +239,26 @@
 
 <div class="container">
     <div class="converter"><br>
-                <h2 class="text-center mb-4"style="font-size:22px;font-weight:bold;"><span style="color: rgba(248, 188, 4);font-size:23px;font-weight:bold">Crypto</span> Converter</h2>
+                <h2 class="text-center mb-4"style="font-size:22px;font-weight:bold;color: rgba(248, 188, 4)"><span style="color: #fff;font-size:23px;font-weight:bold">Crypto</span> Converter</h2>
         <br>
     <select id="crypto-select"></select>
     <input type="number" id="crypto-amount" placeholder="Enter amount"><br><br>
     <button onclick="convertCrypto()">Convert</button>  <br>
     <p class="converter-output" id="conversion-result"></p>
 </div><br>
+<div class="scroll-to-prices">
+    <p>Scroll down to see <span>Live Crypto Prices</span></p>
+    <button onclick="scrollToPrices()">
+        ⬇
+    </button>
+</div>
+<script>
+    function scrollToPrices() {
+    document.getElementById("prices-table").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+</script>
     <div class="select-container">
         <div class="price-selection" style="font-size:14px; font-weight:600;">
             <input type="radio" id="binance" name="price-source" value="binance" checked>
