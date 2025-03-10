@@ -58,30 +58,74 @@
 .loading-spinner {
     display: none;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 150px;
+font-size:15px;
+}
+/* Responsive Table Container */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
 }
 
-/* Tables */
+/* Table Styling */
 .table {
-    background: #222;
+    background: #000; /* Black Background */
     color: white;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+    width: 100%;
+    white-space: nowrap; /* Prevents text wrapping */
+}
+
+/* Table Head */
+.table thead {
+    background: #f8bc04; /* Yellow Background */
 }
 
 .table th {
-    background: #444;
-    color: #f8bc04;
+    color: #222; /* Dark Text for Contrast */
     text-transform: uppercase;
     font-weight: bold;
     padding: 12px;
 }
 
+/* Table Body */
 .table td {
     border-color: #555;
     padding: 10px;
+    text-align: center;
 }
+
+/* Alternating Row Colors */
+.table tbody tr:nth-child(even) {
+    background: #121212; /* Darker Black */
+}
+
+.table tbody tr:nth-child(odd) {
+    background: #1a1a1a; /* Slightly Lighter Black */
+}
+
+/* Responsive Scrollbar */
+.table-responsive::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #f8bc04;
+    border-radius: 10px;
+}
+
+/* Responsive Table for Small Screens */
+@media (max-width: 768px) {
+    .table th,
+    .table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
 
 /* Enhancing Charts */
 .plot-container {
@@ -163,22 +207,25 @@
 
             <h3>Future Close Price Predictions</h3>
             <img src="{{ future_plot }}" class="img-fluid">
-            <table class="table table-striped mt-4">
-                <thead>
-                    <tr>
-                        <th>Day</th>
-                        <th>Predicted Close Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for day, price in enumerate(future_predictions, start=1) %}
-                    <tr>
-                        <td>{{ day }}</td>
-                        <td>{{ price | round(2) }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>Predicted Close Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for day, price in enumerate(future_predictions, start=1) %}
+            <tr>
+                <td>{{ day }}</td>
+                <td>{{ price | round(2) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
         {% endif %}
         <a href="/ai_predictor" class="btn btn-secondary mt-4">Back to Home</a>
     </div>
