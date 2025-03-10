@@ -482,14 +482,16 @@ client = Client()
 import seaborn as sns
 plt.style.use("dark_background")  # Apply dark mode
 sns.set_palette("coolwarm")       # Use a stylish color scheme
+
 def plot_to_html(fig):
     """Convert Matplotlib figure to a responsive HTML image."""
     buf = io.BytesIO()
-    fig.savefig(buf, format="png", dpi=100, bbox_inches="tight", transparent=True)
+    fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
     buf.seek(0)
     encoded = base64.b64encode(buf.getvalue()).decode("utf-8")
     buf.close()
     return f'<img src="data:image/png;base64,{encoded}" class="img-fluid" style="max-width:100%;">'
+
 
 
 def get_historical_klines(symbol, interval, start_str, end_str=None):
@@ -568,24 +570,25 @@ def ai_predictor():
             'Predicted Test Data': inv_predictions.flatten()
         }, index=x_test.index[100:])
 
- # Generate Plots
+# Generate Plots
         # Plot 1: Original Closing Prices
-        fig1, ax1 = plt.subplots(figsize=(15, 6))
-        ax1.plot(stock_data['Close'], 'b', label='Close Price')
-        ax1.set_title("Closing Prices Over Time", fontsize=16, fontweight='bold')
-        ax1.set_xlabel("Date", fontsize=14)
-        ax1.set_ylabel("Close Price", fontsize=14)
-        ax1.legend()
+        fig1 = plt.figure(figsize=(15, 6))
+        plt.plot(stock_data['Close'], 'b', label='Close Price')
+        plt.title("Closing Prices Over Time")
+        plt.xlabel("Date")
+        plt.ylabel("Close Price")
+        plt.legend()
         original_plot = plot_to_html(fig1)
-
+        
+   
         # Plot 2: Original vs Predicted Test Data
-        fig2, ax2 = plt.subplots(figsize=(15, 6))
-        ax2.plot(plotting_data['Original Test Data'], label="Original Test Data")
-        ax2.plot(plotting_data['Predicted Test Data'], label="Predicted Test Data", linestyle="--")
-        ax2.legend()
-        ax2.set_title("Original vs Predicted Closing Prices", fontsize=16, fontweight='bold')
-        ax2.set_xlabel("Date", fontsize=14)
-        ax2.set_ylabel("Close Price", fontsize=14)
+        fig2 = plt.figure(figsize=(15, 6))
+        plt.plot(plotting_data['Original Test Data'], label="Original Test Data")
+        plt.plot(plotting_data['Predicted Test Data'], label="Predicted Test Data", linestyle="--")
+        plt.legend()
+        plt.title("Original vs Predicted Closing Prices")
+        plt.xlabel("Date")
+        plt.ylabel("Close Price")
         predicted_plot = plot_to_html(fig2)
 
         # Plot 3: Future Predictions
@@ -601,13 +604,13 @@ def ai_predictor():
 
         future_predictions = np.array(future_predictions).flatten()
 
-        fig3, ax3 = plt.subplots(figsize=(15, 6))
-        ax3.plot(range(1, no_of_days + 1), future_predictions, marker='o', label="Predicted Future Prices", color="purple")
-        ax3.set_title("Future Close Price Predictions", fontsize=16, fontweight='bold')
-        ax3.set_xlabel("Days Ahead", fontsize=14)
-        ax3.set_ylabel("Predicted Close Price", fontsize=14)
-        ax3.grid(alpha=0.3)
-        ax3.legend()
+          fig3 = plt.figure(figsize=(15, 6))
+        plt.plot(range(1, no_of_days + 1), future_predictions, marker='o', label="Predicted Future Prices", color="purple")
+        plt.title("Future Close Price Predictions")
+        plt.xlabel("Days Ahead")
+        plt.ylabel("Predicted Close Price")
+        plt.grid(alpha=0.3)
+        plt.legend()
         future_plot = plot_to_html(fig3)
 
         return render_template(
