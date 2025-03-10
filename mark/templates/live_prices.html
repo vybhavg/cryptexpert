@@ -238,6 +238,18 @@ td img {
                 document.querySelectorAll(`.${selectedExchange}-row`).forEach(row => row.style.display = "table-row");
             }
         }
+        function populateCryptoSelect() {
+            // Clear existing options
+            cryptoSelect.innerHTML = "";
+
+            // Add new options based on available cryptocurrencies
+            Object.keys(cryptoPrices).forEach(symbol => {
+                const option = document.createElement("option");
+                option.value = symbol;
+                option.textContent = symbol;
+                cryptoSelect.appendChild(option);
+            });
+        }
 
         async function fetchPrices() {
             try {
@@ -254,7 +266,7 @@ td img {
                 updateTable("binance", binancePrices);
                 updateTable("okx", okxPrices);
                 updateTable("coinbase", coinbasePrices);
-
+                populateCryptoSelect()
                 toggleTickers();
             } catch (error) {
                 console.error('Error fetching prices:', error);
