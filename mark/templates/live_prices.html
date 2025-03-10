@@ -80,7 +80,6 @@
     margin-top: 15px;
     font-size: 22px;
     font-weight: bold;
-    color: #fff;
     background: rgba(255, 204, 0, 0.1);
     padding: 12px 20px;
     border-radius: 10px;
@@ -88,6 +87,23 @@
     display: inline-block;
     transition: all 0.3s ease-in-out;
     min-width: 200px;
+}
+.crypto-output {
+    color: rgba(248, 188, 4, 1); /* Your yellow color */
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.usd-output {
+    color: #fff; /* White for contrast */
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.error {
+    color: #ff4d4d; /* Red for error messages */
+    font-weight: bold;
+    font-size: 16px;
 }
 
 .converter-output:hover {
@@ -468,21 +484,21 @@ body {
 
         exchangeRadios.forEach(radio => radio.addEventListener("change", toggleTickers));
 
-        window.convertCrypto = function () {
-            const selectedCrypto = document.getElementById("crypto-select").value;
-            const amount = parseFloat(document.getElementById("crypto-amount").value);
-            const result = document.getElementById("conversion-result");
+window.convertCrypto = function () {
+    const selectedCrypto = document.getElementById("crypto-select").value;
+    const amount = parseFloat(document.getElementById("crypto-amount").value);
+    const result = document.getElementById("conversion-result");
 
-            // Validate input
-            if (!selectedCrypto || !cryptoPrices[selectedCrypto] || isNaN(amount) || amount <= 0) {
-                result.textContent = "Invalid input. Please enter a valid amount and select a cryptocurrency.";
-                return;
-            }
+    // Validate input
+    if (!selectedCrypto || !cryptoPrices[selectedCrypto] || isNaN(amount) || amount <= 0) {
+        result.innerHTML = `<span class="error">Invalid input. Please enter a valid amount and select a cryptocurrency.</span>`;
+        return;
+    }
 
-            // Perform the conversion
-            const convertedValue = (amount * cryptoPrices[selectedCrypto]).toFixed(2);
-            result.textContent = `${amount} ${selectedCrypto} = $${convertedValue} USD`;
-        }
+    // Perform the conversion
+    const convertedValue = (amount * cryptoPrices[selectedCrypto]).toFixed(2);
+    result.innerHTML = `<span class="usd-output">${amount}</span> <span class="crypto-output">${selectedCrypto}</span> = <span class="usd-output">$${convertedValue}</span> <span class="crypto-output">USD</span>`;
+}
 
         fetchPrices();
         setInterval(fetchPrices, 10000);
