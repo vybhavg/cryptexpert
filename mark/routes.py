@@ -477,15 +477,19 @@ model = load_model("/home/ec2-user/cryptexpert/mark/model.keras")
 # Initialize Binance Client (No API Key Required for Public Data)
 client = Client()
 
+import seaborn as sns
+plt.style.use("dark_background")  # Apply dark mode
+sns.set_palette("coolwarm")       # Use a stylish color scheme
 
 def plot_to_html(fig):
-    """Convert Matplotlib figure to HTML image."""
+    """Convert Matplotlib figure to a responsive HTML image."""
     buf = io.BytesIO()
-    fig.savefig(buf, format="png")
+    fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
     buf.seek(0)
-    data = base64.b64encode(buf.getbuffer()).decode("ascii")
+    encoded = base64.b64encode(buf.getvalue()).decode("utf-8")
     buf.close()
-    return f"data:image/png;base64,{data}"
+    return f'<img src="data:image/png;base64,{encoded}" class="img-fluid" style="max-width:100%;">'
+
 
 
 def get_historical_klines(symbol, interval, start_str, end_str=None):
@@ -512,6 +516,17 @@ def get_historical_klines(symbol, interval, start_str, end_str=None):
 
     return all_data
 
+from flask import Flask, render_template, request
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.graph_objects as go
+import io, base64
+from sklearn.preprocessing import MinMaxScaler
+from binance.client import Client
+
+app = Flask(__name__)
 
 @app.route("/ai_predictor", methods=["GET", "POST"])
 def ai_predictor():
@@ -521,24 +536,16 @@ def ai_predictor():
 
         # Fetch Historical Data from Binance
         klines = get_historical_klines(symbol=stock, interval=Client.KLINE_INTERVAL_1DAY, start_str="2017-08-17")
-
-        # Convert to DataFrame
-        stock_data = pd.DataFrame(klines, columns=[
-            'Open Time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close Time',
-            'Quote Asset Volume', 'Number of Trades', 'Taker Buy Base Asset Volume',
-            'Taker Buy Quote Asset Volume', 'Ignore'
-        ])
+        stock_data = pd.DataFrame(klines, columns=['Open Time', 'Open', 'High', 'Low', 'Close', 'Volume', 
+                                                   'Close Time', 'Quote Asset Volume', 'Number of Trades', 
+                                                   'Taker Buy Base Asset Volume', 'Taker Buy Quote Asset Volume', 'Ignore'])
         stock_data['Close'] = stock_data['Close'].astype(float)
         stock_data.index = pd.to_datetime(stock_data['Close Time'], unit='ms')
 
         if stock_data.empty:
             return render_template("ai_price_predictor.html", error="Invalid crypto pair or no data available.")
 
-        # Prepare candlestick data for visualization
-        candlestick_data = stock_data[['Close Time', 'Open', 'High', 'Low', 'Close', 'Volume']].tail(200)
-        candlestick_json = candlestick_data.to_json(orient="records")
-
-        # Data Preparation for Prediction
+        # Prepare Data for Prediction
         splitting_len = int(len(stock_data) * 0.9)
         x_test = stock_data[['Close']][splitting_len:]
 
@@ -563,7 +570,10 @@ def ai_predictor():
             'Predicted Test Data': inv_predictions.flatten()
         }, index=x_test.index[100:])
 
-        # Generate Plots
+        # 📌 Use Seaborn for Dark Mode Styling
+        plt.style.use("dark_background")
+        sns.set_palette("coolwarm")
+
         # Plot 1: Original Closing Prices
         fig1 = plt.figure(figsize=(15, 6))
         plt.plot(stock_data['Close'], 'b', label='Close Price')
@@ -583,7 +593,7 @@ def ai_predictor():
         plt.ylabel("Close Price")
         predicted_plot = plot_to_html(fig2)
 
-        # Plot 3: Future Predictions
+        # Future Predictions
         last_100 = stock_data[['Close']].tail(100)
         last_100_scaled = scaler.transform(last_100)
 
@@ -596,24 +606,23 @@ def ai_predictor():
 
         future_predictions = np.array(future_predictions).flatten()
 
-        fig3 = plt.figure(figsize=(15, 6))
-        plt.plot(range(1, no_of_days + 1), future_predictions, marker='o', label="Predicted Future Prices", color="purple")
-        plt.title("Future Close Price Predictions")
-        plt.xlabel("Days Ahead")
-        plt.ylabel("Predicted Close Price")
-        plt.grid(alpha=0.3)
-        plt.legend()
-        future_plot = plot_to_html(fig3)
+        # Plot 3: Future Predictions (Interactive with Plotly)
+        fig3 = go.Figure()
+        fig3.add_trace(go.Scatter(x=list(range(1, no_of_days + 1)), y=future_predictions, 
+                                  mode="lines+markers", name="Future Prediction",
+                                  marker=dict(color="purple", size=8)))
+        fig3.update_layout(title="Future Close Price Predictions", template="plotly_dark", width=900, height=500)
+        future_plot = fig3.to_html(full_html=False)
 
         return render_template(
             "ai_price_predictor.html",
             stock=stock,
-            candlestick_json=candlestick_json,
             predicted_plot=predicted_plot,
             future_plot=future_plot,
             enumerate=enumerate,
             future_predictions=future_predictions
         )
+
     return render_template("ai_price_predictor.html")
 
 @app.route('/search')
