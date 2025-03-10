@@ -198,60 +198,67 @@
 </div>
     
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
+document.addEventListener("DOMContentLoaded", () => {
+    const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
+    const imageCache = {}; // Store images to avoid reloading
 
-        function toggleTickers() {
-            const selectedExchange = document.querySelector('input[name="price-source"]:checked')?.value;
-            document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
-                row.style.display = "none";
-            });
+    function toggleTickers() {
+        const selectedExchange = document.querySelector('input[name="price-source"]:checked')?.value;
+        document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
+            row.style.display = "none";
+        });
 
-            if (selectedExchange) {
-                document.querySelectorAll(`.${selectedExchange}-row`).forEach(row => row.style.display = "table-row");
-            }
+        if (selectedExchange) {
+            document.querySelectorAll(`.${selectedExchange}-row`).forEach(row => row.style.display = "table-row");
         }
+    }
 
-        async function fetchPrices() {
-            try {
-                const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
-                    fetch('/binance_prices'),
-                    fetch('/okx_prices'),
-                    fetch('/coinbase_prices')
-                ]);
+    async function fetchPrices() {
+        try {
+            const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
+                fetch('/binance_prices'),
+                fetch('/okx_prices'),
+                fetch('/coinbase_prices')
+            ]);
 
-                const binancePrices = await binanceResponse.json();
-                const okxPrices = await okxResponse.json();
-                const coinbasePrices = await coinbaseResponse.json();
+            const binancePrices = await binanceResponse.json();
+            const okxPrices = await okxResponse.json();
+            const coinbasePrices = await coinbaseResponse.json();
 
-                updateTable("binance", binancePrices);
-                updateTable("okx", okxPrices);
-                updateTable("coinbase", coinbasePrices);
+            updateTable("binance", binancePrices);
+            updateTable("okx", okxPrices);
+            updateTable("coinbase", coinbasePrices);
 
-                toggleTickers();
-            } catch (error) {
-                console.error('Error fetching prices:', error);
-            }
+            toggleTickers();
+        } catch (error) {
+            console.error('Error fetching prices:', error);
         }
+    }
 
-        function updateTable(exchange, prices) {
-            const tableBody = document.getElementById("table-body");
-            document.querySelectorAll(`.${exchange}-row`).forEach(row => row.remove());
+    function updateTable(exchange, prices) {
+        const tableBody = document.getElementById("table-body");
 
-            prices.forEach(ticker => {
-                const row = document.createElement("tr");
+        prices.forEach(ticker => {
+            let row = document.getElementById(`${exchange}-${ticker.symbol}`);
+            let displaySymbol = ticker.symbol.replace("USDT", ""); // Remove "USDT" from Binance
+
+            if (!row) {
+                // Create row if not exists
+                row = document.createElement("tr");
+                row.id = `${exchange}-${ticker.symbol}`;
                 row.classList.add(`${exchange}-row`);
-                row.style.display = "none"; // Default hidden, will be toggled later
+                row.style.display = "none"; // Initially hidden
 
-                // Remove "USDT" from Binance symbols if present
-                let displaySymbol = ticker.symbol;
-                if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
-                    displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
+                // Preload images once
+                if (!imageCache[ticker.symbol]) {
+                    const img = new Image();
+                    img.src = `https://crypto-icons.com/${ticker.symbol.toLowerCase()}.png`; // Example image URL
+                    imageCache[ticker.symbol] = img.src;
                 }
 
                 row.innerHTML = `
-                    <td>${displaySymbol}</td>
-                    <td>$${ticker.price}</td>
+                    <td><img src="${imageCache[ticker.symbol]}" alt="${displaySymbol}" width="20"> ${displaySymbol}</td>
+                    <td class="crypto-price">$${ticker.price}</td>
                     <td class="percentage-change">
                         <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
                             ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
@@ -260,14 +267,21 @@
                 `;
 
                 tableBody.appendChild(row);
-            });
-        }
+            } else {
+                // Update only price and percentage change
+                row.querySelector(".crypto-price").textContent = `$${ticker.price}`;
+                row.querySelector(".percentage-change span").textContent = `${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%`;
+                row.querySelector(".percentage-change span").className = ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral";
+            }
+        });
+    }
 
-        exchangeRadios.forEach(radio => radio.addEventListener("change", toggleTickers));
+    exchangeRadios.forEach(radio => radio.addEventListener("change", toggleTickers));
 
-        fetchPrices();
-        setInterval(fetchPrices, 10000);
-    });
+    fetchPrices();
+    setInterval(fetchPrices, 10000);
+});
+
 </script>
 {% endblock %}
 
