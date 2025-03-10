@@ -13,7 +13,7 @@
         border-radius: 10px;
         box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
         text-align: center; /* Center child elements */
-        
+
     }
     .select-container {
         margin-bottom: 20px;
@@ -111,10 +111,11 @@
             <label for="coinbase">CoinBase</label>
         </div>
     </div>
-    
+
     <table id="prices-table">
         <thead style="font-size:15px;">
             <tr>
+
                 <th>Symbol</th>
                 <th>Price (USD)</th>
                 <th>24h Change (%)</th>
@@ -123,6 +124,7 @@
         <tbody id="table-body"style="color:white;font-size:14px;">
             {% for ticker in binance_prices %}
 <tr class="binance-row">
+
 <td>{{ ticker.symbol[:-4]}}</td>
     <td>${{ ticker.price }}</td>
     <td class="percentage-change">
@@ -137,7 +139,7 @@
 </tr>
 {% endfor %}
 
-            
+
             {% for ticker in okx_prices %}
             <tr class="okx-row" style="display:none;">
                 <td>{{ ticker.symbol }}</td>
@@ -153,9 +155,10 @@
                 </td>
             </tr>
             {% endfor %}
-            
+
             {% for ticker in coinbase_prices %}
             <tr class="coinbase-row" style="display:none;">
+
                 <td>{{ ticker.symbol }}</td>
                 <td>${{ ticker.price }}</td>
                 <td class="percentage-change">
@@ -172,7 +175,7 @@
         </tbody>
     </table>
 </div>
-    
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
@@ -184,7 +187,7 @@
             });
 
             if (selectedExchange) {
-                document.querySelectorAll(.${selectedExchange}-row).forEach(row => row.style.display = "table-row");
+                document.querySelectorAll(`.${selectedExchange}-row`).forEach(row => row.style.display = "table-row");
             }
         }
 
@@ -212,11 +215,11 @@
 
         function updateTable(exchange, prices) {
             const tableBody = document.getElementById("table-body");
-            document.querySelectorAll(.${exchange}-row).forEach(row => row.remove());
+            document.querySelectorAll(`.${exchange}-row`).forEach(row => row.remove());
 
             prices.forEach(ticker => {
                 const row = document.createElement("tr");
-                row.classList.add(${exchange}-row);
+                row.classList.add(`${exchange}-row`);
                 row.style.display = "none"; // Default hidden, will be toggled later
 
                 // Remove "USDT" from Binance symbols if present
@@ -225,7 +228,7 @@
                     displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
                 }
 
-                row.innerHTML = 
+                row.innerHTML = `
                     <td>${displaySymbol}</td>
                     <td>$${ticker.price}</td>
                     <td class="percentage-change">
@@ -233,7 +236,7 @@
                             ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
                         </span>
                     </td>
-                ;
+                `;
 
                 tableBody.appendChild(row);
             });
@@ -245,4 +248,4 @@
         setInterval(fetchPrices, 10000);
     });
 </script>
-{% endblock %} 
+{% endblock %}
