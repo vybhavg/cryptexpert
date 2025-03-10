@@ -133,13 +133,7 @@ td img {
 
 {% endblock %}
  {% block content %} 
-<div class="converter">
-        <h2 style="color:white;">Crypto Converter</h2>
-        <select id="crypto-select"></select>
-        <input type="number" id="crypto-amount" placeholder="Enter amount">
-        <button onclick="convertCrypto()">Convert</button>
-        <p class="converter-output" id="conversion-result"></p>
-    </div>
+
 <div class="container">
     <h1 style="color:white;font-size:24px;font-weight:bold;">Live Crypto Prices</h1><br>
     <div class="select-container">
@@ -218,6 +212,14 @@ td img {
         </tbody>
     </table>
 </div>
+
+<div class="converter">
+        <h2 style="color:white;">Crypto Converter</h2>
+        <select id="crypto-select"></select>
+        <input type="number" id="crypto-amount" placeholder="Enter amount">
+        <button onclick="convertCrypto()">Convert</button>
+        <p class="converter-output" id="conversion-result"></p>
+    </div>
 <script>
     const cryptoLogos = {{ crypto_logos | tojson }};
 </script>
