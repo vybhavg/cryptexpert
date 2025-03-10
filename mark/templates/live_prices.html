@@ -5,7 +5,7 @@
 {% block style %}
 <style>
     .converter {
-        margin-top: 100px;
+        margin-top: 30px;
         padding: 20px;
         background: #2a2a2a;
         border-radius: 10px;
@@ -132,14 +132,15 @@
 {% block content %}
 
 
-<div class="converter">
+
+<div class="container">
+    <div class="converter">
     <h2 style="color:white;">Crypto Converter</h2>
     <select id="crypto-select"></select>
     <input type="number" id="crypto-amount" placeholder="Enter amount">
     <button onclick="convertCrypto()">Convert</button>
     <p class="converter-output" id="conversion-result"></p>
-</div>
-<div class="container">
+</div><br>
     <h1 style="color:white;font-size:24px;font-weight:bold;">Live Crypto Prices</h1><br>
     <div class="select-container">
         <div class="price-selection" style="font-size:14px; font-weight:600;">
