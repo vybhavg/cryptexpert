@@ -371,18 +371,18 @@ def otp_form():
     session['otp'] = otp
     try:
         msg = Message('Cryptexpert OTP Verification', recipients=[email])
-msg.body = f'''
-Dear Valued User,
-
-Your One-Time Password (OTP) for Cryptexpert authentication is: **{otp}**  
-This OTP is valid for a limited time. Please do not share it with anyone.
-
-If you did not request this OTP, please ignore this email.  
-
-Best regards,  
-**Cryptexpert Team**  
-Secure Your Crypto Investments with Confidence.
-'''
+        msg.body = f'''
+        Dear Valued User,
+        
+        Your One-Time Password (OTP) for Cryptexpert authentication is: **{otp}**  
+        This OTP is valid for a limited time. Please do not share it with anyone.
+        
+        If you did not request this OTP, please ignore this email.  
+        
+        Best regards,  
+        **Cryptexpert Team**  
+        Secure Your Crypto Investments with Confidence.
+        '''
         mail.send(msg)
         flash("OTP sent successfully","success")
         return redirect(url_for('verify_form'))
