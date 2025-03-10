@@ -124,7 +124,7 @@
         <tbody id="table-body"style="color:white;font-size:14px;">
             {% for ticker in binance_prices %}
 <tr class="binance-row">
-<td><img src="{{ crypto_logos[ticker.symbol[:-4]] }}"></td>
+<td><img src="{{ crypto_logos[ticker.symbol[:-4]] }}" width="35px" height="35px"></td>
 <td>{{ ticker.symbol[:-4]}}</td>
     <td>${{ ticker.price }}</td>
     <td class="percentage-change">
@@ -142,7 +142,7 @@
 
             {% for ticker in okx_prices %}
             <tr class="okx-row" style="display:none;">
-                <td><img src="{{ crypto_logos[ticker.symbol] }}"></td>
+                <td><img src="{{ crypto_logos[ticker.symbol] }}" width="35px" height="35px"></td>
 
                 <td>{{ ticker.symbol }}</td>
                 <td>${{ ticker.price }}</td>
@@ -160,7 +160,7 @@
 
             {% for ticker in coinbase_prices %}
             <tr class="coinbase-row" style="display:none;">
-<td><img src="{{ crypto_logos[ticker.symbol] }}"></td>
+<td><img src="{{ crypto_logos[ticker.symbol] }}"width="35px" height="35px"></td>
                 <td>{{ ticker.symbol }}</td>
                 <td>${{ ticker.price }}</td>
                 <td class="percentage-change">
@@ -234,7 +234,7 @@
                 }
 const logoSrc = cryptoLogos[displaySymbol] || "/static/img/crypto/BTC.png";
 row.innerHTML = `
-    <td><img src="${logoSrc}" alt="${displaySymbol}" width="50px" height="50px"></td>
+    <td><img src="${logoSrc}" alt="${displaySymbol}" width="35px" height="35px"></td>
     <td>${displaySymbol}</td>
     <td>$${ticker.price}</td>
     <td class="percentage-change">
