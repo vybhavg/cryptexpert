@@ -195,17 +195,14 @@ font-size:15px;
 
 {% if stock %}
     <div id="results">
-        <h2 class="text-center mt-5">Results for {{ stock }}</h2>
+        <h2 class="text-center mt-5" style="font-size:18px;">Results for {{ stock }}</h2>
         {% if error %}
             <div class="alert alert-danger">{{ error }}</div>
         {% else %}
-            <h3>Original Closing Prices Over Time</h3>
             <div id="tradingview-chart" class="mb-4" style="height: 500px;"></div>
 
-            <h3>Original vs Predicted Test Data</h3>
             <img src="{{ predicted_plot }}" class="img-fluid">
 
-            <h3>Future Close Price Predictions</h3>
             <img src="{{ future_plot }}" class="img-fluid">
             <div class="table-responsive">
     <table class="table table-striped mt-4">
