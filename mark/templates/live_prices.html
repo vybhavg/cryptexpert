@@ -124,7 +124,7 @@
         {% for ticker in binance_prices %}
         <tr class="binance-row">
             <td>
-                <img src="{{ crypto_logos.get(ticker.symbol[:-4], 'default_logo.png') }}" 
+                <img src="{{ crypto_logos.get(ticker.symbol[:-4]) }}" 
                      alt="{{ ticker.symbol[:-4] }} logo" width="30">
             </td>
             <td>{{ ticker.symbol[:-4] }}</td>
@@ -148,7 +148,7 @@
         {% for ticker in okx_prices %}
         <tr class="okx-row" style="display:none;">
             <td>
-                <img src="{{ crypto_logos.get(ticker.symbol, 'default_logo.png') }}" 
+                <img src="{{ crypto_logos.get(ticker.symbol) }}" 
                      alt="{{ ticker.symbol }} logo" width="30">
             </td>
             <td>{{ ticker.symbol }}</td>
@@ -172,7 +172,7 @@
         {% for ticker in coinbase_prices %}
         <tr class="coinbase-row" style="display:none;">
             <td>
-                <img src="{{ crypto_logos.get(ticker.symbol, 'default_logo.png') }}" 
+                <img src="{{ crypto_logos.get(ticker.symbol) }}" 
                      alt="{{ ticker.symbol }} logo" width="30">
             </td>
             <td>{{ ticker.symbol }}</td>
@@ -248,7 +248,7 @@
                 if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
                     displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
                 }
-            const imageUrl = crypto_logos[displaySymbol] || "default_logo.png";
+            const imageUrl = crypto_logos[displaySymbol];
 
             row.innerHTML = `
             <td><img src="${imageUrl}" alt="${displaySymbol} logo" width="30"></td>
