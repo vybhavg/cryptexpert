@@ -283,10 +283,7 @@ body {
         <div class="input-group">
             <input type="number" id="fiat-amount" placeholder="0.00" oninput="convertFiatToCrypto()" />
             <select id="fiat-select" onchange="convertCryptoToFiat()">
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-                <!-- Add more fiat currencies as needed -->
+                <!-- Options will be dynamically populated -->
             </select>
         </div>
     </div>
@@ -399,8 +396,8 @@ body {
         const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
 
         let cryptoPrices = {}; // Stores crypto prices in USD
-        let fiatRates = { USD: 1, EUR: 0.85, GBP: 0.73 }; // Example fiat rates (1 USD = X EUR, etc.)
-        let previousCoinList = []; // Track the previous list of coins
+        const fiatRates = { USD: 1, EUR: 0.85, GBP: 0.73 }; // Example fiat rates (1 USD = X EUR, etc.)
+        const cryptoLogos = {{ crypto_logos | tojson }}; // Crypto logos from your backend
 
         // Fetch crypto prices from Binance API
         async function fetchCryptoPrices() {
@@ -419,34 +416,48 @@ body {
             }
         }
 
-        // Populate crypto select dropdown
+        // Populate crypto select dropdown with logos
         function populateCryptoSelect() {
-            const currentCoinList = Object.keys(cryptoPrices);
+            const coins = Object.keys(cryptoPrices);
+            cryptoSelect.innerHTML = coins.map(coin => `
+                <option value="${coin}" data-logo="${cryptoLogos[coin] || '/static/img/crypto/BTC.png'}">
+                    ${coin}
+                </option>
+            `).join("");
+            updateCryptoLogo();
+        }
 
-            // Check if the coin list has changed
-            if (JSON.stringify(currentCoinList) !== JSON.stringify(previousCoinList)) {
-                // Save the current selection
-                const selectedCrypto = cryptoSelect.value;
+        // Update crypto logo when selection changes
+        function updateCryptoLogo() {
+            const selectedOption = cryptoSelect.options[cryptoSelect.selectedIndex];
+            const logoUrl = selectedOption.getAttribute("data-logo");
+            cryptoSelect.style.backgroundImage = `url('${logoUrl}')`;
+            cryptoSelect.style.backgroundRepeat = "no-repeat";
+            cryptoSelect.style.backgroundPosition = "left 10px center";
+            cryptoSelect.style.backgroundSize = "20px 20px";
+            cryptoSelect.style.paddingLeft = "40px"; // Add padding for the logo
+        }
 
-                // Clear existing options
-                cryptoSelect.innerHTML = "";
+        // Populate fiat select dropdown with flags
+        function populateFiatSelect() {
+            const fiats = Object.keys(fiatRates);
+            fiatSelect.innerHTML = fiats.map(fiat => `
+                <option value="${fiat}" data-flag="https://flagcdn.com/${fiat === 'USD' ? 'us' : fiat === 'EUR' ? 'eu' : 'gb'}.svg">
+                    ${fiat}
+                </option>
+            `).join("");
+            updateFiatFlag();
+        }
 
-                // Add new options based on available cryptocurrencies
-                currentCoinList.forEach(symbol => {
-                    const option = document.createElement("option");
-                    option.value = symbol;
-                    option.textContent = symbol;
-                    cryptoSelect.appendChild(option);
-                });
-
-                // Restore the previous selection if it still exists
-                if (currentCoinList.includes(selectedCrypto)) {
-                    cryptoSelect.value = selectedCrypto;
-                }
-
-                // Update the previous coin list
-                previousCoinList = currentCoinList;
-            }
+        // Update fiat flag when selection changes
+        function updateFiatFlag() {
+            const selectedOption = fiatSelect.options[fiatSelect.selectedIndex];
+            const flagUrl = selectedOption.getAttribute("data-flag");
+            fiatSelect.style.backgroundImage = `url('${flagUrl}')`;
+            fiatSelect.style.backgroundRepeat = "no-repeat";
+            fiatSelect.style.backgroundPosition = "left 10px center";
+            fiatSelect.style.backgroundSize = "20px 20px";
+            fiatSelect.style.paddingLeft = "40px"; // Add padding for the flag
         }
 
         // Convert crypto to fiat
@@ -456,7 +467,7 @@ body {
             const selectedFiat = fiatSelect.value;
 
             // Validate input
-            if (isNaN(cryptoAmount)) {
+            if (isNaN(cryptoAmount) || cryptoAmount <= 0) {
                 conversionResult.innerHTML = `<span class="error">Please enter a valid crypto amount.</span>`;
                 return;
             }
@@ -470,11 +481,11 @@ body {
             }
 
             // Perform the conversion
-            const fiatAmount = (cryptoAmount * cryptoPrices[selectedCrypto] * fiatRates[selectedFiat]).toFixed(2);
-            fiatAmountInput.value = fiatAmount;
+            const fiatAmount = cryptoAmount * cryptoPrices[selectedCrypto] * fiatRates[selectedFiat];
+            fiatAmountInput.value = fiatAmount.toFixed(2); // Format fiat amount
             conversionResult.innerHTML = `
-                <span class="crypto-output">${cryptoAmount} ${selectedCrypto}</span> = 
-                <span class="usd-output">${fiatAmount} ${selectedFiat}</span>
+                <span class="crypto-output">${cryptoAmount.toFixed(8)} ${selectedCrypto}</span> = 
+                <span class="usd-output">${fiatAmount.toFixed(2)} ${selectedFiat}</span>
             `;
         }
 
@@ -485,7 +496,7 @@ body {
             const selectedFiat = fiatSelect.value;
 
             // Validate input
-            if (isNaN(fiatAmount)) {
+            if (isNaN(fiatAmount) || fiatAmount <= 0) {
                 conversionResult.innerHTML = `<span class="error">Please enter a valid fiat amount.</span>`;
                 return;
             }
@@ -499,11 +510,11 @@ body {
             }
 
             // Perform the conversion
-            const cryptoAmount = (fiatAmount / (cryptoPrices[selectedCrypto] * fiatRates[selectedFiat])).toFixed(8);
-            cryptoAmountInput.value = cryptoAmount;
+            const cryptoAmount = fiatAmount / (cryptoPrices[selectedCrypto] * fiatRates[selectedFiat]);
+            cryptoAmountInput.value = cryptoAmount.toFixed(8); // Format crypto amount
             conversionResult.innerHTML = `
-                <span class="usd-output">${fiatAmount} ${selectedFiat}</span> = 
-                <span class="crypto-output">${cryptoAmount} ${selectedCrypto}</span>
+                <span class="usd-output">${fiatAmount.toFixed(2)} ${selectedFiat}</span> = 
+                <span class="crypto-output">${cryptoAmount.toFixed(8)} ${selectedCrypto}</span>
             `;
         }
 
@@ -587,15 +598,22 @@ body {
         }
 
         // Event listeners
-        cryptoSelect.addEventListener("change", convertCryptoToFiat);
-        fiatSelect.addEventListener("change", convertCryptoToFiat);
+        cryptoSelect.addEventListener("change", () => {
+            convertCryptoToFiat();
+            updateCryptoLogo();
+        });
+        fiatSelect.addEventListener("change", () => {
+            convertCryptoToFiat();
+            updateFiatFlag();
+        });
         cryptoAmountInput.addEventListener("input", convertCryptoToFiat);
         fiatAmountInput.addEventListener("input", convertFiatToCrypto);
         exchangeRadios.forEach(radio => radio.addEventListener("change", toggleTickers));
 
-        // Fetch prices on load
+        // Fetch prices and populate dropdowns on load
         fetchCryptoPrices();
         fetchPrices();
+        populateFiatSelect();
         setInterval(fetchPrices, 20000); // Refresh prices every 20 seconds
     });
 </script>
