@@ -245,37 +245,39 @@ html {
 
 .hover\:text-\[\#f8bc04\]:hover {
     color: #f8bc04;
-}.alert {
-    padding: 1rem;
-    margin:75px auto;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: 0.25rem;
+}
+        
+.swal2-dark {
+    background-color: #1a1a1a; /* Dark background */
+    color: #ffffff; /* White text */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-.alert-success {
-    color: #155724;
-    background-color: #d4edda;
-    border-color: #c3e6cb;
+/* Ensure the toast applies the dark mode styles correctly */
+.swal2-toast.swal2-dark {
+    background-color: #1a1a1a; /* Ensure toast inherits dark background */
+    color: #ffffff; /* White text */
 }
 
-.alert-danger {
-    color: #721c24;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
+.swal2-toast.swal2-dark .swal2-title {
+    color: #ffffff; /* White title text */
 }
 
-.alert-warning {
-    color: #856404;
-    background-color: #fff3cd;
-    border-color: #ffeeba;
+.swal2-toast.swal2-dark .swal2-html-container {
+    color: #cccccc; /* Light gray content text */
 }
 
-.alert-info {
-    color: #0c5460;
-    background-color: #d1ecf1;
-    border-color: #bee5eb;
-}.slide-in-right {
+.swal2-toast.swal2-dark .swal2-icon {
+    color: #f8bc04; /* Yellow icon */
+}
+
+/* Ensure the timer progress bar is styled correctly */
+.swal2-toast.swal2-dark .swal2-timer-progress-bar {
+    background: #f8bc04 !important; /* Yellow progress bar */
+}
+        
+.slide-in-right {
     animation: slideInRight 1s ease-out forwards;
 }
 
