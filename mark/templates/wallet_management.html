@@ -32,110 +32,84 @@
     <div class="max-w-4xl w-full bg-gray-900 shadow-xl rounded-lg p-8 space-y-8">
         <h1 class="text-3xl font-bold text-center text-yellow">Wallet Management</h1>
 
-        <!-- API Key Submission Form -->
+        <!-- List of Exchanges -->
         <div class="space-y-6">
-            <h2 class="text-2xl font-semibold text-yellow">Submit API Key</h2>
-            <form method="POST" action="{{ url_for('wallet_management') }}" class="space-y-4">
-                <div>
-                    <label for="exchange" class="block text-sm font-medium text-gray-300">Exchange</label>
-                    <select id="exchange" name="exchange" required
-                            class="mt-1 block w-full p-3 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-white focus:ring-yellow focus:border-yellow sm:text-sm">
-                        <option value="">Select Exchange</option>
-                        {% for exchange in ["Binance", "Coinbase", "CoinMarketCap"] %}
-                            <option value="{{ exchange }}" {% if exchange in user_exchanges %}selected{% endif %}>
-                                {{ exchange }}
-                                {% if exchange in user_exchanges %}
-                                    ✅
-                                {% endif %}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label for="api_key" class="block text-sm font-medium text-gray-300">API Key</label>
-                    <input type="text" id="api_key" name="api_key" required
-                           class="mt-1 block w-full p-3 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-white focus:ring-yellow focus:border-yellow sm:text-sm">
-                </div>
-                <div>
-                    <label for="api_secret" class="block text-sm font-medium text-gray-300">API Secret</label>
-                    <input type="text" id="api_secret" name="api_secret" required
-                           class="mt-1 block w-full p-3 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-white focus:ring-yellow focus:border-yellow sm:text-sm">
-                </div>
-                <button type="submit"
-                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow">
-                    Submit API Key
-                </button>
-            </form>
-        </div>
+            {% for exchange in exchange_data %}
+                <div class="p-6 border border-gray-700 rounded-lg bg-gray-800 shadow-sm">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-semibold text-yellow">{{ exchange.name }}</h2>
+                        {% if not exchange.api_key_exists %}
+                            <button onclick="toggleForm('{{ exchange.name }}')"
+                                    class="text-sm font-medium text-black bg-yellow px-4 py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow">
+                                Submit API Key
+                            </button>
+                        {% endif %}
+                    </div>
 
-        <!-- API Key List with Delete Option -->
-        <div class="space-y-6">
-            <h2 class="text-2xl font-semibold text-yellow">Your API Keys</h2>
-            {% for api in user_api_keys %}
-                <div class="flex justify-between items-center p-4 border border-gray-700 rounded-lg bg-gray-800 shadow-sm">
-                    <span class="text-lg font-medium text-yellow">{{ api.exchange }} ✅</span>
-                    <form method="POST" action="{{ url_for('delete_api_key', api_id=api.id) }}" class="inline">
-                        <button type="submit"
-                                class="text-red-500 hover:text-red-700 focus:outline-none">
-                            <span class="material-icons">delete</span>
-                        </button>
-                    </form>
+                    <!-- API Key Form (Hidden by Default) -->
+                    {% if not exchange.api_key_exists %}
+                        <form id="form-{{ exchange.name }}" method="POST" action="{{ url_for('wallet_management') }}"
+                              class="mt-4 space-y-4 hidden">
+                            <input type="hidden" name="exchange" value="{{ exchange.name }}">
+                            <div>
+                                <label for="api_key" class="block text-sm font-medium text-gray-300">API Key</label>
+                                <input type="text" id="api_key" name="api_key" required
+                                       class="mt-1 block w-full p-3 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-white focus:ring-yellow focus:border-yellow sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="api_secret" class="block text-sm font-medium text-gray-300">API Secret</label>
+                                <input type="text" id="api_secret" name="api_secret" required
+                                       class="mt-1 block w-full p-3 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-white focus:ring-yellow focus:border-yellow sm:text-sm">
+                            </div>
+                            <button type="submit"
+                                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow">
+                                Submit API Key
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    <!-- Display Balances -->
+                    {% if exchange.api_key_exists %}
+                        <div class="mt-6">
+                            {% if exchange.balances %}
+                                <h3 class="text-xl font-medium text-yellow">Balances</h3>
+                                {% if exchange.total_balance_usd %}
+                                    <p class="text-gray-300">Total Balance: {{ exchange.total_balance_usd }}</p>
+                                {% endif %}
+                                <div class="overflow-x-auto mt-4">
+                                    <table class="min-w-full divide-y divide-gray-700">
+                                        <thead class="bg-gray-800">
+                                            <tr>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-yellow uppercase tracking-wider">Coin</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-yellow uppercase tracking-wider">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-gray-900 divide-y divide-gray-700">
+                                            {% for coin, amount in exchange.balances.items() %}
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-yellow">{{ coin }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ amount }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <p class="text-sm text-red-500">Failed to fetch balances. Please check your API key and permissions.</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
-
-        <!-- Fetch Wallet Balances Form -->
-        <div class="space-y-6">
-            <h2 class="text-2xl font-semibold text-yellow">Fetch Wallet Balances</h2>
-            <form method="POST" action="{{ url_for('wallet_management') }}" class="space-y-4">
-                <div>
-                    <label for="exchange" class="block text-sm font-medium text-gray-300">Select Exchange</label>
-                    <select id="exchange" name="exchange" required
-                            class="mt-1 block w-full p-3 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-white focus:ring-yellow focus:border-yellow sm:text-sm">
-                        <option value="">Select Exchange</option>
-                        {% for exchange in ["Binance", "Coinbase", "CoinMarketCap"] %}
-                            <option value="{{ exchange }}" {% if exchange == selected_exchange %}selected{% endif %}>
-                                {{ exchange }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <button type="submit" name="fetch_balances"
-                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow">
-                    Fetch Balances
-                </button>
-            </form>
-        </div>
-
-        <!-- Display Wallet Balances -->
-        {% if balances %}
-            <div class="space-y-6">
-                <h2 class="text-2xl font-semibold text-yellow">Balances for {{ exchange }}</h2>
-                {% if total_balance_usd %}
-                    <h3 class="text-xl font-medium text-yellow">Total Balance: {{ total_balance_usd }}</h3>
-                {% endif %}
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-700">
-                        <thead class="bg-gray-800">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-yellow uppercase tracking-wider">Coin</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-yellow uppercase tracking-wider">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-gray-900 divide-y divide-gray-700">
-                            {% for coin, amount in balances.items() %}
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-yellow">{{ coin }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ amount }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        {% elif exchange %}
-            <p class="text-sm text-red-500">No balances found or API keys missing.</p>
-        {% endif %}
     </div>
 </div>
+
+<!-- JavaScript to Toggle API Key Form -->
+<script>
+    function toggleForm(exchangeName) {
+        const form = document.getElementById(`form-${exchangeName}`);
+        form.classList.toggle('hidden');
+    }
+</script>
 {% endblock %}
