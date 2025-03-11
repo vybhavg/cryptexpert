@@ -23,51 +23,78 @@
         <!-- App styles -->
         <link rel="stylesheet" href="/static/css/app.min.css">
 <style>
-.alert {
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: 0.25rem;
+.swal2-dark {
+    background-color: #1a1a1a; /* Dark background */
+    color: #ffffff; /* White text */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-.alert-success {
-    color: #155724;
-    background-color: #d4edda;
-    border-color: #c3e6cb;
+/* Ensure the toast applies the dark mode styles correctly */
+.swal2-toast.swal2-dark {
+    background-color: #1a1a1a; /* Ensure toast inherits dark background */
+    color: #ffffff; /* White text */
 }
 
-.alert-danger {
-    color: #721c24;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
+.swal2-toast.swal2-dark .swal2-title {
+    color: #ffffff; /* White title text */
 }
 
-.alert-warning {
-    color: #856404;
-    background-color: #fff3cd;
-    border-color: #ffeeba;
+.swal2-toast.swal2-dark .swal2-html-container {
+    color: #cccccc; /* Light gray content text */
 }
 
-.alert-info {
-    color: #0c5460;
-    background-color: #d1ecf1;
-    border-color: #bee5eb;
+.swal2-toast.swal2-dark .swal2-icon {
+    color: #f8bc04; /* Yellow icon */
+}
+
+/* Ensure the timer progress bar is styled correctly */
+.swal2-toast.swal2-dark .swal2-timer-progress-bar {
+    background: #f8bc04 !important; /* Yellow progress bar */
 }
 </style>
     </head>
 
     <body data-sa-theme="5">
-  <!-- Flash messages -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
+  <script>
+     const iconMap = {
+    success: 'success',
+    error: 'error',
+    warning: 'warning',
+    info: 'info',
+};
+        // Get flashed messages from Flask
+        const flashedMessages = [
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {
+                            category: "{{ category }}",
+                            message: "{{ message }}"
+                        },
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        ];
+
+        // Loop through flashed messages and display them using SweetAlert2
+        flashedMessages.forEach((msg) => {
+            Swal.fire({
+    icon: iconMap[msg.category] || 'info', // Default to 'info' if category is not mapped
+    title: msg.category.toUpperCase(),
+    text: msg.message,
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    customClass: {
+        popup: 'swal2-dark', // Apply dark mode styles
+    },
+});
+        });
+    </script>
+
         <div class="login">
 
             <!-- Login -->
