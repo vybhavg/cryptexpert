@@ -4,6 +4,11 @@
 
 {% block head %}
     <!-- Additional head content specific to charts.html -->
+<!-- Add this to the <head> section -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- Add this before the closing </body> tag -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 {% endblock %}
 
@@ -210,7 +215,20 @@ document.getElementById("crypto-title").textContent = `${symbol.slice(0, -4).toU
         saveNotesButton.addEventListener("click", () => {
             const notes = notepad.value;
             localStorage.setItem(notesKey, notes);
-            alert("Notes saved successfully!");
+// Show a SweetAlert2 toast notification in dark mode
+Swal.fire({
+    icon: 'success',
+    title: 'Notes Saved!',
+    text: 'Your observations have been saved successfully.',
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000, // Auto-close after 3 seconds
+    timerProgressBar: true,
+    customClass: {
+        popup: 'swal2-dark', // Apply the dark mode class
+    },
+});
         });
     {% endif %}
     
@@ -222,6 +240,29 @@ document.getElementById("crypto-title").textContent = `${symbol.slice(0, -4).toU
 
 {% block style %}
 <style>
+    /* Dark Mode SweetAlert2 Toast */
+.swal2-toast.swal2-dark {
+    background-color: #1a1a1a; /* Dark background */
+    color: #ffffff; /* White text */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.swal2-toast.swal2-dark .swal2-title {
+    color: #ffffff; /* White title text */
+}
+
+.swal2-toast.swal2-dark .swal2-content {
+    color: #cccccc; /* Light gray content text */
+}
+
+.swal2-toast.swal2-dark .swal2-icon {
+    color: #f8bc04; /* Yellow icon */
+}
+
+.swal2-toast.swal2-dark .swal2-timer-progress-bar {
+    background: #f8bc04; /* Yellow progress bar */
+}
  /* General Styles */
 body {
     background: #0a0a0a; /* Dark background */
