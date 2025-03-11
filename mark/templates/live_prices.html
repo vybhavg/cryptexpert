@@ -246,7 +246,7 @@ fiatSelect.addEventListener("change", () => {
 
 const logoSrc = cryptoLogos[displaySymbol] || "/static/img/crypto/BTC.png";
 row.innerHTML = `
-    <td><img src="${logoSrc}" alt="${displaySymbol}" width="35px" height="35px"></td>
+    <td class="roww" data-symbol="${displaySymbol}"><img src="${logoSrc}" alt="${displaySymbol}" width="35px" height="35px"></td>
     <td>${displaySymbol}</td>
     <td>$${ticker.price}</td>
     <td class="percentage-change">
@@ -264,6 +264,17 @@ row.innerHTML = `
         fetchPrices();
         setInterval(fetchPrices, 10000);
     });
+
+    document.querySelectorAll(".roww[data-symbol]").forEach(row => {
+    row.addEventListener("click", function () {
+        let symbol = this.getAttribute("data-symbol");
+        if (symbol) {
+            window.location.href = `/charts?symbol=${symbol}USDT`;
+        } else {
+            console.error("No symbol found for this row.");
+        }
+    });
+});
 </script>
 
 
