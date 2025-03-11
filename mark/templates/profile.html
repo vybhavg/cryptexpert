@@ -71,7 +71,7 @@
     }
 
     .btn-secondary {
-        background-color: #6c757d;
+        background-color: #f8bc04;
         border: none;
         color: white;
         font-weight: 500;
@@ -133,7 +133,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-lg">
@@ -152,18 +152,18 @@
 
                         <!-- User Information -->
                         <div class="col-md-8">
-                            <h4 class="mb-3">{{ current_user.username }}</h4>
-                            <p class="text-muted">{{ current_user.email }}</p>
+                            <h4 class="mb-3" style="color:#f8bc04">{{ current_user.username }}</h4>
+                            <p class="mb-3"style="color:#f8bc04">{{ current_user.email }}</p>
 
                             <hr>
 
                             <!-- Additional User Details -->
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p><strong>Last Login:</strong> {{ current_user.last_login.strftime('%Y-%m-%d %H:%M') if current_user.last_login else 'N/A' }}</p>
+                                    <p style="color:#fff"><strong style="color:#f8bc04">Last Login:</strong> {{ current_user.last_login.strftime('%Y-%m-%d %H:%M') if current_user.last_login else 'N/A' }}</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
+                                    <p style="color:#fff"><strong style="color:#f8bc04">Status:</strong> <span class="badge bg-success" style="color:#fff">Active</span></p>
                                 </div>
                             </div>
 
