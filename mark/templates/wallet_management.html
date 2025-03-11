@@ -73,6 +73,13 @@
             color: #a0aec0;
         }
 
+        /* Total Balance Styling */
+        .total-balance {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
         /* Table Styling */
         .crypto-table {
             width: 100%;
@@ -124,17 +131,18 @@
                                         Delete API Key
                                     </button>
                                 </form>
-                            {% else %}
-                                <button onclick="toggleForm('{{ exchange.name }}')"
-                                        class="crypto-button btn-hover">
-                                    Submit API Key
-                                </button>
                             {% endif %}
                         </div>
                     </div>
 
                     <!-- API Key Form (Hidden by Default) -->
                     {% if not exchange.api_key_exists %}
+                        <div class="flex justify-center mt-6">
+                            <button onclick="toggleForm('{{ exchange.name }}')"
+                                    class="crypto-button btn-hover">
+                                Submit API Key
+                            </button>
+                        </div>
                         <form id="form-{{ exchange.name }}" method="POST" action="{{ url_for('wallet_management') }}"
                               class="mt-4 space-y-4 hidden transform transition-all duration-300 ease-in-out">
                             <input type="hidden" name="exchange" value="{{ exchange.name }}">
@@ -159,9 +167,8 @@
                     {% if exchange.api_key_exists %}
                         <div class="mt-6">
                             {% if exchange.balances %}
-                                <h3 class="crypto-subheading mb-4">Balances</h3>
                                 {% if exchange.total_balance_usd %}
-                                    <p class="crypto-text mb-4">Total Balance: {{ exchange.total_balance_usd }}</p>
+                                    <p class="total-balance mb-4">Total Balance: ${{ exchange.total_balance_usd }}</p>
                                 {% endif %}
                                 <table class="crypto-table">
                                     <thead>
