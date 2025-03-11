@@ -50,43 +50,44 @@ const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@depth');
                 console.log('WebSocket connection closed');
             };
 
-            ws.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
+           ws.onmessage = (event) => {
+    try {
+        const data = JSON.parse(event.data);
 
-                    if (!data.bids || !data.asks) {
-                        console.error("Unexpected WebSocket data format:", data);
-                        return;
-                    }
+        if (!data.bids || !data.asks) {
+            console.error("Unexpected WebSocket data format:", data);
+            return;
+        }
 
-                    const { bids, asks } = data;
+        const { bids, asks } = data;
 
-                    // Display Sell Orders (Asks)
-                    const sellOrders = document.getElementById("sell-orders");
-                    sellOrders.innerHTML = asks.slice(0, 10) // Limit to 10 orders
-                        .map(order => `
-                            <div class="text-red-500 text-sm flex justify-between">
-                                <span>${parseFloat(order[0]).toFixed(4)}</span>
-                                <span>${parseFloat(order[1]).toFixed(4)}</span>
-                            </div>
-                        `)
-                        .join("");
+        // Display Sell Orders (Asks)
+        const sellOrders = document.getElementById("sell-orders");
+        sellOrders.innerHTML = asks.slice(0, 10) // Limit to 10 orders
+            .map(order => `
+                <div class="text-red-500 text-sm flex justify-between">
+                    <span>${parseFloat(order[0]).toFixed(4)}</span>
+                    <span>${parseFloat(order[1]).toFixed(4)}</span>
+                </div>
+            `)
+            .join("");
 
-                    // Display Buy Orders (Bids)
-                    const buyOrders = document.getElementById("buy-orders");
-                    buyOrders.innerHTML = bids.slice(0, 10) // Limit to 10 orders
-                        .map(order => `
-                            <div class="text-green-500 text-sm flex justify-between">
-                                <span>${parseFloat(order[0]).toFixed(4)}</span>
-                                <span>${parseFloat(order[1]).toFixed(4)}</span>
-                            </div>
-                        `)
-                        .join("");
+        // Display Buy Orders (Bids)
+        const buyOrders = document.getElementById("buy-orders");
+        buyOrders.innerHTML = bids.slice(0, 10) // Limit to 10 orders
+            .map(order => `
+                <div class="text-green-500 text-sm flex justify-between">
+                    <span>${parseFloat(order[0]).toFixed(4)}</span>
+                    <span>${parseFloat(order[1]).toFixed(4)}</span>
+                </div>
+            `)
+            .join("");
 
-                } catch (error) {
-                    console.error("Error processing WebSocket message:", error);
-                }
-            };
+    } catch (error) {
+        console.error("Error processing WebSocket message:", error);
+    }
+};
+
 
             // Load TradingView chart
             if (typeof TradingView === "undefined") {
