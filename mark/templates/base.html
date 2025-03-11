@@ -649,11 +649,11 @@ html {
                 </a>
             {% else %}
                 <!-- Show these options if the user is not logged in -->
-                <a class="col-6 app-shortcuts__item" href="{{ url_for('login_page') }}">
+                <a class="col-6 app-shortcuts__item" href="{{ url_for('login_form') }}">
                     <i class="zmdi zmdi-account"></i>
                     <small>Log In</small>
                 </a>
-                <a class="col-6 app-shortcuts__item" href="{{ url_for('register_page') }}">
+                <a class="col-6 app-shortcuts__item" href="{{ url_for('register_form') }}">
                     <i class="zmdi zmdi-account-add"></i>
                     <small>Register</small>
                 </a>
