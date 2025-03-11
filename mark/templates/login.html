@@ -12,7 +12,11 @@
         <!-- Vendor styles -->
         <link rel="stylesheet" href="/static/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css">
         <link rel="stylesheet" href="/static/vendors/bower_components/animate.css/animate.min.css">
+<!-- Add this to the <head> section -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
+<!-- Add this before the closing </body> tag -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- App styles -->
         <link rel="stylesheet" href="/static/css/app.min.css">
 <style>
@@ -48,18 +52,44 @@
 }
 </style></head>
     <body data-sa-theme="5">
-<!-- Flash messages -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
+ <script>
+     const iconMap = {
+    success: 'success',
+    error: 'error',
+    warning: 'warning',
+    info: 'info',
+};
+        // Get flashed messages from Flask
+        const flashedMessages = [
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {
+                            category: "{{ category }}",
+                            message: "{{ message }}"
+                        },
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        ];
 
+        // Loop through flashed messages and display them using SweetAlert2
+        flashedMessages.forEach((msg) => {
+            Swal.fire({
+    icon: iconMap[msg.category] || 'info', // Default to 'info' if category is not mapped
+    title: msg.category.toUpperCase(),
+    text: msg.message,
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    customClass: {
+        popup: 'swal2-dark', // Apply dark mode styles
+    },
+});
+        });
+    </script>
 
         <div class="login">
 
