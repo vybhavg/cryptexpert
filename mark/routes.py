@@ -553,10 +553,12 @@ def setup_authenticator_qr():
     qr.save(buffer)
     buffer.seek(0)
     return send_file(buffer, mimetype='image/png')
-
+    
 @app.route('/charts')
+@login_required  # Ensure only logged-in users can access this route
 def charts():
-    return render_template('charts.html')
+    # Pass the current_user object to the template
+    return render_template('charts.html', user=current_user)
 
 # Load the trained model
 model = load_model("/home/ec2-user/cryptexpert/mark/model.keras")
