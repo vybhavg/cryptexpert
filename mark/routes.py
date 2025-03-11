@@ -854,10 +854,6 @@ def wallet_management():
         api_key = request.form.get("api_key")
         api_secret = request.form.get("api_secret")
 
-        # Debugging: Print the received API key and secret
-        print(f"Received API Key: {api_key}")
-        print(f"Received API Secret: {api_secret}")
-
         if not exchange or not api_key or not api_secret:
             flash("All fields are required!", "error")
             return redirect(url_for("wallet_management"))
@@ -876,48 +872,31 @@ def wallet_management():
         flash("API key added successfully!", "success")
         return redirect(url_for("wallet_management"))
 
-    # Handle Fetching Wallet Balances
-    if request.method == "POST" and "fetch_balances" in request.form:
-        exchange_name = request.form.get("exchange")
-        api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange_name).first()
+    # Fetch all exchanges and their balances
+    user_exchanges = UserAPIKey.query.filter_by(user_id=user_id).all()
+    exchange_data = []
 
-        if not api_key_entry:
-            flash(f"API key for {exchange_name} is missing. Please submit your API key.", "error")
-            return redirect(url_for("wallet_management"))
+    for exchange in ["Binance", "Coinbase", "CoinMarketCap"]:
+        api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
+        balances = None
+        total_balance_usd = None
 
-        # Decrypt API keys
-        api_key, api_secret = api_key_entry.get_api_keys()
-        print(f"Decrypted API Key: {api_key}")
-        print(f"Decrypted API Secret: {api_secret}")
+        if api_key_entry:
+            # Fetch balances if API key exists
+            api_key, api_secret = api_key_entry.get_api_keys()
+            balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange)
 
-        # Fetch wallet balances based on the selected exchange
-        balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange_name)
+        exchange_data.append({
+            "name": exchange,
+            "api_key_exists": api_key_entry is not None,
+            "balances": balances,
+            "total_balance_usd": total_balance_usd,
+        })
 
-        if balances is None:
-            flash("Failed to fetch balances. Please check your API key and permissions.", "error")
-        else:
-            flash("Balances fetched successfully!", "success")
-
-        # Render the template with the fetched balances
-        return render_template(
-            "wallet_management.html",
-            user_api_keys=UserAPIKey.query.filter_by(user_id=user_id).all(),
-            user_exchanges={key.exchange for key in UserAPIKey.query.filter_by(user_id=user_id).all()},
-            exchange=exchange_name,
-            balances=balances,
-            total_balance_usd=total_balance_usd,
-        )
-
-    # Render the default view
     return render_template(
         "wallet_management.html",
-        user_api_keys=UserAPIKey.query.filter_by(user_id=user_id).all(),
-        user_exchanges={key.exchange for key in UserAPIKey.query.filter_by(user_id=user_id).all()},
-        exchange=None,
-        balances=None,
-        total_balance_usd=None,
+        exchange_data=exchange_data,
     )
-
 @app.route("/delete_api_key/<int:api_id>", methods=["POST"])
 @login_required
 def delete_api_key(api_id):
