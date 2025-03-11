@@ -18,7 +18,7 @@
                     <div class="row">
                         <!-- Profile Picture -->
                         <div class="col-md-4 text-center">
-                            <img src="{{ current_user.profile_picture or url_for('static', filename='demo/img/profile-pics/8.jpg') }}"
+                            <img src="{{ url_for('static', filename='demo/img/profile-pics/8.jpg') }}"
                                  alt="Profile Picture"
                                  class="img-fluid rounded-circle mb-3"
                                  style="width: 150px; height: 150px; object-fit: cover;">
@@ -35,11 +35,9 @@
                             <!-- Additional User Details -->
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p><strong>Joined:</strong> {{ current_user.date_joined.strftime('%Y-%m-%d') }}</p>
-                                    <p><strong>Last Login:</strong> {{ current_user.last_login.strftime('%Y-%m-%d %H:%M') }}</p>
+                                    <p><strong>Last Login:</strong> {{ current_user.last_login.strftime('%Y-%m-%d %H:%M') if current_user.last_login else 'N/A' }}</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p><strong>Role:</strong> {{ current_user.role }}</p>
                                     <p><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
                                 </div>
                             </div>
