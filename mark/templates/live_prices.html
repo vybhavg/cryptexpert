@@ -9,8 +9,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.0/bignumber.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-       
+        const cryptoSelect = document.getElementById("crypto-select");
+        const fiatSelect = document.getElementById("fiat-select");
+        const cryptoAmountInput = document.getElementById("crypto-amount");
+        const fiatAmountInput = document.getElementById("fiat-amount");
         const conversionResult = document.getElementById("conversion-result");
+        const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
 
         let cryptoPrices = {}; // Stores crypto prices in USD
         const fiatRates = { USD: 1, EUR: 0.85, GBP: 0.73 }; // Example fiat rates (1 USD = X EUR, etc.)
@@ -84,68 +88,108 @@
             return formatted.replace(/\.?0+$/, ""); // Remove trailing zeros
         }
 
-          function convertCryptoToFiat() {
-        const cryptoAmount = new BigNumber(cryptoAmountInput.value || 0);
-        const selectedCrypto = cryptoSelect.value;
-        const selectedFiat = fiatSelect.value;
+        // Convert crypto to fiat
+        function convertCryptoToFiat() {
+            const cryptoAmount = new BigNumber(cryptoAmountInput.value || 0); // Use BigNumber for precision
+            const selectedCrypto = cryptoSelect.value;
+            const selectedFiat = fiatSelect.value;
 
-        if (cryptoAmount.isNaN() || cryptoAmount.lte(0)) {
-            conversionResult.innerHTML = `<span class="error">Please enter a valid crypto amount.</span>`;
-            return;
-        }
-        if (!cryptoPrices[selectedCrypto]) {
-            conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
-            return;
-        }
-        if (!fiatRates[selectedFiat]) {
-            conversionResult.innerHTML = `<span class="error">Fiat rate not found for ${selectedFiat}.</span>`;
-            return;
-        }
+            // Validate input
+            if (cryptoAmount.isNaN() || cryptoAmount.lte(0)) {
+                conversionResult.innerHTML = `<span class="error">Please enter a valid crypto amount.</span>`;
+                return;
+            }
+            if (!cryptoPrices[selectedCrypto]) {
+                conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
+                return;
+            }
+            if (!fiatRates[selectedFiat]) {
+                conversionResult.innerHTML = `<span class="error">Fiat rate not found for ${selectedFiat}.</span>`;
+                return;
+            }
 
-        const fiatAmount = cryptoAmount
-            .times(cryptoPrices[selectedCrypto])
-            .times(fiatRates[selectedFiat]);
+            // Perform the conversion
+            const fiatAmount = cryptoAmount
+                .times(cryptoPrices[selectedCrypto]) // Multiply by crypto price
+                .times(fiatRates[selectedFiat]); // Multiply by fiat rate
 
-        fiatAmountInput.value = formatNumber(fiatAmount, 2);
-        conversionResult.innerHTML = `
-            <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span> = 
-            <span class="usd-output">${formatNumber(fiatAmount, 2)} ${selectedFiat}</span>
-        `;
-    }
-
-    function convertFiatToCrypto() {
-        const fiatAmount = new BigNumber(fiatAmountInput.value || 0);
-        const selectedCrypto = cryptoSelect.value;
-        const selectedFiat = fiatSelect.value;
-
-        if (fiatAmount.isNaN() || fiatAmount.lte(0)) {
-            conversionResult.innerHTML = `<span class="error">Please enter a valid fiat amount.</span>`;
-            return;
-        }
-        if (!cryptoPrices[selectedCrypto]) {
-            conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
-            return;
-        }
-        if (!fiatRates[selectedFiat]) {
-            conversionResult.innerHTML = `<span class="error">Fiat rate not found for ${selectedFiat}.</span>`;
-            return;
+            fiatAmountInput.value = formatNumber(fiatAmount, 2); // Format fiat amount
+            conversionResult.innerHTML = `
+                <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span> = 
+                <span class="usd-output">${formatNumber(fiatAmount, 2)} ${selectedFiat}</span>
+            `;
         }
 
-        const cryptoAmount = fiatAmount
-            .div(cryptoPrices[selectedCrypto])
-            .div(fiatRates[selectedFiat]);
+        // Convert fiat to crypto
+        function convertFiatToCrypto() {
+            const fiatAmount = new BigNumber(fiatAmountInput.value || 0); // Use BigNumber for precision
+            const selectedCrypto = cryptoSelect.value;
+            const selectedFiat = fiatSelect.value;
 
-        cryptoAmountInput.value = formatNumber(cryptoAmount);
-        conversionResult.innerHTML = `
-            <span class="usd-output">${formatNumber(fiatAmount, 2)} ${selectedFiat}</span> = 
-            <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span>
-        `;
-    }
+            // Validate input
+            if (fiatAmount.isNaN() || fiatAmount.lte(0)) {
+                conversionResult.innerHTML = `<span class="error">Please enter a valid fiat amount.</span>`;
+                return;
+            }
+            if (!cryptoPrices[selectedCrypto]) {
+                conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
+                return;
+            }
+            if (!fiatRates[selectedFiat]) {
+                conversionResult.innerHTML = `<span class="error">Fiat rate not found for ${selectedFiat}.</span>`;
+                return;
+            }
 
-      
+            // Perform the conversion
+            const cryptoAmount = fiatAmount
+                .div(cryptoPrices[selectedCrypto]) // Divide by crypto price
+                .div(fiatRates[selectedFiat]); // Divide by fiat rate
 
-      
+            cryptoAmountInput.value = formatNumber(cryptoAmount); // Format crypto amount
+            conversionResult.innerHTML = `
+                <span class="usd-output">${formatNumber(fiatAmount, 2)} ${selectedFiat}</span> = 
+                <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span>
+            `;
 
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Event listeners
+        cryptoSelect.addEventListener("change", () => {
+            convertCryptoToFiat();
+            updateCryptoLogo();
+        });
+        fiatSelect.addEventListener("change", () => {
+            convertCryptoToFiat();
+            updateFiatFlag();
+        });
+        cryptoAmountInput.addEventListener("input", convertCryptoToFiat);
+        fiatAmountInput.addEventListener("input", convertFiatToCrypto);
+ 
+
+        // Fetch prices and populate dropdowns on load
+        fetchCryptoPrices();
+        populateFiatSelect();
+        setInterval(fetchCryptoPrices, 20000); // Refresh prices every 20 seconds
     });
 </script>
 
@@ -605,23 +649,7 @@ body {
         </tbody>
     </table>
 </div>
-<script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const cryptoAmountInput = document.getElementById("crypto-amount");
-            const fiatAmountInput = document.getElementById("fiat-amount");
-            const cryptoSelect = document.getElementById("crypto-select");
-            const fiatSelect = document.getElementById("fiat-select");
 
-            // Attach event listeners
-            cryptoAmountInput.addEventListener("input", convertCryptoToFiat);
-            fiatAmountInput.addEventListener("input", convertFiatToCrypto);
-            cryptoSelect.addEventListener("change", convertCryptoToFiat);
-            fiatSelect.addEventListener("change", convertCryptoToFiat);
 
-            // Fetch prices and populate dropdowns on load
-            fetchCryptoPrices();
-            populateFiatSelect();
-            setInterval(fetchCryptoPrices, 20000); // Refresh prices every 20 seconds
-        });
-    </script>
+
 {% endblock %}
