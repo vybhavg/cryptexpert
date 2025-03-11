@@ -346,7 +346,7 @@ def login_form():
             next_page = request.args.get('next')  # Get the 'next' parameter
             return redirect(url_for('otp_form', next=next_page))  # Pass 'next' to OTP form
         else:
-            flash('Username and password are incorrect', "danger")
+            flash('Username and password are incorrect', "error")
     
     if form.errors:
         for err in form.errors.values():
@@ -389,7 +389,7 @@ def otp_form():
         flash("OTP sent successfully", "success")
         return redirect(url_for('verify_form', next=next_page))  # Pass 'next' to verify form
     except Exception as e:
-        flash(f'Unable to send OTP: {e}', "danger")
+        flash(f'Unable to send OTP: {e}', "error")
         return redirect(url_for('register_form'))
 
 @app.route('/verifyotp', methods=['GET', 'POST'])
@@ -411,7 +411,7 @@ def verify_form():
                 else:
                     return render_template('verify_otp.html', form=auth_form, username=session['userid'], show_auth_form=True, next=next_page)
         else:
-            flash('Incorrect OTP', "danger")
+            flash('Incorrect OTP', "error")
 
     if auth_form.validate_on_submit():
         entered_code = auth_form.authotp.data
@@ -482,7 +482,7 @@ def forgot_password():
             flash('Password reset link has been sent to your email.', 'success')
             return redirect(url_for('login_form'))
         else:
-            flash('No account found with this email.', 'danger')
+            flash('No account found with this email.', 'error')
 
     return render_template('forgot_password.html')
 
@@ -491,7 +491,7 @@ def forgot_password():
 def reset_password(token):
     email = verify_reset_token(token)
     if not email:
-        flash('Invalid or expired token.', 'danger')
+        flash('Invalid or expired token.', 'error')
         return redirect(url_for('forgot_password'))
 
     user = User.query.filter_by(email=email).first()
@@ -531,7 +531,7 @@ def setup_authenticator():
             flash("Authenticator set up successfully!","success")
             return redirect(url_for('index'))
         else:
-            flash("Invalid authenticator code. Please try again.","danger")
+            flash("Invalid authenticator code. Please try again.","error")
 
     return render_template(
         'setup_authenticator.html',
@@ -546,7 +546,7 @@ def setup_authenticator_qr():
     user = User.query.filter_by(username=current_user.username).first()
 
     if not user or not user.authenticator_secret:
-        flash("Invalid access.","danger")
+        flash("Invalid access.","error")
         return redirect(url_for('index'))
 
     otp_uri = pyotp.totp.TOTP(user.authenticator_secret).provisioning_uri(
@@ -742,7 +742,7 @@ def submit_api_key():
         api_secret = request.form.get("api_secret")
 
         if not exchange or not api_key or not api_secret:
-            flash("All fields are required!", "danger")
+            flash("All fields are required!", "error")
             return redirect(url_for("submit_api_key"))
 
         # Check if API key for this exchange already exists
@@ -772,7 +772,7 @@ def delete_api_key(api_id):
     api_key_entry = UserAPIKey.query.filter_by(id=api_id, user_id=current_user.id).first()
 
     if not api_key_entry:
-        flash("API key not found!", "danger")
+        flash("API key not found!", "error")
         return redirect(url_for("submit_api_key"))
 
     db.session.delete(api_key_entry)
