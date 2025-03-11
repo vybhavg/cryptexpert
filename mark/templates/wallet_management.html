@@ -47,24 +47,6 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
         }
 
-        /* Responsive Table */
-        .responsive-table {
-            overflow-x: auto;
-        }
-        .responsive-table table {
-            min-width: 600px;
-        }
-        .responsive-table th,
-        .responsive-table td {
-            white-space: nowrap;
-        }
-        .responsive-table tbody tr:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-        .responsive-table tbody tr:nth-child(odd) {
-            background-color: rgba(255, 255, 255, 0.02);
-        }
-
         /* Button Hover Effect */
         .btn-hover {
             transition: all 0.3s ease-in-out;
@@ -73,20 +55,36 @@
             transform: scale(1.05);
             box-shadow: 0 4px 15px rgba(248, 188, 4, 0.4);
         }
+
+        /* Exchange Logo Size */
+        .exchange-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-black text-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style="margin-top:75px;">
-    <div class="max-w-4xl w-full space-y-8">
-        <h1 class="text-4xl font-bold text-center text-yellow">Wallet Management</h1>
+<div class="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8" style="margin-top:75px;">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold text-yellow mb-8">Wallet Management</h1>
 
         <!-- List of Exchanges -->
         <div class="space-y-6">
             {% for exchange in exchange_data %}
                 <div class="p-6 rounded-lg card-bg card-hover glow-border">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-semibold text-yellow">{{ exchange.name }}</h2>
+                    <div class="flex items-center justify-between">
+                        <!-- Left Side: Logo and Exchange Name -->
+                        <div class="flex items-center space-x-4">
+                            <img src="{{ url_for('static', filename='images/' + exchange.name.lower() + '.png') }}"
+                                 alt="{{ exchange.name }} Logo"
+                                 class="exchange-logo">
+                            <h2 class="text-2xl font-semibold text-yellow">{{ exchange.name }}</h2>
+                        </div>
+
+                        <!-- Right Side: Action Buttons -->
                         <div class="flex space-x-4">
                             {% if exchange.api_key_exists %}
                                 <form method="POST" action="{{ url_for('wallet_management') }}">
@@ -136,7 +134,7 @@
                                 {% if exchange.total_balance_usd %}
                                     <p class="text-gray-300">Total Balance: {{ exchange.total_balance_usd }}</p>
                                 {% endif %}
-                                <div class="responsive-table">
+                                <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-700">
                                         <thead class="bg-gray-800">
                                             <tr>
