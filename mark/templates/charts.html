@@ -8,29 +8,39 @@
 {% endblock %}
 
 {% block content %}
-    <div class="flex flex-row gap-4">
-        <!-- Sell Orders (Left Side) -->
-        <div class="w-1/6 bg-gray-800 p-4 rounded-lg">
-            <h3 class="text-lg font-bold text-white mb-4">Sell Orders</h3>
-            <div id="sell-orders" class="space-y-2">
-                <!-- Sell orders will be dynamically populated here -->
-            </div>
+  <div class="flex flex-row gap-4">
+    <!-- Sell Orders (Left Side) -->
+    <div class="w-1/6 bg-gray-800 p-4 rounded-lg">
+        <h3 class="text-lg font-bold text-white mb-4">Sell Orders</h3>
+        <div class="text-gray-400 text-sm flex justify-between mb-2">
+            <span>Price (USDT)</span>
+            <span>Amount (BTC)</span>
+            <span>Total</span>
         </div>
-
-        <!-- TradingView Chart (Middle) -->
-        <div class="w-2/3">
-            <h2 id="crypto-title" class="text-white text-xl font-bold mb-4"></h2>
-            <div id="tradingview_chart" style="height: 500px;"></div>
-        </div>
-
-        <!-- Buy Orders (Right Side) -->
-        <div class="w-1/6 bg-gray-800 p-4 rounded-lg">
-            <h3 class="text-lg font-bold text-white mb-4">Buy Orders</h3>
-            <div id="buy-orders" class="space-y-2">
-                <!-- Buy orders will be dynamically populated here -->
-            </div>
+        <div id="sell-orders" class="space-y-2">
+            <!-- Sell orders will be dynamically populated here -->
         </div>
     </div>
+
+    <!-- TradingView Chart (Middle) -->
+    <div class="w-2/3">
+        <h2 id="crypto-title" class="text-white text-xl font-bold mb-4"></h2>
+        <div id="tradingview_chart" style="height: 500px;"></div>
+    </div>
+
+    <!-- Buy Orders (Right Side) -->
+    <div class="w-1/6 bg-gray-800 p-4 rounded-lg">
+        <h3 class="text-lg font-bold text-white mb-4">Buy Orders</h3>
+        <div class="text-gray-400 text-sm flex justify-between mb-2">
+            <span>Price (USDT)</span>
+            <span>Amount (BTC)</span>
+            <span>Total</span>
+        </div>
+        <div id="buy-orders" class="space-y-2">
+            <!-- Buy orders will be dynamically populated here -->
+        </div>
+    </div>
+</div>
 
     <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function () {
@@ -49,42 +59,59 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log('WebSocket connection closed');
     };
 
-    ws.onmessage = (event) => {
-        try {
-            const data = JSON.parse(event.data);
+ws.onmessage = (event) => {
+    try {
+        const data = JSON.parse(event.data);
 
-            // Check if the message is a depthUpdate
-            if (data.e === 'depthUpdate') {
-                const { b: bids, a: asks } = data;
+        // Check if the message is a depthUpdate
+        if (data.e === 'depthUpdate') {
+            const { b: bids, a: asks } = data;
 
-                // Display Sell Orders (Asks)
-                const sellOrders = document.getElementById("sell-orders");
-                sellOrders.innerHTML = asks.slice(0, 10) // Limit to 10 orders
-                    .map(order => `
+            // Function to format numbers with thousands separators
+            const formatNumber = (num) => {
+                return num.toLocaleString(undefined, { maximumFractionDigits: 8 });
+            };
+
+            // Display Sell Orders (Asks)
+            const sellOrders = document.getElementById("sell-orders");
+            sellOrders.innerHTML = asks.slice(0, 10) // Limit to 10 orders
+                .map(order => {
+                    const price = parseFloat(order[0]);
+                    const amount = parseFloat(order[1]);
+                    const total = price * amount;
+                    return `
                         <div class="text-red-500 text-sm flex justify-between">
-                            <span>${parseFloat(order[0]).toFixed(4)}</span>
-                            <span>${parseFloat(order[1]).toFixed(4)}</span>
+                            <span>${formatNumber(price)}</span>
+                            <span>${formatNumber(amount)}</span>
+                            <span>${formatNumber(total)}</span>
                         </div>
-                    `)
-                    .join("");
+                    `;
+                })
+                .join("");
 
-                // Display Buy Orders (Bids)
-                const buyOrders = document.getElementById("buy-orders");
-                buyOrders.innerHTML = bids.slice(0, 10) // Limit to 10 orders
-                    .map(order => `
+            // Display Buy Orders (Bids)
+            const buyOrders = document.getElementById("buy-orders");
+            buyOrders.innerHTML = bids.slice(0, 10) // Limit to 10 orders
+                .map(order => {
+                    const price = parseFloat(order[0]);
+                    const amount = parseFloat(order[1]);
+                    const total = price * amount;
+                    return `
                         <div class="text-green-500 text-sm flex justify-between">
-                            <span>${parseFloat(order[0]).toFixed(4)}</span>
-                            <span>${parseFloat(order[1]).toFixed(4)}</span>
+                            <span>${formatNumber(price)}</span>
+                            <span>${formatNumber(amount)}</span>
+                            <span>${formatNumber(total)}</span>
                         </div>
-                    `)
-                    .join("");
-            } else {
-                console.error("Unexpected WebSocket data format:", data);
-            }
-        } catch (error) {
-            console.error("Error processing WebSocket message:", error);
+                    `;
+                })
+                .join("");
+        } else {
+            console.error("Unexpected WebSocket data format:", data);
         }
-    };
+    } catch (error) {
+        console.error("Error processing WebSocket message:", error);
+    }
+};
 
     // Load TradingView chart
     if (typeof TradingView === "undefined") {
