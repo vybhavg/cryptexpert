@@ -558,7 +558,12 @@ def setup_authenticator_qr():
     qr.save(buffer)
     buffer.seek(0)
     return send_file(buffer, mimetype='image/png')
-    
+
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', current_user=current_user)
+
 @app.route('/charts')
 def charts():
     # Pass the current_user object and the current path to the template
