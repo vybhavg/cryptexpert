@@ -641,7 +641,7 @@ html {
         <div class="row app-shortcuts">
             {% if current_user.is_authenticated %}
                 <!-- Show these options if the user is logged in -->
-                <a class="col-4 app-shortcuts__item" href="#">
+                <a class="col-4 app-shortcuts__item" href="{{url_for(profile)}}">
                     <i class="zmdi zmdi-account-circle"></i>
                     <small>View Profile</small>
                 </a>
@@ -703,7 +703,7 @@ html {
     <div class="dropdown-menu">
         {% if current_user.is_authenticated %}
             <!-- Show these options if the user is logged in -->
-            <a class="dropdown-item" href="#">View Profile</a>
+            <a class="dropdown-item" href="{{url_for(profile)}}">View Profile</a>
             <a class="dropdown-item" href="#">Settings</a>
             <a class="dropdown-item" href="{{ url_for('logout_page') }}">Logout</a>
         {% else %}
