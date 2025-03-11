@@ -148,59 +148,46 @@ ws.onmessage = (event) => {
 });
     </script>
 {% endblock %}
-
 {% block style %}
     <!-- Additional styles specific to charts.html -->
     <style>
-        #tradingview_chart {
-            margin-top: 20px;
-            border-radius: 10px;
-            overflow: hidden;
+        /* General Styles */
+        body {
+            background-color: #121212; /* Dark background for the entire page */
+            color: #ffffff; /* White text for better contrast */
+            font-family: 'Inter', sans-serif; /* Modern font */
         }
 
+        /* Flex Container */
         .flex {
             display: flex;
             margin-top: 75px;
-        }
-
-        .flex-row {
-            flex-direction: row;
-        }
-
-        .gap-4 {
             gap: 1rem;
         }
 
-        .w-1\/6 {
-            width: 16.666667%;
-        }
-
-        .w-2\/3 {
-            width: 66.666667%;
-        }
-
+        /* Box Styles */
         .bg-gray-800 {
-            background-color: black;
+            background-color: #1e1e1e; /* Blackish-grey background */
+            border: 1px solid #333; /* Subtle border */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
         }
 
         .p-4 {
-            padding: 1rem;
+            padding: 1.5rem; /* Increased padding for better spacing */
         }
 
-        .rounded-lg {
-            border-radius: 0.5rem;
-        }
-
+        /* Text Styles */
         .text-white {
-            color: white;
+            color: #ffffff;
         }
 
         .text-red-500 {
-            color: #ef4444;
+            color: #ef4444; /* Red for sell orders */
         }
 
         .text-green-500 {
-            color: #22c55e;
+            color: #22c55e; /* Green for buy orders */
         }
 
         .text-sm {
@@ -208,7 +195,7 @@ ws.onmessage = (event) => {
         }
 
         .font-bold {
-            font-weight: bold;
+            font-weight: 700;
         }
 
         .font-semibold {
@@ -216,11 +203,60 @@ ws.onmessage = (event) => {
         }
 
         .mb-4 {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem; /* Increased margin for better spacing */
         }
 
-        .space-y-2 > * + * {
-            margin-top: 0.5rem;
+        /* Order Book Styles */
+        #sell-orders, #buy-orders {
+            max-height: 500px; /* Limit height for scrollability */
+            overflow-y: auto; /* Add scrollbar if content overflows */
+        }
+
+        #sell-orders div, #buy-orders div {
+            padding: 0.5rem 0; /* Add padding to each order row */
+            border-bottom: 1px solid #333; /* Subtle separator between rows */
+        }
+
+        #sell-orders div:last-child, #buy-orders div:last-child {
+            border-bottom: none; /* Remove border for the last row */
+        }
+
+        /* TradingView Chart Styles */
+        #tradingview_chart {
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+        }
+
+        /* Header Styles */
+        h3 {
+            font-size: 1.25rem; /* Larger font size for headers */
+            margin-bottom: 1.5rem; /* Increased margin for better spacing */
+        }
+
+        h2 {
+            font-size: 1.5rem; /* Larger font size for the chart title */
+            margin-bottom: 1.5rem; /* Increased margin for better spacing */
+        }
+
+        /* Scrollbar Styles (for order books) */
+        ::-webkit-scrollbar {
+            width: 8px; /* Width of the scrollbar */
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e; /* Track color */
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333; /* Thumb color */
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444; /* Thumb color on hover */
         }
     </style>
 {% endblock %}
