@@ -628,27 +628,39 @@ html {
                     </li>
 
                     <li class="dropdown hidden-xs-down">
-                        <a href="#" data-toggle="dropdown">
-                            <img class="user__img" src="static/demo/img/profile-pics/8.jpg" style="margin-left: 8px;" alt="">
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right dropdown-menu--block" role="menu">
-                            <div class="row app-shortcuts">
-                                <a class="col-4 app-shortcuts__item" href="#">
-                                    <i class="zmdi zmdi-account-circle"></i>
-                                    <small>View Profile</small>
-                                </a>
-                                <a class="col-4 app-shortcuts__item" href="#">
-                                    <i class="zmdi zmdi-settings"></i>
-                                    <small>Settings</small>
-                                </a>
-                                <a class="col-4 app-shortcuts__item" href="{{url_for('logout_page')}}">
-                                    <i class="zmdi zmdi-power"></i>
-                                    <small>Log Out</small>
-                                </a>
-                                
-                            </div>
-                        </div>
-                    </li>
+    <a href="#" data-toggle="dropdown">
+        <img class="user__img" src="static/demo/img/profile-pics/8.jpg" style="margin-left: 8px;" alt="">
+    </a>
+    <div class="dropdown-menu dropdown-menu-right dropdown-menu--block" role="menu">
+        <div class="row app-shortcuts">
+            {% if current_user.is_authenticated %}
+                <!-- Show these options if the user is logged in -->
+                <a class="col-4 app-shortcuts__item" href="#">
+                    <i class="zmdi zmdi-account-circle"></i>
+                    <small>View Profile</small>
+                </a>
+                <a class="col-4 app-shortcuts__item" href="#">
+                    <i class="zmdi zmdi-settings"></i>
+                    <small>Settings</small>
+                </a>
+                <a class="col-4 app-shortcuts__item" href="{{ url_for('logout_page') }}">
+                    <i class="zmdi zmdi-power"></i>
+                    <small>Log Out</small>
+                </a>
+            {% else %}
+                <!-- Show these options if the user is not logged in -->
+                <a class="col-6 app-shortcuts__item" href="{{ url_for('login_page') }}">
+                    <i class="zmdi zmdi-account"></i>
+                    <small>Log In</small>
+                </a>
+                <a class="col-6 app-shortcuts__item" href="{{ url_for('register_page') }}">
+                    <i class="zmdi zmdi-account-add"></i>
+                    <small>Register</small>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</li>
                 </ul>
 
                 <div class="clock hidden-md-down">
