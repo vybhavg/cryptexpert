@@ -230,11 +230,17 @@ body {
     font-size: 14px;
     padding: 8px;
     border-radius: 6px;
-    background: #222; /* Slightly lighter background for items */
+    background: #222;
+    overflow: hidden; /* Ensure the content doesn't overflow */
+    white-space: nowrap; /* Prevent text from wrapping */
+    text-overflow: ellipsis; /* Add ellipsis for overflow text */
 }
 
 .order-price, .order-amount, .order-total {
-    text-align: right; /* Align numbers to the right */
+    text-align: right;
+    overflow: hidden; /* Ensure the content doesn't overflow */
+    white-space: nowrap; /* Prevent text from wrapping */
+    text-overflow: ellipsis; /* Add ellipsis for overflow text */
 }
 
 .sell-item {
