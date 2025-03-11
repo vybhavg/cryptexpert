@@ -82,10 +82,15 @@
             fiatSelect.style.paddingLeft = "50px"; // Increased padding for the flag
         }
 
-        // Format numbers without trailing zeros
-        function formatNumber(number, decimals = 8) {
+        // Format numbers for display (with commas)
+        function formatNumberForDisplay(number, decimals = 8) {
             const formatted = new BigNumber(number).toFormat(decimals); // Format with decimals
             return formatted.replace(/\.?0+$/, ""); // Remove trailing zeros
+        }
+
+        // Format numbers for input (without commas)
+        function formatNumberForInput(number) {
+            return number.replace(/,/g, ''); // Remove all commas
         }
 
         // Convert crypto to fiat
@@ -113,10 +118,19 @@
                 .times(cryptoPrices[selectedCrypto]) // Multiply by crypto price
                 .times(fiatRates[selectedFiat]); // Multiply by fiat rate
 
-            fiatAmountInput.value = formatNumber(fiatAmount, 2); // Format fiat amount
+            // Format for display (with commas)
+            const displayFiatAmount = formatNumberForDisplay(fiatAmount, 2);
+
+            // Format for input (without commas)
+            const inputFiatAmount = formatNumberForInput(displayFiatAmount);
+
+            // Set the value for input
+            fiatAmountInput.value = inputFiatAmount;
+
+            // Set the value for display
             conversionResult.innerHTML = `
-                <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span> = 
-                <span class="usd-output">${formatNumber(fiatAmount, 2)} ${selectedFiat}</span>
+                <span class="crypto-output">${formatNumberForDisplay(cryptoAmount)} ${selectedCrypto}</span> = 
+                <span class="usd-output">${displayFiatAmount} ${selectedFiat}</span>
             `;
         }
 
@@ -145,39 +159,33 @@
                 .div(cryptoPrices[selectedCrypto]) // Divide by crypto price
                 .div(fiatRates[selectedFiat]); // Divide by fiat rate
 
-            cryptoAmountInput.value = formatNumber(cryptoAmount); // Format crypto amount
+            // Format for display (with commas)
+            const displayCryptoAmount = formatNumberForDisplay(cryptoAmount);
+
+            // Format for input (without commas)
+            const inputCryptoAmount = formatNumberForInput(displayCryptoAmount);
+
+            // Set the value for input
+            cryptoAmountInput.value = inputCryptoAmount;
+
+            // Set the value for display
             conversionResult.innerHTML = `
-                <span class="usd-output">${formatNumber(fiatAmount, 2)} ${selectedFiat}</span> = 
-                <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span>
+                <span class="usd-output">${formatNumberForDisplay(fiatAmount, 2)} ${selectedFiat}</span> = 
+                <span class="crypto-output">${displayCryptoAmount} ${selectedCrypto}</span>
             `;
-
-
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       // Add event listeners
-    cryptoSelect.addEventListener("change", convertCryptoToFiat);
-    fiatSelect.addEventListener("change", convertCryptoToFiat);
-    cryptoAmountInput.addEventListener("input", convertCryptoToFiat);
-    fiatAmountInput.addEventListener("input", convertFiatToCrypto);
+        // Add event listeners
+        cryptoSelect.addEventListener("change", convertCryptoToFiat);
+        fiatSelect.addEventListener("change", convertCryptoToFiat);
+        cryptoAmountInput.addEventListener("input", () => {
+            cryptoAmountInput.value = formatNumberForInput(cryptoAmountInput.value);
+            convertCryptoToFiat();
+        });
+        fiatAmountInput.addEventListener("input", () => {
+            fiatAmountInput.value = formatNumberForInput(fiatAmountInput.value);
+            convertFiatToCrypto();
+        });
 
         // Fetch prices and populate dropdowns on load
         fetchCryptoPrices();
@@ -185,7 +193,6 @@
         setInterval(fetchCryptoPrices, 20000); // Refresh prices every 20 seconds
     });
 </script>
-
 
 
 <script>
