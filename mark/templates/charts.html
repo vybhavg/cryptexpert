@@ -8,41 +8,41 @@
 {% endblock %}
 
 {% block content %}
-  <div class="flex flex-row gap-4">
+<div class="chart-container">
     <!-- Sell Orders (Left Side) -->
-    <div class="w-1/6 p-4 rounded-lg">
-        <h3 class="text-lg font-bold text-white" style="color:red">Sell Orders</h3>
-        <div class="text-gray-400 text-sm flex justify-between">
+    <div class="order-book sell-orders">
+        <h3 class="order-book-title">Sell Orders</h3>
+        <div class="order-book-header">
             <span>Price (USDT)</span>
             <span>Amount (BTC)</span>
             <span>Total</span>
         </div>
-        <div id="sell-orders" class="space-y-2">
+        <div id="sell-orders" class="order-list">
             <!-- Sell orders will be dynamically populated here -->
         </div>
     </div>
 
     <!-- TradingView Chart (Middle) -->
-    <div class="w-2/3">
-        <h2 id="crypto-title" class="text-white text-xl font-bold mb-4"></h2>
-        <div id="tradingview_chart" style="height: 500px;"></div>
+    <div class="chart-wrapper">
+        <h2 id="crypto-title" class="chart-title">BTC/USDT Chart</h2>
+        <div id="tradingview_chart" class="tradingview-chart"></div>
     </div>
 
     <!-- Buy Orders (Right Side) -->
-    <div class="w-1/6 p-4 rounded-lg">
-        <h3 class="text-lg font-bold text-white"style="color:red">Buy Orders</h3>
-        <div class="text-gray-400 text-sm flex justify-between">
+    <div class="order-book buy-orders">
+        <h3 class="order-book-title">Buy Orders</h3>
+        <div class="order-book-header">
             <span>Price (USDT)</span>
             <span>Amount (BTC)</span>
             <span>Total</span>
         </div>
-        <div id="buy-orders" class="space-y-2">
+        <div id="buy-orders" class="order-list">
             <!-- Buy orders will be dynamically populated here -->
         </div>
     </div>
 </div>
 
-    <script type="text/javascript">
+<script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function () {
     // Initialize WebSocket
     const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@depth');
@@ -59,59 +59,59 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log('WebSocket connection closed');
     };
 
-ws.onmessage = (event) => {
-    try {
-        const data = JSON.parse(event.data);
+    ws.onmessage = (event) => {
+        try {
+            const data = JSON.parse(event.data);
 
-        // Check if the message is a depthUpdate
-        if (data.e === 'depthUpdate') {
-            const { b: bids, a: asks } = data;
+            // Check if the message is a depthUpdate
+            if (data.e === 'depthUpdate') {
+                const { b: bids, a: asks } = data;
 
-            // Function to format numbers with thousands separators
-            const formatNumber = (num) => {
-                return num.toLocaleString(undefined, { maximumFractionDigits: 8 });
-            };
+                // Function to format numbers with thousands separators
+                const formatNumber = (num) => {
+                    return num.toLocaleString(undefined, { maximumFractionDigits: 8 });
+                };
 
-            // Display Sell Orders (Asks)
-            const sellOrders = document.getElementById("sell-orders");
-            sellOrders.innerHTML = asks.slice(0, 10) // Limit to 10 orders
-                .map(order => {
-                    const price = parseFloat(order[0]);
-                    const amount = parseFloat(order[1]);
-                    const total = price * amount;
-                    return `
-                        <div class="text-red-500 text-sm flex justify-between">
-                            <span>${formatNumber(price)}</span>
-                            <span>${formatNumber(amount)}</span>
-                            <span>${formatNumber(total)}</span>
-                        </div>
-                    `;
-                })
-                .join("");
+                // Display Sell Orders (Asks)
+                const sellOrders = document.getElementById("sell-orders");
+                sellOrders.innerHTML = asks.slice(0, 10) // Limit to 10 orders
+                    .map(order => {
+                        const price = parseFloat(order[0]);
+                        const amount = parseFloat(order[1]);
+                        const total = price * amount;
+                        return `
+                            <div class="order-item sell-item">
+                                <span>${formatNumber(price)}</span>
+                                <span>${formatNumber(amount)}</span>
+                                <span>${formatNumber(total)}</span>
+                            </div>
+                        `;
+                    })
+                    .join("");
 
-            // Display Buy Orders (Bids)
-            const buyOrders = document.getElementById("buy-orders");
-            buyOrders.innerHTML = bids.slice(0, 10) // Limit to 10 orders
-                .map(order => {
-                    const price = parseFloat(order[0]);
-                    const amount = parseFloat(order[1]);
-                    const total = price * amount;
-                    return `
-                        <div class="text-green-500 text-sm flex justify-between">
-                            <span>${formatNumber(price)}</span>
-                            <span>${formatNumber(amount)}</span>
-                            <span>${formatNumber(total)}</span>
-                        </div>
-                    `;
-                })
-                .join("");
-        } else {
-            console.error("Unexpected WebSocket data format:", data);
+                // Display Buy Orders (Bids)
+                const buyOrders = document.getElementById("buy-orders");
+                buyOrders.innerHTML = bids.slice(0, 10) // Limit to 10 orders
+                    .map(order => {
+                        const price = parseFloat(order[0]);
+                        const amount = parseFloat(order[1]);
+                        const total = price * amount;
+                        return `
+                            <div class="order-item buy-item">
+                                <span>${formatNumber(price)}</span>
+                                <span>${formatNumber(amount)}</span>
+                                <span>${formatNumber(total)}</span>
+                            </div>
+                        `;
+                    })
+                    .join("");
+            } else {
+                console.error("Unexpected WebSocket data format:", data);
+            }
+        } catch (error) {
+            console.error("Error processing WebSocket message:", error);
         }
-    } catch (error) {
-        console.error("Error processing WebSocket message:", error);
-    }
-};
+    };
 
     // Load TradingView chart
     if (typeof TradingView === "undefined") {
@@ -146,157 +146,115 @@ ws.onmessage = (event) => {
         });
     }
 });
-    </script>
+</script>
 {% endblock %}
+
 {% block style %}
-    <!-- Additional styles specific to charts.html -->
 <style>
- <style>
     /* General Styles */
     body {
-        background: linear-gradient(135deg, #121212, #1e1e1e); /* Gradient background */
-        color: #ffffff; /* White text for better contrast */
+        background: #0a0a0a; /* Dark background */
+        color: #ffffff; /* White text */
         font-family: 'Inter', sans-serif; /* Modern font */
         margin: 0;
         padding: 0;
     }
 
-    /* Flex Container */
-    .flex {
+    /* Chart Container */
+    .chart-container {
         display: flex;
-        margin-top: 75px;
-        gap: 1.5rem; /* Increased gap for better spacing */
-        padding: 1.5rem; /* Padding around the container */
-    }
-
-    /* Box Styles */
-    .bg-gray-800 {
-        background: rgba(30, 30, 30, 0.8); /* Semi-transparent background */
-        border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-        border-radius: 15px; /* Rounded corners */
-        backdrop-filter: blur(10px); /* Glassmorphism effect */
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
-        transition: all 0.3s ease; /* Smooth transition */
-    }
-
-    .bg-gray-800:hover {
-        transform: translateY(-5px); /* Lift effect on hover */
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
-    }
-
-    .p-4 {
-        padding: 2rem; /* Increased padding for better spacing */
-    }
-
-    /* Text Styles */
-    .text-white {
-        color: #ffffff;
-    }
-
-    .text-red-500 {
-        color: #ff4d4d; /* Brighter red for sell orders */
-    }
-
-    .text-green-500 {
-        color: #00ff88; /* Brighter green for buy orders */
-    }
-
-    .text-sm {
-        font-size: 0.875rem;
-    }
-
-    .font-bold {
-        font-weight: 700;
-    }
-
-    .font-semibold {
-        font-weight: 600;
-    }
-
-    .mb-4 {
-        margin-bottom: 1.5rem; /* Increased margin for better spacing */
+        gap: 20px;
+        padding: 20px;
+        max-width: 1600px;
+        margin: 0 auto;
     }
 
     /* Order Book Styles */
-    #sell-orders div, #buy-orders div {
-        padding: 0.75rem 0 !important; /* Add padding to each order row */
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; /* Subtle separator between rows */
-        transition: background-color 0.3s ease !important; /* Smooth transition */
+    .order-book {
+        width: 20%;
+        background: #1a1a1a; /* Dark background for order books */
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
-    #sell-orders div:hover, #buy-orders div:hover {
-        background-color: rgba(255, 255, 255, 0.05) !important; /* Highlight on hover */
+    .order-book-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #ff4d4d; /* Red for sell orders */
     }
 
-    #sell-orders div:last-child, #buy-orders div:last-child {
-        border-bottom: none !important; /* Remove border for the last row */
+    .buy-orders .order-book-title {
+        color: #00ff88; /* Green for buy orders */
     }
 
-    /* TradingView Chart Styles */
-    #tradingview_chart {
-        margin-top: 20px;
-        border-radius: 15px;
+    .order-book-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 12px;
+    }
+
+    .order-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        padding: 8px;
+        border-radius: 6px;
+        background: #222; /* Slightly lighter background for items */
+    }
+
+    .sell-item {
+        color: #ff4d4d; /* Red for sell items */
+    }
+
+    .buy-item {
+        color: #00ff88; /* Green for buy items */
+    }
+
+    /* Chart Wrapper */
+    .chart-wrapper {
+        width: 60%;
+        background: #1a1a1a; /* Dark background for chart */
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .chart-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #00ff88; /* Green for chart title */
+    }
+
+    .tradingview-chart {
+        height: 500px;
+        border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
-        transition: all 0.3s ease; /* Smooth transition */
     }
 
-    #tradingview_chart:hover {
-        transform: translateY(-5px); /* Lift effect on hover */
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
-    }
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .chart-container {
+            flex-direction: column;
+        }
 
-    /* Header Styles */
-    h3 {
-        font-size: 1.5rem; /* Larger font size for headers */
-        margin-bottom: 1.5rem; /* Increased margin for better spacing */
-        text-shadow: 0 0 10px rgba(255, 0, 0, 0.7); /* Neon glow for sell orders */
-    }
+        .order-book, .chart-wrapper {
+            width: 100%;
+        }
 
-    h2 {
-        font-size: 2rem; /* Larger font size for the chart title */
-        margin-bottom: 1.5rem; /* Increased margin for better spacing */
-        text-shadow: 0 0 10px rgba(0, 255, 136, 0.7); /* Neon glow for chart title */
+        .order-book {
+            margin-bottom: 20px;
+        }
     }
-
-    /* Scrollbar Styles (for order books) */
-    ::-webkit-scrollbar {
-        width: 10px; /* Width of the scrollbar */
-    }
-
-    ::-webkit-scrollbar-track {
-        background: rgba(30, 30, 30, 0.8); /* Track color */
-        border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.2); /* Thumb color */
-        border-radius: 10px;
-        transition: background 0.3s ease; /* Smooth transition */
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.4); /* Thumb color on hover */
-    }
-
-    /* Neon Glow Effect */
-    .neon-glow {
-        text-shadow: 0 0 10px rgba(255, 0, 0, 0.7), 0 0 20px rgba(255, 0, 0, 0.7), 0 0 30px rgba(255, 0, 0, 0.7);
-    }
-
-    .neon-glow-green {
-        text-shadow: 0 0 10px rgba(0, 255, 136, 0.7), 0 0 20px rgba(0, 255, 136, 0.7), 0 0 30px rgba(0, 255, 136, 0.7);
-    }
-
-    /* Hover Effects */
-    .hover-effect {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .hover-effect:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-    }
-    
 </style>
 {% endblock %}
