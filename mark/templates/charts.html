@@ -57,7 +57,11 @@
     <!-- Show locked message for non-logged-in users -->
     <div class="notepad-container locked">
         <h3 class="notepad-title">Observations</h3>
-<p class="locked-message">🔒 This feature is locked. Please <a href="{{ url_for('login_form', next=request.path) }}">sign in</a> to continue.</p>    </div>
+<p class="locked-message">
+    🔒 This feature is locked. Please 
+    <a href="{{ url_for('login_form', next=request.full_path|replace('&', '%26')) }}">sign in</a> 
+    to continue.
+</p>
 {% endif %}
 
 
