@@ -872,6 +872,20 @@ def wallet_management():
         flash("API key added successfully!", "success")
         return redirect(url_for("wallet_management"))
 
+    # Handle API Key Deletion
+    if request.method == "POST" and "delete_api_key" in request.form:
+        exchange = request.form.get("exchange")
+        api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
+
+        if api_key_entry:
+            db.session.delete(api_key_entry)
+            db.session.commit()
+            flash(f"API key for {exchange} deleted successfully!", "success")
+        else:
+            flash(f"API key for {exchange} not found!", "error")
+
+        return redirect(url_for("wallet_management"))
+
     # Fetch all exchanges and their balances
     user_exchanges = UserAPIKey.query.filter_by(user_id=user_id).all()
     exchange_data = []
