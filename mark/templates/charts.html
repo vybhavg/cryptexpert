@@ -35,7 +35,7 @@
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function () {
             // Initialize WebSocket
-            const ws = new WebSocket('wss://your-websocket-url'); // Replace with your WebSocket URL
+const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@depth');
 
             ws.onopen = () => {
                 console.log('WebSocket connection established');
