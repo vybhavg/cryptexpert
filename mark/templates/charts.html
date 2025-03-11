@@ -49,9 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize WebSocket
 const urlParams = new URLSearchParams(window.location.search);
 const symboll = urlParams.get("symbol") || "BTC";
-    const urll=`wss://stream.binance.com:9443/ws/${symboll.toLowerCase()}@depth`;
 const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symboll.toLowerCase()}@depth`);
-console.log(urll);
 
     ws.onopen = () => {
         console.log('WebSocket connection established');
