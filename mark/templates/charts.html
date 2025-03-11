@@ -33,95 +33,92 @@
     </div>
 
     <script type="text/javascript">
-        document.addEventListener("DOMContentLoaded", function () {
-            // Initialize WebSocket
-const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@depth');
+document.addEventListener("DOMContentLoaded", function () {
+    // Initialize WebSocket
+    const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@depth');
 
-            ws.onopen = () => {
-                console.log('WebSocket connection established');
-                // You can send any initial message or subscription request here if needed
-            };
+    ws.onopen = () => {
+        console.log('WebSocket connection established');
+    };
 
-            ws.onerror = (error) => {
-                console.error('WebSocket error:', error);
-            };
+    ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
 
-            ws.onclose = () => {
-                console.log('WebSocket connection closed');
-            };
+    ws.onclose = () => {
+        console.log('WebSocket connection closed');
+    };
 
-           ws.onmessage = (event) => {
-    try {
-        const data = JSON.parse(event.data);
+    ws.onmessage = (event) => {
+        try {
+            const data = JSON.parse(event.data);
 
-        if (!data.bids || !data.asks) {
-            console.error("Unexpected WebSocket data format:", data);
-            return;
-        }
+            // Check if the message is a depthUpdate
+            if (data.e === 'depthUpdate') {
+                const { b: bids, a: asks } = data;
 
-        const { bids, asks } = data;
+                // Display Sell Orders (Asks)
+                const sellOrders = document.getElementById("sell-orders");
+                sellOrders.innerHTML = asks.slice(0, 10) // Limit to 10 orders
+                    .map(order => `
+                        <div class="text-red-500 text-sm flex justify-between">
+                            <span>${parseFloat(order[0]).toFixed(4)}</span>
+                            <span>${parseFloat(order[1]).toFixed(4)}</span>
+                        </div>
+                    `)
+                    .join("");
 
-        // Display Sell Orders (Asks)
-        const sellOrders = document.getElementById("sell-orders");
-        sellOrders.innerHTML = asks.slice(0, 10) // Limit to 10 orders
-            .map(order => `
-                <div class="text-red-500 text-sm flex justify-between">
-                    <span>${parseFloat(order[0]).toFixed(4)}</span>
-                    <span>${parseFloat(order[1]).toFixed(4)}</span>
-                </div>
-            `)
-            .join("");
-
-        // Display Buy Orders (Bids)
-        const buyOrders = document.getElementById("buy-orders");
-        buyOrders.innerHTML = bids.slice(0, 10) // Limit to 10 orders
-            .map(order => `
-                <div class="text-green-500 text-sm flex justify-between">
-                    <span>${parseFloat(order[0]).toFixed(4)}</span>
-                    <span>${parseFloat(order[1]).toFixed(4)}</span>
-                </div>
-            `)
-            .join("");
-
-    } catch (error) {
-        console.error("Error processing WebSocket message:", error);
-    }
-};
-
-
-            // Load TradingView chart
-            if (typeof TradingView === "undefined") {
-                console.error("TradingView library failed to load. Retrying...");
-                setTimeout(() => {
-                    if (typeof TradingView !== "undefined") {
-                        loadTradingViewChart();
-                    } else {
-                        console.error("TradingView library still not available.");
-                    }
-                }, 2000);
+                // Display Buy Orders (Bids)
+                const buyOrders = document.getElementById("buy-orders");
+                buyOrders.innerHTML = bids.slice(0, 10) // Limit to 10 orders
+                    .map(order => `
+                        <div class="text-green-500 text-sm flex justify-between">
+                            <span>${parseFloat(order[0]).toFixed(4)}</span>
+                            <span>${parseFloat(order[1]).toFixed(4)}</span>
+                        </div>
+                    `)
+                    .join("");
             } else {
+                console.error("Unexpected WebSocket data format:", data);
+            }
+        } catch (error) {
+            console.error("Error processing WebSocket message:", error);
+        }
+    };
+
+    // Load TradingView chart
+    if (typeof TradingView === "undefined") {
+        console.error("TradingView library failed to load. Retrying...");
+        setTimeout(() => {
+            if (typeof TradingView !== "undefined") {
                 loadTradingViewChart();
+            } else {
+                console.error("TradingView library still not available.");
             }
+        }, 2000);
+    } else {
+        loadTradingViewChart();
+    }
 
-            function loadTradingViewChart() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const symbol = urlParams.get("symbol") || "BTC";
-                document.getElementById("crypto-title").textContent = `${symbol} Chart`;
+    function loadTradingViewChart() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const symbol = urlParams.get("symbol") || "BTC";
+        document.getElementById("crypto-title").textContent = `${symbol} Chart`;
 
-                new TradingView.widget({
-                    "container_id": "tradingview_chart",
-                    "symbol": `BINANCE:${symbol}USDT`,
-                    "interval": "D",
-                    "theme": "dark",
-                    "style": "1",
-                    "locale": "en",
-                    "toolbar_bg": "#f1f3f6",
-                    "hide_side_toolbar": false,
-                    "allow_symbol_change": true,
-                    "autosize": true
-                });
-            }
+        new TradingView.widget({
+            "container_id": "tradingview_chart",
+            "symbol": `BINANCE:${symbol}USDT`,
+            "interval": "D",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "toolbar_bg": "#f1f3f6",
+            "hide_side_toolbar": false,
+            "allow_symbol_change": true,
+            "autosize": true
         });
+    }
+});
     </script>
 {% endblock %}
 
