@@ -555,7 +555,6 @@ def setup_authenticator_qr():
     return send_file(buffer, mimetype='image/png')
     
 @app.route('/charts')
-@login_required  # Ensure only logged-in users can access this route
 def charts():
     # Pass the current_user object to the template
     return render_template('charts.html', user=current_user)
