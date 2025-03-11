@@ -241,18 +241,25 @@ Swal.fire({
 {% block style %}
 <style>
     /* Dark Mode SweetAlert2 Toast */
-.swal2-toast.swal2-dark {
+/* Dark Mode SweetAlert2 Toast */
+.swal2-dark {
     background-color: #1a1a1a; /* Dark background */
     color: #ffffff; /* White text */
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
+/* Ensure the toast applies the dark mode styles correctly */
+.swal2-toast.swal2-dark {
+    background-color: #1a1a1a; /* Ensure toast inherits dark background */
+    color: #ffffff; /* White text */
+}
+
 .swal2-toast.swal2-dark .swal2-title {
     color: #ffffff; /* White title text */
 }
 
-.swal2-toast.swal2-dark .swal2-content {
+.swal2-toast.swal2-dark .swal2-html-container {
     color: #cccccc; /* Light gray content text */
 }
 
@@ -260,9 +267,11 @@ Swal.fire({
     color: #f8bc04; /* Yellow icon */
 }
 
+/* Ensure the timer progress bar is styled correctly */
 .swal2-toast.swal2-dark .swal2-timer-progress-bar {
-    background: #f8bc04; /* Yellow progress bar */
+    background: #f8bc04 !important; /* Yellow progress bar */
 }
+
  /* General Styles */
 body {
     background: #0a0a0a; /* Dark background */
