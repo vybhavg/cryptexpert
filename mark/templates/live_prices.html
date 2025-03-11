@@ -541,13 +541,15 @@ body {
 
                 // Remove "USDT" from Binance symbols if present
                 let displaySymbol = ticker.symbol;
-                console.log(displaySymbol);
+                
                 if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
                     displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
+                    // Store the price for the converter
+                cryptoPrices[displaySymbol] = new BigNumber(ticker.price); // Use BigNumber for precision
+                    console.log(cryptoPrices[displaySymbol]);
                 }
 
-                // Store the price for the converter
-                cryptoPrices[displaySymbol] = new BigNumber(ticker.price); // Use BigNumber for precision
+                
 
                 const logoSrc = cryptoLogos[displaySymbol] || "/static/img/crypto/BTC.png";
                 row.innerHTML = `
