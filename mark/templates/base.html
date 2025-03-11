@@ -684,21 +684,35 @@ html {
             <aside class="sidebar">
                 <div class="scrollbar-inner">
 
-                    <div class="user">
-                        <div class="user__info" data-toggle="dropdown">
-                            <img class="user__img" src="static/demo/img/profile-pics/8.jpg" alt="">
-                            <div>
-                                <div class="user__name">{{name}}</div>
-                                <div class="user__email">{{email}}</div>
-                            </div>
-                        </div>
+   <div class="user">
+    <div class="user__info" data-toggle="dropdown">
+        <img class="user__img" src="static/demo/img/profile-pics/8.jpg" alt="">
+        <div>
+            {% if current_user.is_authenticated %}
+                <!-- Show name and email if the user is logged in -->
+                <div class="user__name">{{ current_user.username }}</div>
+                <div class="user__email">{{ current_user.email }}</div>
+            {% else %}
+                <!-- Show placeholder text if the user is not logged in -->
+                <div class="user__name">Guest</div>
+                <div class="user__email">Not logged in</div>
+            {% endif %}
+        </div>
+    </div>
 
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">View Profile</a>
-                            <a class="dropdown-item" href="#">Settings</a>
-                            <a class="dropdown-item" href="{{url_for('logout_page')}}">Logout</a>
-                        </div>
-                    </div>
+    <div class="dropdown-menu">
+        {% if current_user.is_authenticated %}
+            <!-- Show these options if the user is logged in -->
+            <a class="dropdown-item" href="#">View Profile</a>
+            <a class="dropdown-item" href="#">Settings</a>
+            <a class="dropdown-item" href="{{ url_for('logout_page') }}">Logout</a>
+        {% else %}
+            <!-- Show these options if the user is not logged in -->
+            <a class="dropdown-item" href="{{ url_for('login_form') }}">Log In</a>
+            <a class="dropdown-item" href="{{ url_for('register_form') }}">Register</a>
+        {% endif %}
+    </div>
+</div>
 
                     <ul class="navigation">
                         <li class="navigation__active"><a href="index-2.html"><i class="zmdi zmdi-home"></i> Home</a></li>
