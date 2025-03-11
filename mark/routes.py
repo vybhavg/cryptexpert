@@ -747,29 +747,46 @@ import asyncio
 from binance import AsyncClient  # Use AsyncClient for Binance API
 
 
-# Function to get wallet balances based on selected exchange
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+
 def get_wallet_balances(api_key, api_secret, exchange):
     """Fetches wallet balances from different exchanges."""
-    
-    if exchange.lower() == "binance":
-        return asyncio.run(get_binance_balances_async(api_key, api_secret))  # Use asyncio.run()
+    try:
+        if exchange.lower() == "binance":
+            return asyncio.run(get_binance_balances_async(api_key, api_secret))
 
-    elif exchange.lower() == "coinbase":
-        return get_coinbase_balances(api_key, api_secret)
+        elif exchange.lower() == "coinbase":
+            return get_coinbase_balances(api_key, api_secret)
 
-    return None
+        else:
+            logging.error(f"Unsupported exchange: {exchange}")
+            return None, 0.0
+
+    except Exception as e:
+        logging.error(f"Error in get_wallet_balances: {e}")
+        return None, 0.0
 
 import asyncio
 from binance import AsyncClient
 
 async def get_binance_balances_async(api_key, api_secret):
     """Fetches wallet balances from Binance asynchronously and calculates total balance in USD."""
+    client = None
     try:
-        client = await AsyncClient.create(api_key, api_secret)  # Async client
+        # Initialize Binance client
+        client = await AsyncClient.create(api_key, api_secret)
+        logging.debug("Binance client created successfully.")
+
+        # Fetch account info
         account_info = await client.get_account()
+        logging.debug("Account info fetched successfully.")
 
         # Extract non-zero balances
         balances = {asset["asset"]: float(asset["free"]) for asset in account_info["balances"] if float(asset["free"]) > 0}
+        logging.debug(f"Non-zero balances: {balances}")
 
         # Fetch USD prices for all assets
         total_balance_usd = 0.0
@@ -779,18 +796,24 @@ async def get_binance_balances_async(api_key, api_secret):
                 price_info = await client.get_symbol_ticker(symbol=symbol)
                 asset_price = float(price_info["price"])
                 total_balance_usd += amount * asset_price
-            except:
-                continue  # Skip if price fetch fails (e.g., some tokens don't have direct USDT pairs)
+                logging.debug(f"Fetched price for {symbol}: {asset_price}")
+            except BinanceAPIException as e:
+                logging.warning(f"Failed to fetch price for {symbol}: {e}")
+                continue  # Skip if price fetch fails
 
-        # Fix: Properly close the client session
-        await client.close_connection()
-
+        logging.debug(f"Total balance in USD: {total_balance_usd}")
         return balances, total_balance_usd
 
-    except Exception as e:
-        print(f"Binance API Error: {e}")
+    except BinanceAPIException as e:
+        logging.error(f"Binance API Error: {e}")
         return None, 0.0
-
+    except Exception as e:
+        logging.error(f"Unexpected error in get_binance_balances_async: {e}")
+        return None, 0.0
+    finally:
+        if client:
+            await client.close_connection()
+            logging.debug("Binance client connection closed.")
 
 # Function to get wallet balances from Coinbase
 def get_coinbase_balances(api_key, api_secret):
@@ -860,6 +883,11 @@ def wallet_management():
         # Fetch wallet balances based on the selected exchange
         balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange_name)
 
+        if balances is None:
+            flash("Failed to fetch balances. Please check your API key and permissions.", "error")
+        else:
+            flash("Balances fetched successfully!", "success")
+
         # Render the template with the fetched balances
         return render_template(
             "wallet_management.html",
@@ -879,7 +907,6 @@ def wallet_management():
         balances=None,
         total_balance_usd=None,
     )
-
 
 @app.route("/delete_api_key/<int:api_id>", methods=["POST"])
 @login_required
