@@ -6,6 +6,132 @@
 <!-- Additional styles or scripts for the profile page can go here -->
 {% endblock %}
 
+{% block style %}
+<style>
+    /* Modern container styling */
+    .container {
+        margin-top: 75px;
+    }
+
+    /* Card styling */
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #1a1a1a, #333);
+        border-radius: 15px 15px 0 0;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 1.5rem;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    /* Profile picture styling */
+    .profile-picture {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border: 4px solid #f8bc04;
+        border-radius: 50%;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .profile-picture:hover {
+        transform: scale(1.05);
+        border-color: #e0a800;
+    }
+
+    /* Button styling */
+    .btn-warning {
+        background-color: #f8bc04;
+        border: none;
+        color: #000;
+        font-weight: 500;
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        color: white;
+        font-weight: 500;
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        transform: translateY(-2px);
+    }
+
+    /* Text and typography */
+    h4 {
+        font-size: 1.75rem;
+        font-weight: bold;
+        color: #1a1a1a;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    /* Badge styling */
+    .badge.bg-success {
+        background-color: #28a745;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-size: 0.9rem;
+    }
+
+    /* Hover effects for links */
+    a {
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    a:hover {
+        color: #f8bc04;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+        }
+
+        .card-header {
+            font-size: 1.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -20,8 +146,7 @@
                         <div class="col-md-4 text-center">
                             <img src="{{ url_for('static', filename='demo/img/profile-pics/8.jpg') }}"
                                  alt="Profile Picture"
-                                 class="img-fluid rounded-circle mb-3"
-                                 style="width: 150px; height: 150px; object-fit: cover;">
+                                 class="profile-picture mb-3">
                             <a href="#" class="btn btn-warning btn-sm">Change Picture</a>
                         </div>
 
@@ -57,31 +182,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block style %}
-<style>
-    .card {
-        border: none;
-        border-radius: 10px;
-    }
-
-    .card-header {
-        border-radius: 10px 10px 0 0;
-    }
-
-    .btn-warning {
-        background-color: #f8bc04;
-        border: none;
-        color: #000;
-    }
-
-    .btn-warning:hover {
-        background-color: #e0a800;
-    }
-
-    .badge.bg-success {
-        background-color: #28a745;
-    }
-</style>
 {% endblock %}
