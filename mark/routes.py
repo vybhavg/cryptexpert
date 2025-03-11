@@ -853,7 +853,7 @@ def wallet_management():
         exchange = request.form.get("exchange")
         api_key = request.form.get("api_key")
         api_secret = request.form.get("api_secret")
-
+        print(api_key, api_secret)
         if not exchange or not api_key or not api_secret:
             flash("All fields are required!", "error")
             return redirect(url_for("wallet_management"))
@@ -883,8 +883,7 @@ def wallet_management():
 
         # Decrypt API keys
         api_key, api_secret = api_key_entry.get_api_keys()
-        if(api_key):
-            print(api_key, api_secret)
+        print(api_key, api_secret)
         # Fetch wallet balances based on the selected exchange
         balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange_name)
 
