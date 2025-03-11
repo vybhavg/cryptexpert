@@ -2,7 +2,256 @@
 
 {% block title %}Live Crypto Prices{% endblock %}
 {% block head %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.0/bignumber.min.js"></script>{% endblock %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.0/bignumber.min.js"></script>
+<script>
+    const cryptoLogos = {{ crypto_logos | tojson }};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.0/bignumber.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const cryptoSelect = document.getElementById("crypto-select");
+        const fiatSelect = document.getElementById("fiat-select");
+        const cryptoAmountInput = document.getElementById("crypto-amount");
+        const fiatAmountInput = document.getElementById("fiat-amount");
+        const conversionResult = document.getElementById("conversion-result");
+        const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
+
+        let cryptoPrices = {}; // Stores crypto prices in USD
+        const fiatRates = { USD: 1, EUR: 0.85, GBP: 0.73 }; // Example fiat rates (1 USD = X EUR, etc.)
+        const cryptoLogos = {{ crypto_logos | tojson }}; // Crypto logos from your backend
+
+        // Fetch crypto prices from Binance API
+        async function fetchCryptoPrices() {
+            try {
+                const response = await fetch('https://api.binance.com/api/v3/ticker/price');
+                const data = await response.json();
+                data.forEach(ticker => {
+                    if (ticker.symbol.endsWith("USDT")) {
+                        const symbol = ticker.symbol.replace("USDT", ""); // Remove USDT suffix
+                        cryptoPrices[symbol] = new BigNumber(ticker.price); // Use BigNumber for precision
+                    }
+                });
+                console.log("cryptoPrices:", cryptoPrices); // Debugging
+                populateCryptoSelect();
+            } catch (error) {
+                console.error('Error fetching crypto prices:', error);
+            }
+        }
+
+        // Populate crypto select dropdown with logos
+        function populateCryptoSelect() {
+            const coins = Object.keys(cryptoPrices);
+            cryptoSelect.innerHTML = coins.map(coin => `
+                <option value="${coin}" data-logo="${cryptoLogos[coin] || '/static/img/crypto/BTC.png'}">
+                    ${coin}
+                </option>
+            `).join("");
+            updateCryptoLogo();
+        }
+
+        // Update crypto logo when selection changes
+        function updateCryptoLogo() {
+            const selectedOption = cryptoSelect.options[cryptoSelect.selectedIndex];
+            const logoUrl = selectedOption.getAttribute("data-logo");
+            cryptoSelect.style.backgroundImage = `url('${logoUrl}')`;
+            cryptoSelect.style.backgroundRepeat = "no-repeat";
+            cryptoSelect.style.backgroundPosition = "left 10px center";
+            cryptoSelect.style.backgroundSize = "30px 30px"; // Increased logo size
+            cryptoSelect.style.paddingLeft = "50px"; // Increased padding for the logo
+        }
+
+        // Populate fiat select dropdown with flags
+        function populateFiatSelect() {
+            const fiats = Object.keys(fiatRates);
+            fiatSelect.innerHTML = fiats.map(fiat => `
+                <option value="${fiat}" data-flag="https://flagcdn.com/${fiat === 'USD' ? 'us' : fiat === 'EUR' ? 'eu' : 'gb'}.svg">
+                    ${fiat}
+                </option>
+            `).join("");
+            updateFiatFlag();
+        }
+
+        // Update fiat flag when selection changes
+        function updateFiatFlag() {
+            const selectedOption = fiatSelect.options[fiatSelect.selectedIndex];
+            const flagUrl = selectedOption.getAttribute("data-flag");
+            fiatSelect.style.backgroundImage = `url('${flagUrl}')`;
+            fiatSelect.style.backgroundRepeat = "no-repeat";
+            fiatSelect.style.backgroundPosition = "left 10px center";
+            fiatSelect.style.backgroundSize = "30px 30px"; // Increased flag size
+            fiatSelect.style.paddingLeft = "50px"; // Increased padding for the flag
+        }
+
+        // Format numbers without trailing zeros
+        function formatNumber(number, decimals = 8) {
+            const formatted = new BigNumber(number).toFormat(decimals); // Format with decimals
+            return formatted.replace(/\.?0+$/, ""); // Remove trailing zeros
+        }
+
+        // Convert crypto to fiat
+        function convertCryptoToFiat() {
+            const cryptoAmount = new BigNumber(cryptoAmountInput.value || 0); // Use BigNumber for precision
+            const selectedCrypto = cryptoSelect.value;
+            const selectedFiat = fiatSelect.value;
+
+            // Validate input
+            if (cryptoAmount.isNaN() || cryptoAmount.lte(0)) {
+                conversionResult.innerHTML = `<span class="error">Please enter a valid crypto amount.</span>`;
+                return;
+            }
+            if (!cryptoPrices[selectedCrypto]) {
+                conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
+                return;
+            }
+            if (!fiatRates[selectedFiat]) {
+                conversionResult.innerHTML = `<span class="error">Fiat rate not found for ${selectedFiat}.</span>`;
+                return;
+            }
+
+            // Perform the conversion
+            const fiatAmount = cryptoAmount
+                .times(cryptoPrices[selectedCrypto]) // Multiply by crypto price
+                .times(fiatRates[selectedFiat]); // Multiply by fiat rate
+
+            fiatAmountInput.value = formatNumber(fiatAmount, 2); // Format fiat amount
+            conversionResult.innerHTML = `
+                <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span> = 
+                <span class="usd-output">${formatNumber(fiatAmount, 2)} ${selectedFiat}</span>
+            `;
+        }
+
+        // Convert fiat to crypto
+        function convertFiatToCrypto() {
+            const fiatAmount = new BigNumber(fiatAmountInput.value || 0); // Use BigNumber for precision
+            const selectedCrypto = cryptoSelect.value;
+            const selectedFiat = fiatSelect.value;
+
+            // Validate input
+            if (fiatAmount.isNaN() || fiatAmount.lte(0)) {
+                conversionResult.innerHTML = `<span class="error">Please enter a valid fiat amount.</span>`;
+                return;
+            }
+            if (!cryptoPrices[selectedCrypto]) {
+                conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
+                return;
+            }
+            if (!fiatRates[selectedFiat]) {
+                conversionResult.innerHTML = `<span class="error">Fiat rate not found for ${selectedFiat}.</span>`;
+                return;
+            }
+
+            // Perform the conversion
+            const cryptoAmount = fiatAmount
+                .div(cryptoPrices[selectedCrypto]) // Divide by crypto price
+                .div(fiatRates[selectedFiat]); // Divide by fiat rate
+
+            cryptoAmountInput.value = formatNumber(cryptoAmount); // Format crypto amount
+            conversionResult.innerHTML = `
+                <span class="usd-output">${formatNumber(fiatAmount, 2)} ${selectedFiat}</span> = 
+                <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span>
+            `;
+        }
+
+      
+
+        // Event listeners
+        cryptoSelect.addEventListener("change", () => {
+            convertCryptoToFiat();
+            updateCryptoLogo();
+        });
+        fiatSelect.addEventListener("change", () => {
+            convertCryptoToFiat();
+            updateFiatFlag();
+        });
+        cryptoAmountInput.addEventListener("input", convertCryptoToFiat);
+        fiatAmountInput.addEventListener("input", convertFiatToCrypto);
+ 
+
+        // Fetch prices and populate dropdowns on load
+        fetchCryptoPrices();
+        populateFiatSelect();
+        setInterval(fetchCryptoPrices, 20000); // Refresh prices every 20 seconds
+    });
+</script>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
+
+        function toggleTickers() {
+            const selectedExchange = document.querySelector('input[name="price-source"]:checked')?.value;
+            document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
+                row.style.display = "none";
+            });
+
+            if (selectedExchange) {
+                document.querySelectorAll(`.${selectedExchange}-row`).forEach(row => row.style.display = "table-row");
+            }
+        }
+
+        async function fetchPrices() {
+            try {
+                const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
+                    fetch('/binance_prices'),
+                    fetch('/okx_prices'),
+                    fetch('/coinbase_prices')
+                ]);
+
+                const binancePrices = await binanceResponse.json();
+                const okxPrices = await okxResponse.json();
+                const coinbasePrices = await coinbaseResponse.json();
+
+                updateTable("binance", binancePrices);
+                updateTable("okx", okxPrices);
+                updateTable("coinbase", coinbasePrices);
+
+                toggleTickers();
+            } catch (error) {
+                console.error('Error fetching prices:', error);
+            }
+        }
+
+        function updateTable(exchange, prices) {
+            const tableBody = document.getElementById("table-body");
+            document.querySelectorAll(`.${exchange}-row`).forEach(row => row.remove());
+
+            prices.forEach(ticker => {
+                const row = document.createElement("tr");
+                row.classList.add(`${exchange}-row`);
+                row.style.display = "none"; // Default hidden, will be toggled later
+
+                // Remove "USDT" from Binance symbols if present
+                let displaySymbol = ticker.symbol;
+                if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
+                    displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
+                }
+
+const logoSrc = cryptoLogos[displaySymbol] || "/static/img/crypto/BTC.png";
+row.innerHTML = `
+    <td><img src="${logoSrc}" alt="${displaySymbol}" width="35px" height="35px"></td>
+    <td>${displaySymbol}</td>
+    <td>$${ticker.price}</td>
+    <td class="percentage-change">
+        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
+            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
+        </span>
+    </td>
+`;
+                tableBody.appendChild(row);
+            });
+        }
+
+        exchangeRadios.forEach(radio => radio.addEventListener("change", toggleTickers));
+
+        fetchPrices();
+        setInterval(fetchPrices, 10000);
+    });
+</script>
+
+
+{% endblock %}
 {% block style %}
 <style>
 .converter {
@@ -265,254 +514,6 @@ body {
 {% endblock %}
 
 {% block content %}
-
-<script>
-    const cryptoLogos = {{ crypto_logos | tojson }};
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.1.0/bignumber.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const cryptoSelect = document.getElementById("crypto-select");
-        const fiatSelect = document.getElementById("fiat-select");
-        const cryptoAmountInput = document.getElementById("crypto-amount");
-        const fiatAmountInput = document.getElementById("fiat-amount");
-        const conversionResult = document.getElementById("conversion-result");
-        const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
-
-        let cryptoPrices = {}; // Stores crypto prices in USD
-        const fiatRates = { USD: 1, EUR: 0.85, GBP: 0.73 }; // Example fiat rates (1 USD = X EUR, etc.)
-        const cryptoLogos = {{ crypto_logos | tojson }}; // Crypto logos from your backend
-
-        // Fetch crypto prices from Binance API
-        async function fetchCryptoPrices() {
-            try {
-                const response = await fetch('https://api.binance.com/api/v3/ticker/price');
-                const data = await response.json();
-                data.forEach(ticker => {
-                    if (ticker.symbol.endsWith("USDT")) {
-                        const symbol = ticker.symbol.replace("USDT", ""); // Remove USDT suffix
-                        cryptoPrices[symbol] = new BigNumber(ticker.price); // Use BigNumber for precision
-                    }
-                });
-                console.log("cryptoPrices:", cryptoPrices); // Debugging
-                populateCryptoSelect();
-            } catch (error) {
-                console.error('Error fetching crypto prices:', error);
-            }
-        }
-
-        // Populate crypto select dropdown with logos
-        function populateCryptoSelect() {
-            const coins = Object.keys(cryptoPrices);
-            cryptoSelect.innerHTML = coins.map(coin => `
-                <option value="${coin}" data-logo="${cryptoLogos[coin] || '/static/img/crypto/BTC.png'}">
-                    ${coin}
-                </option>
-            `).join("");
-            updateCryptoLogo();
-        }
-
-        // Update crypto logo when selection changes
-        function updateCryptoLogo() {
-            const selectedOption = cryptoSelect.options[cryptoSelect.selectedIndex];
-            const logoUrl = selectedOption.getAttribute("data-logo");
-            cryptoSelect.style.backgroundImage = `url('${logoUrl}')`;
-            cryptoSelect.style.backgroundRepeat = "no-repeat";
-            cryptoSelect.style.backgroundPosition = "left 10px center";
-            cryptoSelect.style.backgroundSize = "30px 30px"; // Increased logo size
-            cryptoSelect.style.paddingLeft = "50px"; // Increased padding for the logo
-        }
-
-        // Populate fiat select dropdown with flags
-        function populateFiatSelect() {
-            const fiats = Object.keys(fiatRates);
-            fiatSelect.innerHTML = fiats.map(fiat => `
-                <option value="${fiat}" data-flag="https://flagcdn.com/${fiat === 'USD' ? 'us' : fiat === 'EUR' ? 'eu' : 'gb'}.svg">
-                    ${fiat}
-                </option>
-            `).join("");
-            updateFiatFlag();
-        }
-
-        // Update fiat flag when selection changes
-        function updateFiatFlag() {
-            const selectedOption = fiatSelect.options[fiatSelect.selectedIndex];
-            const flagUrl = selectedOption.getAttribute("data-flag");
-            fiatSelect.style.backgroundImage = `url('${flagUrl}')`;
-            fiatSelect.style.backgroundRepeat = "no-repeat";
-            fiatSelect.style.backgroundPosition = "left 10px center";
-            fiatSelect.style.backgroundSize = "30px 30px"; // Increased flag size
-            fiatSelect.style.paddingLeft = "50px"; // Increased padding for the flag
-        }
-
-        // Format numbers without trailing zeros
-        function formatNumber(number, decimals = 8) {
-            const formatted = new BigNumber(number).toFormat(decimals); // Format with decimals
-            return formatted.replace(/\.?0+$/, ""); // Remove trailing zeros
-        }
-
-        // Convert crypto to fiat
-        function convertCryptoToFiat() {
-            const cryptoAmount = new BigNumber(cryptoAmountInput.value || 0); // Use BigNumber for precision
-            const selectedCrypto = cryptoSelect.value;
-            const selectedFiat = fiatSelect.value;
-
-            // Validate input
-            if (cryptoAmount.isNaN() || cryptoAmount.lte(0)) {
-                conversionResult.innerHTML = `<span class="error">Please enter a valid crypto amount.</span>`;
-                return;
-            }
-            if (!cryptoPrices[selectedCrypto]) {
-                conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
-                return;
-            }
-            if (!fiatRates[selectedFiat]) {
-                conversionResult.innerHTML = `<span class="error">Fiat rate not found for ${selectedFiat}.</span>`;
-                return;
-            }
-
-            // Perform the conversion
-            const fiatAmount = cryptoAmount
-                .times(cryptoPrices[selectedCrypto]) // Multiply by crypto price
-                .times(fiatRates[selectedFiat]); // Multiply by fiat rate
-
-            fiatAmountInput.value = formatNumber(fiatAmount, 2); // Format fiat amount
-            conversionResult.innerHTML = `
-                <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span> = 
-                <span class="usd-output">${formatNumber(fiatAmount, 2)} ${selectedFiat}</span>
-            `;
-        }
-
-        // Convert fiat to crypto
-        function convertFiatToCrypto() {
-            const fiatAmount = new BigNumber(fiatAmountInput.value || 0); // Use BigNumber for precision
-            const selectedCrypto = cryptoSelect.value;
-            const selectedFiat = fiatSelect.value;
-
-            // Validate input
-            if (fiatAmount.isNaN() || fiatAmount.lte(0)) {
-                conversionResult.innerHTML = `<span class="error">Please enter a valid fiat amount.</span>`;
-                return;
-            }
-            if (!cryptoPrices[selectedCrypto]) {
-                conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
-                return;
-            }
-            if (!fiatRates[selectedFiat]) {
-                conversionResult.innerHTML = `<span class="error">Fiat rate not found for ${selectedFiat}.</span>`;
-                return;
-            }
-
-            // Perform the conversion
-            const cryptoAmount = fiatAmount
-                .div(cryptoPrices[selectedCrypto]) // Divide by crypto price
-                .div(fiatRates[selectedFiat]); // Divide by fiat rate
-
-            cryptoAmountInput.value = formatNumber(cryptoAmount); // Format crypto amount
-            conversionResult.innerHTML = `
-                <span class="usd-output">${formatNumber(fiatAmount, 2)} ${selectedFiat}</span> = 
-                <span class="crypto-output">${formatNumber(cryptoAmount)} ${selectedCrypto}</span>
-            `;
-        }
-
-      
-
-        // Event listeners
-        cryptoSelect.addEventListener("change", () => {
-            convertCryptoToFiat();
-            updateCryptoLogo();
-        });
-        fiatSelect.addEventListener("change", () => {
-            convertCryptoToFiat();
-            updateFiatFlag();
-        });
-        cryptoAmountInput.addEventListener("input", convertCryptoToFiat);
-        fiatAmountInput.addEventListener("input", convertFiatToCrypto);
- 
-
-        // Fetch prices and populate dropdowns on load
-        fetchCryptoPrices();
-        populateFiatSelect();
-        setInterval(fetchCryptoPrices, 20000); // Refresh prices every 20 seconds
-    });
-</script>
-
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
-
-        function toggleTickers() {
-            const selectedExchange = document.querySelector('input[name="price-source"]:checked')?.value;
-            document.querySelectorAll(".binance-row, .okx-row, .coinbase-row").forEach(row => {
-                row.style.display = "none";
-            });
-
-            if (selectedExchange) {
-                document.querySelectorAll(`.${selectedExchange}-row`).forEach(row => row.style.display = "table-row");
-            }
-        }
-
-        async function fetchPrices() {
-            try {
-                const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
-                    fetch('/binance_prices'),
-                    fetch('/okx_prices'),
-                    fetch('/coinbase_prices')
-                ]);
-
-                const binancePrices = await binanceResponse.json();
-                const okxPrices = await okxResponse.json();
-                const coinbasePrices = await coinbaseResponse.json();
-
-                updateTable("binance", binancePrices);
-                updateTable("okx", okxPrices);
-                updateTable("coinbase", coinbasePrices);
-
-                toggleTickers();
-            } catch (error) {
-                console.error('Error fetching prices:', error);
-            }
-        }
-
-        function updateTable(exchange, prices) {
-            const tableBody = document.getElementById("table-body");
-            document.querySelectorAll(`.${exchange}-row`).forEach(row => row.remove());
-
-            prices.forEach(ticker => {
-                const row = document.createElement("tr");
-                row.classList.add(`${exchange}-row`);
-                row.style.display = "none"; // Default hidden, will be toggled later
-
-                // Remove "USDT" from Binance symbols if present
-                let displaySymbol = ticker.symbol;
-                if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
-                    displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
-                }
-
-const logoSrc = cryptoLogos[displaySymbol] || "/static/img/crypto/BTC.png";
-row.innerHTML = `
-    <td><img src="${logoSrc}" alt="${displaySymbol}" width="35px" height="35px"></td>
-    <td>${displaySymbol}</td>
-    <td>$${ticker.price}</td>
-    <td class="percentage-change">
-        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
-            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
-        </span>
-    </td>
-`;
-                tableBody.appendChild(row);
-            });
-        }
-
-        exchangeRadios.forEach(radio => radio.addEventListener("change", toggleTickers));
-
-        fetchPrices();
-        setInterval(fetchPrices, 10000);
-    });
-</script>
-
 
 <div class="container">
 <div class="converter"><br>
