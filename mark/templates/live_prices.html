@@ -265,15 +265,18 @@ row.innerHTML = `
         setInterval(fetchPrices, 10000);
     });
 
-    document.querySelectorAll(".roww[data-symbol]").forEach(row => {
-    row.addEventListener("click", function () {
-        let symbol = this.getAttribute("data-symbol");
+    document.addEventListener("click", function (event) {
+    const row = event.target.closest(".roww[data-symbol]");
+    if (row) {
+        let symbol = row.getAttribute("data-symbol");
         if (symbol) {
             window.location.href = `/charts?symbol=${symbol}USDT`;
         } else {
             console.error("No symbol found for this row.");
         }
-    });
+    }
+});
+
 });
 </script>
 
