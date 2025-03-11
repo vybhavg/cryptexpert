@@ -5,11 +5,34 @@
 {% block head %}
     <!-- Additional head content specific to charts.html -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- For API requests -->
 {% endblock %}
 
 {% block content %}
-    <h2 id="crypto-title"></h2>
-    <div id="tradingview_chart" style="height: 500px;"></div>
+    <div class="flex flex-row gap-4">
+        <!-- Sell Orders (Left Side) -->
+        <div class="w-1/6 bg-gray-800 p-4 rounded-lg">
+            <h3 class="text-lg font-bold text-white mb-4">Sell Orders</h3>
+            <div id="sell-orders" class="space-y-2">
+                <!-- Sell orders will be dynamically populated here -->
+            </div>
+        </div>
+
+        <!-- TradingView Chart (Middle) -->
+        <div class="w-2/3">
+            <h2 id="crypto-title" class="text-white text-xl font-bold mb-4"></h2>
+            <div id="tradingview_chart" style="height: 500px;"></div>
+        </div>
+
+        <!-- Buy Orders (Right Side) -->
+        <div class="w-1/6 bg-gray-800 p-4 rounded-lg">
+            <h3 class="text-lg font-bold text-white mb-4">Buy Orders</h3>
+            <div id="buy-orders" class="space-y-2">
+                <!-- Buy orders will be dynamically populated here -->
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const urlParams = new URLSearchParams(window.location.search);
@@ -17,10 +40,10 @@
 
             document.getElementById("crypto-title").textContent = `${symbol} Chart`;
 
-            // Ensure TradingView is available
+            // Initialize TradingView Chart
             if (typeof TradingView !== "undefined") {
                 new TradingView.widget({
-                    "container_id": "tradingview_chart", // Ensure this matches the div id
+                    "container_id": "tradingview_chart",
                     "symbol": `BINANCE:${symbol}USDT`,
                     "interval": "D",
                     "theme": "dark",
@@ -29,11 +52,46 @@
                     "toolbar_bg": "#f1f3f6",
                     "hide_side_toolbar": false,
                     "allow_symbol_change": true,
-                    "autosize": true // Make it responsive
+                    "autosize": true
                 });
             } else {
                 console.error("TradingView library not loaded.");
             }
+
+            // Fetch Order Book Data
+            async function fetchOrderBook(symbol) {
+                try {
+                    const response = await axios.get(`https://api.binance.com/api/v3/depth?symbol=${symbol}USDT&limit=10`);
+                    const { bids, asks } = response.data;
+
+                    // Display Sell Orders (Asks)
+                    const sellOrders = document.getElementById("sell-orders");
+                    sellOrders.innerHTML = asks
+                        .map(order => `
+                            <div class="text-red-500 text-sm">
+                                <span>${parseFloat(order[0]).toFixed(4)}</span>
+                                <span class="float-right">${parseFloat(order[1]).toFixed(4)}</span>
+                            </div>
+                        `)
+                        .join("");
+
+                    // Display Buy Orders (Bids)
+                    const buyOrders = document.getElementById("buy-orders");
+                    buyOrders.innerHTML = bids
+                        .map(order => `
+                            <div class="text-green-500 text-sm">
+                                <span>${parseFloat(order[0]).toFixed(4)}</span>
+                                <span class="float-right">${parseFloat(order[1]).toFixed(4)}</span>
+                            </div>
+                        `)
+                        .join("");
+                } catch (error) {
+                    console.error("Error fetching order book:", error);
+                }
+            }
+
+            // Fetch order book data for the selected symbol
+            fetchOrderBook(symbol);
         });
     </script>
 {% endblock %}
@@ -45,6 +103,70 @@
             margin-top: 20px;
             border-radius: 10px;
             overflow: hidden;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-row {
+            flex-direction: row;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .w-1\/6 {
+            width: 16.666667%;
+        }
+
+        .w-2\/3 {
+            width: 66.666667%;
+        }
+
+        .bg-gray-800 {
+            background-color: #2d3748;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        .text-red-500 {
+            color: #ef4444;
+        }
+
+        .text-green-500 {
+            color: #22c55e;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+        }
+
+        .font-bold {
+            font-weight: bold;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .space-y-2 > * + * {
+            margin-top: 0.5rem;
         }
     </style>
 {% endblock %}
