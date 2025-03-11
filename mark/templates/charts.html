@@ -48,8 +48,8 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Initialize WebSocket
 const urlParams = new URLSearchParams(window.location.search);
-const symbol = urlParams.get("symbol") || "BTC";
-const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@depth`);
+const symboll = urlParams.get("symbol") || "BTC";
+const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symboll.toLowerCase()}@depth`);
 
 
     ws.onopen = () => {
@@ -135,7 +135,8 @@ const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase(
     function loadTradingViewChart() {
         const urlParams = new URLSearchParams(window.location.search);
         const symbol = urlParams.get("symbol") || "BTC";
-        document.getElementById("crypto-title").textContent = `${symbol[:-4]}/${symbol[-4:]} Chart`;
+document.getElementById("crypto-title").textContent = `${symbol.slice(0, -4).toUpperCase()}/${symbol.slice(-4).toUpperCase()} Chart`;
+
 
         const widgetOptions = {
             "container_id": "tradingview_chart",
