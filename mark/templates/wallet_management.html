@@ -15,7 +15,6 @@
         <div class="mb-5">
             <h4>Submit API Key</h4>
             <form method="POST" action="{{ url_for('wallet_management') }}">
-                <input type="hidden" name="api_key" value="true">
                 <div class="mb-3">
                     <label for="exchange" class="form-label">Exchange</label>
                     <select class="form-select" id="exchange" name="exchange" required>
@@ -70,7 +69,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Fetch Balances</button>
+                <button type="submit" name="fetch_balances" class="btn btn-primary w-100">Fetch Balances</button>
             </form>
         </div>
 
