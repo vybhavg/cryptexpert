@@ -3,21 +3,25 @@
 {% block title %}Wallet Management{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Include Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow-lg p-4">
-        <h2 class="text-center">Wallet Management</h2>
+<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl w-full bg-white shadow-xl rounded-lg p-8 space-y-8">
+        <h1 class="text-3xl font-bold text-center text-gray-900">Wallet Management</h1>
 
         <!-- API Key Submission Form -->
-        <div class="mb-5">
-            <h4>Submit API Key</h4>
-            <form method="POST" action="{{ url_for('wallet_management') }}">
-                <div class="mb-3">
-                    <label for="exchange" class="form-label">Exchange</label>
-                    <select class="form-select" id="exchange" name="exchange" required>
+        <div class="space-y-6">
+            <h2 class="text-2xl font-semibold text-gray-800">Submit API Key</h2>
+            <form method="POST" action="{{ url_for('wallet_management') }}" class="space-y-4">
+                <div>
+                    <label for="exchange" class="block text-sm font-medium text-gray-700">Exchange</label>
+                    <select id="exchange" name="exchange" required
+                            class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option value="">Select Exchange</option>
                         {% for exchange in ["Binance", "Coinbase", "CoinMarketCap"] %}
                             <option value="{{ exchange }}" {% if exchange in user_exchanges %}selected{% endif %}>
@@ -29,38 +33,47 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label for="api_key" class="form-label">API Key</label>
-                    <input type="text" class="form-control" id="api_key" name="api_key" required>
+                <div>
+                    <label for="api_key" class="block text-sm font-medium text-gray-700">API Key</label>
+                    <input type="text" id="api_key" name="api_key" required
+                           class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 </div>
-                <div class="mb-3">
-                    <label for="api_secret" class="form-label">API Secret</label>
-                    <input type="text" class="form-control" id="api_secret" name="api_secret" required>
+                <div>
+                    <label for="api_secret" class="block text-sm font-medium text-gray-700">API Secret</label>
+                    <input type="text" id="api_secret" name="api_secret" required
+                           class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Submit API Key</button>
+                <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Submit API Key
+                </button>
             </form>
         </div>
 
         <!-- API Key List with Delete Option -->
-        <div class="mb-5">
-            <h4>Your API Keys</h4>
+        <div class="space-y-6">
+            <h2 class="text-2xl font-semibold text-gray-800">Your API Keys</h2>
             {% for api in user_api_keys %}
-                <div class="d-flex justify-content-between align-items-center p-2 border rounded bg-white mt-2">
-                    <span><strong>{{ api.exchange }}</strong> ✅</span>
-                    <form method="POST" action="{{ url_for('delete_api_key', api_id=api.id) }}" class="d-inline">
-                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                <div class="flex justify-between items-center p-4 border border-gray-200 rounded-lg bg-white shadow-sm">
+                    <span class="text-lg font-medium text-gray-800">{{ api.exchange }} ✅</span>
+                    <form method="POST" action="{{ url_for('delete_api_key', api_id=api.id) }}" class="inline">
+                        <button type="submit"
+                                class="text-red-600 hover:text-red-800 focus:outline-none">
+                            <span class="material-icons">delete</span>
+                        </button>
                     </form>
                 </div>
             {% endfor %}
         </div>
 
         <!-- Fetch Wallet Balances Form -->
-        <div class="mb-5">
-            <h4>Fetch Wallet Balances</h4>
-            <form method="POST" action="{{ url_for('wallet_management') }}">
-                <div class="mb-3">
-                    <label for="exchange" class="form-label">Select Exchange</label>
-                    <select class="form-select" id="exchange" name="exchange" required>
+        <div class="space-y-6">
+            <h2 class="text-2xl font-semibold text-gray-800">Fetch Wallet Balances</h2>
+            <form method="POST" action="{{ url_for('wallet_management') }}" class="space-y-4">
+                <div>
+                    <label for="exchange" class="block text-sm font-medium text-gray-700">Select Exchange</label>
+                    <select id="exchange" name="exchange" required
+                            class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option value="">Select Exchange</option>
                         {% for exchange in ["Binance", "Coinbase", "CoinMarketCap"] %}
                             <option value="{{ exchange }}" {% if exchange == selected_exchange %}selected{% endif %}>
@@ -69,37 +82,42 @@
                         {% endfor %}
                     </select>
                 </div>
-                <button type="submit" name="fetch_balances" class="btn btn-primary w-100">Fetch Balances</button>
+                <button type="submit" name="fetch_balances"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Fetch Balances
+                </button>
             </form>
         </div>
 
         <!-- Display Wallet Balances -->
         {% if balances %}
-            <h3 class="mt-4">Balances for {{ exchange }}</h3>
-            {% if total_balance_usd %}
-                <h3 class="mt-4">Total Balance: {{ total_balance_usd }}</h3>
-            {% endif %}
-            <table class="table table-bordered mt-3">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Coin</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for coin, amount in balances.items() %}
-                        <tr>
-                            <td>{{ coin }}</td>
-                            <td>{{ amount }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="space-y-6">
+                <h2 class="text-2xl font-semibold text-gray-800">Balances for {{ exchange }}</h2>
+                {% if total_balance_usd %}
+                    <h3 class="text-xl font-medium text-gray-700">Total Balance: {{ total_balance_usd }}</h3>
+                {% endif %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coin</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for coin, amount in balances.items() %}
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ coin }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ amount }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         {% elif exchange %}
-            <p class="mt-3 text-danger">No balances found or API keys missing.</p>
+            <p class="text-sm text-red-600">No balances found or API keys missing.</p>
         {% endif %}
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
