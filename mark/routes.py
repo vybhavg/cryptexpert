@@ -738,53 +738,10 @@ def search():
 
     return jsonify(response)
 
-@app.route("/submit_api_key", methods=["GET", "POST"])
-@login_required
-def submit_api_key():
-    if request.method == "POST":
-        exchange = request.form.get("exchange")
-        api_key = request.form.get("api_key")
-        api_secret = request.form.get("api_secret")
-
-        if not exchange or not api_key or not api_secret:
-            flash("All fields are required!", "error")
-            return redirect(url_for("submit_api_key"))
-
-        # Check if API key for this exchange already exists
-        existing_key = UserAPIKey.query.filter_by(user_id=current_user.id, exchange=exchange).first()
-        if existing_key:
-            flash(f"API key for {exchange} already exists!", "warning")
-            return redirect(url_for("submit_api_key"))
-
-        # Encrypt and store API keys
-        new_api_key = UserAPIKey(user_id=current_user.id, exchange=exchange, api_key=api_key, api_secret=api_secret)
-        db.session.add(new_api_key)
-        db.session.commit()
-
-        flash("API key added successfully!", "success")
-        return redirect(url_for("submit_api_key"))
-
-    # Fetch user API keys for display
-    user_api_keys = UserAPIKey.query.filter_by(user_id=current_user.id).all()
-    user_exchanges = {key.exchange for key in user_api_keys}  # Set of exchanges user has keys for
-
-    return render_template("submit_api_key.html", user_api_keys=user_api_keys, user_exchanges=user_exchanges)
 
 
-@app.route("/delete_api_key/<int:api_id>", methods=["POST"])
-@login_required
-def delete_api_key(api_id):
-    api_key_entry = UserAPIKey.query.filter_by(id=api_id, user_id=current_user.id).first()
 
-    if not api_key_entry:
-        flash("API key not found!", "error")
-        return redirect(url_for("submit_api_key"))
 
-    db.session.delete(api_key_entry)
-    db.session.commit()
-
-    flash("API key removed successfully!", "success")
-    return redirect(url_for("submit_api_key"))
 
 import asyncio
 from binance import AsyncClient  # Use AsyncClient for Binance API
@@ -859,33 +816,82 @@ def get_coinbase_balances(api_key, api_secret):
         print(f"Coinbase API Error: {e}")
         return None
 
-# Route for displaying and processing wallet balances
-@app.route("/wallet_balances", methods=["GET", "POST"])
+@app.route("/wallet_management", methods=["GET", "POST"])
 @login_required
-def wallet_balances():
+def wallet_management():
     user_id = current_user.id
-    exchanges = Exchange.query.all()  # Get available exchanges
 
-    if request.method == "POST":
+    # Handle API Key Submission
+    if request.method == "POST" and "api_key" in request.form:
+        exchange = request.form.get("exchange")
+        api_key = request.form.get("api_key")
+        api_secret = request.form.get("api_secret")
+
+        if not exchange or not api_key or not api_secret:
+            flash("All fields are required!", "error")
+            return redirect(url_for("wallet_management"))
+
+        # Check if API key for this exchange already exists
+        existing_key = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
+        if existing_key:
+            flash(f"API key for {exchange} already exists!", "warning")
+            return redirect(url_for("wallet_management"))
+
+        # Encrypt and store API keys
+        new_api_key = UserAPIKey(user_id=user_id, exchange=exchange, api_key=api_key, api_secret=api_secret)
+        db.session.add(new_api_key)
+        db.session.commit()
+
+        flash("API key added successfully!", "success")
+        return redirect(url_for("wallet_management"))
+
+    # Handle Fetching Wallet Balances
+    if request.method == "POST" and "fetch_balances" in request.form:
         exchange_name = request.form.get("exchange")
         api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange_name).first()
 
         if not api_key_entry:
-            flash(f"API key for {exchange_name} is missing. Please submit your API key.")
-            return redirect(url_for("submit_api_key"))
+            flash(f"API key for {exchange_name} is missing. Please submit your API key.", "error")
+            return redirect(url_for("wallet_management"))
 
-        # Decrypt API keys using the `decrypt_data` function
+        # Decrypt API keys
         api_key, api_secret = api_key_entry.get_api_keys()
-        if(api_key):
-            print(api_key, api_secret)
 
         # Fetch wallet balances based on the selected exchange
-        balances,total_balance_usd = get_wallet_balances(api_key, api_secret, exchange_name)
+        balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange_name)
 
         # Render the template with the fetched balances
-        return render_template("wallet_balances.html", exchanges=exchanges, exchange=exchange_name, balances=balances, total_balance_usd=total_balance_usd)
+        return render_template(
+            "wallet_management.html",
+            user_api_keys=UserAPIKey.query.filter_by(user_id=user_id).all(),
+            user_exchanges={key.exchange for key in UserAPIKey.query.filter_by(user_id=user_id).all()},
+            exchange=exchange_name,
+            balances=balances,
+            total_balance_usd=total_balance_usd,
+        )
 
-    return render_template("wallet_balances.html", exchanges=exchanges, exchange=None, balances=None)   
+    # Render the default view
+    return render_template(
+        "wallet_management.html",
+        user_api_keys=UserAPIKey.query.filter_by(user_id=user_id).all(),
+        user_exchanges={key.exchange for key in UserAPIKey.query.filter_by(user_id=user_id).all()},
+        exchange=None,
+        balances=None,
+        total_balance_usd=None,
+    )
 
 
+@app.route("/delete_api_key/<int:api_id>", methods=["POST"])
+@login_required
+def delete_api_key(api_id):
+    api_key_entry = UserAPIKey.query.filter_by(id=api_id, user_id=current_user.id).first()
 
+    if not api_key_entry:
+        flash("API key not found!", "error")
+        return redirect(url_for("wallet_management"))
+
+    db.session.delete(api_key_entry)
+    db.session.commit()
+
+    flash("API key removed successfully!", "success")
+    return redirect(url_for("wallet_management"))
