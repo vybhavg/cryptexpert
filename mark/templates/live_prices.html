@@ -266,124 +266,6 @@ body {
 
 {% block content %}
 
-
-
-<div class="container">
-<div class="converter"><br>
-    <h2 class="text-center mb-4" style="font-size:26px;font-weight:bold;color: rgba(248, 188, 4)">
-        <span style="color: #fff;font-size:26px;font-weight:bold">Crypto</span> Converter
-    </h2>
-    <br>
-    <div class="converter-input">
-        <div class="input-group">
-            <input type="number" id="crypto-amount" placeholder="0.00" oninput="convertCryptoToFiat()" />
-            <select id="crypto-select" onchange="convertCryptoToFiat()">
-                <!-- Options will be dynamically populated -->
-            </select>
-        </div>
-        <div class="input-group">
-            <input type="number" id="fiat-amount" placeholder="0.00" oninput="convertFiatToCrypto()" />
-            <select id="fiat-select" onchange="convertCryptoToFiat()">
-                <!-- Options will be dynamically populated -->
-            </select>
-        </div>
-    </div>
-    <p class="converter-output" id="conversion-result"></p>
-</div>
-
-
-    <br>
-
-
-<div class="scroll-to-prices">
-    <p>Live Crypto Prices</p>
-    <button onclick="scrollToPrices()">
-        ⬇
-    </button>
-</div>
-<script>
-    function scrollToPrices() {
-    document.getElementById("select-container").scrollIntoView({
-        behavior: "smooth"
-    });
-}
-</script><br><br>
-
-    <div class="select-container" id="select-container">
-        <div class="price-selection" style="font-size:14px; font-weight:600;">
-            <input type="radio" id="binance" name="price-source" value="binance" checked>
-            <label for="binance">Binance</label>
-            <input type="radio" id="okx" name="price-source" value="okx">
-            <label for="okx">OKX</label>
-            <input type="radio" id="coinbase" name="price-source" value="coinbase">
-            <label for="coinbase">CoinBase</label>
-        </div>
-    </div>
-
-    <table id="prices-table">
-        <thead style="font-size:15px;">
-            <tr>
-                <th>Logo</th>
-                <th>Symbol</th>
-                <th>Price (USD)</th>
-                <th>24h Change (%)</th>
-            </tr>
-        </thead>
-        <tbody id="table-body" style="color:white;font-size:14px;">
-            {% for ticker in binance_prices %}
-            <tr class="binance-row">
-                <td><img src="{{ crypto_logos[ticker.symbol[:-4]] }}" width="35px" height="35px"></td>
-                <td>{{ ticker.symbol[:-4] }}</td>
-                <td>${{ ticker.price }}</td>
-                <td class="percentage-change">
-                    {% if ticker.priceChangePercent > 0 %}
-                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                    {% elif ticker.priceChangePercent < 0 %}
-                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
-                    {% else %}
-                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-
-            {% for ticker in okx_prices %}
-            <tr class="okx-row" style="display:none;">
-                <td><img src="{{ crypto_logos[ticker.symbol] }}" width="35px" height="35px"></td>
-                <td>{{ ticker.symbol }}</td>
-                <td>${{ ticker.price }}</td>
-                <td class="percentage-change">
-                    {% if ticker.priceChangePercent > 0 %}
-                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                    {% elif ticker.priceChangePercent < 0 %}
-                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
-                    {% else %}
-                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-
-            {% for ticker in coinbase_prices %}
-            <tr class="coinbase-row" style="display:none;">
-                <td><img src="{{ crypto_logos[ticker.symbol] }}" width="35px" height="35px"></td>
-                <td>{{ ticker.symbol }}</td>
-                <td>${{ ticker.price }}</td>
-                <td class="percentage-change">
-                    {% if ticker.priceChangePercent > 0 %}
-                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                    {% elif ticker.priceChangePercent < 0 %}
-                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
-                    {% else %}
-                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
 <script>
     const cryptoLogos = {{ crypto_logos | tojson }};
 </script>
@@ -630,5 +512,122 @@ row.innerHTML = `
         setInterval(fetchPrices, 10000);
     });
 </script>
+
+
+<div class="container">
+<div class="converter"><br>
+    <h2 class="text-center mb-4" style="font-size:26px;font-weight:bold;color: rgba(248, 188, 4)">
+        <span style="color: #fff;font-size:26px;font-weight:bold">Crypto</span> Converter
+    </h2>
+    <br>
+    <div class="converter-input">
+        <div class="input-group">
+            <input type="number" id="crypto-amount" placeholder="0.00" oninput="convertCryptoToFiat()" />
+            <select id="crypto-select" onchange="convertCryptoToFiat()">
+                <!-- Options will be dynamically populated -->
+            </select>
+        </div>
+        <div class="input-group">
+            <input type="number" id="fiat-amount" placeholder="0.00" oninput="convertFiatToCrypto()" />
+            <select id="fiat-select" onchange="convertCryptoToFiat()">
+                <!-- Options will be dynamically populated -->
+            </select>
+        </div>
+    </div>
+    <p class="converter-output" id="conversion-result"></p>
+</div>
+
+
+    <br>
+
+
+<div class="scroll-to-prices">
+    <p>Live Crypto Prices</p>
+    <button onclick="scrollToPrices()">
+        ⬇
+    </button>
+</div>
+<script>
+    function scrollToPrices() {
+    document.getElementById("select-container").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+</script><br><br>
+
+    <div class="select-container" id="select-container">
+        <div class="price-selection" style="font-size:14px; font-weight:600;">
+            <input type="radio" id="binance" name="price-source" value="binance" checked>
+            <label for="binance">Binance</label>
+            <input type="radio" id="okx" name="price-source" value="okx">
+            <label for="okx">OKX</label>
+            <input type="radio" id="coinbase" name="price-source" value="coinbase">
+            <label for="coinbase">CoinBase</label>
+        </div>
+    </div>
+
+    <table id="prices-table">
+        <thead style="font-size:15px;">
+            <tr>
+                <th>Logo</th>
+                <th>Symbol</th>
+                <th>Price (USD)</th>
+                <th>24h Change (%)</th>
+            </tr>
+        </thead>
+        <tbody id="table-body" style="color:white;font-size:14px;">
+            {% for ticker in binance_prices %}
+            <tr class="binance-row">
+                <td><img src="{{ crypto_logos[ticker.symbol[:-4]] }}" width="35px" height="35px"></td>
+                <td>{{ ticker.symbol[:-4] }}</td>
+                <td>${{ ticker.price }}</td>
+                <td class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% for ticker in okx_prices %}
+            <tr class="okx-row" style="display:none;">
+                <td><img src="{{ crypto_logos[ticker.symbol] }}" width="35px" height="35px"></td>
+                <td>{{ ticker.symbol }}</td>
+                <td>${{ ticker.price }}</td>
+                <td class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% for ticker in coinbase_prices %}
+            <tr class="coinbase-row" style="display:none;">
+                <td><img src="{{ crypto_logos[ticker.symbol] }}" width="35px" height="35px"></td>
+                <td>{{ ticker.symbol }}</td>
+                <td>${{ ticker.price }}</td>
+                <td class="percentage-change">
+                    {% if ticker.priceChangePercent > 0 %}
+                    <span class="positive">+{{ ticker.priceChangePercent }}%</span>
+                    {% elif ticker.priceChangePercent < 0 %}
+                    <span class="negative">{{ ticker.priceChangePercent }}%</span>
+                    {% else %}
+                    <span class="neutral">{{ ticker.priceChangePercent }}%</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}
