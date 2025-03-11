@@ -44,6 +44,24 @@
         </div>
     </div>
 </div>
+
+<!-- Notepad Section -->
+{% if user.is_authenticated %}
+    <!-- Show notepad for logged-in users -->
+    <div class="notepad-container">
+        <h3 class="notepad-title">Observations</h3>
+        <textarea id="notepad" class="notepad-textarea" placeholder="Write your observations about this cryptocurrency..."></textarea>
+        <button id="save-notes" class="save-notes-button">Save Notes</button>
+    </div>
+{% else %}
+    <!-- Show locked message for non-logged-in users -->
+    <div class="notepad-container locked">
+        <h3 class="notepad-title">Observations</h3>
+        <p class="locked-message">This feature is locked. Please <a href="{{ url_for('login_form') }}">sign in</a> to continue.</p>
+    </div>
+{% endif %}
+
+
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function () {
     // Initialize WebSocket
@@ -167,7 +185,30 @@ document.getElementById("crypto-title").textContent = `${symbol.slice(0, -4).toU
             }
         });
     }
+    // Save notes functionality (only for logged-in users)
+    {% if user.is_authenticated %}
+        const notepad = document.getElementById("notepad");
+        const saveNotesButton = document.getElementById("save-notes");
+
+        // Load saved notes from localStorage
+        const symbol = "{{ symbol }}";  // Pass symbol from Flask route if needed
+        const notesKey = `{{ user.username }}_${symbol}_notes`;
+        const savedNotes = localStorage.getItem(notesKey);
+        if (savedNotes) {
+            notepad.value = savedNotes;
+        }
+
+        // Save notes when the save button is clicked
+        saveNotesButton.addEventListener("click", () => {
+            const notes = notepad.value;
+            localStorage.setItem(notesKey, notes);
+            alert("Notes saved successfully!");
+        });
+    {% endif %}
+    
 });
+
+   
 </script>
 {% endblock %}
 
@@ -295,6 +336,78 @@ body {
     height: 500px;
     border-radius: 8px;
     overflow: hidden;
+}
+
+/* Notepad Styles */
+.notepad-container {
+    width: 100%;
+    max-width: 1600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #1a1a1a; /* Dark background */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.notepad-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #f8bc04; /* Yellow for title */
+}
+
+.notepad-textarea {
+    width: 100%;
+    height: 150px;
+    padding: 12px;
+    font-size: 14px;
+    color: #ffffff;
+    background: #222; /* Slightly lighter background */
+    border: 1px solid #444;
+    border-radius: 8px;
+    resize: vertical; /* Allow vertical resizing */
+    outline: none;
+}
+
+.notepad-textarea::placeholder {
+    color: #888;
+}
+
+.save-notes-button {
+    display: block;
+    margin-top: 12px;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #fff;
+    background: #333;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.save-notes-button:hover {
+    background: #444;
+}
+
+/* Locked Notepad Styles */
+.notepad-container.locked {
+    text-align: center;
+    padding: 20px;
+}
+
+.locked-message {
+    font-size: 16px;
+    color: #ff4d4d; /* Red for locked message */
+}
+
+.locked-message a {
+    color: #f8bc04; /* Yellow for link */
+    text-decoration: none;
+}
+
+.locked-message a:hover {
+    text-decoration: underline;
 }
 
 /* Responsive Design */
