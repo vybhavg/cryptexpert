@@ -17,7 +17,7 @@
         const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
 
         let cryptoPrices = {}; // Stores crypto prices in USD
-        const fiatRates = { USD: 1, EUR: 0.92, GBP: 0.77, INR: 87.19 }; // Example fiat rates (1 USD = X EUR, etc.)
+        const fiatRates = { INR: 87.19, USD: 1, EUR: 0.92, GBP: 0.77 }; // Example fiat rates (1 USD = X EUR, etc.)
         const cryptoLogos = {{ crypto_logos | tojson }}; // Crypto logos from your backend
 
         // Fetch crypto prices from Binance API
