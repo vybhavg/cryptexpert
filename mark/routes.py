@@ -323,7 +323,7 @@ def live_prices():
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def register_page():
+def register_form():
     form = RegisterForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data, password=form.password1.data)
@@ -337,7 +337,7 @@ def register_page():
     return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
-def login_page():
+def login_form():
     form = LoginForm()
     if form.validate_on_submit():
         attempted_user = User.query.filter_by(username=form.username.data).first()
@@ -390,7 +390,7 @@ def otp_form():
         return redirect(url_for('verify_form', next=next_page))  # Pass 'next' to verify form
     except Exception as e:
         flash(f'Unable to send OTP: {e}', "danger")
-        return redirect(url_for('register_page'))
+        return redirect(url_for('register_form'))
 
 @app.route('/verifyotp', methods=['GET', 'POST'])
 def verify_form():
@@ -480,7 +480,7 @@ def forgot_password():
 
 
             flash('Password reset link has been sent to your email.', 'success')
-            return redirect(url_for('login_page'))
+            return redirect(url_for('login_form'))
         else:
             flash('No account found with this email.', 'danger')
 
@@ -501,7 +501,7 @@ def reset_password(token):
         db.session.commit()
         
         flash('Your password has been updated!', 'success')
-        return redirect(url_for('login_page'))
+        return redirect(url_for('login_form'))
 
     return render_template('reset_password.html')
 
