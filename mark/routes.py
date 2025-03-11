@@ -883,7 +883,8 @@ def wallet_management():
 
         # Decrypt API keys
         api_key, api_secret = api_key_entry.get_api_keys()
-
+        if(api_key):
+            print(api_key, api_secret)
         # Fetch wallet balances based on the selected exchange
         balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange_name)
 
