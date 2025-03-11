@@ -343,13 +343,14 @@ def login_form():
         attempted_user = User.query.filter_by(username=form.username.data).first()
         if attempted_user and attempted_user.check_password(entered_password=form.password.data):
             session['userid'] = attempted_user.username
-            return redirect(url_for('otp_form'))
+            next_page = request.args.get('next')  # Get the 'next' parameter
+            return redirect(url_for('otp_form', next=next_page))  # Pass 'next' to OTP form
         else:
-            flash('Username and password are incorrect',"danger")
+            flash('Username and password are incorrect', "danger")
     
     if form.errors:
         for err in form.errors.values():
-            flash(err,"warning")
+            flash(err, "warning")
     return render_template('login.html', form=form)
 
 @app.route('/logout')
@@ -369,6 +370,7 @@ def otp_form():
     otp = generate_otp()
     session['email'] = email
     session['otp'] = otp
+    next_page = request.args.get('next')  # Get the 'next' parameter
     try:
         msg = Message('Cryptexpert OTP Verification', recipients=[email])
         msg.body = f'''
@@ -384,48 +386,51 @@ def otp_form():
         Secure Your Crypto Investments with Confidence.
         '''
         mail.send(msg)
-        flash("OTP sent successfully","success")
-        return redirect(url_for('verify_form'))
+        flash("OTP sent successfully", "success")
+        return redirect(url_for('verify_form', next=next_page))  # Pass 'next' to verify form
     except Exception as e:
-        flash(f'Unable to send OTP: {e}',"danger")
+        flash(f'Unable to send OTP: {e}', "danger")
         return redirect(url_for('register_form'))
 
 @app.route('/verifyotp', methods=['GET', 'POST'])
 def verify_form():
     form = verifyform()
-    auth_form=Authenticationform()
+    auth_form = Authenticationform()
     user = User.query.filter_by(username=session['userid']).first()
+    next_page = request.args.get('next')  # Get the 'next' parameter
+
     if form.validate_on_submit():
         entered_otp = form.userotp.data
         if entered_otp and str(session.get('otp')) == entered_otp:
             session.pop('otp', None)
             if user:
-                if user.authenticator_enabled !=1:
+                if user.authenticator_enabled != 1:
                     session.pop('userid', None)
                     login_user(user)
-                    return redirect(url_for('setup_authenticator')) 
+                    return redirect(url_for('setup_authenticator', next=next_page))  # Pass 'next' to setup authenticator
                 else:
-                    return render_template('verify_otp.html', form=auth_form, username=session['userid'], show_auth_form=True)
-                    
+                    return render_template('verify_otp.html', form=auth_form, username=session['userid'], show_auth_form=True, next=next_page)
         else:
-            flash('Incorrect OTP',"danger")
+            flash('Incorrect OTP', "danger")
 
     if auth_form.validate_on_submit():
         entered_code = auth_form.authotp.data
         totp = pyotp.TOTP(user.authenticator_secret)
         if totp.verify(entered_code):
             login_user(user) 
-            flash(f'User logged in successfully: {user.username}',"success") 
-            return redirect(url_for('index'))
+            flash(f'User logged in successfully: {user.username}', "success") 
+            if next_page:
+                return redirect(next_page)  # Redirect to the 'next' page
+            else:
+                return redirect(url_for('index'))  # Default to the home page
         else:
-            flash("Invalid authenticator code. Please try again.","warning")
-            return render_template('verify_otp.html', form=auth_form, username=session['userid'], show_auth_form=True)
-
+            flash("Invalid authenticator code. Please try again.", "warning")
+            return render_template('verify_otp.html', form=auth_form, username=session['userid'], show_auth_form=True, next=next_page)
 
     if form.errors:
         for err in form.errors.values():
-            flash(err,"warning")
-    return render_template('verify_otp.html', form=form, username=session['userid'], show_auth_form=False)
+            flash(err, "warning")
+    return render_template('verify_otp.html', form=form, username=session['userid'], show_auth_form=False, next=next_page)
 
 from itsdangerous import URLSafeTimedSerializer
 from werkzeug.security import generate_password_hash
@@ -556,8 +561,9 @@ def setup_authenticator_qr():
     
 @app.route('/charts')
 def charts():
-    # Pass the current_user object to the template
-    return render_template('charts.html', user=current_user)
+    # Pass the current_user object and the current path to the template
+    return render_template('charts.html', user=current_user, next=request.path)
+
 
 # Load the trained model
 model = load_model("/home/ec2-user/cryptexpert/mark/model.keras")
