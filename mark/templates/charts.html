@@ -151,6 +151,7 @@ ws.onmessage = (event) => {
 {% block style %}
     <!-- Additional styles specific to charts.html -->
 <style>
+ <style>
     /* General Styles */
     body {
         background: linear-gradient(135deg, #121212, #1e1e1e); /* Gradient background */
@@ -217,23 +218,18 @@ ws.onmessage = (event) => {
     }
 
     /* Order Book Styles */
-    #sell-orders, #buy-orders {
-        max-height: 500px; /* Limit height for scrollability */
-        overflow-y: auto; /* Add scrollbar if content overflows */
-    }
-
     #sell-orders div, #buy-orders div {
-        padding: 0.75rem 0; /* Add padding to each order row */
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle separator between rows */
-        transition: background-color 0.3s ease; /* Smooth transition */
+        padding: 0.75rem 0 !important; /* Add padding to each order row */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; /* Subtle separator between rows */
+        transition: background-color 0.3s ease !important; /* Smooth transition */
     }
 
     #sell-orders div:hover, #buy-orders div:hover {
-        background-color: rgba(255, 255, 255, 0.05); /* Highlight on hover */
+        background-color: rgba(255, 255, 255, 0.05) !important; /* Highlight on hover */
     }
 
     #sell-orders div:last-child, #buy-orders div:last-child {
-        border-bottom: none; /* Remove border for the last row */
+        border-bottom: none !important; /* Remove border for the last row */
     }
 
     /* TradingView Chart Styles */
@@ -301,5 +297,6 @@ ws.onmessage = (event) => {
         transform: translateY(-5px);
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
     }
+    
 </style>
 {% endblock %}
