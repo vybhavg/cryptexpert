@@ -173,18 +173,11 @@
 
 
 
-        // Event listeners
-        cryptoSelect.addEventListener("change", () => {
-            convertCryptoToFiat();
-            updateCryptoLogo();
-        });
-        fiatSelect.addEventListener("change", () => {
-            convertCryptoToFiat();
-            updateFiatFlag();
-        });
-        cryptoAmountInput.addEventListener("input", convertCryptoToFiat);
-        fiatAmountInput.addEventListener("input", convertFiatToCrypto);
- 
+       // Add event listeners
+    cryptoSelect.addEventListener("change", convertCryptoToFiat);
+    fiatSelect.addEventListener("change", convertCryptoToFiat);
+    cryptoAmountInput.addEventListener("input", convertCryptoToFiat);
+    fiatAmountInput.addEventListener("input", convertFiatToCrypto);
 
         // Fetch prices and populate dropdowns on load
         fetchCryptoPrices();
@@ -542,14 +535,14 @@ body {
     <br>
     <div class="converter-input">
         <div class="input-group">
-            <input type="number" id="crypto-amount" placeholder="0.00" oninput="convertCryptoToFiat()" />
-            <select id="crypto-select" onchange="convertCryptoToFiat()">
+            <input type="number" id="crypto-amount" placeholder="0.00" " />
+            <select id="crypto-select">
                 <!-- Options will be dynamically populated -->
             </select>
         </div>
         <div class="input-group">
-            <input type="number" id="fiat-amount" placeholder="0.00" oninput="convertFiatToCrypto()" />
-            <select id="fiat-select" onchange="convertCryptoToFiat()">
+            <input type="number" id="fiat-amount" placeholder="0.00"/>
+            <select id="fiat-select" >
                 <!-- Options will be dynamically populated -->
             </select>
         </div>
