@@ -540,8 +540,8 @@ body {
                 row.style.display = "none"; // Default hidden, will be toggled later
 
                 // Remove "USDT" from Binance symbols if present
-                let displaySymbol = ticker;
-                console.log(displaySymbol.price);
+                let displaySymbol = ticker.symbol;
+                console.log(displaySymbol);
                 if (exchange === "binance" && displaySymbol.endsWith("USDT")) {
                     displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
                 }
