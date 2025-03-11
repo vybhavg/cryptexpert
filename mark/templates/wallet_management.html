@@ -22,28 +22,6 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
 
-        /* Glowing Border Effect */
-        .glow-border {
-            position: relative;
-        }
-        .glow-border::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #f8bc04, #ff6b6b, #f8bc04);
-            z-index: -1;
-            border-radius: 12px;
-            filter: blur(10px);
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-        .glow-border:hover::before {
-            opacity: 1;
-        }
-
         /* Hover Effect for Cards */
         .card-hover {
             transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
@@ -125,7 +103,7 @@
         <!-- List of Exchanges -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for exchange in exchange_data %}
-                <div class="p-6 rounded-lg card-bg card-hover glow-border">
+                <div class="p-6 rounded-lg card-bg card-hover">
                     <div class="flex items-center justify-between">
                         <!-- Left Side: Logo and Exchange Name -->
                         <div class="flex items-center space-x-4">
