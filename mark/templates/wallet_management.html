@@ -63,13 +63,47 @@
             border-radius: 50%;
             object-fit: cover;
         }
+
+        /* Modern Crypto Style */
+        .crypto-heading {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #f8bc04;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .crypto-subheading {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .crypto-text {
+            font-size: 1rem;
+            color: #a0aec0;
+        }
+
+        .crypto-button {
+            background-color: #f8bc04;
+            color: #000000;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .crypto-button:hover {
+            background-color: #ff6b6b;
+            color: #ffffff;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8" style="margin-top:75px;">
     <div class="max-w-4xl mx-auto">
-        <h1 class="text-4xl font-bold text-yellow mb-8">Wallet Management</h1>
+        <h1 class="crypto-heading mb-8">Wallet Management</h1>
 
         <!-- List of Exchanges -->
         <div class="space-y-6">
@@ -81,7 +115,7 @@
                             <img src="{{ url_for('static', filename='images/' + exchange.name.lower() + '.png') }}"
                                  alt="{{ exchange.name }} Logo"
                                  class="exchange-logo">
-                            <h2 class="text-2xl font-semibold text-yellow">{{ exchange.name }}</h2>
+                            <h2 class="crypto-subheading">{{ exchange.name }}</h2>
                         </div>
 
                         <!-- Right Side: Action Buttons -->
@@ -91,13 +125,13 @@
                                     <input type="hidden" name="delete_api_key" value="true">
                                     <input type="hidden" name="exchange" value="{{ exchange.name }}">
                                     <button type="submit"
-                                            class="text-sm font-medium text-black bg-red-500 px-4 py-2 rounded-md btn-hover">
+                                            class="crypto-button btn-hover">
                                         Delete API Key
                                     </button>
                                 </form>
                             {% else %}
                                 <button onclick="toggleForm('{{ exchange.name }}')"
-                                        class="text-sm font-medium text-black bg-yellow px-4 py-2 rounded-md btn-hover">
+                                        class="crypto-button btn-hover">
                                     Submit API Key
                                 </button>
                             {% endif %}
@@ -110,12 +144,12 @@
                               class="mt-4 space-y-4 hidden transform transition-all duration-300 ease-in-out">
                             <input type="hidden" name="exchange" value="{{ exchange.name }}">
                             <div>
-                                <label for="api_key" class="block text-sm font-medium text-gray-300">API Key</label>
+                                <label for="api_key" class="crypto-text">API Key</label>
                                 <input type="text" id="api_key" name="api_key" required
                                        class="mt-1 block w-full p-3 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-white focus:ring-yellow focus:border-yellow sm:text-sm">
                             </div>
                             <div>
-                                <label for="api_secret" class="block text-sm font-medium text-gray-300">API Secret</label>
+                                <label for="api_secret" class="crypto-text">API Secret</label>
                                 <input type="text" id="api_secret" name="api_secret" required
                                        class="mt-1 block w-full p-3 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-white focus:ring-yellow focus:border-yellow sm:text-sm">
                             </div>
@@ -130,9 +164,9 @@
                     {% if exchange.api_key_exists %}
                         <div class="mt-6">
                             {% if exchange.balances %}
-                                <h3 class="text-xl font-medium text-yellow">Balances</h3>
+                                <h3 class="crypto-subheading">Balances</h3>
                                 {% if exchange.total_balance_usd %}
-                                    <p class="text-gray-300">Total Balance: {{ exchange.total_balance_usd }}</p>
+                                    <p class="crypto-text">Total Balance: {{ exchange.total_balance_usd }}</p>
                                 {% endif %}
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-700">
