@@ -168,7 +168,10 @@
         }
 
         // Add event listeners
-        cryptoSelect.addEventListener("change", convertCryptoToFiat);
+cryptoSelect.addEventListener("change", () => {
+            convertCryptoToFiat();
+            updateCryptoLogo(); // Update logo when dropdown changes
+        });        
         fiatSelect.addEventListener("change", convertCryptoToFiat);
         cryptoAmountInput.addEventListener("input", () => {
             cryptoAmountInput.value = formatNumberForInput(cryptoAmountInput.value);
