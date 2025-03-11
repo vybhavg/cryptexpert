@@ -1,117 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-    
-<!--Designed By ALpha-->
-<head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>CryptExpert</title>
+{% extends "base.html" %}
 
-        <!-- Vendor styles -->
-           <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css'>
-           <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-           <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;display=swap" rel="stylesheet"/>
-           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+{% block title %}CryptExpert - Charts{% endblock %}
 
-        <link rel="stylesheet" href="/static/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css">
-        <link rel="stylesheet" href="/static/vendors/bower_components/animate.css/animate.min.css">
-        <link rel="stylesheet" href="/static/vendors/bower_components/jquery.scrollbar/jquery.scrollbar.css">
-        <link rel="stylesheet" href="/static/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap" rel="stylesheet">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
-        <!-- App styles -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% block head %}
+    <!-- Additional head content specific to charts.html -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+{% endblock %}
 
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-        <link href="https://fonts.googleapis.com/css2?family=Sriracha&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/static/css/app.min.css">
-        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+{% block content %}
+    <h2 id="crypto-title"></h2>
+    <div id="tradingview_chart" style="height: 500px;"></div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const symbol = urlParams.get("symbol") || "BTC"; // Default to BTC if no symbol is found
 
-    </head>
+            document.getElementById("crypto-title").textContent = `${symbol} Chart`;
 
-    <body data-sa-theme="1">
-        <h2 id="crypto-title"></h2>
-        <div id="tradingview_chart" style="height: 500px;"></div>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const urlParams = new URLSearchParams(window.location.search);
-                const symbol = urlParams.get("symbol") || "BTC"; // Default to BTC if no symbol is found
-            
-                document.getElementById("crypto-title").textContent = `${symbol} Chart`;
-            
-                // Ensure TradingView is available
-                if (typeof TradingView !== "undefined") {
-                    new TradingView.widget({
-                        "container_id": "tradingview_chart", // Ensure this matches the div id
-                        "symbol": `BINANCE:${symbol}USDT`,
-                        "interval": "D",
-                        "theme": "dark",
-                        "style": "1",
-                        "locale": "en",
-                        "toolbar_bg": "#f1f3f6",
-                        "hide_side_toolbar": false,
-                        "allow_symbol_change": true,
-                        "autosize": true // Make it responsive
-                    });
-                } else {
-                    console.error("TradingView library not loaded.");
-                }
-            });
-            </script>
-        
-    
-        <!-- Older IE warning message -->
-            <!--[if IE]>
-                <div class="ie-warning">
-                    <h1>Warning!!</h1>
-                    <p>You are using an outdated version of Internet Explorer, please upgrade to any of the following web browsers to access this website.</p>
+            // Ensure TradingView is available
+            if (typeof TradingView !== "undefined") {
+                new TradingView.widget({
+                    "container_id": "tradingview_chart", // Ensure this matches the div id
+                    "symbol": `BINANCE:${symbol}USDT`,
+                    "interval": "D",
+                    "theme": "dark",
+                    "style": "1",
+                    "locale": "en",
+                    "toolbar_bg": "#f1f3f6",
+                    "hide_side_toolbar": false,
+                    "allow_symbol_change": true,
+                    "autosize": true // Make it responsive
+                });
+            } else {
+                console.error("TradingView library not loaded.");
+            }
+        });
+    </script>
+{% endblock %}
 
-                    <div class="ie-warning__downloads">
-                        <a href="http://www.google.com/chrome">
-                            <img src="img/browsers/chrome.png" alt="">
-                        </a>
-
-                        <a href="https://www.mozilla.org/en-US/firefox/new">
-                            <img src="img/browsers/firefox.png" alt="">
-                        </a>
-
-                        <a href="http://www.opera.com">
-                            <img src="img/browsers/opera.png" alt="">
-                        </a>
-
-                        <a href="https://support.apple.com/downloads/safari">
-                            <img src="img/browsers/safari.png" alt="">
-                        </a>
-
-                        <a href="https://www.microsoft.com/en-us/windows/microsoft-edge">
-                            <img src="img/browsers/edge.png" alt="">
-                        </a>
-
-                        <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
-                            <img src="img/browsers/ie.png" alt="">
-                        </a>
-                    </div>
-                    <p>Sorry for the inconvenience!</p>
-                </div>
-            <![endif]-->
-
-        <!-- Javascript -->
-        <!-- Vendors -->
-        <script src="/static/vendors/bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="/static/vendors/bower_components/popper.js/dist/umd/popper.min.js"></script>
-        <script src="/static/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="/static/vendors/bower_components/jquery.scrollbar/jquery.scrollbar.min.js"></script>
-        <script src="/static/vendors/bower_components/jquery-scrollLock/jquery-scrollLock.min.js"></script>
-
-     
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.js'></script>
-
-
-    </body>
-
-<!--Designed By ALpha-->
-</html>
+{% block style %}
+    <!-- Additional styles specific to charts.html -->
+    <style>
+        #tradingview_chart {
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+    </style>
+{% endblock %}
