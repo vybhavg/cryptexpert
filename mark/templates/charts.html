@@ -81,9 +81,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         const total = price * amount;
                         return `
                             <div class="order-item sell-item">
-                                <span>${formatNumber(price)}</span>
-                                <span>${formatNumber(amount)}</span>
-                                <span>${formatNumber(total)}</span>
+                                <span class="order-price">${formatNumber(price)}</span>
+                                <span class="order-amount">${formatNumber(amount)}</span>
+                                <span class="order-total">${formatNumber(total)}</span>
                             </div>
                         `;
                     })
@@ -98,9 +98,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         const total = price * amount;
                         return `
                             <div class="order-item buy-item">
-                                <span>${formatNumber(price)}</span>
-                                <span>${formatNumber(amount)}</span>
-                                <span>${formatNumber(total)}</span>
+                                <span class="order-price">${formatNumber(price)}</span>
+                                <span class="order-amount">${formatNumber(amount)}</span>
+                                <span class="order-total">${formatNumber(total)}</span>
                             </div>
                         `;
                     })
@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
         gap: 20px;
         padding: 20px;
         max-width: 1600px;
-        margin:75px auto;
+        margin: 0 auto;
     }
 
     /* Order Book Styles */
@@ -190,8 +190,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     .order-book-header {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
         font-size: 12px;
         color: #888;
         margin-bottom: 12px;
@@ -204,12 +205,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     .order-item {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
         font-size: 14px;
         padding: 8px;
         border-radius: 6px;
         background: #222; /* Slightly lighter background for items */
+    }
+
+    .order-price, .order-amount, .order-total {
+        text-align: right; /* Align numbers to the right */
     }
 
     .sell-item {
