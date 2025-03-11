@@ -47,7 +47,10 @@
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function () {
     // Initialize WebSocket
-    const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@depth');
+const urlParams = new URLSearchParams(window.location.search);
+const symbol = urlParams.get("symbol") || "BTC";
+const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@depth`);
+
 
     ws.onopen = () => {
         console.log('WebSocket connection established');
@@ -132,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function loadTradingViewChart() {
         const urlParams = new URLSearchParams(window.location.search);
         const symbol = urlParams.get("symbol") || "BTC";
-        document.getElementById("crypto-title").textContent = `${symbol} Chart`;
+        document.getElementById("crypto-title").textContent = `${symbol[:-4]}/${symbol[-4:]} Chart`;
 
         const widgetOptions = {
             "container_id": "tradingview_chart",
