@@ -60,7 +60,12 @@
             // WebSocket for Order Book Data
             const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}usdt@depth`);
 
+            ws.onopen = () => {
+                console.log("WebSocket connection opened.");
+            };
+
             ws.onmessage = (event) => {
+                console.log("WebSocket message received:", event.data);
                 const data = JSON.parse(event.data);
                 const { bids, asks } = data;
 
