@@ -60,13 +60,19 @@
     </div>
 {% else %}
     <!-- Show locked message for non-logged-in users -->
-    <div class="notepad-container locked">
-        <h3 class="notepad-title">Observations</h3>
-<p class="locked-message">
-    🔒 This feature is locked. Please 
-    <a href="{{ url_for('login_form', next=request.full_path|replace('&', '%26')) }}">sign in</a> 
-    to continue.
-</p>
+  <!-- Locked Message Section -->
+<div class="notepad-container locked">
+    <h3 class="notepad-title">Observations</h3>
+    <!-- Add the lock icon using Font Awesome -->
+    <div class="lock-icon">
+        <i class="fas fa-lock" style="font-size: 50px; color: #f8bc04;"></i>
+    </div>
+    <p class="locked-message">
+        This feature is locked. Please 
+        <a href="{{ url_for('login_form', next=request.full_path|replace('&', '%26')) }}">sign in</a> 
+        to continue.
+    </p>
+</div>
 {% endif %}
 
 
@@ -271,7 +277,21 @@ Swal.fire({
 .swal2-toast.swal2-dark .swal2-timer-progress-bar {
     background: #f8bc04 !important; /* Yellow progress bar */
 }
+/* Lock Icon Styles */
+.lock-icon {
+    text-align: center; /* Center the icon */
+    margin-bottom: 16px; /* Add some spacing below the icon */
+}
 
+.lock-icon img {
+    width: 50px; /* Adjust the size of the icon */
+    height: 50px;
+}
+
+.lock-icon i {
+    font-size: 50px; /* Adjust the size of the Font Awesome icon */
+    color: #f8bc04; /* Yellow color */
+}
  /* General Styles */
 body {
     background: #0a0a0a; /* Dark background */
