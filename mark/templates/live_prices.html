@@ -556,6 +556,7 @@ body {
 </script>
 
 
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
@@ -608,16 +609,17 @@ body {
                     displaySymbol = displaySymbol.replace("USDT", ""); // BTCUSDT → BTC
                 }
 
-                row.innerHTML = `
-                    <td>${displaySymbol}</td>
-                    <td>$${ticker.price}</td>
-                    <td class="percentage-change">
-                        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
-                            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
-                        </span>
-                    </td>
-                `;
-
+const logoSrc = cryptoLogos[displaySymbol] || "/static/img/crypto/BTC.png";
+row.innerHTML = `
+    <td><img src="${logoSrc}" alt="${displaySymbol}" width="35px" height="35px"></td>
+    <td>${displaySymbol}</td>
+    <td>$${ticker.price}</td>
+    <td class="percentage-change">
+        <span class="${ticker.priceChangePercent > 0 ? "positive" : ticker.priceChangePercent < 0 ? "negative" : "neutral"}">
+            ${ticker.priceChangePercent > 0 ? "+" : ""}${ticker.priceChangePercent}%
+        </span>
+    </td>
+`;
                 tableBody.appendChild(row);
             });
         }
