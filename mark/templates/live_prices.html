@@ -172,7 +172,10 @@
             convertCryptoToFiat();
             updateCryptoLogo(); // Update logo when dropdown changes
         });
-        fiatSelect.addEventListener("change", convertCryptoToFiat);
+fiatSelect.addEventListener("change", () => {
+    convertCryptoToFiat();
+    updateFiatFlag(); // Update the fiat flag when selection changes
+});
         cryptoAmountInput.addEventListener("input", () => {
             cryptoAmountInput.value = formatNumberForInput(cryptoAmountInput.value);
             convertCryptoToFiat();
