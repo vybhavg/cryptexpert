@@ -770,7 +770,11 @@ def get_wallet_balances(api_key, api_secret, exchange):
         return None, 0.0
 
 import asyncio
-from binance import AsyncClient
+from binance import AsyncClient, BinanceAPIException
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
 
 async def get_binance_balances_async(api_key, api_secret):
     """Fetches wallet balances from Binance asynchronously and calculates total balance in USD."""
