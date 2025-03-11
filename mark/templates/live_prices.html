@@ -99,11 +99,7 @@
             const selectedCrypto = cryptoSelect.value;
             const selectedFiat = fiatSelect.value;
 
-            // Validate input
-            if (cryptoAmount.isNaN() || cryptoAmount.lte(0)) {
-                conversionResult.innerHTML = `<span class="error">Please enter a valid crypto amount.</span>`;
-                return;
-            }
+           
             if (!cryptoPrices[selectedCrypto]) {
                 conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
                 return;
@@ -140,11 +136,7 @@
             const selectedCrypto = cryptoSelect.value;
             const selectedFiat = fiatSelect.value;
 
-            // Validate input
-            if (fiatAmount.isNaN() || fiatAmount.lte(0)) {
-                conversionResult.innerHTML = `<span class="error">Please enter a valid fiat amount.</span>`;
-                return;
-            }
+            
             if (!cryptoPrices[selectedCrypto]) {
                 conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
                 return;
