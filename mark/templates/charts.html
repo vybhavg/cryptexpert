@@ -150,113 +150,156 @@ ws.onmessage = (event) => {
 {% endblock %}
 {% block style %}
     <!-- Additional styles specific to charts.html -->
-    <style>
-        /* General Styles */
-        body {
-            background-color: #121212; /* Dark background for the entire page */
-            color: #ffffff; /* White text for better contrast */
-            font-family: 'Inter', sans-serif; /* Modern font */
-        }
+<style>
+    /* General Styles */
+    body {
+        background: linear-gradient(135deg, #121212, #1e1e1e); /* Gradient background */
+        color: #ffffff; /* White text for better contrast */
+        font-family: 'Inter', sans-serif; /* Modern font */
+        margin: 0;
+        padding: 0;
+    }
 
-        /* Flex Container */
-        .flex {
-            display: flex;
-            margin-top: 75px;
-            gap: 1rem;
-        }
+    /* Flex Container */
+    .flex {
+        display: flex;
+        margin-top: 75px;
+        gap: 1.5rem; /* Increased gap for better spacing */
+        padding: 1.5rem; /* Padding around the container */
+    }
 
-        /* Box Styles */
-        .bg-gray-800 {
-            background-color: #1e1e1e; /* Blackish-grey background */
-            border: 1px solid #333; /* Subtle border */
-            border-radius: 10px; /* Rounded corners */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-        }
+    /* Box Styles */
+    .bg-gray-800 {
+        background: rgba(30, 30, 30, 0.8); /* Semi-transparent background */
+        border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+        border-radius: 15px; /* Rounded corners */
+        backdrop-filter: blur(10px); /* Glassmorphism effect */
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+        transition: all 0.3s ease; /* Smooth transition */
+    }
 
-        .p-4 {
-            padding: 1.5rem; /* Increased padding for better spacing */
-        }
+    .bg-gray-800:hover {
+        transform: translateY(-5px); /* Lift effect on hover */
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+    }
 
-        /* Text Styles */
-        .text-white {
-            color: #ffffff;
-        }
+    .p-4 {
+        padding: 2rem; /* Increased padding for better spacing */
+    }
 
-        .text-red-500 {
-            color: #ef4444; /* Red for sell orders */
-        }
+    /* Text Styles */
+    .text-white {
+        color: #ffffff;
+    }
 
-        .text-green-500 {
-            color: #22c55e; /* Green for buy orders */
-        }
+    .text-red-500 {
+        color: #ff4d4d; /* Brighter red for sell orders */
+    }
 
-        .text-sm {
-            font-size: 0.875rem;
-        }
+    .text-green-500 {
+        color: #00ff88; /* Brighter green for buy orders */
+    }
 
-        .font-bold {
-            font-weight: 700;
-        }
+    .text-sm {
+        font-size: 0.875rem;
+    }
 
-        .font-semibold {
-            font-weight: 600;
-        }
+    .font-bold {
+        font-weight: 700;
+    }
 
-        .mb-4 {
-            margin-bottom: 1.5rem; /* Increased margin for better spacing */
-        }
+    .font-semibold {
+        font-weight: 600;
+    }
 
-        /* Order Book Styles */
-        #sell-orders, #buy-orders {
-            max-height: 500px; /* Limit height for scrollability */
-            overflow-y: auto; /* Add scrollbar if content overflows */
-        }
+    .mb-4 {
+        margin-bottom: 1.5rem; /* Increased margin for better spacing */
+    }
 
-        #sell-orders div, #buy-orders div {
-            padding: 0.5rem 0; /* Add padding to each order row */
-            border-bottom: 1px solid #333; /* Subtle separator between rows */
-        }
+    /* Order Book Styles */
+    #sell-orders, #buy-orders {
+        max-height: 500px; /* Limit height for scrollability */
+        overflow-y: auto; /* Add scrollbar if content overflows */
+    }
 
-        #sell-orders div:last-child, #buy-orders div:last-child {
-            border-bottom: none; /* Remove border for the last row */
-        }
+    #sell-orders div, #buy-orders div {
+        padding: 0.75rem 0; /* Add padding to each order row */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle separator between rows */
+        transition: background-color 0.3s ease; /* Smooth transition */
+    }
 
-        /* TradingView Chart Styles */
-        #tradingview_chart {
-            margin-top: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-        }
+    #sell-orders div:hover, #buy-orders div:hover {
+        background-color: rgba(255, 255, 255, 0.05); /* Highlight on hover */
+    }
 
-        /* Header Styles */
-        h3 {
-            font-size: 1.25rem; /* Larger font size for headers */
-            margin-bottom: 1.5rem; /* Increased margin for better spacing */
-        }
+    #sell-orders div:last-child, #buy-orders div:last-child {
+        border-bottom: none; /* Remove border for the last row */
+    }
 
-        h2 {
-            font-size: 1.5rem; /* Larger font size for the chart title */
-            margin-bottom: 1.5rem; /* Increased margin for better spacing */
-        }
+    /* TradingView Chart Styles */
+    #tradingview_chart {
+        margin-top: 20px;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+        transition: all 0.3s ease; /* Smooth transition */
+    }
 
-        /* Scrollbar Styles (for order books) */
-        ::-webkit-scrollbar {
-            width: 8px; /* Width of the scrollbar */
-        }
+    #tradingview_chart:hover {
+        transform: translateY(-5px); /* Lift effect on hover */
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+    }
 
-        ::-webkit-scrollbar-track {
-            background: #1e1e1e; /* Track color */
-            border-radius: 4px;
-        }
+    /* Header Styles */
+    h3 {
+        font-size: 1.5rem; /* Larger font size for headers */
+        margin-bottom: 1.5rem; /* Increased margin for better spacing */
+        text-shadow: 0 0 10px rgba(255, 0, 0, 0.7); /* Neon glow for sell orders */
+    }
 
-        ::-webkit-scrollbar-thumb {
-            background: #333; /* Thumb color */
-            border-radius: 4px;
-        }
+    h2 {
+        font-size: 2rem; /* Larger font size for the chart title */
+        margin-bottom: 1.5rem; /* Increased margin for better spacing */
+        text-shadow: 0 0 10px rgba(0, 255, 136, 0.7); /* Neon glow for chart title */
+    }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #444; /* Thumb color on hover */
-        }
-    </style>
+    /* Scrollbar Styles (for order books) */
+    ::-webkit-scrollbar {
+        width: 10px; /* Width of the scrollbar */
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(30, 30, 30, 0.8); /* Track color */
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2); /* Thumb color */
+        border-radius: 10px;
+        transition: background 0.3s ease; /* Smooth transition */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.4); /* Thumb color on hover */
+    }
+
+    /* Neon Glow Effect */
+    .neon-glow {
+        text-shadow: 0 0 10px rgba(255, 0, 0, 0.7), 0 0 20px rgba(255, 0, 0, 0.7), 0 0 30px rgba(255, 0, 0, 0.7);
+    }
+
+    .neon-glow-green {
+        text-shadow: 0 0 10px rgba(0, 255, 136, 0.7), 0 0 20px rgba(0, 255, 136, 0.7), 0 0 30px rgba(0, 255, 136, 0.7);
+    }
+
+    /* Hover Effects */
+    .hover-effect {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-effect:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+</style>
 {% endblock %}
