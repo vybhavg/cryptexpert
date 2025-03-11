@@ -7,8 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Include Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Custom CSS for Yellow Accent -->
+    <!-- Custom CSS for Advanced Styling -->
     <style>
+        /* Custom Yellow Accent */
         .bg-yellow {
             background-color: #f8bc04;
         }
@@ -24,18 +25,50 @@
         .focus\:ring-yellow:focus {
             ring-color: #f8bc04;
         }
+
+        /* Gradient Background */
+        .gradient-bg {
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+        }
+
+        /* Card Hover Effect */
+        .card-hover {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Responsive Table */
+        .responsive-table {
+            overflow-x: auto;
+        }
+        .responsive-table table {
+            min-width: 600px;
+        }
+        .responsive-table th,
+        .responsive-table td {
+            white-space: nowrap;
+        }
+        .responsive-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .responsive-table tbody tr:nth-child(odd) {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
     </style>
 {% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-black text-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-4xl w-full bg-gray-900 shadow-xl rounded-lg p-8 space-y-8">
-        <h1 class="text-3xl font-bold text-center text-yellow">Wallet Management</h1>
+<div class="min-h-screen gradient-bg text-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style="margin-top:75px;">
+    <div class="max-w-4xl w-full bg-gray-900 shadow-2xl rounded-lg p-8 space-y-8">
+        <h1 class="text-4xl font-bold text-center text-yellow">Wallet Management</h1>
 
         <!-- List of Exchanges -->
         <div class="space-y-6">
             {% for exchange in exchange_data %}
-                <div class="p-6 border border-gray-700 rounded-lg bg-gray-800 shadow-sm">
+                <div class="p-6 border border-gray-700 rounded-lg bg-gray-800 shadow-sm card-hover">
                     <div class="flex justify-between items-center">
                         <h2 class="text-2xl font-semibold text-yellow">{{ exchange.name }}</h2>
                         <div class="flex space-x-4">
@@ -44,13 +77,13 @@
                                     <input type="hidden" name="delete_api_key" value="true">
                                     <input type="hidden" name="exchange" value="{{ exchange.name }}">
                                     <button type="submit"
-                                            class="text-sm font-medium text-black bg-red-500 px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                            class="text-sm font-medium text-black bg-red-500 px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200">
                                         Delete API Key
                                     </button>
                                 </form>
                             {% else %}
                                 <button onclick="toggleForm('{{ exchange.name }}')"
-                                        class="text-sm font-medium text-black bg-yellow px-4 py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow">
+                                        class="text-sm font-medium text-black bg-yellow px-4 py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow transition-all duration-200">
                                     Submit API Key
                                 </button>
                             {% endif %}
@@ -60,7 +93,7 @@
                     <!-- API Key Form (Hidden by Default) -->
                     {% if not exchange.api_key_exists %}
                         <form id="form-{{ exchange.name }}" method="POST" action="{{ url_for('wallet_management') }}"
-                              class="mt-4 space-y-4 hidden">
+                              class="mt-4 space-y-4 hidden transform transition-all duration-300 ease-in-out">
                             <input type="hidden" name="exchange" value="{{ exchange.name }}">
                             <div>
                                 <label for="api_key" class="block text-sm font-medium text-gray-300">API Key</label>
@@ -73,7 +106,7 @@
                                        class="mt-1 block w-full p-3 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-white focus:ring-yellow focus:border-yellow sm:text-sm">
                             </div>
                             <button type="submit"
-                                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow">
+                                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow transition-all duration-200">
                                 Submit API Key
                             </button>
                         </form>
@@ -87,7 +120,7 @@
                                 {% if exchange.total_balance_usd %}
                                     <p class="text-gray-300">Total Balance: {{ exchange.total_balance_usd }}</p>
                                 {% endif %}
-                                <div class="overflow-x-auto mt-4">
+                                <div class="responsive-table">
                                     <table class="min-w-full divide-y divide-gray-700">
                                         <thead class="bg-gray-800">
                                             <tr>
@@ -97,7 +130,7 @@
                                         </thead>
                                         <tbody class="bg-gray-900 divide-y divide-gray-700">
                                             {% for coin, amount in exchange.balances.items() %}
-                                                <tr>
+                                                <tr class="hover:bg-gray-800 transition-all duration-200">
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-yellow">{{ coin }}</td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ amount }}</td>
                                                 </tr>
