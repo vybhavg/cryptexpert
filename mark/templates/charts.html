@@ -193,9 +193,14 @@ document.getElementById("crypto-title").textContent = `${symbol.slice(0, -4).toU
         const notepad = document.getElementById("notepad");
         const saveNotesButton = document.getElementById("save-notes");
 
-        // Load saved notes from localStorage
-        const symbol = "{{ symbol }}";  // Pass symbol from Flask route if needed
+        // Get the cryptocurrency symbol from the page (e.g., BTC, ETH)
+        const cryptoTitle = document.getElementById("crypto-title").textContent;
+        const symbol = cryptoTitle.split("/")[0].toLowerCase(); // Extract symbol (e.g., "btc")
+
+        // Create a unique key for the user's notes for this cryptocurrency
         const notesKey = `{{ user.username }}_${symbol}_notes`;
+
+        // Load saved notes from localStorage
         const savedNotes = localStorage.getItem(notesKey);
         if (savedNotes) {
             notepad.value = savedNotes;
