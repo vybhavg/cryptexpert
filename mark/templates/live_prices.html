@@ -17,7 +17,7 @@
         const exchangeRadios = document.querySelectorAll('input[name="price-source"]');
 
         let cryptoPrices = {}; // Stores crypto prices in USD
-        const fiatRates = { USD: 1, EUR: 0.85, GBP: 0.73 }; // Example fiat rates (1 USD = X EUR, etc.)
+        const fiatRates = { USD: 1, EUR: 0.92, GBP: 0.77, INR: 87.19 }; // Example fiat rates (1 USD = X EUR, etc.)
         const cryptoLogos = {{ crypto_logos | tojson }}; // Crypto logos from your backend
 
         // Fetch crypto prices from Binance API
@@ -40,12 +40,14 @@
 
         // Populate crypto select dropdown with logos
         function populateCryptoSelect() {
+            const selectedCrypto = cryptoSelect.value; // Save the currently selected crypto
             const coins = Object.keys(cryptoPrices);
             cryptoSelect.innerHTML = coins.map(coin => `
                 <option value="${coin}" data-logo="${cryptoLogos[coin] || '/static/img/crypto/BTC.png'}">
                     ${coin}
                 </option>
             `).join("");
+            cryptoSelect.value = selectedCrypto; // Restore the selected crypto
             updateCryptoLogo();
         }
 
@@ -64,9 +66,9 @@
         function populateFiatSelect() {
             const fiats = Object.keys(fiatRates);
             fiatSelect.innerHTML = fiats.map(fiat => `
-                <option value="${fiat}" data-flag="https://flagcdn.com/${fiat === 'USD' ? 'us' : fiat === 'EUR' ? 'eu' : 'gb'}.svg">
-                    ${fiat}
-                </option>
+                <option value="${fiat}" data-flag="https://flagcdn.com/${fiat === 'USD' ? 'us' : fiat === 'EUR' ? 'eu' : fiat === 'GBP' ? 'gb' : 'in'}.svg">
+            ${fiat}
+        </option>
             `).join("");
             updateFiatFlag();
         }
@@ -99,7 +101,6 @@
             const selectedCrypto = cryptoSelect.value;
             const selectedFiat = fiatSelect.value;
 
-           
             if (!cryptoPrices[selectedCrypto]) {
                 conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
                 return;
@@ -136,7 +137,6 @@
             const selectedCrypto = cryptoSelect.value;
             const selectedFiat = fiatSelect.value;
 
-            
             if (!cryptoPrices[selectedCrypto]) {
                 conversionResult.innerHTML = `<span class="error">Price not found for ${selectedCrypto}.</span>`;
                 return;
@@ -168,10 +168,10 @@
         }
 
         // Add event listeners
-cryptoSelect.addEventListener("change", () => {
+        cryptoSelect.addEventListener("change", () => {
             convertCryptoToFiat();
             updateCryptoLogo(); // Update logo when dropdown changes
-        });        
+        });
         fiatSelect.addEventListener("change", convertCryptoToFiat);
         cryptoAmountInput.addEventListener("input", () => {
             cryptoAmountInput.value = formatNumberForInput(cryptoAmountInput.value);
@@ -188,7 +188,6 @@ cryptoSelect.addEventListener("change", () => {
         setInterval(fetchCryptoPrices, 20000); // Refresh prices every 20 seconds
     });
 </script>
-
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
