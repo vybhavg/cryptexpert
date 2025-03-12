@@ -414,71 +414,69 @@
         }
     }
 
-    // Initialize Pie Charts
     document.addEventListener('DOMContentLoaded', function () {
-        // Pie Chart for Total Balance Allocation Across Exchanges
-        const totalBalanceCtx = document.getElementById('totalBalancePieChart').getContext('2d');
-        new Chart(totalBalanceCtx, {
-            type: 'pie',
-            data: {
-                labels: {{ exchange_names | tojson }},
-                datasets: [{
-                    data: {{ exchange_balances | tojson }},
-                    backgroundColor: [
-                        '#f8bc04', '#ffd700', '#ffcc00', '#ffc107', '#ffb300', '#ffa000', '#ff8f00', '#ff6f00'
-                    ],
-                    borderColor: '#1a1a1a',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            color: '#ffffff'
-                        }
+    // Pie Chart for Total Balance Allocation Across Exchanges
+    const totalBalanceCtx = document.getElementById('totalBalancePieChart').getContext('2d');
+    new Chart(totalBalanceCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ exchange_names | tojson }},
+            datasets: [{
+                data: {{ exchange_balances | tojson }},
+                backgroundColor: [
+                    '#4e79a7', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
+                ],
+                borderColor: '#1a1a1a',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#ffffff'
                     }
                 }
             }
-        });
+        }
+    });
 
-        // Pie Charts for Each Exchange
-        {% for exchange in exchange_data %}
-            {% if exchange.api_key_exists and exchange.balances %}
-                const ctx = document.getElementById(`pieChart-{{ exchange.name }}`).getContext('2d');
-                new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: {{ exchange.balances.keys() | list | tojson }},
-                        datasets: [{
-                            data: {{ exchange.balances.values() | list | tojson }},
-                            backgroundColor: [
-                                '#f8bc04', '#ffd700', '#ffcc00', '#ffc107', '#ffb300', '#ffa000', '#ff8f00', '#ff6f00'
-                            ],
-                            borderColor: '#1a1a1a',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    color: '#ffffff'
-                                }
+    // Pie Charts for Each Exchange
+    {% for exchange in exchange_data %}
+        {% if exchange.api_key_exists and exchange.balances %}
+            const ctx = document.getElementById(`pieChart-{{ exchange.name }}`).getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: {{ exchange.balances.keys() | list | tojson }},
+                    datasets: [{
+                        data: {{ exchange.balances.values() | list | tojson }},
+                        backgroundColor: [
+                            '#4e79a7', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
+                        ],
+                        borderColor: '#1a1a1a',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#ffffff'
                             }
                         }
                     }
-                });
-            {% endif %}
-        {% endfor %}
-    });
-
+                }
+            });
+        {% endif %}
+    {% endfor %}
+});
     // Apply Filters
     function applyFilters() {
         const exchangeFilter = document.getElementById('exchangeFilter').value;
