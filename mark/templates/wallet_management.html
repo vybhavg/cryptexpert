@@ -547,7 +547,15 @@ input:checked + .slider:before {
         form.classList.toggle('hidden');
     }
 
-    function refreshBalances(exchangeName) {
+    function refreshAllBalances() {
+    const exchangeCards = document.querySelectorAll('[data-exchange]');
+    exchangeCards.forEach(card => {
+        const exchangeName = card.getAttribute('data-exchange');
+        refreshBalances(exchangeName);
+    });
+}
+
+function refreshBalances(exchangeName) {
     const card = document.querySelector(`[data-exchange="${exchangeName}"]`);
     const spinner = document.createElement('div');
     spinner.className = 'loading-spinner';
@@ -580,10 +588,101 @@ input:checked + .slider:before {
                 }
             }
 
-            // Update the total balance
-           const totalBalanceElement = card.querySelector('.total-balance');
-if (totalBalanceElement && data.total_balance_usd) {
-    totalBalanceElement.textContent = `Balance: $${parseFloat(data.total_balance_usd).toFixed(2)}`;
+            // Update the total balance for the exchange
+            const totalBalanceElement = card.querySelector('.total-balance');
+            if (totalBalanceElement && data.total_balance_usd) {
+                totalBalanceElement.textContent = `Balance: $${parseFloat(data.total_balance_usd).toFixed(2)}`;
+            }
+
+            // Update the global total balance
+            const globalTotalBalanceElement = document.querySelector('.total-balance span');
+            if (globalTotalBalanceElement && data.total_balance_all_exchanges) {
+                globalTotalBalanceElement.textContent = `Total Balance: $${parseFloat(data.total_balance_all_exchanges).toFixed(2)}`;
+            }
+
+            // Update the pie chart for the exchange
+            const pieChartCanvas = card.querySelector(`#pieChart-${exchangeName}`);
+            if (pieChartCanvas) {
+                const ctx = pieChartCanvas.getContext('2d');
+                const chart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(data.balances),
+                        datasets: [{
+                            data: Object.values(data.balances),
+                            backgroundColor: [
+                                '#4e79a7', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
+                            ],
+                            borderColor: '#1a1a1a',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#ffffff'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Show success notification
+            Swal.fire({
+                icon: 'success',
+                title: 'Balance Synced',
+                text: `Balances for ${exchangeName} refreshed!`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-dark',
+                },
+            });
+        } else {
+            // Show error notification
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || 'Failed to refresh balances.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-dark',
+                },
+            });
+        }
+    })
+    .catch(error => {
+        // Remove the spinner
+        card.removeChild(spinner);
+
+        // Show error notification
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while refreshing balances.',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'swal2-dark',
+            },
+        });
+        console.error('Error:', error);
+    });
 }
 
 
