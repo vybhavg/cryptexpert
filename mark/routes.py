@@ -761,6 +761,9 @@ def get_wallet_balances(api_key, api_secret, exchange):
         elif exchange.lower() == "coindcx":
             return get_coindcx_balances(api_key, api_secret)
 
+        elif exchange.lower() == "wazirx":
+            return get_wazirx_balances(api_key, api_secret)
+            
         else:
             logging.error(f"Unsupported exchange: {exchange}")
             return None, 0.0
@@ -942,6 +945,56 @@ def get_coindcx_balances(api_key, api_secret):
         logging.error(f"CoinDCX API Error: {e}")
         return None, 0.0
 
+def get_wazirx_balances(api_key, api_secret):
+    """Fetches wallet balances from WazirX."""
+    try:
+        # Step 1: Generate a timestamp in milliseconds
+        timestamp = int(round(time.time() * 1000))
+
+        # Step 2: Create the query string
+        query_string = f"timestamp={timestamp}"
+
+        # Step 3: Generate the signature using HMAC-SHA256
+        signature = hmac.new(api_secret.encode(), query_string.encode(), hashlib.sha256).hexdigest()
+
+        # Step 4: Set up the headers
+        headers = {
+            "X-Api-Key": api_key,
+            "X-Api-Signature": signature,
+        }
+
+        # Step 5: Make the GET request
+        url = f"https://api.wazirx.com/api/v2/funds?{query_string}"
+        response = requests.get(url, headers=headers)
+
+        # Log the raw response for debugging
+        print("WazirX API Response:", response.text)
+
+        # Step 6: Handle the response
+        if response.status_code == 200:
+            data = response.json()
+            print("Parsed Data:", data)
+
+            # Extract non-zero balances
+            balances = {
+                balance["asset"]: float(balance["free"])
+                for balance in data
+                if float(balance["free"]) > 0
+            }
+
+            # Calculate total balance in USD (if needed)
+            total_balance_usd = sum(balances.values())  # This assumes all balances are already in USD
+            return balances, total_balance_usd
+
+        else:
+            # Log the error if the request fails
+            logging.error(f"WazirX API Error: {response.status_code} - {response.text}")
+            return None, 0.0
+
+    except Exception as e:
+        # Log any unexpected errors
+        logging.error(f"WazirX API Error: {e}")
+        return None, 0.0
 
 @app.route("/wallet_management", methods=["GET", "POST"])
 @login_required
@@ -992,7 +1045,7 @@ def wallet_management():
     exchange_names = []
     exchange_balances = []
     all_transactions = []
-    for exchange in ["Binance", "OKX", "CoinDCX"]:  # Replace Coinbase with CoinDCX
+    for exchange in ["Binance", "Wazirx", "CoinDCX"]:  # Replace Coinbase with CoinDCX
         api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
         balances = None
         total_balance_usd = None
@@ -1000,10 +1053,10 @@ def wallet_management():
 
         if exchange == "Binance":
             logo_url = "https://w7.pngwing.com/pngs/703/998/png-transparent-binance-binancecoin-blockchain-coin-blockchain-classic-icon-thumbnail.png"
-        elif exchange == "OKX":
-            logo_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Logo-OKX.png/768px-Logo-OKX.png"
+        elif exchange == "Wazirx":
+            logo_url = "https://www.svgrepo.com/show/331638/wazirx.svg"
         else:
-            logo_url = "https://www.coindcx.com/static/media/logo.3d1a0e8a.svg"  # Replace with CoinDCX logo URL
+            logo_url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3Z7jjYiJS75NtXWpoSKRgKjnRw76IvszehQ&s"  # Replace with CoinDCX logo URL
 
         if api_key_entry:
             # Fetch balances and transactions if API key exists
