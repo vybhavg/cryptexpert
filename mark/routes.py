@@ -834,29 +834,52 @@ async def get_binance_transaction_history(api_key, api_secret):
             await client.close_connection()
 
 
-# Function to get wallet balances from Coinbase
-def get_coinbase_balances(api_key, api_secret):
-    """Fetches wallet balances from Coinbase."""
+async def get_binance_transaction_history(api_key, api_secret):
+    """Fetches transaction history from Binance for all symbols."""
+    client = None
     try:
-        headers = {
-            "Accept": "application/json",
-            "CB-ACCESS-KEY": api_key,
-            "CB-ACCESS-SIGN": api_secret,
-        }
-        response = requests.get("https://api.coinbase.com/v2/accounts", headers=headers)
-        
-        if response.status_code == 200:
-            data = response.json()
-            balances = {account["currency"]: float(account["balance"]["amount"]) for account in data["data"] if float(account["balance"]["amount"]) > 0}
-            return balances
-        
-        else:
-            print(f"Coinbase API Error: {response.json()}")
-            return None
+        client = await AsyncClient.create(api_key, api_secret)
+        logging.debug("Binance client created successfully.")
 
+        # Fetch account info to get all trading pairs
+        account_info = await client.get_account()
+        logging.debug("Account info fetched successfully.")
+
+        # Extract all symbols with non-zero balances
+        symbols = set()
+        for asset in account_info["balances"]:
+            if float(asset["free"]) > 0:
+                asset_name = asset["asset"]
+                # Fetch trading pairs for this asset (e.g., BTCUSDT, ETHUSDT)
+                exchange_info = await client.get_exchange_info()
+                for symbol_info in exchange_info["symbols"]:
+                    if symbol_info["baseAsset"] == asset_name:
+                        symbols.add(symbol_info["symbol"])
+
+        # Fetch trade history for all symbols
+        all_trades = []
+        for symbol in symbols:
+            try:
+                trades = await client.get_my_trades(symbol=symbol)
+                all_trades.extend(trades)
+                logging.debug(f"Fetched {len(trades)} trades for {symbol}")
+            except BinanceAPIException as e:
+                logging.warning(f"Failed to fetch trades for {symbol}: {e}")
+                continue  # Skip if trades cannot be fetched for this symbol
+
+        return all_trades
+
+    except BinanceAPIException as e:
+        logging.error(f"Binance API Error: {e}")
+        return []
     except Exception as e:
-        print(f"Coinbase API Error: {e}")
-        return None
+        logging.error(f"Unexpected error in get_binance_transaction_history: {e}")
+        return []
+    finally:
+        if client:
+            await client.close_connection()
+            logging.debug("Binance client connection closed.")
+            
         
 def get_coinbase_transaction_history(api_key, api_secret):
     """Fetches transaction history from Coinbase."""
