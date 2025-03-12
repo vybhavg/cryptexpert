@@ -865,6 +865,17 @@ async def get_binance_transactions_async(api_key, api_secret):
             await client.close_connection()
 
 
+# Define the datetimeformat filter
+@app.template_filter('datetimeformat')
+def datetimeformat(value, format='%Y-%m-%d %H:%M:%S'):
+    """Format a timestamp to a human-readable format."""
+    if isinstance(value, int):
+        # If the value is a timestamp in milliseconds, convert it to seconds
+        value = value / 1000
+    return datetime.utcfromtimestamp(value).strftime(format)
+
+# Register the filter in the Jinja2 environment
+app.jinja_env.filters['datetimeformat'] = datetimeformat
 
 def get_coindcx_balances(api_key, api_secret):
     """Fetches wallet balances from CoinDCX."""
