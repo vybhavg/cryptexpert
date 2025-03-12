@@ -890,11 +890,16 @@ def wallet_management():
     user_exchanges = UserAPIKey.query.filter_by(user_id=user_id).all()
     exchange_data = []
 
-    for exchange in ["Binance", "Coinbase", "CoinMarketCap"]:
+    for exchange in ["Binance", "OKX", "Coinbase"]:
         api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
         balances = None
         total_balance_usd = None
-
+        if exchange=="Binance":
+            logo_url="https://w7.pngwing.com/pngs/703/998/png-transparent-binance-binancecoin-blockchain-coin-blockchain-classic-icon-thumbnail.png"
+        elif exchange=="OKX":
+            logo_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Logo-OKX.png/768px-Logo-OKX.png"
+        else:
+            logo_url="https://www.pngall.com/wp-content/uploads/15/Coinbase-Logo-PNG-Images.png"
         if api_key_entry:
             # Fetch balances if API key exists
             api_key, api_secret = api_key_entry.get_api_keys()
@@ -905,6 +910,7 @@ def wallet_management():
             "api_key_exists": api_key_entry is not None,
             "balances": balances,
             "total_balance_usd": total_balance_usd,
+            "logo_url": logo_url
         })
 
     return render_template(
