@@ -12,6 +12,64 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS for Advanced Styling -->
     <style>
+        /* Auto-Sync Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #555; /* Dark gray background for the toggle */
+    transition: 0.4s;
+    border-radius: 24px; /* Rounded corners */
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background-color: #f8bc04; /* Yellow circle */
+    transition: 0.4s;
+    border-radius: 50%; /* Circular shape */
+}
+
+input:checked + .slider {
+    background-color: #4CAF50; /* Green background when checked */
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px); /* Move the circle to the right */
+}
+
+/* Dark mode adjustments */
+.dark-bg .slider {
+    background-color: #444; /* Slightly lighter gray for dark mode */
+}
+
+.dark-bg input:checked + .slider {
+    background-color: #4CAF50; /* Green background when checked */
+}
+
+.dark-bg .slider:before {
+    background-color: #f8bc04; /* Yellow circle */
+}
         .auto-sync-toggle {
     display: flex;
     align-items: center;
