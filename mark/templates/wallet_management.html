@@ -505,19 +505,19 @@ input:checked + .slider:before {
                 <th>Exchange</th>
             </tr>
         </thead>
-        <tbody>
-            {% for transaction in all_transactions %}
-                <tr>
-                    <td data-type="{{ 'buy' if transaction.isBuyer else 'sell' }}">
-                        {{ 'Buy' if transaction.isBuyer else 'Sell' }}
-                    </td>
-                    <td>{{ "%.8f"|format(transaction.qty | float) }} BTC</td>
-                    <td>{{ transaction.commission }} {{ transaction.commissionAsset }}</td>
-                    <td>{{ transaction.time | datetimeformat }}</td>
-                    <td>{{ transaction.exchange }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
+       <tbody>
+    {% for transaction in all_transactions %}
+        <tr>
+            <td data-type="{{ 'buy' if transaction.isBuyer else 'sell' }}">
+                {{ 'Buy' if transaction.isBuyer else 'Sell' }}
+            </td>
+            <td>{{ "%.8f"|format(transaction.qty | float) }} {{ transaction.symbol }}</td> <!-- Use transaction.symbol -->
+            <td>{{ transaction.commission }} {{ transaction.commissionAsset }}</td>
+            <td>{{ transaction.time | datetimeformat }}</td>
+            <td>{{ transaction.exchange }}</td>
+        </tr>
+    {% endfor %}
+</tbody>
     </table>
 </div>
 </div>
@@ -772,18 +772,18 @@ function toggleAutoSync(exchangeName) {
     {% endfor %}
 });
     // Apply Filters
-    function applyFilters() {
-        const exchangeFilter = document.getElementById('exchangeFilter').value;
-        const typeFilter = document.getElementById('typeFilter').value;
-        const rows = document.querySelectorAll('.transaction-history tbody tr');
+   function applyFilters() {
+    const exchangeFilter = document.getElementById('exchangeFilter').value;
+    const typeFilter = document.getElementById('typeFilter').value;
+    const rows = document.querySelectorAll('.transaction-history tbody tr');
 
-        rows.forEach(row => {
-            const exchange = row.querySelector('td:nth-child(5)').textContent;
-            const type = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
-            const showExchange = exchangeFilter === 'all' || exchange === exchangeFilter;
-            const showType = typeFilter === 'all' || type === typeFilter.toLowerCase();
-            row.style.display = showExchange && showType ? '' : 'none';
-        });
-    }
+    rows.forEach(row => {
+        const exchange = row.querySelector('td:nth-child(5)').textContent;
+        const type = row.querySelector('td:nth-child(1)').getAttribute('data-type'); // Use data-type attribute
+        const showExchange = exchangeFilter === 'all' || exchange === exchangeFilter;
+        const showType = typeFilter === 'all' || type === typeFilter.toLowerCase();
+        row.style.display = showExchange && showType ? '' : 'none';
+    });
+}
 </script>
 {% endblock %}
