@@ -946,7 +946,7 @@ def wallet_management():
     exchange_data = []
     exchange_names = []
     exchange_balances = []
-    all_transactions= []
+    all_transactions= {}
     for exchange in ["Binance", "OKX", "Coinbase"]:
         api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
         balances = None
@@ -966,7 +966,9 @@ def wallet_management():
             balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange)
             if exchange == "Binance":
                 transactions = asyncio.run(get_binance_transactions_async(api_key, api_secret))
-        all_transactions.append(transactions)
+                for txn in transactions:
+                    txn["exchange"] = "Binance"  # Add exchange field to each transaction
+                all_transactions.extend(transactions)
         exchange_data.append({
             "name": exchange,
             "api_key_exists": api_key_entry is not None,
