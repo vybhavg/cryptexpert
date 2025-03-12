@@ -889,7 +889,8 @@ def wallet_management():
     # Fetch all exchanges and their balances
     user_exchanges = UserAPIKey.query.filter_by(user_id=user_id).all()
     exchange_data = []
-
+    exchange_names = []
+    exchange_balances = []
     for exchange in ["Binance", "OKX", "Coinbase"]:
         api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
         balances = None
@@ -912,11 +913,18 @@ def wallet_management():
             "total_balance_usd": total_balance_usd,
             "logo_url": logo_url
         })
+        if api_key_entry is not None and total_balance_usd is not None:
+            exchange_names.append(exchange)
+            exchange_balances.append(total_balance_usd)
 
     return render_template(
         "wallet_management.html",
         exchange_data=exchange_data,
+        exchange_names=exchange_names,
+        exchange_balances=exchange_balances,
+        total_balance_all_exchanges=sum(exchange_balances)  # Calculate total balance across all exchanges
     )
+    
 @app.route("/delete_api_key/<int:api_id>", methods=["POST"])
 @login_required
 def delete_api_key(api_id):
