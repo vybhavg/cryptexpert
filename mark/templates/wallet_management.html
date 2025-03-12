@@ -504,12 +504,55 @@
     });
 }
 
-    function toggleAutoSync(exchangeName) {
-        const autoSyncCheckbox = document.getElementById(`autoSync-${exchangeName}`);
-        if (autoSyncCheckbox.checked) {
-            setInterval(() => refreshBalances(exchangeName), 300000); // 5 minutes
+const autoSyncIntervals = {};
+
+// Function to toggle auto-sync
+function toggleAutoSync(exchangeName) {
+    const autoSyncCheckbox = document.getElementById(`autoSync-${exchangeName}`);
+
+    if (autoSyncCheckbox.checked) {
+        // Enable auto-sync
+        autoSyncIntervals[exchangeName] = setInterval(() => {
+            refreshBalances(exchangeName);
+        }, 300000); // 5 minutes = 300,000 milliseconds
+
+        // Show success notification
+        Swal.fire({
+            icon: 'success',
+            title: 'Auto-Sync Enabled',
+            text: `Balances for ${exchangeName} will sync every 5 minutes.`,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'swal2-dark',
+            },
+        });
+    } else {
+        // Disable auto-sync
+        if (autoSyncIntervals[exchangeName]) {
+            clearInterval(autoSyncIntervals[exchangeName]);
+            delete autoSyncIntervals[exchangeName];
+
+            // Show success notification
+            Swal.fire({
+                icon: 'info',
+                title: 'Auto-Sync Disabled',
+                text: `Auto-sync for ${exchangeName} has been turned off.`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-dark',
+                },
+            });
         }
     }
+}
 
     document.addEventListener('DOMContentLoaded', function () {
     // Pie Chart for Total Balance Allocation Across Exchanges
