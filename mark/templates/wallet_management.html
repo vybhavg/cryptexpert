@@ -13,150 +13,186 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom CSS for Advanced Styling -->
     <style>
-        /* Dark Mode Background */
-        .dark-bg {
-            background-color: #0a0a0a;
-        }
+<style>
+    /* Dark Mode Background */
+    .dark-bg {
+        background-color: #0a0a0a;
+    }
 
-        /* Card Styling */
-        .card-bg {
-            background-color: #1a1a1a;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
+    /* Card Styling */
+    .card-bg {
+        background-color: #1a1a1a;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
 
-        /* Hover Effect for Cards */
-        .card-hover {
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-        }
+    /* Hover Effect for Cards */
+    .card-hover {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
 
-        /* Button Styling */
-        .crypto-button {
-            background-color: #f8bc04;
-            color: #000000;
-            font-weight: 600;
-            padding: 0.65rem 1.4rem;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease-in-out;
-        }
-        .crypto-button:hover {
-            background-color: #ffd700; /* Brighter yellow on hover */
-            color: #000000;
-        }
+    /* Button Styling */
+    .crypto-button {
+        background-color: #f8bc04;
+        color: #000000;
+        font-weight: 600;
+        padding: 0.65rem 1.4rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease-in-out;
+    }
+    .crypto-button:hover {
+        background-color: #ffd700; /* Brighter yellow on hover */
+        color: #000000;
+    }
 
-        /* Exchange Logo Size */
-        .exchange-logo {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
+    /* Exchange Logo Size */
+    .exchange-logo {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
 
-        /* Modern Crypto Style */
+    /* Modern Crypto Style */
+    .crypto-heading {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #f8bc04;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .crypto-subheading {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    .crypto-text {
+        font-size: 1rem;
+        color: #a0aec0;
+    }
+
+    /* Total Balance Styling */
+    .total-balance {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ffffff;
+    }
+
+    /* Table Styling */
+    .crypto-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .crypto-table th,
+    .crypto-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .crypto-table th {
+        background-color: #1a1a1a;
+        color: #f8bc04;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+    }
+    .crypto-table tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    .crypto-table tr:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid #f8bc04;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Gradient Background for Connected Exchanges */
+    .connected-exchanges {
+        background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Pie Chart Container */
+    .pie-chart-container {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    /* Dark Mode SweetAlert2 Toast */
+    .swal2-dark {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+    .swal2-dark .swal2-title {
+        color: #ffffff;
+    }
+    .swal2-dark .swal2-html-container {
+        color: #cccccc;
+    }
+    .swal2-dark .swal2-icon {
+        color: #f8bc04;
+    }
+    .swal2-dark .swal2-timer-progress-bar {
+        background: #f8bc04 !important;
+    }
+
+    /* Grid Layout for Cards */
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* Flexbox for Card Content */
+    .flex {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
         .crypto-heading {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #f8bc04;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .crypto-subheading {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .crypto-text {
-            font-size: 1rem;
-            color: #a0aec0;
-        }
-
-        /* Total Balance Styling */
-        .total-balance {
             font-size: 1.5rem;
-            font-weight: bold;
-            color: #ffffff;
         }
-
-        /* Table Styling */
-        .crypto-table {
-            width: 100%;
-            border-collapse: collapse;
+        .crypto-subheading {
+            font-size: 1rem;
         }
-        .crypto-table th,
-        .crypto-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        .crypto-text {
+            font-size: 0.875rem;
         }
-        .crypto-table th {
-            background-color: #1a1a1a;
-            color: #f8bc04;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
+        .total-balance {
+            font-size: 1.25rem;
         }
-        .crypto-table tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-        .crypto-table tr:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Loading Spinner */
-        .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #f8bc04;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Gradient Background for Connected Exchanges */
-        .connected-exchanges {
-            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        /* Pie Chart Container */
-        .pie-chart-container {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        /* Dark Mode SweetAlert2 Toast */
-        .swal2-dark {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-        }
-        .swal2-dark .swal2-title {
-            color: #ffffff;
-        }
-        .swal2-dark .swal2-html-container {
-            color: #cccccc;
-        }
-        .swal2-dark .swal2-icon {
-            color: #f8bc04;
-        }
-        .swal2-dark .swal2-timer-progress-bar {
-            background: #f8bc04 !important;
-        }
-    </style>
+    }
+</style>
 {% endblock %}
 
 {% block content %}
