@@ -1123,8 +1123,14 @@ def refresh_balances():
     api_key, api_secret = api_key_entry.get_api_keys()
     balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange)
 
+    # Handle cases where balances are not fetched
     if balances is None or total_balance_usd is None:
-        return jsonify({"success": False, "message": "Failed to fetch balances."}), 500
+        return jsonify({
+            "success": True,
+            "balances": {},
+            "total_balance_usd": 0.0,
+            "total_balance_all_exchanges": 0.0
+        })
 
     # Calculate the total balance across all exchanges
     total_balance_all_exchanges = 0
