@@ -1023,15 +1023,31 @@ def refresh_balances():
     if not api_key_entry:
         return jsonify({"success": False, "message": f"API key for {exchange} not found."}), 404
 
-    # Fetch updated balances
+    # Fetch updated balances for the requested exchange
     api_key, api_secret = api_key_entry.get_api_keys()
     balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange)
 
     if balances is None or total_balance_usd is None:
         return jsonify({"success": False, "message": "Failed to fetch balances."}), 500
 
+    # Calculate the total balance across all exchanges
+    total_balance_all_exchanges = 0
+    all_exchanges = UserAPIKey.query.filter_by(user_id=user_id).all()
+    for exchange_entry in all_exchanges:
+        if exchange_entry.exchange == exchange:
+            # Use the updated balance for the current exchange
+            total_balance_all_exchanges += total_balance_usd
+        else:
+            # Fetch the balance for other exchanges from the database or cache
+            other_balances, other_total_balance_usd = get_wallet_balances(
+                exchange_entry.get_api_keys()[0], exchange_entry.get_api_keys()[1], exchange_entry.exchange
+            )
+            if other_total_balance_usd is not None:
+                total_balance_all_exchanges += other_total_balance_usd
+
     return jsonify({
         "success": True,
         "balances": balances,
-        "total_balance_usd": total_balance_usd
+        "total_balance_usd": total_balance_usd,  # Balance for the requested exchange
+        "total_balance_all_exchanges": total_balance_all_exchanges  # Total balance across all exchanges
     })
