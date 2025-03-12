@@ -782,7 +782,8 @@ async def get_binance_balances_async(api_key, api_secret):
         # Initialize Binance client
         client = await AsyncClient.create(api_key, api_secret)
         logging.debug("Binance client created successfully.")
-
+        trades = await client.get_my_trades(symbol='BTCUSDT')  # Example for BTCUSDT, you can loop through all symbols
+        print("1:",trades)
         # Fetch account info
         account_info = await client.get_account()
         logging.debug("Account info fetched successfully.")
@@ -827,6 +828,7 @@ async def get_binance_transactions_async(api_key, api_secret):
     try:
         client = await AsyncClient.create(api_key, api_secret)
         trades = await client.get_my_trades(symbol='BTCUSDT')  # Example for BTCUSDT, you can loop through all symbols
+        print("2:",trades)
         return trades
     except BinanceAPIException as e:
         logging.error(f"Binance API Error: {e}")
