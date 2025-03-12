@@ -196,7 +196,7 @@ input:checked + .slider:before {
 
 .crypto-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: collapse; /* Ensure borders are collapsed */
 }
 
 .crypto-table th,
@@ -204,16 +204,17 @@ input:checked + .slider:before {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 1rem; /* Slightly larger font size */
-    color: #ffffff; /* White text color */
+    font-size: 1rem;
+    color: #ffffff;
 }
 
 .crypto-table th {
     background-color: #1a1a1a;
-    color: #f8bc04; /* Yellow heading text */
+    color: #f8bc04;
     font-weight: 600;
     position: sticky;
-    top: 0;
+    top: -1px; /* Adjust this value to align the header properly */
+    z-index: 1; /* Ensure the header is above the table rows */
 }
 
 .crypto-table tr:nth-child(even) {
