@@ -915,8 +915,11 @@ def get_coindcx_balances(api_key, api_secret):
         # Step 6: Handle the response
         if response.status_code == 200:
             data = response.json()
-            # Log the parsed data for debugging
             print("Parsed Data:", data)
+
+            # Handle empty or zero balances
+            if not data:
+                return {}, 0.0  # Return empty balances and zero total balance
 
             # Extract non-zero balances
             balances = {
@@ -924,6 +927,7 @@ def get_coindcx_balances(api_key, api_secret):
                 for balance in data
                 if float(balance["balance"]) > 0
             }
+
             # Calculate total balance in USD (if needed)
             total_balance_usd = sum(balances.values())  # This assumes all balances are already in USD
             return balances, total_balance_usd
@@ -937,6 +941,7 @@ def get_coindcx_balances(api_key, api_secret):
         # Log any unexpected errors
         logging.error(f"CoinDCX API Error: {e}")
         return None, 0.0
+
 
 @app.route("/wallet_management", methods=["GET", "POST"])
 @login_required
