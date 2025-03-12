@@ -1,4 +1,3 @@
-
 from mark import app, db, mail
 from mark.form import RegisterForm, LoginForm, otpform, verifyform,Authenticationform
 from mark.models import User, Item, CryptoAsset, Exchange, UserAPIKey
@@ -118,11 +117,11 @@ crypto_logos = {
 
 def get_specific_prices_from_binance():
     response = requests.get("https://api.binance.com/api/v3/ticker/24hr")
-    
+
     if response.status_code != 200:
         print("Error fetching data:", response.status_code)
         return []
-    
+
     data = response.json()
 
     # List of specific cryptocurrencies to display
@@ -168,9 +167,9 @@ def get_specific_prices_from_okx():
     'DIA-USDT', 'LRC-USDT', 'STMX-USDT', 'PERL-USDT', 'REN-USDT', 'FET-USDT', 'DODO-USDT', 'MTA-USDT', 'HNT-USDT', 'FIL-USDT',
     'RUNE-USDT', 'SAND-USDT', 'CELO-USDT', 'DASH-USDT'
 ]
-    
+
     prices = []
-    
+
     try:
         for symbol in specific_coins:
             # Make the API request to fetch price data from OKX
@@ -182,10 +181,10 @@ def get_specific_prices_from_okx():
                 if 'data' in data and len(data['data']) > 0:
                     ticker = data['data'][0]
                     price = f"{float(ticker['last']):,.2f}"  # Extract the last price
-                    
+
                     # Get the price change percentage, but ensure we handle invalid data correctly
                     price_change_percent = ticker.get('change24h', "N/A")
-                    
+
                     # If 'price_change_percent' is 'N/A' or not a number, set it to 0.0
                     try:
                         price_change_percent = float(price_change_percent) * 100 if price_change_percent != "N/A" else 0.0
@@ -201,7 +200,7 @@ def get_specific_prices_from_okx():
                     print(f"Error: Data not found for {symbol}")
             else:
                 print(f"Error fetching {symbol}: {response.status_code}")
-                
+
             print(f"Response for {symbol}: {response.json()}")
 
     except requests.exceptions.RequestException as e:
@@ -223,7 +222,7 @@ def get_specific_prices_from_coinbase():
     ]
 
     prices = []
-    
+
     try:
         for symbol in specific_coins:
             response = requests.get(f"https://api.coinbase.com/v2/prices/{symbol}/spot")
@@ -241,7 +240,7 @@ def get_specific_prices_from_coinbase():
                 print(f"Error fetching {symbol}: {response.status_code}")
             print(f"Response for {symbol}: {response.json()}")
 
-    
+
     except requests.exceptions.RequestException as e:
         print(f"Request error: {e}")
 
@@ -260,10 +259,10 @@ def home():
 
     for ticker in okx_prices:
         ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-        
+
     for ticker in coinbase_prices:
         ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-        
+
     return render_template('index.html', binance_prices=binance_prices, okx_prices=okx_prices, coinbase_prices=coinbase_prices,crypto_logos=crypto_logos)
 
 
@@ -298,10 +297,10 @@ def index():
 
     for ticker in okx_prices:
         ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-        
+
     for ticker in coinbase_prices:
         ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-        
+
     return render_template('index.html', binance_prices=binance_prices, okx_prices=okx_prices, coinbase_prices=coinbase_prices,crypto_logos=crypto_logos)
 
 @app.route('/live_prices')
@@ -315,10 +314,10 @@ def live_prices():
 
     for ticker in okx_prices:
         ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-        
+
     for ticker in coinbase_prices:
         ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-        
+
     return render_template('live_prices.html', binance_prices=binance_prices, okx_prices=okx_prices, coinbase_prices=coinbase_prices,crypto_logos=crypto_logos)
 
 
@@ -347,7 +346,7 @@ def login_form():
             return redirect(url_for('otp_form', next=next_page))  # Pass 'next' to OTP form
         else:
             flash('Username and password are incorrect', "error")
-    
+
     if form.errors:
         for err in form.errors.values():
             flash(err, "warning")
@@ -461,7 +460,7 @@ def forgot_password():
                 subject="Cryptexpert - Password Reset Request",
                 recipients=[email]
             )
-            
+
             msg.body = f"""
             Dear {user.username},
             
@@ -475,7 +474,7 @@ def forgot_password():
             Best regards,  
             Cryptexpert Team  
             """
-            
+
             mail.send(msg)
 
 
@@ -499,7 +498,7 @@ def reset_password(token):
         new_password = request.form.get('password')
         user.password = new_password
         db.session.commit()
-        
+
         flash('Your password has been updated!', 'success')
         return redirect(url_for('login_form'))
 
@@ -512,7 +511,7 @@ def setup_authenticator():
     if not user.authenticator_secret:
         user.authenticator_secret = pyotp.random_base32()
         db.session.commit()
-    
+
     otp_uri = pyotp.totp.TOTP(user.authenticator_secret).provisioning_uri(
         name=user.username,
         issuer_name="CryptExpert"
@@ -717,11 +716,11 @@ def ai_predictor():
             future_predictions=future_predictions
         )
     return render_template("ai_price_predictor.html")
-    
+
 @app.route('/search')
 def search():
     query = request.args.get('q', '').strip().lower()
-    
+
     if not query:
         return jsonify([])
 
@@ -820,70 +819,61 @@ async def get_binance_balances_async(api_key, api_secret):
             logging.debug("Binance client connection closed.")
 
 
-async def get_binance_transaction_history(api_key, api_secret):
-    """Fetches transaction history from Binance for all symbols."""
-    client = None
-    try:
-        client = await AsyncClient.create(api_key, api_secret)
-        logging.debug("Binance client created successfully.")
 
-        # Fetch account info to get all trading pairs
-        account_info = await client.get_account()
-        logging.debug("Account info fetched successfully.")
 
-        # Extract all symbols with non-zero balances
-        symbols = set()
-        for asset in account_info["balances"]:
-            if float(asset["free"]) > 0:
-                asset_name = asset["asset"]
-                # Fetch trading pairs for this asset (e.g., BTCUSDT, ETHUSDT)
-                exchange_info = await client.get_exchange_info()
-                for symbol_info in exchange_info["symbols"]:
-                    if symbol_info["baseAsset"] == asset_name:
-                        symbols.add(symbol_info["symbol"])
 
-        # Fetch trade history for all symbols
-        all_trades = []
-        for symbol in symbols:
-            try:
-                trades = await client.get_my_trades(symbol=symbol)
-                all_trades.extend(trades)
-                logging.debug(f"Fetched {len(trades)} trades for {symbol}")
-            except BinanceAPIException as e:
-                logging.warning(f"Failed to fetch trades for {symbol}: {e}")
-                continue  # Skip if trades cannot be fetched for this symbol
 
-        return all_trades
 
-    except BinanceAPIException as e:
-        logging.error(f"Binance API Error: {e}")
-        return []
-    except Exception as e:
-        logging.error(f"Unexpected error in get_binance_transaction_history: {e}")
-        return []
-    finally:
-        if client:
-            await client.close_connection()
-            logging.debug("Binance client connection closed.")
-            
-        
-def get_coinbase_transaction_history(api_key, api_secret):
-    """Fetches transaction history from Coinbase."""
+
+
+
+
+
+
+
+
+
+# Function to get wallet balances from Coinbase
+def get_coinbase_balances(api_key, api_secret):
+    """Fetches wallet balances from Coinbase."""
     try:
         headers = {
             "Accept": "application/json",
             "CB-ACCESS-KEY": api_key,
             "CB-ACCESS-SIGN": api_secret,
         }
-        response = requests.get("https://api.coinbase.com/v2/accounts/transactions", headers=headers)
+        response = requests.get("https://api.coinbase.com/v2/accounts", headers=headers)
+
         if response.status_code == 200:
-            return response.json().get("data", [])
+            data = response.json()
+            balances = {account["currency"]: float(account["balance"]["amount"]) for account in data["data"] if float(account["balance"]["amount"]) > 0}
+            return balances
+
         else:
-            logging.error(f"Coinbase API Error: {response.json()}")
-            return []
+            print(f"Coinbase API Error: {response.json()}")
+            return None
+
     except Exception as e:
-        logging.error(f"Error fetching Coinbase transaction history: {e}")
-        return []
+        print(f"Coinbase API Error: {e}")
+        return None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @app.route("/wallet_management", methods=["GET", "POST"])
@@ -934,41 +924,41 @@ def wallet_management():
     exchange_data = []
     exchange_names = []
     exchange_balances = []
-    all_transactions = []
+
 
     for exchange in ["Binance", "OKX", "Coinbase"]:
         api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
         balances = None
         total_balance_usd = None
-        transactions = []
+        if exchange=="Binance":
+            logo_url="https://w7.pngwing.com/pngs/703/998/png-transparent-binance-binancecoin-blockchain-coin-blockchain-classic-icon-thumbnail.png"
+        elif exchange=="OKX":
+            logo_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Logo-OKX.png/768px-Logo-OKX.png"
 
-        if exchange == "Binance":
-            logo_url = "https://w7.pngwing.com/pngs/703/998/png-transparent-binance-binancecoin-blockchain-coin-blockchain-classic-icon-thumbnail.png"
-        elif exchange == "OKX":
-            logo_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Logo-OKX.png/768px-Logo-OKX.png"
+
         else:
-            logo_url = "https://www.pngall.com/wp-content/uploads/15/Coinbase-Logo-PNG-Images.png"
+            logo_url="https://www.pngall.com/wp-content/uploads/15/Coinbase-Logo-PNG-Images.png"
 
         if api_key_entry:
             # Fetch balances if API key exists
             api_key, api_secret = api_key_entry.get_api_keys()
             balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange)
 
-            # Fetch transaction history
-            if exchange.lower() == "binance":
-                transactions = asyncio.run(get_binance_transaction_history(api_key, api_secret))
-            elif exchange.lower() == "coinbase":
-                transactions = get_coinbase_transaction_history(api_key, api_secret)
 
-            # Format transactions
-            for tx in transactions:
-                all_transactions.append({
-                    "type": tx.get("side", "N/A"),  # Example for Binance
-                    "amount": tx.get("qty", "N/A"),
-                    "fee": tx.get("commission", "N/A"),
-                    "date": tx.get("time", "N/A"),
-                    "exchange": exchange
-                })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         exchange_data.append({
             "name": exchange,
@@ -987,10 +977,10 @@ def wallet_management():
         exchange_data=exchange_data,
         exchange_names=exchange_names,
         exchange_balances=exchange_balances,
-        total_balance_all_exchanges=sum(exchange_balances),
-        all_transactions=all_transactions  # Pass transaction history to the template
+        total_balance_all_exchanges=sum(exchange_balances)  # Calculate total balance across all exchanges
+
     )
-    
+
 @app.route("/delete_api_key/<int:api_id>", methods=["POST"])
 @login_required
 def delete_api_key(api_id):
