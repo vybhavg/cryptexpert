@@ -843,7 +843,13 @@ async def get_binance_transactions_async(api_key, api_secret):
 
 
 
+from datetime import datetime
 
+@app.template_filter('datetimeformat')
+def datetimeformat(value):
+    return datetime.utcfromtimestamp(value / 1000).strftime('%Y-%m-%d %H:%M:%S')
+
+app.jinja_env.filters['datetimeformat'] = datetimeformat
 
 
 
