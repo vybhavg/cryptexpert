@@ -20,28 +20,28 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        }
 
-        /* Slide-Up Animation */
-        @keyframes slideUp {
-            0% {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .card-bg {
-            animation: slideUp 0.5s ease-out;
         }
 
         /* Hover Effect for Cards */
-        .card-bg:hover {
-            transform: translateY(-10px);
+        .card-hover {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+
+
+
+
+
+
+
+
+
+
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+
+
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
         }
 
@@ -114,13 +114,13 @@
             background-color: rgba(255, 255, 255, 0.05);
         }
 
-        /* Center Button Styling */
-        .center-button {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
+
+
+
+
+
+
+
     </style>
 {% endblock %}
 
@@ -132,11 +132,11 @@
         <!-- List of Exchanges -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for exchange in exchange_data %}
-                <div class="p-6 rounded-lg card-bg">
+                <div class="p-6 rounded-lg card-bg card-hover">
                     <div class="flex items-center justify-between">
                         <!-- Left Side: Logo and Exchange Name -->
                         <div class="flex items-center space-x-4">
-                            <img src="{{ exchange.logo_url }}"  <!-- Replace with actual logo URLs -->
+                            <img src="{{ url_for('static', filename='images/' + exchange.name.lower() + '.png') }}"
                                  alt="{{ exchange.name }} Logo"
                                  class="exchange-logo">
                             <h2 class="crypto-subheading">{{ exchange.name }}</h2>
@@ -159,7 +159,7 @@
 
                     <!-- API Key Form (Hidden by Default) -->
                     {% if not exchange.api_key_exists %}
-                        <div class="center-button mt-6">
+                        <div class="flex justify-center mt-6">
                             <button onclick="toggleForm('{{ exchange.name }}')"
                                     class="crypto-button btn-hover">
                                 Submit API Key
@@ -226,11 +226,11 @@
         form.classList.toggle('hidden');
     }
 
-    // Truncate balances to 2 decimal points
-    document.querySelectorAll('.total-balance, .crypto-table td').forEach(element => {
-        if (element.textContent.includes('.')) {
-            element.textContent = parseFloat(element.textContent).toFixed(2);
-        }
-    });
+
+
+
+
+
+
 </script>
 {% endblock %}
