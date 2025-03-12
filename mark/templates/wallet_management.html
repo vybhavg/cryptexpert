@@ -203,7 +203,7 @@
                                         {% for coin, amount in exchange.balances.items() %}
                                             <tr>
                                                 <td class="text-yellow">{{ coin }}</td>
-                                                <td class="text-gray-300">{{ amount | truncate(2, true, '') }}</td>
+    <td class="text-gray-300">{{ amount | round(2) }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
