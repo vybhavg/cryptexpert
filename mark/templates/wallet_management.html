@@ -264,13 +264,7 @@ input:checked + .slider:before {
     Total Balance: ${{ "%.2f"|format(total_balance_all_exchanges) }}
 </div>
 
-
-        <!-- Pie Chart for Allocation of Total Balance Across Exchanges -->
-        <div class="pie-chart-container mb-8">
-            <canvas id="totalBalancePieChart"></canvas>
-        </div>
-
-        <!-- Connected Exchanges Summary -->
+  <!-- Connected Exchanges Summary -->
         <div class="connected-exchanges">
             <h2 class="crypto-subheading mb-4">Connected Exchanges</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -284,6 +278,12 @@ input:checked + .slider:before {
                 {% endfor %}
             </div>
         </div>
+        <!-- Pie Chart for Allocation of Total Balance Across Exchanges -->
+        <div class="pie-chart-container mb-8">
+            <canvas id="totalBalancePieChart"></canvas>
+        </div>
+
+      
 
         <!-- List of Exchanges -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
