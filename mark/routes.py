@@ -782,8 +782,7 @@ async def get_binance_balances_async(api_key, api_secret):
         # Initialize Binance client
         client = await AsyncClient.create(api_key, api_secret)
         logging.debug("Binance client created successfully.")
-        trades = await client.get_my_trades(symbol='BTCUSDT')  # Example for BTCUSDT, you can loop through all symbols
-        print("1:",trades)
+
         # Fetch account info
         account_info = await client.get_account()
         logging.debug("Account info fetched successfully.")
@@ -822,14 +821,35 @@ async def get_binance_balances_async(api_key, api_secret):
 
 
 
+from binance import AsyncClient, BinanceAPIException
+import logging
+
 async def get_binance_transactions_async(api_key, api_secret):
-    """Fetches transaction history from Binance asynchronously."""
+    """Fetches transaction history from Binance for all symbols asynchronously."""
     client = None
     try:
         client = await AsyncClient.create(api_key, api_secret)
-        trades = await client.get_my_trades(symbol='BTCUSDT')  # Example for BTCUSDT, you can loop through all symbols
-        print("2:",trades)
-        return trades
+
+        # Fetch all available symbols from Binance exchange info
+        exchange_info = await client.get_exchange_info()
+        symbols = [s['symbol'] for s in exchange_info['symbols']]  # Extract all trading pairs
+        
+        all_trades = []
+
+        for symbol in symbols:
+            try:
+                trades = await client.get_my_trades(symbol=symbol)
+                if trades:
+                    for trade in trades:
+                        trade["symbol"] = symbol  # Ensure each trade has its symbol
+                    all_trades.extend(trades)  # Add all trades for this symbol
+            except BinanceAPIException as e:
+                logging.error(f"Binance API Error for {symbol}: {e}")
+            except Exception as e:
+                logging.error(f"Unexpected error fetching trades for {symbol}: {e}")
+
+        return all_trades
+
     except BinanceAPIException as e:
         logging.error(f"Binance API Error: {e}")
         return None
@@ -839,6 +859,7 @@ async def get_binance_transactions_async(api_key, api_secret):
     finally:
         if client:
             await client.close_connection()
+
 
 
 
