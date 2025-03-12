@@ -261,8 +261,9 @@ input:checked + .slider:before {
 
         <!-- Total Balance Across All Exchanges -->
         <div class="total-balance mb-8">
-            Total Balance: ${{ total_balance_all_exchanges }}
-        </div>
+    Total Balance: ${{ "%.2f"|format(total_balance_all_exchanges) }}
+</div>
+
 
         <!-- Pie Chart for Allocation of Total Balance Across Exchanges -->
         <div class="pie-chart-container mb-8">
