@@ -9,79 +9,79 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Include Chart.js for Pie Chart -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS for Advanced Styling -->
     <style>
         /* Auto-Sync Toggle Switch */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 24px;
-}
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
 
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #555; /* Dark gray background for the toggle */
-    transition: 0.4s;
-    border-radius: 24px; /* Rounded corners */
-}
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #555; /* Dark gray background for the toggle */
+            transition: 0.4s;
+            border-radius: 24px; /* Rounded corners */
+        }
 
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 2px;
-    bottom: 2px;
-    background-color: #f8bc04; /* Yellow circle */
-    transition: 0.4s;
-    border-radius: 50%; /* Circular shape */
-}
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: #f8bc04; /* Yellow circle */
+            transition: 0.4s;
+            border-radius: 50%; /* Circular shape */
+        }
 
+        input:checked + .slider:before {
+            transform: translateX(26px); /* Move the circle to the right */
+        }
 
+        /* Dark mode adjustments */
+        .dark-bg .slider {
+            background-color: #444; /* Slightly lighter gray for dark mode */
+        }
 
-input:checked + .slider:before {
-    transform: translateX(26px); /* Move the circle to the right */
-}
+        .dark-bg input:checked + .slider:before {
+            background-color: rgb(67, 192, 63); /* Yellow circle */
+        }
 
-/* Dark mode adjustments */
-.dark-bg .slider {
-    background-color: #444; /* Slightly lighter gray for dark mode */
-}
-
-.dark-bg input:checked + .slider:before {
-    background-color: rgb(67, 192, 63); /* Yellow circle */
-}
-.dark-bg .slider:before {
-    background-color: rgb(192, 63, 63); /* Yellow circle */
-}
+        .dark-bg .slider:before {
+            background-color: rgb(192, 63, 63); /* Yellow circle */
+        }
 
         .auto-sync-toggle {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Space between text and toggle */
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.05); /* Slight background for emphasis */
-    border-radius: 8px; /* Rounded corners */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-}
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between text and toggle */
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.05); /* Slight background for emphasis */
+            border-radius: 8px; /* Rounded corners */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+        }
 
-.auto-sync-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Slightly lighter on hover */
-    transition: background-color 0.3s ease;
-}
+        .auto-sync-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Slightly lighter on hover */
+            transition: background-color 0.3s ease;
+        }
+
         /* Dark Mode Background */
         .dark-bg {
             background-color: #0a0a0a;
@@ -99,6 +99,7 @@ input:checked + .slider:before {
         .card-hover {
             transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         }
+
         .card-hover:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
@@ -113,6 +114,7 @@ input:checked + .slider:before {
             border-radius: 0.5rem;
             transition: all 0.3s ease-in-out;
         }
+
         .crypto-button:hover {
             background-color: #ffd700; /* Brighter yellow on hover */
             color: #000000;
@@ -184,110 +186,109 @@ input:checked + .slider:before {
             color: #ffffff;
         }
 
-/* Transaction Table Styling */
-.transaction-history {
-    max-height: 400px; /* Increased height for better visibility */
-    overflow-y: auto;
-    margin-top: 1rem;
-    background-color: #1a1a1a; /* Dark background for the table container */
-    border-radius: 8px; /* Rounded corners */
-    padding: 1rem; /* Padding for better spacing */
-}
+        /* Transaction Table Styling */
+        .transaction-history {
+            max-height: 400px; /* Increased height for better visibility */
+            overflow-y: auto;
+            margin-top: 1rem;
+            background-color: #1a1a1a; /* Dark background for the table container */
+            border-radius: 8px; /* Rounded corners */
+            padding: 1rem; /* Padding for better spacing */
+        }
 
-.crypto-table {
-    width: 100%;
-    border-collapse: collapse; /* Ensure borders are collapsed */
-}
+        .crypto-table {
+            width: 100%;
+            border-collapse: collapse; /* Ensure borders are collapsed */
+        }
 
-.crypto-table th,
-.crypto-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 1rem;
-    color: #ffffff;
-}
+        .crypto-table th,
+        .crypto-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1rem;
+            color: #ffffff;
+        }
 
-.crypto-table th {
-    background-color: #1a1a1a;
-    color: #f8bc04;
-    font-weight: 600;
-    position: sticky;
-    top: -13px; /* Adjust this value to align the header properly */
-    z-index: 1; /* Ensure the header is above the table rows */
-}
+        .crypto-table th {
+            background-color: #1a1a1a;
+            color: #f8bc04;
+            font-weight: 600;
+            position: sticky;
+            top: -13px; /* Adjust this value to align the header properly */
+            z-index: 1; /* Ensure the header is above the table rows */
+        }
 
-.crypto-table tr:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.05);
-}
+        .crypto-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
 
-.crypto-table tr:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
+        .crypto-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
 
-/* Type Column Styling */
-.crypto-table td[data-type="buy"] {
-    color: #4caf50; /* Green for Buy */
-    font-weight: 600; /* Bold text for Buy */
-}
+        /* Type Column Styling */
+        .crypto-table td[data-type="buy"] {
+            color: #4caf50; /* Green for Buy */
+            font-weight: 600; /* Bold text for Buy */
+        }
 
-.crypto-table td[data-type="sell"] {
-    color: #f44336; /* Red for Sell */
-    font-weight: 600; /* Bold text for Sell */
-}
+        .crypto-table td[data-type="sell"] {
+            color: #f44336; /* Red for Sell */
+            font-weight: 600; /* Bold text for Sell */
+        }
 
-/* Amount Column Styling */
-.crypto-table td:nth-child(2) {
-    font-family: monospace; /* Monospace font for better alignment of numbers */
-    color: #f8bc04; /* Yellow color for amount */
-}
+        /* Amount Column Styling */
+        .crypto-table td:nth-child(2) {
+            font-family: monospace; /* Monospace font for better alignment of numbers */
+            color: #f8bc04; /* Yellow color for amount */
+        }
 
-/* Fee Column Styling */
-.crypto-table td:nth-child(3) {
-    color: #a0aec0; /* Light gray for fee */
-}
+        /* Fee Column Styling */
+        .crypto-table td:nth-child(3) {
+            color: #a0aec0; /* Light gray for fee */
+        }
 
-/* Date Column Styling */
-.crypto-table td:nth-child(4) {
-    color: #ffffff; /* White for date */
-}
+        /* Date Column Styling */
+        .crypto-table td:nth-child(4) {
+            color: #ffffff; /* White for date */
+        }
 
-/* Exchange Column Styling */
-.crypto-table td:nth-child(5) {
-    color: #ffffff; /* White for exchange */
-}
+        /* Exchange Column Styling */
+        .crypto-table td:nth-child(5) {
+            color: #ffffff; /* White for exchange */
+        }
 
-/* Filter Options Styling */
-.filter-options {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: 1rem;
-}
+        /* Filter Options Styling */
+        .filter-options {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
 
-.filter-options select,
-.filter-options button {
-    padding: 8px 12px;
-    background-color: #1a1a1a;
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
+        .filter-options select,
+        .filter-options button {
+            padding: 8px 12px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
+        .filter-options button {
+            background-color: #f8bc04;
+            color: #000000;
+            font-weight: 600;
+        }
 
+        .filter-options button:hover {
+            background-color: #ffd700; /* Brighter yellow on hover */
+        }
 
-.filter-options button {
-    background-color: #f8bc04;
-    color: #000000;
-    font-weight: 600;
-}
-
-.filter-options button:hover {
-    background-color: #ffd700; /* Brighter yellow on hover */
-}
         /* Loading Spinner */
         .loading-spinner {
             border: 4px solid rgba(255, 255, 255, 0.3);
@@ -297,9 +298,15 @@ input:checked + .slider:before {
             height: 40px;
             animation: spin 1s linear infinite;
         }
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Gradient Background for Connected Exchanges */
@@ -330,16 +337,17 @@ input:checked + .slider:before {
             justify-content: space-between;
             margin-top: 1rem;
         }
-        .total-balance {
-    padding: 1rem;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
 
-.total-balance button {
-    margin-left: 1rem;
-}
+        .total-balance {
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .total-balance button {
+            margin-left: 1rem;
+        }
     </style>
 {% endblock %}
 
@@ -348,15 +356,15 @@ input:checked + .slider:before {
     <div class="max-w-6xl mx-auto">
         <h1 class="crypto-heading mb-8">Wallets</h1>
 
-   <!-- Total Balance and Refresh All Button -->
-<div class="total-balance mb-8 flex items-center justify-between">
-    <span>Total Balance: ${{ "%.2f"|format(total_balance_all_exchanges) }}</span>
-    <button onclick="refreshAllBalances()" class="crypto-button text-sm px-3 py-2">
-        <i class="fas fa-sync-alt"></i> Refresh All Balances
-    </button>
-</div>
+        <!-- Total Balance and Refresh All Button -->
+        <div class="total-balance mb-8 flex items-center justify-between">
+            <span>Total Balance: ${{ "%.2f"|format(total_balance_all_exchanges) }}</span>
+            <button onclick="refreshAllBalances()" class="crypto-button text-sm px-3 py-2">
+                <i class="fas fa-sync-alt"></i> Refresh All Balances
+            </button>
+        </div>
 
-  <!-- Connected Exchanges Summary -->
+        <!-- Connected Exchanges Summary -->
         <div class="connected-exchanges">
             <h2 class="crypto-subheading mb-4">Connected Exchanges</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -370,12 +378,11 @@ input:checked + .slider:before {
                 {% endfor %}
             </div>
         </div>
+
         <!-- Pie Chart for Allocation of Total Balance Across Exchanges -->
         <div class="pie-chart-container mb-8">
             <canvas id="totalBalancePieChart"></canvas>
         </div>
-
-      
 
         <!-- List of Exchanges -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -474,8 +481,8 @@ input:checked + .slider:before {
                     {% if exchange.api_key_exists %}
                         <div class="auto-sync-toggle mt-6">
                             <span class="crypto-text">
-    <i class="fas fa-sync-alt"></i> Auto-Sync Every 5 Minutes
-</span>
+                                <i class="fas fa-sync-alt"></i> Auto-Sync Every 5 Minutes
+                            </span>
                             <label class="switch">
                                 <input type="checkbox" id="autoSync-{{ exchange.name }}" onchange="toggleAutoSync('{{ exchange.name }}')">
                                 <span class="slider round"></span>
@@ -486,57 +493,56 @@ input:checked + .slider:before {
             {% endfor %}
         </div>
 
-<div class="mt-8">
-    <h2 class="crypto-subheading mb-4">Transaction History</h2>
+        <!-- Transaction History -->
+        <div class="mt-8">
+            <h2 class="crypto-subheading mb-4">Transaction History</h2>
 
- <!-- Filter Options -->
-<div class="filter-options">
-    <select id="exchangeFilter">
-        <option value="all">All Exchanges</option>
-        {% for exchange in exchange_data %}
-            <option value="{{ exchange.name }}">{{ exchange.name }}</option>
-        {% endfor %}
-    </select>
-    <select id="typeFilter">
-        <option value="all">All Types</option>
-        <option value="buy">Buy</option>
-        <option value="sell">Sell</option>
-        <option value="withdraw">Withdraw</option>
-        <option value="deposit">Deposit</option>
-    </select>
-    <button onclick="applyFilters()">Apply Filters</button>
-</div>
+            <!-- Filter Options -->
+            <div class="filter-options">
+                <select id="exchangeFilter">
+                    <option value="all">All Exchanges</option>
+                    {% for exchange in exchange_data %}
+                        <option value="{{ exchange.name }}">{{ exchange.name }}</option>
+                    {% endfor %}
+                </select>
+                <select id="typeFilter">
+                    <option value="all">All Types</option>
+                    <option value="buy">Buy</option>
+                    <option value="sell">Sell</option>
+                    <option value="withdraw">Withdraw</option>
+                    <option value="deposit">Deposit</option>
+                </select>
+                <button onclick="applyFilters()">Apply Filters</button>
+            </div>
 
-<!-- Transaction History Table -->
-<div class="transaction-history">
-    <table class="crypto-table">
-        <thead>
-            <tr>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Fee</th>
-                <th>Date</th>
-                <th>Exchange</th>
-            </tr>
-        </thead>
-       <tbody>
-    {% for transaction in all_transactions %}
-        <tr>
-            <td data-type="{{ 'buy' if transaction.isBuyer else 'sell' }}">
-                {{ 'Buy' if transaction.isBuyer else 'Sell' }}
-            </td>
-            <td>{{ "%.8f"|format(transaction.qty | float) }} {{ transaction.symbol }}</td> <!-- Use transaction.symbol -->
-            <td>{{ transaction.commission }} {{ transaction.commissionAsset }}</td>
-            <td>{{ transaction.time | datetimeformat }}</td>
-            <td>{{ transaction.exchange }}</td>
-        </tr>
-    {% endfor %}
-</tbody>
-    </table>
-</div>
-</div>
-
-
+            <!-- Transaction History Table -->
+            <div class="transaction-history">
+                <table class="crypto-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Fee</th>
+                            <th>Date</th>
+                            <th>Exchange</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in all_transactions %}
+                            <tr>
+                                <td data-type="{{ 'buy' if transaction.isBuyer else 'sell' }}">
+                                    {{ 'Buy' if transaction.isBuyer else 'Sell' }}
+                                </td>
+                                <td>{{ "%.8f"|format(transaction.qty | float) }} {{ transaction.symbol }}</td>
+                                <td>{{ transaction.commission }} {{ transaction.commissionAsset }}</td>
+                                <td>{{ transaction.time | datetimeformat }}</td>
+                                <td>{{ transaction.exchange }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -547,61 +553,234 @@ input:checked + .slider:before {
         form.classList.toggle('hidden');
     }
 
-function refreshBalances(exchangeName) {
-    const card = document.querySelector(`[data-exchange="${exchangeName}"]`);
-    const spinner = document.createElement('div');
-    spinner.className = 'loading-spinner';
-    card.appendChild(spinner);
+    function refreshBalances(exchangeName) {
+        const card = document.querySelector(`[data-exchange="${exchangeName}"]`);
+        const spinner = document.createElement('div');
+        spinner.className = 'loading-spinner';
+        card.appendChild(spinner);
 
-    // Make an API call to refresh balances
-    fetch(`/refresh_balances?exchange=${exchangeName}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Remove the spinner
-        card.removeChild(spinner);
+        // Make an API call to refresh balances
+        fetch(`/refresh_balances?exchange=${exchangeName}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Remove the spinner
+                card.removeChild(spinner);
 
-        if (data.success) {
-            // Update the balances table
-            const balancesTable = card.querySelector('.crypto-table tbody');
-            if (balancesTable) {
-                balancesTable.innerHTML = ''; // Clear existing rows
-                for (const [coin, amount] of Object.entries(data.balances)) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="text-yellow">${coin}</td>
-                        <td class="text-gray-300">${amount}</td>
-                    `;
-                    balancesTable.appendChild(row);
+                if (data.success) {
+                    // Update the balances table
+                    const balancesTable = card.querySelector('.crypto-table tbody');
+                    if (balancesTable) {
+                        balancesTable.innerHTML = ''; // Clear existing rows
+                        for (const [coin, amount] of Object.entries(data.balances)) {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td class="text-yellow">${coin}</td>
+                                <td class="text-gray-300">${amount}</td>
+                            `;
+                            balancesTable.appendChild(row);
+                        }
+                    }
+
+                    // Update the total balance for the exchange
+                    const totalBalanceElement = card.querySelector('.total-balance');
+                    if (totalBalanceElement && data.total_balance_usd) {
+                        totalBalanceElement.textContent = `Balance: $${parseFloat(data.total_balance_usd).toFixed(2)}`;
+                    }
+
+                    // Update the global total balance
+                    const globalTotalBalanceElement = document.querySelector('.total-balance span');
+                    if (globalTotalBalanceElement && data.total_balance_all_exchanges) {
+                        globalTotalBalanceElement.textContent = `Total Balance: $${parseFloat(data.total_balance_all_exchanges).toFixed(2)}`;
+                    }
+
+                    // Update the pie chart for the exchange
+                    const pieChartCanvas = card.querySelector(`#pieChart-${exchangeName}`);
+                    if (pieChartCanvas) {
+                        const ctx = pieChartCanvas.getContext('2d');
+                        const chart = new Chart(ctx, {
+                            type: 'pie',
+                            data: {
+                                labels: Object.keys(data.balances),
+                                datasets: [{
+                                    data: Object.values(data.balances),
+                                    backgroundColor: [
+                                        '#4e79a7', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
+                                    ],
+                                    borderColor: '#1a1a1a',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: {
+                                            color: '#ffffff'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // Show success notification
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Balance Synced',
+                        text: `Balances for ${exchangeName} refreshed!`,
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'swal2-dark',
+                        },
+                    });
+                } else {
+                    // Show error notification
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to refresh balances.',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'swal2-dark',
+                        },
+                    });
+                }
+            })
+            .catch(error => {
+                // Remove the spinner
+                card.removeChild(spinner);
+
+                // Show error notification
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while refreshing balances.',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'swal2-dark',
+                    },
+                });
+                console.error('Error:', error);
+            });
+    }
+
+    function refreshAllBalances() {
+        const exchangeCards = document.querySelectorAll('[data-exchange]');
+        exchangeCards.forEach(card => {
+            const exchangeName = card.getAttribute('data-exchange');
+            refreshBalances(exchangeName);
+        });
+    }
+
+    const autoSyncIntervals = {};
+
+    // Function to toggle auto-sync
+    function toggleAutoSync(exchangeName) {
+        const autoSyncCheckbox = document.getElementById(`autoSync-${exchangeName}`);
+
+        if (autoSyncCheckbox.checked) {
+            // Enable auto-sync
+            autoSyncIntervals[exchangeName] = setInterval(() => {
+                refreshBalances(exchangeName);
+            }, 300000); // 5 minutes = 300,000 milliseconds
+
+            // Show success notification
+            Swal.fire({
+                icon: 'success',
+                title: 'Auto-Sync Enabled',
+                text: `Balances for ${exchangeName} will sync every 5 minutes.`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-dark',
+                },
+            });
+        } else {
+            // Disable auto-sync
+            if (autoSyncIntervals[exchangeName]) {
+                clearInterval(autoSyncIntervals[exchangeName]);
+                delete autoSyncIntervals[exchangeName];
+
+                // Show success notification
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Auto-Sync Disabled',
+                    text: `Auto-sync for ${exchangeName} has been turned off.`,
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'swal2-dark',
+                    },
+                });
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Pie Chart for Total Balance Allocation Across Exchanges
+        const totalBalanceCtx = document.getElementById('totalBalancePieChart').getContext('2d');
+        new Chart(totalBalanceCtx, {
+            type: 'pie',
+            data: {
+                labels: {{ exchange_names | tojson }},
+                datasets: [{
+                    data: {{ exchange_balances | tojson }},
+                    backgroundColor: [
+                        '#f8bc04', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
+                    ],
+                    borderColor: '#1a1a1a',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    }
                 }
             }
+        });
 
-            // Update the total balance for the exchange
-            const totalBalanceElement = card.querySelector('.total-balance');
-            if (totalBalanceElement && data.total_balance_usd) {
-                totalBalanceElement.textContent = `Balance: $${parseFloat(data.total_balance_usd).toFixed(2)}`;
-            }
-
-            // Update the global total balance
-            const globalTotalBalanceElement = document.querySelector('.total-balance span');
-            if (globalTotalBalanceElement && data.total_balance_all_exchanges) {
-                globalTotalBalanceElement.textContent = `Total Balance: $${parseFloat(data.total_balance_all_exchanges).toFixed(2)}`;
-            }
-
-            // Update the pie chart for the exchange
-            const pieChartCanvas = card.querySelector(`#pieChart-${exchangeName}`);
-            if (pieChartCanvas) {
-                const ctx = pieChartCanvas.getContext('2d');
-                const chart = new Chart(ctx, {
+        // Pie Charts for Each Exchange
+        {% for exchange in exchange_data %}
+            {% if exchange.api_key_exists and exchange.balances %}
+                const ctx = document.getElementById(`pieChart-{{ exchange.name }}`).getContext('2d');
+                new Chart(ctx, {
                     type: 'pie',
                     data: {
-                        labels: Object.keys(data.balances),
+                        labels: {{ exchange.balances.keys() | list | tojson }},
                         datasets: [{
-                            data: Object.values(data.balances),
+                            data: {{ exchange.balances.values() | list | tojson }},
                             backgroundColor: [
                                 '#4e79a7', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
                             ],
@@ -622,196 +801,23 @@ function refreshBalances(exchangeName) {
                         }
                     }
                 });
-            }
-
-            // Show success notification
-            Swal.fire({
-                icon: 'success',
-                title: 'Balance Synced',
-                text: `Balances for ${exchangeName} refreshed!`,
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'swal2-dark',
-                },
-            });
-        } else {
-            // Show error notification
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: data.message || 'Failed to refresh balances.',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'swal2-dark',
-                },
-            });
-        }
-    })
-    .catch(error => {
-        // Remove the spinner
-        card.removeChild(spinner);
-
-        // Show error notification
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An error occurred while refreshing balances.',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            customClass: {
-                popup: 'swal2-dark',
-            },
-        });
-        console.error('Error:', error);
-    });
-}
-
-    function refreshAllBalances() {
-    const exchangeCards = document.querySelectorAll('[data-exchange]');
-    exchangeCards.forEach(card => {
-        const exchangeName = card.getAttribute('data-exchange');
-        refreshBalances(exchangeName);
-    });
-}
-
-    
-const autoSyncIntervals = {};
-
-// Function to toggle auto-sync
-function toggleAutoSync(exchangeName) {
-    const autoSyncCheckbox = document.getElementById(`autoSync-${exchangeName}`);
-
-    if (autoSyncCheckbox.checked) {
-        // Enable auto-sync
-        autoSyncIntervals[exchangeName] = setInterval(() => {
-            refreshBalances(exchangeName);
-        }, 300000); // 5 minutes = 300,000 milliseconds
-
-        // Show success notification
-        Swal.fire({
-            icon: 'success',
-            title: 'Auto-Sync Enabled',
-            text: `Balances for ${exchangeName} will sync every 5 minutes.`,
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            customClass: {
-                popup: 'swal2-dark',
-            },
-        });
-    } else {
-        // Disable auto-sync
-        if (autoSyncIntervals[exchangeName]) {
-            clearInterval(autoSyncIntervals[exchangeName]);
-            delete autoSyncIntervals[exchangeName];
-
-            // Show success notification
-            Swal.fire({
-                icon: 'info',
-                title: 'Auto-Sync Disabled',
-                text: `Auto-sync for ${exchangeName} has been turned off.`,
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'swal2-dark',
-                },
-            });
-        }
-    }
-}
-
-    document.addEventListener('DOMContentLoaded', function () {
-    // Pie Chart for Total Balance Allocation Across Exchanges
-    const totalBalanceCtx = document.getElementById('totalBalancePieChart').getContext('2d');
-    new Chart(totalBalanceCtx, {
-        type: 'pie',
-        data: {
-            labels: {{ exchange_names | tojson }},
-            datasets: [{
-                data: {{ exchange_balances | tojson }},
-                backgroundColor: [
-                    '#f8bc04', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
-                ],
-                borderColor: '#1a1a1a',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        color: '#ffffff'
-                    }
-                }
-            }
-        }
+            {% endif %}
+        {% endfor %}
     });
 
-    // Pie Charts for Each Exchange
-    {% for exchange in exchange_data %}
-        {% if exchange.api_key_exists and exchange.balances %}
-            const ctx = document.getElementById(`pieChart-{{ exchange.name }}`).getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: {{ exchange.balances.keys() | list | tojson }},
-                    datasets: [{
-                        data: {{ exchange.balances.values() | list | tojson }},
-                        backgroundColor: [
-                            '#4e79a7', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
-                        ],
-                        borderColor: '#1a1a1a',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: '#ffffff'
-                            }
-                        }
-                    }
-                }
-            });
-        {% endif %}
-    {% endfor %}
-});
     // Apply Filters
-   function applyFilters() {
-    const exchangeFilter = document.getElementById('exchangeFilter').value;
-    const typeFilter = document.getElementById('typeFilter').value;
-    const rows = document.querySelectorAll('.transaction-history tbody tr');
+    function applyFilters() {
+        const exchangeFilter = document.getElementById('exchangeFilter').value;
+        const typeFilter = document.getElementById('typeFilter').value;
+        const rows = document.querySelectorAll('.transaction-history tbody tr');
 
-    rows.forEach(row => {
-        const exchange = row.querySelector('td:nth-child(5)').textContent;
-        const type = row.querySelector('td:nth-child(1)').getAttribute('data-type'); // Use data-type attribute
-        const showExchange = exchangeFilter === 'all' || exchange === exchangeFilter;
-        const showType = typeFilter === 'all' || type === typeFilter.toLowerCase();
-        row.style.display = showExchange && showType ? '' : 'none';
-    });
-}
+        rows.forEach(row => {
+            const exchange = row.querySelector('td:nth-child(5)').textContent;
+            const type = row.querySelector('td:nth-child(1)').getAttribute('data-type'); // Use data-type attribute
+            const showExchange = exchangeFilter === 'all' || exchange === exchangeFilter;
+            const showType = typeFilter === 'all' || type === typeFilter.toLowerCase();
+            row.style.display = showExchange && showType ? '' : 'none';
+        });
+    }
 </script>
 {% endblock %}
