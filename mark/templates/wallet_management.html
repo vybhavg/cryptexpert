@@ -433,32 +433,32 @@ input:checked + .slider:before {
 
                     <!-- Display Balances -->
                     {% if exchange.api_key_exists %}
-                        <div class="mt-6">
-                            {% if exchange.balances %}
-                                {% if exchange.total_balance_usd %}
-                                    <p class="total-balance mb-4">Balance: ${{ "%.2f"|format(exchange.total_balance_usd) }}</p>
-                                {% endif %}
-                                <table class="crypto-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Coin</th>
-                                            <th>Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for coin, amount in exchange.balances.items() %}
-                                            <tr>
-                                                <td class="text-yellow">{{ coin }}</td>
-                                                <td class="text-gray-300">{{ amount }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% else %}
-                                <p class="text-sm text-red-500">Failed to fetch balances. Please check your API key and permissions.</p>
-                            {% endif %}
-                        </div>
-                    {% endif %}
+    <div class="mt-6">
+        {% if exchange.balances %}
+            {% if exchange.total_balance_usd %}
+                <p class="total-balance mb-4">Balance: ${{ "%.2f"|format(exchange.total_balance_usd) }}</p>
+            {% endif %}
+            <table class="crypto-table">
+                <thead>
+                    <tr>
+                        <th>Coin</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for coin, amount in exchange.balances.items() %}
+                        <tr>
+                            <td class="text-yellow">{{ coin }}</td>
+                            <td class="text-gray-300">{{ amount }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-sm text-gray-400">No balances found.</p>
+        {% endif %}
+    </div>
+{% endif %}
 
                     <!-- Portfolio Allocation Pie Chart -->
                     {% if exchange.api_key_exists %}
