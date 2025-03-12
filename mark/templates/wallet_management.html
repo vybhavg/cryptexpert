@@ -514,7 +514,7 @@ function toggleAutoSync(exchangeName) {
         // Enable auto-sync
         autoSyncIntervals[exchangeName] = setInterval(() => {
             refreshBalances(exchangeName);
-        }, 300000); // 5 minutes = 300,000 milliseconds
+        }, 5000); // 5 minutes = 300,000 milliseconds
 
         // Show success notification
         Swal.fire({
