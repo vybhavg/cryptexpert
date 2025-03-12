@@ -344,7 +344,7 @@ input:checked + .slider:before {
                         <div class="mt-6">
                             {% if exchange.balances %}
                                 {% if exchange.total_balance_usd %}
-                                    <p class="total-balance mb-4">Balance: ${{ exchange.total_balance_usd }}</p>
+                                    <p class="total-balance mb-4">Balance: ${{ "%.2f"|format(exchange.total_balance_usd) }}</p>
                                 {% endif %}
                                 <table class="crypto-table">
                                     <thead>
