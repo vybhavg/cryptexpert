@@ -819,20 +819,6 @@ async def get_binance_balances_async(api_key, api_secret):
             await client.close_connection()
             logging.debug("Binance client connection closed.")
 
-async def get_binance_transaction_history(api_key, api_secret):
-    """Fetches transaction history from Binance."""
-    client = None
-    try:
-        client = await AsyncClient.create(api_key, api_secret)
-        trades = await client.get_my_trades()
-        return trades
-    except Exception as e:
-        logging.error(f"Error fetching Binance transaction history: {e}")
-        return []
-    finally:
-        if client:
-            await client.close_connection()
-
 
 async def get_binance_transaction_history(api_key, api_secret):
     """Fetches transaction history from Binance for all symbols."""
