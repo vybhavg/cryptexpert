@@ -487,10 +487,11 @@ input:checked + .slider:before {
             }
 
             // Update the total balance
-            const totalBalanceElement = card.querySelector('.total-balance');
-            if (totalBalanceElement && data.total_balance_usd) {
-                totalBalanceElement.textContent = `Balance: $${data.total_balance_usd}`;
-            }
+           const totalBalanceElement = card.querySelector('.total-balance');
+if (totalBalanceElement && data.total_balance_usd) {
+    totalBalanceElement.textContent = `Balance: $${parseFloat(data.total_balance_usd).toFixed(2)}`;
+}
+
 
             // Update the pie chart for the exchange
             const pieChartCanvas = card.querySelector(`#pieChart-${exchangeName}`);
