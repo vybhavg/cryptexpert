@@ -184,30 +184,91 @@ input:checked + .slider:before {
             color: #ffffff;
         }
 
-        /* Table Styling */
-        .crypto-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .crypto-table th,
-        .crypto-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .crypto-table th {
-            background-color: #1a1a1a;
-            color: #f8bc04;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
-        .crypto-table tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-        .crypto-table tr:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
+       /* Transaction Table Styling */
+.transaction-history {
+    max-height: 400px; /* Increased height for better visibility */
+    overflow-y: auto;
+    margin-top: 1rem;
+}
+
+.crypto-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.crypto-table th,
+.crypto-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1rem; /* Slightly larger font size */
+    color: #ffffff; /* White text color */
+}
+
+.crypto-table th {
+    background-color: #1a1a1a;
+    color: #f8bc04; /* Yellow heading text */
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+.crypto-table tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.crypto-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Type Column Styling */
+.crypto-table td:nth-child(1) {
+    font-weight: 600;
+}
+
+.crypto-table td[data-type="buy"] {
+    color: #4caf50; /* Green for Buy */
+}
+
+.crypto-table td[data-type="sell"] {
+    color: #f44336; /* Red for Sell */
+}
+
+/* Filter Options Styling */
+.filter-options {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.filter-options select,
+.filter-options button {
+    padding: 8px 12px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-options select:hover,
+.filter-options button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.filter-options button {
+    background-color: #f8bc04;
+    color: #000000;
+    font-weight: 600;
+}
+
+.filter-options button:hover {
+    background-color: #ffd700; /* Brighter yellow on hover */
+}
 
         /* Loading Spinner */
         .loading-spinner {
@@ -396,6 +457,24 @@ input:checked + .slider:before {
 
 <div class="mt-8">
     <h2 class="crypto-subheading mb-4">Transaction History</h2>
+
+    <!-- Filter Options -->
+<div class="filter-options">
+    <select id="exchangeFilter">
+        <option value="all">All Exchanges</option>
+        {% for exchange in exchange_data %}
+            <option value="{{ exchange.name }}">{{ exchange.name }}</option>
+        {% endfor %}
+    </select>
+    <select id="typeFilter">
+        <option value="all">All Types</option>
+        <option value="buy">Buy</option>
+        <option value="sell">Sell</option>
+        <option value="withdraw">Withdraw</option>
+        <option value="deposit">Deposit</option>
+    </select>
+    <button onclick="applyFilters()">Apply Filters</button>
+</div>
     <div class="transaction-history">
         <table class="crypto-table">
             <thead>
@@ -423,26 +502,6 @@ input:checked + .slider:before {
 </div>
 
 
-        <!-- Filter Options -->
-        <div class="mt-8">
-            <h2 class="crypto-subheading mb-4">Filter Options</h2>
-            <div class="flex space-x-4">
-                <select id="exchangeFilter" class="p-2 bg-gray-800 text-white rounded-md">
-                    <option value="all">All Exchanges</option>
-                    {% for exchange in exchange_data %}
-                        <option value="{{ exchange.name }}">{{ exchange.name }}</option>
-                    {% endfor %}
-                </select>
-                <select id="typeFilter" class="p-2 bg-gray-800 text-white rounded-md">
-                    <option value="all">All Types</option>
-                    <option value="buy">Buy</option>
-                    <option value="sell">Sell</option>
-                    <option value="withdraw">Withdraw</option>
-                    <option value="deposit">Deposit</option>
-                </select>
-                <button onclick="applyFilters()" class="crypto-button">Apply Filters</button>
-            </div>
-        </div>
     </div>
 </div>
 
