@@ -20,28 +20,14 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-
         }
 
         /* Hover Effect for Cards */
         .card-hover {
             transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-
-
-
-
-
-
-
-
-
-
-
         }
         .card-hover:hover {
             transform: translateY(-5px);
-
-
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
         }
 
@@ -55,8 +41,8 @@
             transition: all 0.3s ease-in-out;
         }
         .crypto-button:hover {
-            background-color: #ff6b6b;
-            color: #ffffff;
+            background-color: #ffd700; /* Brighter yellow on hover */
+            color: #000000;
         }
 
         /* Exchange Logo Size */
@@ -109,25 +95,59 @@
             background-color: #1a1a1a;
             color: #f8bc04;
             font-weight: 600;
+            position: sticky;
+            top: 0;
         }
-        .crypto-table tr:hover {
+        .crypto-table tr:nth-child(even) {
             background-color: rgba(255, 255, 255, 0.05);
         }
+        .crypto-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
 
+        /* Loading Spinner */
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #f8bc04;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-
-
-
-
-
-
+        /* Gradient Background for Connected Exchanges */
+        .connected-exchanges {
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
 <div class="min-h-screen dark-bg text-white py-12 px-4 sm:px-6 lg:px-8" style="margin-top:75px;">
     <div class="max-w-6xl mx-auto">
-        <h1 class="crypto-heading mb-8">Wallet</h1>
+        <h1 class="crypto-heading mb-8">Wallet Management</h1>
+
+        <!-- Connected Exchanges Summary -->
+        <div class="connected-exchanges">
+            <h2 class="crypto-subheading mb-4">Connected Exchanges</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {% for exchange in exchange_data %}
+                    {% if exchange.api_key_exists %}
+                        <div class="flex items-center space-x-3">
+                            <img src="{{ exchange.logo_url }}" alt="{{ exchange.name }} Logo" class="exchange-logo">
+                            <span class="crypto-text">{{ exchange.name }}</span>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
 
         <!-- List of Exchanges -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -136,9 +156,7 @@
                     <div class="flex items-center justify-between">
                         <!-- Left Side: Logo and Exchange Name -->
                         <div class="flex items-center space-x-4">
-                            <img src="{{ exchange.logo_url }}"
-                                 alt="{{ exchange.name }} Logo"
-                                 class="exchange-logo">
+                            <img src="{{ exchange.logo_url }}" alt="{{ exchange.name }} Logo" class="exchange-logo">
                             <h2 class="crypto-subheading">{{ exchange.name }}</h2>
                         </div>
 
@@ -148,11 +166,13 @@
                                 <form method="POST" action="{{ url_for('wallet_management') }}">
                                     <input type="hidden" name="delete_api_key" value="true">
                                     <input type="hidden" name="exchange" value="{{ exchange.name }}">
-                                    <button type="submit"
-                                            class="crypto-button btn-hover">
+                                    <button type="submit" class="crypto-button">
                                         Delete API Key
                                     </button>
                                 </form>
+                                <button onclick="refreshBalances('{{ exchange.name }}')" class="crypto-button">
+                                    Refresh Balances
+                                </button>
                             {% endif %}
                         </div>
                     </div>
@@ -160,8 +180,7 @@
                     <!-- API Key Form (Hidden by Default) -->
                     {% if not exchange.api_key_exists %}
                         <div class="flex justify-center mt-6">
-                            <button onclick="toggleForm('{{ exchange.name }}')"
-                                    class="crypto-button btn-hover">
+                            <button onclick="toggleForm('{{ exchange.name }}')" class="crypto-button">
                                 Submit API Key
                             </button>
                         </div>
@@ -178,8 +197,7 @@
                                 <input type="text" id="api_secret" name="api_secret" required
                                        class="mt-1 block w-full p-3 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-white focus:ring-yellow focus:border-yellow sm:text-sm">
                             </div>
-                            <button type="submit"
-                                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow btn-hover">
+                            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow">
                                 Submit API Key
                             </button>
                         </form>
@@ -219,18 +237,24 @@
     </div>
 </div>
 
-<!-- JavaScript to Toggle API Key Form -->
+<!-- JavaScript to Toggle API Key Form and Refresh Balances -->
 <script>
     function toggleForm(exchangeName) {
         const form = document.getElementById(`form-${exchangeName}`);
         form.classList.toggle('hidden');
     }
 
+    function refreshBalances(exchangeName) {
+        const card = document.querySelector(`[data-exchange="${exchangeName}"]`);
+        const spinner = document.createElement('div');
+        spinner.className = 'loading-spinner';
+        card.appendChild(spinner);
 
-
-
-
-
-
+        // Simulate API call to refresh balances
+        setTimeout(() => {
+            card.removeChild(spinner);
+            alert(`Balances for ${exchangeName} refreshed!`);
+        }, 2000);
+    }
 </script>
 {% endblock %}
