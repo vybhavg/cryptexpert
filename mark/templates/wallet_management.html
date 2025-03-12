@@ -7,6 +7,10 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Include Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Include SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom CSS for Advanced Styling -->
     <style>
         /* Dark Mode Background */
@@ -72,36 +76,6 @@
             font-size: 1rem;
             color: #a0aec0;
         }
-        /* Dark Mode SweetAlert2 Toast */
-.swal2-dark {
-    background-color: #1a1a1a; /* Dark background */
-    color: #ffffff; /* White text */
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
-
-/* Ensure the toast applies the dark mode styles correctly */
-.swal2-toast.swal2-dark {
-    background-color: #1a1a1a; /* Ensure toast inherits dark background */
-    color: #ffffff; /* White text */
-}
-
-.swal2-toast.swal2-dark .swal2-title {
-    color: #ffffff; /* White title text */
-}
-
-.swal2-toast.swal2-dark .swal2-html-container {
-    color: #cccccc; /* Light gray content text */
-}
-
-.swal2-toast.swal2-dark .swal2-icon {
-    color: #f8bc04; /* Yellow icon */
-}
-
-/* Ensure the timer progress bar is styled correctly */
-.swal2-toast.swal2-dark .swal2-timer-progress-bar {
-    background: #f8bc04 !important; /* Yellow progress bar */
-}
 
         /* Total Balance Styling */
         .total-balance {
@@ -156,12 +130,39 @@
             padding: 1.5rem;
             margin-bottom: 2rem;
         }
+
+        /* Pie Chart Container */
+        .pie-chart-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Dark Mode SweetAlert2 Toast */
+        .swal2-dark {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+        .swal2-dark .swal2-title {
+            color: #ffffff;
+        }
+        .swal2-dark .swal2-html-container {
+            color: #cccccc;
+        }
+        .swal2-dark .swal2-icon {
+            color: #f8bc04;
+        }
+        .swal2-dark .swal2-timer-progress-bar {
+            background: #f8bc04 !important;
+        }
     </style>
 {% endblock %}
+
 {% block content %}
 <div class="min-h-screen dark-bg text-white py-12 px-4 sm:px-6 lg:px-8" style="margin-top:75px;">
     <div class="max-w-6xl mx-auto">
-        <h1 class="crypto-heading mb-8">Wallets</h1>
+        <h1 class="crypto-heading mb-8">Wallet Management</h1>
 
         <!-- Connected Exchanges Summary -->
         <div class="connected-exchanges">
@@ -176,6 +177,21 @@
                     {% endif %}
                 {% endfor %}
             </div>
+        </div>
+
+        <!-- Auto-Sync Toggle -->
+        <div class="flex justify-end mb-6">
+            <label class="flex items-center space-x-2">
+                <span class="crypto-text">Auto-Sync Every 5 Minutes</span>
+                <input type="checkbox" id="auto-sync-toggle" class="toggle-checkbox">
+                <div class="toggle-switch"></div>
+            </label>
+        </div>
+
+        <!-- Portfolio Allocation Pie Chart -->
+        <div class="pie-chart-container mb-12">
+            <h2 class="crypto-subheading mb-4">Portfolio Allocation</h2>
+            <canvas id="portfolioPieChart"></canvas>
         </div>
 
         <!-- List of Exchanges -->
@@ -260,6 +276,36 @@
                             {% endif %}
                         </div>
                     {% endif %}
+
+                    <!-- Exchange Fees -->
+                    <div class="mt-6">
+                        <h3 class="crypto-subheading mb-4">Fees</h3>
+                        <p class="crypto-text">Withdrawal Fee: ${{ exchange.withdrawal_fee }}</p>
+                        <p class="crypto-text">Trading Fee: {{ exchange.trading_fee }}%</p>
+                    </div>
+
+                    <!-- Transaction History -->
+                    <div class="mt-6">
+                        <h3 class="crypto-subheading mb-4">Recent Transactions</h3>
+                        <table class="crypto-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in exchange.transactions %}
+                                    <tr>
+                                        <td class="text-yellow">{{ transaction.type }}</td>
+                                        <td class="text-gray-300">{{ transaction.amount }}</td>
+                                        <td class="text-gray-300">{{ transaction.date }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             {% endfor %}
         </div>
@@ -282,22 +328,50 @@
         // Simulate API call to refresh balances
         setTimeout(() => {
             card.removeChild(spinner);
-            // Show a SweetAlert2 toast notification in dark mode
-Swal.fire({
-    icon: 'success',
-    title: 'Balance Synced',
-    text: `Balances for ${exchangeName} refreshed!`,
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000, // Auto-close after 3 seconds
-    timerProgressBar: true,
-    customClass: {
-        popup: 'swal2-dark', // Apply the dark mode class
-    },
-});
-            // You can replace this with an actual API call to refresh balances
+            Swal.fire({
+                icon: 'success',
+                title: 'Balance Synced',
+                text: `Balances for ${exchangeName} refreshed!`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-dark',
+                },
+            });
         }, 2000);
     }
+
+    // Initialize Portfolio Pie Chart
+    const portfolioPieChart = new Chart(document.getElementById('portfolioPieChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Bitcoin', 'Ethereum', 'Binance Coin', 'Others'],
+            datasets: [{
+                data: [40, 30, 20, 10],
+                backgroundColor: ['#f8bc04', '#627eea', '#f3ba2f', '#a0aec0'],
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+        },
+    });
+
+    // Auto-Sync Toggle
+    const autoSyncToggle = document.getElementById('auto-sync-toggle');
+    let autoSyncInterval;
+
+    autoSyncToggle.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            autoSyncInterval = setInterval(() => {
+                refreshBalances('Binance'); // Replace with actual logic
+            }, 300000); // 5 minutes
+        } else {
+            clearInterval(autoSyncInterval);
+        }
+    });
 </script>
 {% endblock %}
