@@ -372,18 +372,20 @@ def otp_form():
     next_page = request.args.get('next')  # Get the 'next' parameter
     try:
         msg = Message('Cryptexpert OTP Verification', recipients=[email])
-        msg.body = f'''
-        Dear Valued User,
-        
-        Your One-Time Password (OTP) for Cryptexpert authentication is: **{otp}**  
-        This OTP is valid for a limited time. Please do not share it with anyone.
-        
-        If you did not request this OTP, please ignore this email.  
-        
-        Best regards,  
-        **Cryptexpert Team**  
-        Secure Your Crypto Investments with Confidence.
-        '''
+        msg.html = f'''
+    <p>Dear Valued User,</p>
+
+    <p>Your One-Time Password (OTP) for Cryptexpert authentication is: <b>{otp}</b></p>
+    
+    <p>This OTP is valid for a limited time. Please do not share it with anyone.</p>
+    
+    <p>If you did not request this OTP, please ignore this email.</p>
+    
+    <p>Best regards,<br>
+    <b>Cryptexpert Team</b><br>
+    Secure Your Crypto Investments with Confidence.</p>
+'''
+
         mail.send(msg)
         flash("OTP sent successfully", "success")
         return redirect(url_for('verify_form', next=next_page))  # Pass 'next' to verify form
