@@ -394,34 +394,34 @@ input:checked + .slider:before {
             {% endfor %}
         </div>
 
-        <!-- Transaction History Section -->
-        <div class="mt-8">
-            <h2 class="crypto-subheading mb-4">Transaction History</h2>
-            <div class="transaction-history">
-                <table class="crypto-table">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Amount</th>
-                            <th>Fee</th>
-                            <th>Date</th>
-                            <th>Exchange</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for transaction in all_transactions %}
-                            <tr>
-                                <td>{{ transaction }}</td>
-                                <td>{{ transaction.amount }}</td>
-                                <td>{{ transaction.fee }}</td>
-                                <td>{{ transaction.date }}</td>
-                                <td>{{ transaction.exchange }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<div class="mt-8">
+    <h2 class="crypto-subheading mb-4">Transaction History</h2>
+    <div class="transaction-history">
+        <table class="crypto-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Fee</th>
+                    <th>Date</th>
+                    <th>Exchange</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in all_transactions %}
+                    <tr>
+                        <td>{{ 'Buy' if transaction.isBuyer else 'Sell' }}</td>
+                        <td>{{ transaction.qty | float | round(8) }} BTC</td>
+                        <td>{{ transaction.commission }} {{ transaction.commissionAsset }}</td>
+                        <td>{{ transaction.time | datetimeformat }}</td>
+                        <td>{{ transaction.exchange }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
         <!-- Filter Options -->
         <div class="mt-8">
