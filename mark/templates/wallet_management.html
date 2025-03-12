@@ -330,6 +330,16 @@ input:checked + .slider:before {
             justify-content: space-between;
             margin-top: 1rem;
         }
+        .total-balance {
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.total-balance button {
+    margin-left: 1rem;
+}
     </style>
 {% endblock %}
 
@@ -338,9 +348,12 @@ input:checked + .slider:before {
     <div class="max-w-6xl mx-auto">
         <h1 class="crypto-heading mb-8">Wallets</h1>
 
-        <!-- Total Balance Across All Exchanges -->
-        <div class="total-balance mb-8">
-    Total Balance: ${{ "%.2f"|format(total_balance_all_exchanges) }}
+   <!-- Total Balance and Refresh All Button -->
+<div class="total-balance mb-8 flex items-center justify-between">
+    <span>Total Balance: ${{ "%.2f"|format(total_balance_all_exchanges) }}</span>
+    <button onclick="refreshAllBalances()" class="crypto-button text-sm px-3 py-2">
+        <i class="fas fa-sync-alt"></i> Refresh All Balances
+    </button>
 </div>
 
   <!-- Connected Exchanges Summary -->
@@ -534,7 +547,7 @@ input:checked + .slider:before {
         form.classList.toggle('hidden');
     }
 
-    function refreshBalances(exchangeName) {
+function refreshBalances(exchangeName) {
     const card = document.querySelector(`[data-exchange="${exchangeName}"]`);
     const spinner = document.createElement('div');
     spinner.className = 'loading-spinner';
@@ -567,12 +580,17 @@ input:checked + .slider:before {
                 }
             }
 
-            // Update the total balance
-           const totalBalanceElement = card.querySelector('.total-balance');
-if (totalBalanceElement && data.total_balance_usd) {
-    totalBalanceElement.textContent = `Balance: $${parseFloat(data.total_balance_usd).toFixed(2)}`;
-}
+            // Update the total balance for the exchange
+            const totalBalanceElement = card.querySelector('.total-balance');
+            if (totalBalanceElement && data.total_balance_usd) {
+                totalBalanceElement.textContent = `Balance: $${parseFloat(data.total_balance_usd).toFixed(2)}`;
+            }
 
+            // Update the global total balance
+            const globalTotalBalanceElement = document.querySelector('.total-balance span');
+            if (globalTotalBalanceElement && data.total_balance_all_exchanges) {
+                globalTotalBalanceElement.textContent = `Total Balance: $${parseFloat(data.total_balance_all_exchanges).toFixed(2)}`;
+            }
 
             // Update the pie chart for the exchange
             const pieChartCanvas = card.querySelector(`#pieChart-${exchangeName}`);
@@ -659,6 +677,15 @@ if (totalBalanceElement && data.total_balance_usd) {
     });
 }
 
+    function refreshAllBalances() {
+    const exchangeCards = document.querySelectorAll('[data-exchange]');
+    exchangeCards.forEach(card => {
+        const exchangeName = card.getAttribute('data-exchange');
+        refreshBalances(exchangeName);
+    });
+}
+
+    
 const autoSyncIntervals = {};
 
 // Function to toggle auto-sync
