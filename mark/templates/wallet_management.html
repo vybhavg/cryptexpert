@@ -128,7 +128,6 @@
         }
     </style>
 {% endblock %}
-
 {% block content %}
 <div class="min-h-screen dark-bg text-white py-12 px-4 sm:px-6 lg:px-8" style="margin-top:75px;">
     <div class="max-w-6xl mx-auto">
@@ -152,8 +151,8 @@
         <!-- List of Exchanges -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for exchange in exchange_data %}
-                <div class="p-6 rounded-lg card-bg card-hover">
-                    <div class="flex items-center justify-between">
+                <div class="p-6 rounded-lg card-bg card-hover" data-exchange="{{ exchange.name }}">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
                         <!-- Left Side: Logo and Exchange Name -->
                         <div class="flex items-center space-x-4">
                             <img src="{{ exchange.logo_url }}" alt="{{ exchange.name }} Logo" class="exchange-logo">
@@ -161,16 +160,16 @@
                         </div>
 
                         <!-- Right Side: Action Buttons -->
-                        <div class="flex space-x-4">
+                        <div class="flex space-x-2">
                             {% if exchange.api_key_exists %}
                                 <form method="POST" action="{{ url_for('wallet_management') }}">
                                     <input type="hidden" name="delete_api_key" value="true">
                                     <input type="hidden" name="exchange" value="{{ exchange.name }}">
-                                    <button type="submit" class="crypto-button">
+                                    <button type="submit" class="crypto-button text-sm px-3 py-2">
                                         Delete API Key
                                     </button>
                                 </form>
-                                <button onclick="refreshBalances('{{ exchange.name }}')" class="crypto-button">
+                                <button onclick="refreshBalances('{{ exchange.name }}')" class="crypto-button text-sm px-3 py-2">
                                     Refresh Balances
                                 </button>
                             {% endif %}
@@ -254,6 +253,7 @@
         setTimeout(() => {
             card.removeChild(spinner);
             alert(`Balances for ${exchangeName} refreshed!`);
+            // You can replace this with an actual API call to refresh balances
         }, 2000);
     }
 </script>
