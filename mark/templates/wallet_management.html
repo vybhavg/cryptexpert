@@ -50,9 +50,7 @@
     border-radius: 50%; /* Circular shape */
 }
 
-input:checked + .slider {
-    background-color: #4CAF50; /* Green background when checked */
-}
+
 
 input:checked + .slider:before {
     transform: translateX(26px); /* Move the circle to the right */
@@ -63,13 +61,11 @@ input:checked + .slider:before {
     background-color: #444; /* Slightly lighter gray for dark mode */
 }
 
-.dark-bg input:checked + .slider {
-    background-color: #4CAF50; /* Green background when checked */
-}
-
-.dark-bg .slider:before {
+.dark-bg input:checked + .slider:before {
     background-color: #f8bc04; /* Yellow circle */
 }
+
+
         .auto-sync-toggle {
     display: flex;
     align-items: center;
