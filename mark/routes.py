@@ -874,7 +874,6 @@ def datetimeformat(value):
 
 app.jinja_env.filters['datetimeformat'] = datetimeformat
 
-
 import requests
 import time
 import hmac
@@ -884,34 +883,47 @@ import logging
 def get_coinbase_balances(api_key, api_secret):
     """Fetches wallet balances from Coinbase."""
     try:
-        # Get the current timestamp
+        # Step 1: Get the current timestamp (in seconds)
         timestamp = str(int(time.time()))
 
-        # Create the message to sign
+        # Step 2: Create the message to sign
+        # Format: timestamp + HTTP method + request path
         message = timestamp + "GET" + "/v2/accounts"
+
+        # Step 3: Generate the signature using HMAC-SHA256
         signature = hmac.new(api_secret.encode(), message.encode(), hashlib.sha256).hexdigest()
 
-        # Set up the headers
+        # Step 4: Set up the headers
         headers = {
             "Accept": "application/json",
-            "CB-ACCESS-KEY": api_key,
-            "CB-ACCESS-SIGN": signature,
-            "CB-ACCESS-TIMESTAMP": timestamp,
+            "CB-ACCESS-KEY": api_key,          # Your API key
+            "CB-ACCESS-SIGN": signature,       # Generated signature
+            "CB-ACCESS-TIMESTAMP": timestamp,  # Current timestamp
         }
 
-        # Make the request
+        # Step 5: Make the request
         response = requests.get("https://api.coinbase.com/v2/accounts", headers=headers)
 
+        # Step 6: Handle the response
         if response.status_code == 200:
             data = response.json()
-            balances = {account["currency"]: float(account["balance"]["amount"]) for account in data["data"] if float(account["balance"]["amount"]) > 0}
-            return balances, sum(balances.values())  # Return balances and total balance
+            # Extract non-zero balances
+            balances = {
+                account["currency"]: float(account["balance"]["amount"])
+                for account in data["data"]
+                if float(account["balance"]["amount"]) > 0
+            }
+            # Calculate total balance in USD (if needed)
+            total_balance_usd = sum(balances.values())
+            return balances, total_balance_usd
 
         else:
+            # Log the error if the request fails
             logging.error(f"Coinbase API Error: {response.status_code} - {response.text}")
             return None, 0.0
 
     except Exception as e:
+        # Log any unexpected errors
         logging.error(f"Coinbase API Error: {e}")
         return None, 0.0
 
