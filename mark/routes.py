@@ -909,9 +909,15 @@ def get_coindcx_balances(api_key, api_secret):
         url = "https://api.coindcx.com/exchange/v1/users/balances"
         response = requests.post(url, data=json_body, headers=headers)
 
+        # Log the raw response for debugging
+        print("API Response:", response.text)
+
         # Step 6: Handle the response
         if response.status_code == 200:
             data = response.json()
+            # Log the parsed data for debugging
+            print("Parsed Data:", data)
+
             # Extract non-zero balances
             balances = {
                 balance["currency"]: float(balance["balance"])
@@ -931,7 +937,6 @@ def get_coindcx_balances(api_key, api_secret):
         # Log any unexpected errors
         logging.error(f"CoinDCX API Error: {e}")
         return None, 0.0
-
 
 @app.route("/wallet_management", methods=["GET", "POST"])
 @login_required
