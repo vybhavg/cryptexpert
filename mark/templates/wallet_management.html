@@ -184,11 +184,14 @@ input:checked + .slider:before {
             color: #ffffff;
         }
 
-       /* Transaction Table Styling */
+/* Transaction Table Styling */
 .transaction-history {
     max-height: 400px; /* Increased height for better visibility */
     overflow-y: auto;
     margin-top: 1rem;
+    background-color: #1a1a1a; /* Dark background for the table container */
+    border-radius: 8px; /* Rounded corners */
+    padding: 1rem; /* Padding for better spacing */
 }
 
 .crypto-table {
@@ -222,16 +225,35 @@ input:checked + .slider:before {
 }
 
 /* Type Column Styling */
-.crypto-table td:nth-child(1) {
-    font-weight: 600;
-}
-
 .crypto-table td[data-type="buy"] {
     color: #4caf50; /* Green for Buy */
+    font-weight: 600; /* Bold text for Buy */
 }
 
 .crypto-table td[data-type="sell"] {
     color: #f44336; /* Red for Sell */
+    font-weight: 600; /* Bold text for Sell */
+}
+
+/* Amount Column Styling */
+.crypto-table td:nth-child(2) {
+    font-family: monospace; /* Monospace font for better alignment of numbers */
+    color: #f8bc04; /* Yellow color for amount */
+}
+
+/* Fee Column Styling */
+.crypto-table td:nth-child(3) {
+    color: #a0aec0; /* Light gray for fee */
+}
+
+/* Date Column Styling */
+.crypto-table td:nth-child(4) {
+    color: #ffffff; /* White for date */
+}
+
+/* Exchange Column Styling */
+.crypto-table td:nth-child(5) {
+    color: #ffffff; /* White for exchange */
 }
 
 /* Filter Options Styling */
@@ -269,7 +291,6 @@ input:checked + .slider:before {
 .filter-options button:hover {
     background-color: #ffd700; /* Brighter yellow on hover */
 }
-
         /* Loading Spinner */
         .loading-spinner {
             border: 4px solid rgba(255, 255, 255, 0.3);
@@ -458,7 +479,7 @@ input:checked + .slider:before {
 <div class="mt-8">
     <h2 class="crypto-subheading mb-4">Transaction History</h2>
 
-    <!-- Filter Options -->
+ <!-- Filter Options -->
 <div class="filter-options">
     <select id="exchangeFilter">
         <option value="all">All Exchanges</option>
@@ -475,30 +496,34 @@ input:checked + .slider:before {
     </select>
     <button onclick="applyFilters()">Apply Filters</button>
 </div>
-    <div class="transaction-history">
-        <table class="crypto-table">
-            <thead>
+
+<!-- Transaction History Table -->
+<div class="transaction-history">
+    <table class="crypto-table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Fee</th>
+                <th>Date</th>
+                <th>Exchange</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in all_transactions %}
                 <tr>
-                    <th>Type</th>
-                    <th>Amount</th>
-                    <th>Fee</th>
-                    <th>Date</th>
-                    <th>Exchange</th>
+                    <td data-type="{{ 'buy' if transaction.isBuyer else 'sell' }}">
+                        {{ 'Buy' if transaction.isBuyer else 'Sell' }}
+                    </td>
+                    <td>{{ "%.8f"|format(transaction.qty | float) }} BTC</td>
+                    <td>{{ transaction.commission }} {{ transaction.commissionAsset }}</td>
+                    <td>{{ transaction.time | datetimeformat }}</td>
+                    <td>{{ transaction.exchange }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for transaction in all_transactions %}
-                    <tr>
-                        <td>{{ 'Buy' if transaction.isBuyer else 'Sell' }}</td>
-                        <td>{{ transaction.qty | float | round(8) }} BTC</td>
-                        <td>{{ transaction.commission }} {{ transaction.commissionAsset }}</td>
-                        <td>{{ transaction.time | datetimeformat }}</td>
-                        <td>{{ transaction.exchange }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 </div>
 
 
