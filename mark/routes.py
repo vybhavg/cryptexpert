@@ -821,7 +821,22 @@ async def get_binance_balances_async(api_key, api_secret):
 
 
 
-
+async def get_binance_transactions_async(api_key, api_secret):
+    """Fetches transaction history from Binance asynchronously."""
+    client = None
+    try:
+        client = await AsyncClient.create(api_key, api_secret)
+        trades = await client.get_my_trades(symbol='BTCUSDT')  # Example for BTCUSDT, you can loop through all symbols
+        return trades
+    except BinanceAPIException as e:
+        logging.error(f"Binance API Error: {e}")
+        return None
+    except Exception as e:
+        logging.error(f"Unexpected error in get_binance_transactions_async: {e}")
+        return None
+    finally:
+        if client:
+            await client.close_connection()
 
 
 
@@ -856,7 +871,6 @@ def get_coinbase_balances(api_key, api_secret):
     except Exception as e:
         print(f"Coinbase API Error: {e}")
         return None
-
 
 
 
@@ -925,46 +939,32 @@ def wallet_management():
     exchange_names = []
     exchange_balances = []
 
-
     for exchange in ["Binance", "OKX", "Coinbase"]:
         api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
         balances = None
         total_balance_usd = None
-        if exchange=="Binance":
-            logo_url="https://w7.pngwing.com/pngs/703/998/png-transparent-binance-binancecoin-blockchain-coin-blockchain-classic-icon-thumbnail.png"
-        elif exchange=="OKX":
-            logo_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Logo-OKX.png/768px-Logo-OKX.png"
+        transactions = None
 
-
+        if exchange == "Binance":
+            logo_url = "https://w7.pngwing.com/pngs/703/998/png-transparent-binance-binancecoin-blockchain-coin-blockchain-classic-icon-thumbnail.png"
+        elif exchange == "OKX":
+            logo_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Logo-OKX.png/768px-Logo-OKX.png"
         else:
-            logo_url="https://www.pngall.com/wp-content/uploads/15/Coinbase-Logo-PNG-Images.png"
+            logo_url = "https://www.pngall.com/wp-content/uploads/15/Coinbase-Logo-PNG-Images.png"
 
         if api_key_entry:
-            # Fetch balances if API key exists
+            # Fetch balances and transactions if API key exists
             api_key, api_secret = api_key_entry.get_api_keys()
             balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            if exchange == "Binance":
+                transactions = asyncio.run(get_binance_transactions_async(api_key, api_secret))
 
         exchange_data.append({
             "name": exchange,
             "api_key_exists": api_key_entry is not None,
             "balances": balances,
             "total_balance_usd": total_balance_usd,
+            "transactions": transactions,
             "logo_url": logo_url
         })
 
@@ -978,7 +978,6 @@ def wallet_management():
         exchange_names=exchange_names,
         exchange_balances=exchange_balances,
         total_balance_all_exchanges=sum(exchange_balances)  # Calculate total balance across all exchanges
-
     )
 
 @app.route("/delete_api_key/<int:api_id>", methods=["POST"])
