@@ -12,7 +12,6 @@
     <!-- Include Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom CSS for Advanced Styling -->
-    <style>
 <style>
     /* Dark Mode Background */
     .dark-bg {
@@ -25,14 +24,10 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 12px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     }
 
     /* Hover Effect for Cards */
-    .card-hover {
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    }
     .card-hover:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
@@ -43,7 +38,7 @@
         background-color: #f8bc04;
         color: #000000;
         font-weight: 600;
-        padding: 0.65rem 1.4rem;
+        padding: 0.5rem 1rem;
         border-radius: 0.5rem;
         transition: all 0.3s ease-in-out;
     }
@@ -163,34 +158,36 @@
     /* Grid Layout for Cards */
     .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 1.5rem;
     }
-
-    /* Flexbox for Card Content */
-    .flex {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    .grid-cols-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
     }
 
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .grid {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        }
-        .crypto-heading {
-            font-size: 1.5rem;
-        }
-        .crypto-subheading {
-            font-size: 1rem;
-        }
-        .crypto-text {
-            font-size: 0.875rem;
-        }
-        .total-balance {
-            font-size: 1.25rem;
-        }
+    /* Flex Utilities */
+    .flex {
+        display: flex;
+    }
+    .flex-wrap {
+        flex-wrap: wrap;
+    }
+    .items-center {
+        align-items: center;
+    }
+    .justify-between {
+        justify-content: space-between;
+    }
+    .space-x-2 > * + * {
+        margin-left: 0.5rem;
+    }
+    .space-x-4 > * + * {
+        margin-left: 1rem;
     }
 </style>
 {% endblock %}
