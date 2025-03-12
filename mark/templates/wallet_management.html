@@ -190,7 +190,7 @@
                         <div class="mt-6">
                             {% if exchange.balances %}
                                 {% if exchange.total_balance_usd %}
-                                    <p class="total-balance mb-4">Total Balance: ${{ exchange.total_balance_usd | truncate(2, true, '') }}</p>
+                                    <p class="total-balance mb-4">Total Balance: ${{ exchange.total_balance_usd }}</p>
                                 {% endif %}
                                 <table class="crypto-table">
                                     <thead>
@@ -203,7 +203,7 @@
                                         {% for coin, amount in exchange.balances.items() %}
                                             <tr>
                                                 <td class="text-yellow">{{ coin }}</td>
-                                                <td class="text-gray-300">{{ amount | truncate(2, true, '') }}</td>
+                                                <td class="text-gray-300">{{ amount }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
