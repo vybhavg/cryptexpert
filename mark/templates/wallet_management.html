@@ -330,16 +330,16 @@ input:checked + .slider:before {
             justify-content: space-between;
             margin-top: 1rem;
         }
+        .total-balance {
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-
-
-
-
-
-
-
-
-
+.total-balance button {
+    margin-left: 1rem;
+}
     </style>
 {% endblock %}
 
@@ -348,13 +348,13 @@ input:checked + .slider:before {
     <div class="max-w-6xl mx-auto">
         <h1 class="crypto-heading mb-8">Wallets</h1>
 
-        <!-- Total Balance and Refresh All Button -->
-        <div class="total-balance mb-8 flex items-center justify-between">
-            <span>Total Balance: ${{ "%.2f"|format(total_balance_all_exchanges) }}</span>
-            <button onclick="refreshAllBalances()" class="crypto-button text-sm px-3 py-2">
-                <i class="fas fa-sync-alt"></i> Refresh All Balances
-            </button>
-        </div>
+   <!-- Total Balance and Refresh All Button -->
+<div class="total-balance mb-8 flex items-center justify-between">
+    <span>Total Balance: ${{ "%.2f"|format(total_balance_all_exchanges) }}</span>
+    <button onclick="refreshAllBalances()" class="crypto-button text-sm px-3 py-2">
+        <i class="fas fa-sync-alt"></i> Refresh All Balances
+    </button>
+</div>
 
   <!-- Connected Exchanges Summary -->
         <div class="connected-exchanges">
@@ -433,32 +433,32 @@ input:checked + .slider:before {
 
                     <!-- Display Balances -->
                     {% if exchange.api_key_exists %}
-    <div class="mt-6">
-        {% if exchange.balances %}
-            {% if exchange.total_balance_usd %}
-                <p class="total-balance mb-4">Balance: ${{ "%.2f"|format(exchange.total_balance_usd) }}</p>
-            {% endif %}
-            <table class="crypto-table">
-                <thead>
-                    <tr>
-                        <th>Coin</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for coin, amount in exchange.balances.items() %}
-                        <tr>
-                            <td class="text-yellow">{{ coin }}</td>
-                            <td class="text-gray-300">{{ amount }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p class="text-lg text-gray-400 font-semibold text-center">No balances found.</p>
-        {% endif %}
-    </div>
-{% endif %}
+                        <div class="mt-6">
+                            {% if exchange.balances %}
+                                {% if exchange.total_balance_usd %}
+                                    <p class="total-balance mb-4">Balance: ${{ "%.2f"|format(exchange.total_balance_usd) }}</p>
+                                {% endif %}
+                                <table class="crypto-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Coin</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for coin, amount in exchange.balances.items() %}
+                                            <tr>
+                                                <td class="text-yellow">{{ coin }}</td>
+                                                <td class="text-gray-300">{{ amount }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p class="text-sm text-red-500">Failed to fetch balances. Please check your API key and permissions.</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
 
                     <!-- Portfolio Allocation Pie Chart -->
                     {% if exchange.api_key_exists %}
@@ -541,241 +541,67 @@ input:checked + .slider:before {
 </div>
 
 <!-- JavaScript to Toggle API Key Form, Refresh Balances, and Initialize Pie Charts -->
-<!-- JavaScript to Toggle API Key Form, Refresh Balances, and Initialize Pie Charts -->
 <script>
     function toggleForm(exchangeName) {
         const form = document.getElementById(`form-${exchangeName}`);
         form.classList.toggle('hidden');
     }
 
-    function refreshAllBalances() {
-        const exchangeCards = document.querySelectorAll('[data-exchange]');
-        exchangeCards.forEach(card => {
-            const exchangeName = card.getAttribute('data-exchange');
-            refreshBalances(exchangeName);
-        });
-    }
+function refreshBalances(exchangeName) {
+    const card = document.querySelector(`[data-exchange="${exchangeName}"]`);
+    const spinner = document.createElement('div');
+    spinner.className = 'loading-spinner';
+    card.appendChild(spinner);
 
-    function refreshBalances(exchangeName) {
-        const card = document.querySelector(`[data-exchange="${exchangeName}"]`);
-        const spinner = document.createElement('div');
-        spinner.className = 'loading-spinner';
-        card.appendChild(spinner);
+    // Make an API call to refresh balances
+    fetch(`/refresh_balances?exchange=${exchangeName}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Remove the spinner
+        card.removeChild(spinner);
 
-        // Make an API call to refresh balances
-        fetch(`/refresh_balances?exchange=${exchangeName}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                // Remove the spinner
-                card.removeChild(spinner);
-
-                if (data.success) {
-                    // Update the balances table
-                    const balancesTable = card.querySelector('.crypto-table tbody');
-                    if (balancesTable) {
-                        balancesTable.innerHTML = ''; // Clear existing rows
-                        for (const [coin, amount] of Object.entries(data.balances)) {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td class="text-yellow">${coin}</td>
-                                <td class="text-gray-300">${amount}</td>
-                            `;
-                            balancesTable.appendChild(row);
-                        }
-                    }
-
-                    // Update the total balance for the exchange
-                    const totalBalanceElement = card.querySelector('.total-balance');
-                    if (totalBalanceElement && data.total_balance_usd) {
-                        totalBalanceElement.textContent = `Balance: $${parseFloat(data.total_balance_usd).toFixed(2)}`;
-                    }
-
-                    // Update the global total balance
-                    const globalTotalBalanceElement = document.querySelector('.total-balance span');
-                    if (globalTotalBalanceElement && data.total_balance_all_exchanges) {
-                        globalTotalBalanceElement.textContent = `Total Balance: $${parseFloat(data.total_balance_all_exchanges).toFixed(2)}`;
-                    }
-
-                    // Update the pie chart for the exchange
-                    const pieChartCanvas = card.querySelector(`#pieChart-${exchangeName}`);
-                    if (pieChartCanvas) {
-                        const ctx = pieChartCanvas.getContext('2d');
-                        const chart = new Chart(ctx, {
-                            type: 'pie',
-                            data: {
-                                labels: Object.keys(data.balances),
-                                datasets: [{
-                                    data: Object.values(data.balances),
-                                    backgroundColor: [
-                                        '#4e79a7', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
-                                    ],
-                                    borderColor: '#1a1a1a',
-                                    borderWidth: 2
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        position: 'bottom',
-                                        labels: {
-                                            color: '#ffffff'
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
-
-                    // Show success notification
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Balance Synced',
-                        text: `Balances for ${exchangeName} refreshed!`,
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        customClass: {
-                            popup: 'swal2-dark',
-                        },
-                    });
-                } else {
-                    // Show error notification
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.message || 'Failed to refresh balances.',
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        customClass: {
-                            popup: 'swal2-dark',
-                        },
-                    });
-                }
-            })
-            .catch(error => {
-                // Remove the spinner
-                card.removeChild(spinner);
-
-                // Show error notification
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'An error occurred while refreshing balances.',
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    customClass: {
-                        popup: 'swal2-dark',
-                    },
-                });
-                console.error('Error:', error);
-            });
-    }
-
-    const autoSyncIntervals = {};
-
-    // Function to toggle auto-sync
-    function toggleAutoSync(exchangeName) {
-        const autoSyncCheckbox = document.getElementById(`autoSync-${exchangeName}`);
-
-        if (autoSyncCheckbox.checked) {
-            // Enable auto-sync
-            autoSyncIntervals[exchangeName] = setInterval(() => {
-                refreshBalances(exchangeName);
-            }, 300000); // 5 minutes = 300,000 milliseconds
-
-            // Show success notification
-            Swal.fire({
-                icon: 'success',
-                title: 'Auto-Sync Enabled',
-                text: `Balances for ${exchangeName} will sync every 5 minutes.`,
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'swal2-dark',
-                },
-            });
-        } else {
-            // Disable auto-sync
-            if (autoSyncIntervals[exchangeName]) {
-                clearInterval(autoSyncIntervals[exchangeName]);
-                delete autoSyncIntervals[exchangeName];
-
-                // Show success notification
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Auto-Sync Disabled',
-                    text: `Auto-sync for ${exchangeName} has been turned off.`,
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    customClass: {
-                        popup: 'swal2-dark',
-                    },
-                });
-            }
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        // Pie Chart for Total Balance Allocation Across Exchanges
-        const totalBalanceCtx = document.getElementById('totalBalancePieChart').getContext('2d');
-        new Chart(totalBalanceCtx, {
-            type: 'pie',
-            data: {
-                labels: {{ exchange_names | tojson }},
-                datasets: [{
-                    data: {{ exchange_balances | tojson }},
-                    backgroundColor: [
-                        '#f8bc04', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
-                    ],
-                    borderColor: '#1a1a1a',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            color: '#ffffff'
-                        }
-                    }
+        if (data.success) {
+            // Update the balances table
+            const balancesTable = card.querySelector('.crypto-table tbody');
+            if (balancesTable) {
+                balancesTable.innerHTML = ''; // Clear existing rows
+                for (const [coin, amount] of Object.entries(data.balances)) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="text-yellow">${coin}</td>
+                        <td class="text-gray-300">${amount}</td>
+                    `;
+                    balancesTable.appendChild(row);
                 }
             }
-        });
 
-        // Pie Charts for Each Exchange
-        {% for exchange in exchange_data %}
-            {% if exchange.api_key_exists and exchange.balances %}
-                const ctx = document.getElementById(`pieChart-{{ exchange.name }}`).getContext('2d');
-                new Chart(ctx, {
+            // Update the total balance for the exchange
+            const totalBalanceElement = card.querySelector('.total-balance');
+            if (totalBalanceElement && data.total_balance_usd) {
+                totalBalanceElement.textContent = `Balance: $${parseFloat(data.total_balance_usd).toFixed(2)}`;
+            }
+
+            // Update the global total balance
+            const globalTotalBalanceElement = document.querySelector('.total-balance span');
+            if (globalTotalBalanceElement && data.total_balance_all_exchanges) {
+                globalTotalBalanceElement.textContent = `Total Balance: $${parseFloat(data.total_balance_all_exchanges).toFixed(2)}`;
+            }
+
+            // Update the pie chart for the exchange
+            const pieChartCanvas = card.querySelector(`#pieChart-${exchangeName}`);
+            if (pieChartCanvas) {
+                const ctx = pieChartCanvas.getContext('2d');
+                const chart = new Chart(ctx, {
                     type: 'pie',
                     data: {
-                        labels: {{ exchange.balances.keys() | list | tojson }},
+                        labels: Object.keys(data.balances),
                         datasets: [{
-                            data: {{ exchange.balances.values() | list | tojson }},
+                            data: Object.values(data.balances),
                             backgroundColor: [
                                 '#4e79a7', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
                             ],
@@ -796,23 +622,196 @@ input:checked + .slider:before {
                         }
                     }
                 });
-            {% endif %}
-        {% endfor %}
+            }
+
+            // Show success notification
+            Swal.fire({
+                icon: 'success',
+                title: 'Balance Synced',
+                text: `Balances for ${exchangeName} refreshed!`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-dark',
+                },
+            });
+        } else {
+            // Show error notification
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || 'Failed to refresh balances.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-dark',
+                },
+            });
+        }
+    })
+    .catch(error => {
+        // Remove the spinner
+        card.removeChild(spinner);
+
+        // Show error notification
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while refreshing balances.',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'swal2-dark',
+            },
+        });
+        console.error('Error:', error);
+    });
+}
+
+    function refreshAllBalances() {
+    const exchangeCards = document.querySelectorAll('[data-exchange]');
+    exchangeCards.forEach(card => {
+        const exchangeName = card.getAttribute('data-exchange');
+        refreshBalances(exchangeName);
+    });
+}
+
+    
+const autoSyncIntervals = {};
+
+// Function to toggle auto-sync
+function toggleAutoSync(exchangeName) {
+    const autoSyncCheckbox = document.getElementById(`autoSync-${exchangeName}`);
+
+    if (autoSyncCheckbox.checked) {
+        // Enable auto-sync
+        autoSyncIntervals[exchangeName] = setInterval(() => {
+            refreshBalances(exchangeName);
+        }, 300000); // 5 minutes = 300,000 milliseconds
+
+        // Show success notification
+        Swal.fire({
+            icon: 'success',
+            title: 'Auto-Sync Enabled',
+            text: `Balances for ${exchangeName} will sync every 5 minutes.`,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'swal2-dark',
+            },
+        });
+    } else {
+        // Disable auto-sync
+        if (autoSyncIntervals[exchangeName]) {
+            clearInterval(autoSyncIntervals[exchangeName]);
+            delete autoSyncIntervals[exchangeName];
+
+            // Show success notification
+            Swal.fire({
+                icon: 'info',
+                title: 'Auto-Sync Disabled',
+                text: `Auto-sync for ${exchangeName} has been turned off.`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-dark',
+                },
+            });
+        }
+    }
+}
+
+    document.addEventListener('DOMContentLoaded', function () {
+    // Pie Chart for Total Balance Allocation Across Exchanges
+    const totalBalanceCtx = document.getElementById('totalBalancePieChart').getContext('2d');
+    new Chart(totalBalanceCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ exchange_names | tojson }},
+            datasets: [{
+                data: {{ exchange_balances | tojson }},
+                backgroundColor: [
+                    '#f8bc04', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
+                ],
+                borderColor: '#1a1a1a',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#ffffff'
+                    }
+                }
+            }
+        }
     });
 
+    // Pie Charts for Each Exchange
+    {% for exchange in exchange_data %}
+        {% if exchange.api_key_exists and exchange.balances %}
+            const ctx = document.getElementById(`pieChart-{{ exchange.name }}`).getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: {{ exchange.balances.keys() | list | tojson }},
+                    datasets: [{
+                        data: {{ exchange.balances.values() | list | tojson }},
+                        backgroundColor: [
+                            '#4e79a7', '#59a14f', '#f28e2b', '#e15759', '#b07aa1', '#edc948', '#76b7b2', '#ff9da7'
+                        ],
+                        borderColor: '#1a1a1a',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#ffffff'
+                            }
+                        }
+                    }
+                }
+            });
+        {% endif %}
+    {% endfor %}
+});
     // Apply Filters
-    function applyFilters() {
-        const exchangeFilter = document.getElementById('exchangeFilter').value;
-        const typeFilter = document.getElementById('typeFilter').value;
-        const rows = document.querySelectorAll('.transaction-history tbody tr');
+   function applyFilters() {
+    const exchangeFilter = document.getElementById('exchangeFilter').value;
+    const typeFilter = document.getElementById('typeFilter').value;
+    const rows = document.querySelectorAll('.transaction-history tbody tr');
 
-        rows.forEach(row => {
-            const exchange = row.querySelector('td:nth-child(5)').textContent;
-            const type = row.querySelector('td:nth-child(1)').getAttribute('data-type'); // Use data-type attribute
-            const showExchange = exchangeFilter === 'all' || exchange === exchangeFilter;
-            const showType = typeFilter === 'all' || type === typeFilter.toLowerCase();
-            row.style.display = showExchange && showType ? '' : 'none';
-        });
-    }
+    rows.forEach(row => {
+        const exchange = row.querySelector('td:nth-child(5)').textContent;
+        const type = row.querySelector('td:nth-child(1)').getAttribute('data-type'); // Use data-type attribute
+        const showExchange = exchangeFilter === 'all' || exchange === exchangeFilter;
+        const showType = typeFilter === 'all' || type === typeFilter.toLowerCase();
+        row.style.display = showExchange && showType ? '' : 'none';
+    });
+}
 </script>
 {% endblock %}
