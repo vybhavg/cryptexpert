@@ -946,7 +946,7 @@ def wallet_management():
     exchange_data = []
     exchange_names = []
     exchange_balances = []
-    all_transactions= {}
+    all_transactions= []
     for exchange in ["Binance", "OKX", "Coinbase"]:
         api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
         balances = None
