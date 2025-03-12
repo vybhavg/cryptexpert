@@ -876,30 +876,38 @@ def datetimeformat(value, format='%Y-%m-%d %H:%M:%S'):
 
 # Register the filter in the Jinja2 environment
 app.jinja_env.filters['datetimeformat'] = datetimeformat
-
+import hmac
+import hashlib
+import json
+import time
+import requests
+import logging
 def get_coindcx_balances(api_key, api_secret):
     """Fetches wallet balances from CoinDCX."""
     try:
-        # Step 1: Get the current timestamp (in milliseconds)
-        timestamp = str(int(time.time() * 1000))
+        # Step 1: Generate a timestamp in milliseconds
+        timestamp = int(round(time.time() * 1000))
 
-        # Step 2: Create the message to sign
-        # Format: timestamp + HTTP method + request path + body (if any)
-        message = timestamp + "GET" + "/exchange/v1/users/balances"
+        # Step 2: Create the JSON body
+        body = {
+            "timestamp": timestamp
+        }
+        json_body = json.dumps(body, separators=(',', ':'))
 
         # Step 3: Generate the signature using HMAC-SHA256
-        signature = hmac.new(api_secret.encode(), message.encode(), hashlib.sha256).hexdigest()
+        secret_bytes = bytes(api_secret, encoding='utf-8')
+        signature = hmac.new(secret_bytes, json_body.encode(), hashlib.sha256).hexdigest()
 
         # Step 4: Set up the headers
         headers = {
-            "Content-Type": "application/json",
-            "X-AUTH-APIKEY": api_key,          # Your API key
-            "X-AUTH-SIGNATURE": signature,     # Generated signature
-            "X-AUTH-TIMESTAMP": timestamp,     # Current timestamp
+            'Content-Type': 'application/json',
+            'X-AUTH-APIKEY': api_key,
+            'X-AUTH-SIGNATURE': signature
         }
 
-        # Step 5: Make the request
-        response = requests.get("https://api.coindcx.com/exchange/v1/users/balances", headers=headers)
+        # Step 5: Make the POST request
+        url = "https://api.coindcx.com/exchange/v1/users/balances"
+        response = requests.post(url, data=json_body, headers=headers)
 
         # Step 6: Handle the response
         if response.status_code == 200:
@@ -923,6 +931,7 @@ def get_coindcx_balances(api_key, api_secret):
         # Log any unexpected errors
         logging.error(f"CoinDCX API Error: {e}")
         return None, 0.0
+
 
 @app.route("/wallet_management", methods=["GET", "POST"])
 @login_required
