@@ -7,6 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Include Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Include Chart.js for Pie Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Custom CSS for Advanced Styling -->
     <style>
@@ -73,36 +75,37 @@
             font-size: 1rem;
             color: #a0aec0;
         }
+
         /* Dark Mode SweetAlert2 Toast */
-.swal2-dark {
-    background-color: #1a1a1a; /* Dark background */
-    color: #ffffff; /* White text */
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
+        .swal2-dark {
+            background-color: #1a1a1a; /* Dark background */
+            color: #ffffff; /* White text */
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
 
-/* Ensure the toast applies the dark mode styles correctly */
-.swal2-toast.swal2-dark {
-    background-color: #1a1a1a; /* Ensure toast inherits dark background */
-    color: #ffffff; /* White text */
-}
+        /* Ensure the toast applies the dark mode styles correctly */
+        .swal2-toast.swal2-dark {
+            background-color: #1a1a1a; /* Ensure toast inherits dark background */
+            color: #ffffff; /* White text */
+        }
 
-.swal2-toast.swal2-dark .swal2-title {
-    color: #ffffff; /* White title text */
-}
+        .swal2-toast.swal2-dark .swal2-title {
+            color: #ffffff; /* White title text */
+        }
 
-.swal2-toast.swal2-dark .swal2-html-container {
-    color: #cccccc; /* Light gray content text */
-}
+        .swal2-toast.swal2-dark .swal2-html-container {
+            color: #cccccc; /* Light gray content text */
+        }
 
-.swal2-toast.swal2-dark .swal2-icon {
-    color: #f8bc04; /* Yellow icon */
-}
+        .swal2-toast.swal2-dark .swal2-icon {
+            color: #f8bc04; /* Yellow icon */
+        }
 
-/* Ensure the timer progress bar is styled correctly */
-.swal2-toast.swal2-dark .swal2-timer-progress-bar {
-    background: #f8bc04 !important; /* Yellow progress bar */
-}
+        /* Ensure the timer progress bar is styled correctly */
+        .swal2-toast.swal2-dark .swal2-timer-progress-bar {
+            background: #f8bc04 !important; /* Yellow progress bar */
+        }
 
         /* Total Balance Styling */
         .total-balance {
@@ -158,7 +161,26 @@
             margin-bottom: 2rem;
         }
 
+        /* Pie Chart Container */
+        .pie-chart-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
 
+        /* Transaction History Styling */
+        .transaction-history {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        /* Auto-Sync Toggle */
+        .auto-sync-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
     </style>
 {% endblock %}
 
@@ -181,21 +203,6 @@
                 {% endfor %}
             </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         <!-- List of Exchanges -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -280,13 +287,62 @@
                         </div>
                     {% endif %}
 
+                    <!-- Exchange Fees & Transaction History -->
+                    {% if exchange.api_key_exists %}
+                        <div class="mt-6">
+                            <h3 class="crypto-subheading mb-4">Fees & Transactions</h3>
+                            <div class="transaction-history">
+                                <table class="crypto-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Amount</th>
+                                            <th>Fee</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for transaction in exchange.transactions %}
+                                            <tr>
+                                                <td>{{ transaction.type }}</td>
+                                                <td>{{ transaction.amount }}</td>
+                                                <td>{{ transaction.fee }}</td>
+                                                <td>{{ transaction.date }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Portfolio Allocation Pie Chart -->
+                    {% if exchange.api_key_exists %}
+                        <div class="mt-6">
+                            <h3 class="crypto-subheading mb-4">Portfolio Allocation</h3>
+                            <div class="pie-chart-container">
+                                <canvas id="pieChart-{{ exchange.name }}"></canvas>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Auto-Sync and Refresh -->
+                    {% if exchange.api_key_exists %}
+                        <div class="auto-sync-toggle mt-6">
+                            <span class="crypto-text">Auto-Sync Every 5 Minutes</span>
+                            <label class="switch">
+                                <input type="checkbox" id="autoSync-{{ exchange.name }}" onchange="toggleAutoSync('{{ exchange.name }}')">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
     </div>
 </div>
 
-<!-- JavaScript to Toggle API Key Form and Refresh Balances -->
+<!-- JavaScript to Toggle API Key Form, Refresh Balances, and Initialize Pie Charts -->
 <script>
     function toggleForm(exchangeName) {
         const form = document.getElementById(`form-${exchangeName}`);
@@ -303,23 +359,63 @@
         setTimeout(() => {
             card.removeChild(spinner);
             // Show a SweetAlert2 toast notification in dark mode
-Swal.fire({
-    icon: 'success',
-    title: 'Balance Synced',
-    text: `Balances for ${exchangeName} refreshed!`,
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000, // Auto-close after 3 seconds
-    timerProgressBar: true,
-    customClass: {
-        popup: 'swal2-dark', // Apply the dark mode class
-    },
-});
+            Swal.fire({
+                icon: 'success',
+                title: 'Balance Synced',
+                text: `Balances for ${exchangeName} refreshed!`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000, // Auto-close after 3 seconds
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-dark', // Apply the dark mode class
+                },
+            });
             // You can replace this with an actual API call to refresh balances
         }, 2000);
     }
 
+    function toggleAutoSync(exchangeName) {
+        const autoSyncCheckbox = document.getElementById(`autoSync-${exchangeName}`);
+        if (autoSyncCheckbox.checked) {
+            setInterval(() => refreshBalances(exchangeName), 300000); // 5 minutes
+        }
+    }
 
+    // Initialize Pie Charts
+    document.addEventListener('DOMContentLoaded', function () {
+        {% for exchange in exchange_data %}
+            {% if exchange.api_key_exists and exchange.balances %}
+                const ctx = document.getElementById(`pieChart-{{ exchange.name }}`).getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: {{ exchange.balances.keys() | list | tojson }},
+                        datasets: [{
+                            data: {{ exchange.balances.values() | list | tojson }},
+                            backgroundColor: [
+                                '#f8bc04', '#ffd700', '#ffcc00', '#ffc107', '#ffb300', '#ffa000', '#ff8f00', '#ff6f00'
+                            ],
+                            borderColor: '#1a1a1a',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#ffffff'
+                                }
+                            }
+                        }
+                    }
+                });
+            {% endif %}
+        {% endfor %}
+    });
 </script>
 {% endblock %}
