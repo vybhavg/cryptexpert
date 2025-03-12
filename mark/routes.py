@@ -940,21 +940,30 @@ def delete_api_key(api_id):
     flash("API key removed successfully!", "success")
     return redirect(url_for("wallet_management"))
 
-@app.route('/refresh_balances')
+
+@app.route("/refresh_balances", methods=["GET"])
+@login_required
 def refresh_balances():
-    exchange_name = request.args.get('exchange')
-    if not exchange_name:
+    user_id = current_user.id
+    exchange = request.args.get("exchange")
+
+    if not exchange:
         return jsonify({"success": False, "message": "Exchange name is required."}), 400
 
-    try:
-        # Fetch updated balances from the exchange
-        balances = your_exchange_api_module.get_balances(exchange_name)  # Replace with your logic
-        total_balance_usd = your_exchange_api_module.calculate_total_balance_usd(balances)  # Replace with your logic
+    # Fetch the API key for the exchange
+    api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
+    if not api_key_entry:
+        return jsonify({"success": False, "message": f"API key for {exchange} not found."}), 404
 
-        return jsonify({
-            "success": True,
-            "balances": balances,
-            "total_balance_usd": total_balance_usd
-        })
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
+    # Fetch updated balances
+    api_key, api_secret = api_key_entry.get_api_keys()
+    balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange)
+
+    if balances is None or total_balance_usd is None:
+        return jsonify({"success": False, "message": "Failed to fetch balances."}), 500
+
+    return jsonify({
+        "success": True,
+        "balances": balances,
+        "total_balance_usd": total_balance_usd
+    })
