@@ -8,159 +8,126 @@
     <!-- Include Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Custom CSS for Advanced Styling -->
-<style>
-    /* Dark Mode Background */
-    .dark-bg {
-        background-color: #0a0a0a;
-    }
-
-    /* Card Styling */
-    .card-bg {
-        background-color: #1a1a1a;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    }
-
-    /* Slide-Up Animation */
-    @keyframes slideUp {
-        0% {
-            transform: translateY(20px);
-            opacity: 0;
+    <style>
+        /* Dark Mode Background */
+        .dark-bg {
+            background-color: #0a0a0a;
         }
-        100% {
-            transform: translateY(0);
-            opacity: 1;
+
+        /* Card Styling */
+        .card-bg {
+            background-color: #1a1a1a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         }
-    }
 
-    .card-bg {
-        animation: slideUp 0.5s ease-out;
-    }
-
-    /* Hover Effect for Cards */
-    .card-bg:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-    }
-
-    /* Button Styling */
-    .crypto-button {
-        background-color: #f8bc04;
-        color: #000000;
-        font-weight: 600;
-        padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
-        transition: all 0.3s ease-in-out;
-        white-space: nowrap; /* Prevent button text from wrapping */
-    }
-    .crypto-button:hover {
-        background-color: #e0a800; /* Slightly darker yellow for hover */
-        color: #000000;
-    }
-
-    /* Exchange Logo Size */
-    .exchange-logo {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-        transition: transform 0.3s ease-in-out;
-    }
-    .exchange-logo:hover {
-        transform: scale(1.1);
-    }
-
-    /* Modern Crypto Style */
-    .crypto-heading {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #f8bc04;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 1.5rem;
-    }
-
-    .crypto-subheading {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #ffffff;
-        margin-right: 1rem; /* Add spacing to prevent overlap */
-    }
-
-    .crypto-text {
-        font-size: 1rem;
-        color: #a0aec0;
-    }
-
-    /* Total Balance Styling */
-    .total-balance {
-        font-size: 1.75rem;
-        font-weight: bold;
-        color: #ffffff;
-        margin-bottom: 1rem;
-    }
-
-    /* Table Styling */
-    .crypto-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    .crypto-table th,
-    .crypto-table td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .crypto-table th {
-        background-color: #1a1a1a;
-        color: #f8bc04;
-        font-weight: 600;
-    }
-    .crypto-table tr:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    /* Center Button Styling */
-    .center-button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top:-40px;
-        height: 100%;
-    }
-
-    /* Form Animation */
-    .form-animation {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-    }
-    .form-animation.show {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    /* Responsive Grid */
-    @media (max-width: 768px) {
-        .grid {
-            grid-template-columns: 1fr;
+        /* Slide-Up Animation */
+        @keyframes slideUp {
+            0% {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
+
+        .card-bg {
+            animation: slideUp 0.5s ease-out;
+        }
+
+        /* Hover Effect for Cards */
+        .card-bg:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Button Styling */
+        .crypto-button {
+            background-color: #f8bc04;
+            color: #000000;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease-in-out;
+        }
+        .crypto-button:hover {
+            background-color: #ff6b6b;
+            color: #ffffff;
+        }
+
+        /* Exchange Logo Size */
+        .exchange-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Modern Crypto Style */
         .crypto-heading {
             font-size: 2rem;
+            font-weight: bold;
+            color: #f8bc04;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
+
         .crypto-subheading {
             font-size: 1.25rem;
+            font-weight: 600;
+            color: #ffffff;
         }
-    }
-</style>
+
+        .crypto-text {
+            font-size: 1rem;
+            color: #a0aec0;
+        }
+
+        /* Total Balance Styling */
+        .total-balance {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        /* Table Styling */
+        .crypto-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .crypto-table th,
+        .crypto-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .crypto-table th {
+            background-color: #1a1a1a;
+            color: #f8bc04;
+            font-weight: 600;
+        }
+        .crypto-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Center Button Styling */
+        .center-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 <div class="min-h-screen dark-bg text-white py-12 px-4 sm:px-6 lg:px-8" style="margin-top:75px;">
     <div class="max-w-6xl mx-auto">
-        <h1 class="crypto-heading text-center">Wallet Management</h1>
+        <h1 class="crypto-heading mb-8">Wallet Management</h1>
 
         <!-- List of Exchanges -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -169,7 +136,7 @@
                     <div class="flex items-center justify-between">
                         <!-- Left Side: Logo and Exchange Name -->
                         <div class="flex items-center space-x-4">
-                            <img src="{{ exchange.logo_url }}" 
+                            <img src="{{ exchange.logo_url }}"  <!-- Replace with actual logo URLs -->
                                  alt="{{ exchange.name }} Logo"
                                  class="exchange-logo">
                             <h2 class="crypto-subheading">{{ exchange.name }}</h2>
@@ -199,7 +166,7 @@
                             </button>
                         </div>
                         <form id="form-{{ exchange.name }}" method="POST" action="{{ url_for('wallet_management') }}"
-                              class="mt-4 space-y-4 form-animation">
+                              class="mt-4 space-y-4 hidden transform transition-all duration-300 ease-in-out">
                             <input type="hidden" name="exchange" value="{{ exchange.name }}">
                             <div>
                                 <label for="api_key" class="crypto-text">API Key</label>
@@ -222,10 +189,8 @@
                     {% if exchange.api_key_exists %}
                         <div class="mt-6">
                             {% if exchange.balances %}
-                                {% if exchange.total_balance_usd and not isNaN(exchange.total_balance_usd) %}
-                                    <p class="total-balance">Total Balance: ${{ exchange.total_balance_usd | round(2) }}</p>
-                                {% else %}
-                                    <p class="total-balance">Total Balance: $0.00</p>
+                                {% if exchange.total_balance_usd %}
+                                    <p class="total-balance mb-4">Total Balance: ${{ exchange.total_balance_usd | truncate(2, true, '') }}</p>
                                 {% endif %}
                                 <table class="crypto-table">
                                     <thead>
@@ -238,7 +203,7 @@
                                         {% for coin, amount in exchange.balances.items() %}
                                             <tr>
                                                 <td class="text-yellow">{{ coin }}</td>
-                                                <td class="text-gray-300">{{ amount | round(2) }}</td>
+                                                <td class="text-gray-300">{{ amount | truncate(2, true, '') }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -258,21 +223,11 @@
 <script>
     function toggleForm(exchangeName) {
         const form = document.getElementById(`form-${exchangeName}`);
-        form.classList.toggle('show');
+        form.classList.toggle('hidden');
     }
 
-    // Replace NaN or invalid values with 0.00
-    document.querySelectorAll('.total-balance').forEach(element => {
-        let balanceText = element.textContent.replace('Total Balance: $', '').trim();
-        if (isNaN(balanceText) || balanceText === 'NaN') {
-            element.textContent = 'Total Balance: $0.00';
-        } else {
-            element.textContent = `Total Balance: $${parseFloat(balanceText).toFixed(2)}`;
-        }
-    });
-
     // Truncate balances to 2 decimal points
-    document.querySelectorAll('.crypto-table td').forEach(element => {
+    document.querySelectorAll('.total-balance, .crypto-table td').forEach(element => {
         if (element.textContent.includes('.')) {
             element.textContent = parseFloat(element.textContent).toFixed(2);
         }
