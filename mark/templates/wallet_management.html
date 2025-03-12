@@ -76,11 +76,89 @@
             color: #a0aec0;
         }
 
+        /* Dark Mode SweetAlert2 Toast */
+        .swal2-dark {
+            background-color: #1a1a1a; /* Dark background */
+            color: #ffffff; /* White text */
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Ensure the toast applies the dark mode styles correctly */
+        .swal2-toast.swal2-dark {
+            background-color: #1a1a1a; /* Ensure toast inherits dark background */
+            color: #ffffff; /* White text */
+        }
+
+        .swal2-toast.swal2-dark .swal2-title {
+            color: #ffffff; /* White title text */
+        }
+
+        .swal2-toast.swal2-dark .swal2-html-container {
+            color: #cccccc; /* Light gray content text */
+        }
+
+        .swal2-toast.swal2-dark .swal2-icon {
+            color: #f8bc04; /* Yellow icon */
+        }
+
+        /* Ensure the timer progress bar is styled correctly */
+        .swal2-toast.swal2-dark .swal2-timer-progress-bar {
+            background: #f8bc04 !important; /* Yellow progress bar */
+        }
+
         /* Total Balance Styling */
         .total-balance {
             font-size: 1.5rem;
             font-weight: bold;
             color: #ffffff;
+        }
+
+        /* Table Styling */
+        .crypto-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .crypto-table th,
+        .crypto-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .crypto-table th {
+            background-color: #1a1a1a;
+            color: #f8bc04;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        .crypto-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .crypto-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #f8bc04;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Gradient Background for Connected Exchanges */
+        .connected-exchanges {
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         /* Pie Chart Container */
@@ -96,31 +174,33 @@
             overflow-y: auto;
         }
 
-        /* Filter Section Styling */
-        .filter-section {
+        /* Auto-Sync Toggle */
+        .auto-sync-toggle {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
         }
     </style>
 {% endblock %}
-
 
 {% block content %}
 <div class="min-h-screen dark-bg text-white py-12 px-4 sm:px-6 lg:px-8" style="margin-top:75px;">
     <div class="max-w-6xl mx-auto">
         <h1 class="crypto-heading mb-8">Wallets</h1>
 
-        <!-- Total Balance Across Exchanges -->
-        <div class="mb-8">
-            <h2 class="crypto-subheading mb-4">Total Balance: ${{ exchange_data | sum(attribute='total_balance_usd') | default(0) }}</h2>
-            <div class="pie-chart-container">
-                <canvas id="totalBalancePieChart"></canvas>
-            </div>
+        <!-- Total Balance Across All Exchanges -->
+        <div class="total-balance mb-8">
+            Total Balance: ${{ total_balance_all_exchanges }}
+        </div>
+
+        <!-- Pie Chart for Allocation of Total Balance Across Exchanges -->
+        <div class="pie-chart-container mb-8">
+            <canvas id="totalBalancePieChart"></canvas>
         </div>
 
         <!-- Connected Exchanges Summary -->
-        <div class="connected-exchanges mb-8">
+        <div class="connected-exchanges">
             <h2 class="crypto-subheading mb-4">Connected Exchanges</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {% for exchange in exchange_data %}
@@ -218,7 +298,7 @@
                     {% endif %}
 
                     <!-- Portfolio Allocation Pie Chart -->
-                    {% if exchange.api_key_exists and exchange.balances %}
+                    {% if exchange.api_key_exists %}
                         <div class="mt-6">
                             <h3 class="crypto-subheading mb-4">Portfolio Allocation</h3>
                             <div class="pie-chart-container">
@@ -226,88 +306,146 @@
                             </div>
                         </div>
                     {% endif %}
+
+                    <!-- Auto-Sync and Refresh -->
+                    {% if exchange.api_key_exists %}
+                        <div class="auto-sync-toggle mt-6">
+                            <span class="crypto-text">Auto-Sync Every 5 Minutes</span>
+                            <label class="switch">
+                                <input type="checkbox" id="autoSync-{{ exchange.name }}" onchange="toggleAutoSync('{{ exchange.name }}')">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
 
-        <!-- Combined Transaction History -->
-        <div class="mt-12">
+        <!-- Transaction History Section -->
+        <div class="mt-8">
             <h2 class="crypto-subheading mb-4">Transaction History</h2>
-            <!-- Filter Section -->
-            <div class="filter-section">
-                <select id="filter-exchange" class="bg-gray-800 text-white p-2 rounded-md">
-                    <option value="all">All Exchanges</option>
-                    {% for exchange in exchange_data %}
-                        <option value="{{ exchange.name }}">{{ exchange.name }}</option>
-                    {% endfor %}
-                </select>
-                <select id="filter-type" class="bg-gray-800 text-white p-2 rounded-md">
-                    <option value="all">All Types</option>
-                    <option value="deposit">Deposit</option>
-                    <option value="withdrawal">Withdrawal</option>
-                    <option value="trade">Trade</option>
-                </select>
-            </div>
             <div class="transaction-history">
                 <table class="crypto-table">
                     <thead>
                         <tr>
-                            <th>Exchange</th>
                             <th>Type</th>
                             <th>Amount</th>
                             <th>Fee</th>
                             <th>Date</th>
+                            <th>Exchange</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for transaction in all_transactions %}
-                            <tr data-exchange="{{ transaction.exchange }}" data-type="{{ transaction.type }}">
-                                <td>{{ transaction.exchange }}</td>
+                            <tr>
                                 <td>{{ transaction.type }}</td>
                                 <td>{{ transaction.amount }}</td>
                                 <td>{{ transaction.fee }}</td>
                                 <td>{{ transaction.date }}</td>
+                                <td>{{ transaction.exchange }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+
+        <!-- Filter Options -->
+        <div class="mt-8">
+            <h2 class="crypto-subheading mb-4">Filter Options</h2>
+            <div class="flex space-x-4">
+                <select id="exchangeFilter" class="p-2 bg-gray-800 text-white rounded-md">
+                    <option value="all">All Exchanges</option>
+                    {% for exchange in exchange_data %}
+                        <option value="{{ exchange.name }}">{{ exchange.name }}</option>
+                    {% endfor %}
+                </select>
+                <select id="typeFilter" class="p-2 bg-gray-800 text-white rounded-md">
+                    <option value="all">All Types</option>
+                    <option value="buy">Buy</option>
+                    <option value="sell">Sell</option>
+                    <option value="withdraw">Withdraw</option>
+                    <option value="deposit">Deposit</option>
+                </select>
+                <button onclick="applyFilters()" class="crypto-button">Apply Filters</button>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- JavaScript for Pie Charts, Filters, and Auto-Sync -->
+<!-- JavaScript to Toggle API Key Form, Refresh Balances, and Initialize Pie Charts -->
 <script>
-    // Initialize Total Balance Pie Chart
-    const totalBalanceCtx = document.getElementById('totalBalancePieChart').getContext('2d');
-    new Chart(totalBalanceCtx, {
-        type: 'pie',
-        data: {
-            labels: {{ exchange_data | map(attribute='name') | list | tojson }},
-            datasets: [{
-                data: {{ exchange_data | map(attribute='total_balance_usd') | list | tojson }},
-                backgroundColor: [
-                    '#f8bc04', '#ff6f00', '#ffcc00', '#ffa000', '#ff8f00', '#ffb300', '#ffc107', '#ffd700'
-                ],
-                borderColor: '#1a1a1a',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        color: '#ffffff'
+    function toggleForm(exchangeName) {
+        const form = document.getElementById(`form-${exchangeName}`);
+        form.classList.toggle('hidden');
+    }
+
+    function refreshBalances(exchangeName) {
+        const card = document.querySelector(`[data-exchange="${exchangeName}"]`);
+        const spinner = document.createElement('div');
+        spinner.className = 'loading-spinner';
+        card.appendChild(spinner);
+
+        // Simulate API call to refresh balances
+        setTimeout(() => {
+            card.removeChild(spinner);
+            // Show a SweetAlert2 toast notification in dark mode
+            Swal.fire({
+                icon: 'success',
+                title: 'Balance Synced',
+                text: `Balances for ${exchangeName} refreshed!`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000, // Auto-close after 3 seconds
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-dark', // Apply the dark mode class
+                },
+            });
+            // You can replace this with an actual API call to refresh balances
+        }, 2000);
+    }
+
+    function toggleAutoSync(exchangeName) {
+        const autoSyncCheckbox = document.getElementById(`autoSync-${exchangeName}`);
+        if (autoSyncCheckbox.checked) {
+            setInterval(() => refreshBalances(exchangeName), 300000); // 5 minutes
+        }
+    }
+
+    // Initialize Pie Charts
+    document.addEventListener('DOMContentLoaded', function () {
+        // Pie Chart for Total Balance Allocation Across Exchanges
+        const totalBalanceCtx = document.getElementById('totalBalancePieChart').getContext('2d');
+        new Chart(totalBalanceCtx, {
+            type: 'pie',
+            data: {
+                labels: {{ exchange_names | tojson }},
+                datasets: [{
+                    data: {{ exchange_balances | tojson }},
+                    backgroundColor: [
+                        '#f8bc04', '#ffd700', '#ffcc00', '#ffc107', '#ffb300', '#ffa000', '#ff8f00', '#ff6f00'
+                    ],
+                    borderColor: '#1a1a1a',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#ffffff'
+                        }
                     }
                 }
             }
-        }
-    });
+        });
 
-    // Initialize Individual Exchange Pie Charts
-    document.addEventListener('DOMContentLoaded', function () {
+        // Pie Charts for Each Exchange
         {% for exchange in exchange_data %}
             {% if exchange.api_key_exists and exchange.balances %}
                 const ctx = document.getElementById(`pieChart-{{ exchange.name }}`).getContext('2d');
@@ -318,7 +456,7 @@
                         datasets: [{
                             data: {{ exchange.balances.values() | list | tojson }},
                             backgroundColor: [
-                                '#f8bc04', '#ff6f00', '#ffcc00', '#ffa000', '#ff8f00', '#ffb300', '#ffc107', '#ffd700'
+                                '#f8bc04', '#ffd700', '#ffcc00', '#ffc107', '#ffb300', '#ffa000', '#ff8f00', '#ff6f00'
                             ],
                             borderColor: '#1a1a1a',
                             borderWidth: 2
@@ -326,6 +464,7 @@
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: false,
                         plugins: {
                             legend: {
                                 position: 'bottom',
@@ -340,20 +479,17 @@
         {% endfor %}
     });
 
-    // Filter Transactions
-    document.getElementById('filter-exchange').addEventListener('change', filterTransactions);
-    document.getElementById('filter-type').addEventListener('change', filterTransactions);
-
-    function filterTransactions() {
-        const exchangeFilter = document.getElementById('filter-exchange').value;
-        const typeFilter = document.getElementById('filter-type').value;
+    // Apply Filters
+    function applyFilters() {
+        const exchangeFilter = document.getElementById('exchangeFilter').value;
+        const typeFilter = document.getElementById('typeFilter').value;
         const rows = document.querySelectorAll('.transaction-history tbody tr');
 
         rows.forEach(row => {
-            const exchange = row.getAttribute('data-exchange');
-            const type = row.getAttribute('data-type');
+            const exchange = row.querySelector('td:nth-child(5)').textContent;
+            const type = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
             const showExchange = exchangeFilter === 'all' || exchange === exchangeFilter;
-            const showType = typeFilter === 'all' || type === typeFilter;
+            const showType = typeFilter === 'all' || type === typeFilter.toLowerCase();
             row.style.display = showExchange && showType ? '' : 'none';
         });
     }
