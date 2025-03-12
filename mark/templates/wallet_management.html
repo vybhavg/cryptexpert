@@ -105,6 +105,7 @@
     </style>
 {% endblock %}
 
+
 {% block content %}
 <div class="min-h-screen dark-bg text-white py-12 px-4 sm:px-6 lg:px-8" style="margin-top:75px;">
     <div class="max-w-6xl mx-auto">
@@ -112,7 +113,7 @@
 
         <!-- Total Balance Across Exchanges -->
         <div class="mb-8">
-            <h2 class="crypto-subheading mb-4">Total Balance: ${{ total_balance_usd }}</h2>
+            <h2 class="crypto-subheading mb-4">Total Balance: ${{ exchange_data | sum(attribute='total_balance_usd') | default(0) }}</h2>
             <div class="pie-chart-container">
                 <canvas id="totalBalancePieChart"></canvas>
             </div>
@@ -217,7 +218,7 @@
                     {% endif %}
 
                     <!-- Portfolio Allocation Pie Chart -->
-                    {% if exchange.api_key_exists %}
+                    {% if exchange.api_key_exists and exchange.balances %}
                         <div class="mt-6">
                             <h3 class="crypto-subheading mb-4">Portfolio Allocation</h3>
                             <div class="pie-chart-container">
@@ -282,9 +283,9 @@
     new Chart(totalBalanceCtx, {
         type: 'pie',
         data: {
-            labels: {{ exchange_names | tojson }},
+            labels: {{ exchange_data | map(attribute='name') | list | tojson }},
             datasets: [{
-                data: {{ exchange_balances | tojson }},
+                data: {{ exchange_data | map(attribute='total_balance_usd') | list | tojson }},
                 backgroundColor: [
                     '#f8bc04', '#ff6f00', '#ffcc00', '#ffa000', '#ff8f00', '#ffb300', '#ffc107', '#ffd700'
                 ],
