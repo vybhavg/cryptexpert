@@ -348,13 +348,13 @@ input:checked + .slider:before {
     <div class="max-w-6xl mx-auto">
         <h1 class="crypto-heading mb-8">Wallets</h1>
 
-        <!-- Total Balance Across All Exchanges -->
-        <div class="total-balance mb-8">
-    Total Balance: ${{ "%.2f"|format(total_balance_all_exchanges) }}
-
-
-
-</div>
+        <!-- Total Balance and Refresh All Button -->
+        <div class="total-balance mb-8 flex items-center justify-between">
+            <span>Total Balance: ${{ "%.2f"|format(total_balance_all_exchanges) }}</span>
+            <button onclick="refreshAllBalances()" class="crypto-button text-sm px-3 py-2">
+                <i class="fas fa-sync-alt"></i> Refresh All Balances
+            </button>
+        </div>
 
   <!-- Connected Exchanges Summary -->
         <div class="connected-exchanges">
