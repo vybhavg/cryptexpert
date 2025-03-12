@@ -875,30 +875,45 @@ def datetimeformat(value):
 app.jinja_env.filters['datetimeformat'] = datetimeformat
 
 
-# Function to get wallet balances from Coinbase
+import requests
+import time
+import hmac
+import hashlib
+import logging
+
 def get_coinbase_balances(api_key, api_secret):
     """Fetches wallet balances from Coinbase."""
     try:
+        # Get the current timestamp
+        timestamp = str(int(time.time()))
+
+        # Create the message to sign
+        message = timestamp + "GET" + "/v2/accounts"
+        signature = hmac.new(api_secret.encode(), message.encode(), hashlib.sha256).hexdigest()
+
+        # Set up the headers
         headers = {
             "Accept": "application/json",
             "CB-ACCESS-KEY": api_key,
-            "CB-ACCESS-SIGN": api_secret,
+            "CB-ACCESS-SIGN": signature,
+            "CB-ACCESS-TIMESTAMP": timestamp,
         }
+
+        # Make the request
         response = requests.get("https://api.coinbase.com/v2/accounts", headers=headers)
 
         if response.status_code == 200:
             data = response.json()
             balances = {account["currency"]: float(account["balance"]["amount"]) for account in data["data"] if float(account["balance"]["amount"]) > 0}
-            return balances
+            return balances, sum(balances.values())  # Return balances and total balance
 
         else:
-            print(f"Coinbase API Error: {response.json()}")
-            return None
+            logging.error(f"Coinbase API Error: {response.status_code} - {response.text}")
+            return None, 0.0
 
     except Exception as e:
-        print(f"Coinbase API Error: {e}")
-        return None
-
+        logging.error(f"Coinbase API Error: {e}")
+        return None, 0.0
 
 
 
