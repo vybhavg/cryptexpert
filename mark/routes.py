@@ -819,6 +819,21 @@ async def get_binance_balances_async(api_key, api_secret):
             await client.close_connection()
             logging.debug("Binance client connection closed.")
 
+async def get_binance_transaction_history(api_key, api_secret):
+    """Fetches transaction history from Binance."""
+    client = None
+    try:
+        client = await AsyncClient.create(api_key, api_secret)
+        trades = await client.get_my_trades()
+        return trades
+    except Exception as e:
+        logging.error(f"Error fetching Binance transaction history: {e}")
+        return []
+    finally:
+        if client:
+            await client.close_connection()
+
+
 # Function to get wallet balances from Coinbase
 def get_coinbase_balances(api_key, api_secret):
     """Fetches wallet balances from Coinbase."""
@@ -842,6 +857,25 @@ def get_coinbase_balances(api_key, api_secret):
     except Exception as e:
         print(f"Coinbase API Error: {e}")
         return None
+        
+def get_coinbase_transaction_history(api_key, api_secret):
+    """Fetches transaction history from Coinbase."""
+    try:
+        headers = {
+            "Accept": "application/json",
+            "CB-ACCESS-KEY": api_key,
+            "CB-ACCESS-SIGN": api_secret,
+        }
+        response = requests.get("https://api.coinbase.com/v2/accounts/transactions", headers=headers)
+        if response.status_code == 200:
+            return response.json().get("data", [])
+        else:
+            logging.error(f"Coinbase API Error: {response.json()}")
+            return []
+    except Exception as e:
+        logging.error(f"Error fetching Coinbase transaction history: {e}")
+        return []
+
 
 @app.route("/wallet_management", methods=["GET", "POST"])
 @login_required
@@ -891,20 +925,41 @@ def wallet_management():
     exchange_data = []
     exchange_names = []
     exchange_balances = []
+    all_transactions = []
+
     for exchange in ["Binance", "OKX", "Coinbase"]:
         api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
         balances = None
         total_balance_usd = None
-        if exchange=="Binance":
-            logo_url="https://w7.pngwing.com/pngs/703/998/png-transparent-binance-binancecoin-blockchain-coin-blockchain-classic-icon-thumbnail.png"
-        elif exchange=="OKX":
-            logo_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Logo-OKX.png/768px-Logo-OKX.png"
+        transactions = []
+
+        if exchange == "Binance":
+            logo_url = "https://w7.pngwing.com/pngs/703/998/png-transparent-binance-binancecoin-blockchain-coin-blockchain-classic-icon-thumbnail.png"
+        elif exchange == "OKX":
+            logo_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Logo-OKX.png/768px-Logo-OKX.png"
         else:
-            logo_url="https://www.pngall.com/wp-content/uploads/15/Coinbase-Logo-PNG-Images.png"
+            logo_url = "https://www.pngall.com/wp-content/uploads/15/Coinbase-Logo-PNG-Images.png"
+
         if api_key_entry:
             # Fetch balances if API key exists
             api_key, api_secret = api_key_entry.get_api_keys()
             balances, total_balance_usd = get_wallet_balances(api_key, api_secret, exchange)
+
+            # Fetch transaction history
+            if exchange.lower() == "binance":
+                transactions = asyncio.run(get_binance_transaction_history(api_key, api_secret))
+            elif exchange.lower() == "coinbase":
+                transactions = get_coinbase_transaction_history(api_key, api_secret)
+
+            # Format transactions
+            for tx in transactions:
+                all_transactions.append({
+                    "type": tx.get("side", "N/A"),  # Example for Binance
+                    "amount": tx.get("qty", "N/A"),
+                    "fee": tx.get("commission", "N/A"),
+                    "date": tx.get("time", "N/A"),
+                    "exchange": exchange
+                })
 
         exchange_data.append({
             "name": exchange,
@@ -913,6 +968,7 @@ def wallet_management():
             "total_balance_usd": total_balance_usd,
             "logo_url": logo_url
         })
+
         if api_key_entry is not None and total_balance_usd is not None:
             exchange_names.append(exchange)
             exchange_balances.append(total_balance_usd)
@@ -922,7 +978,8 @@ def wallet_management():
         exchange_data=exchange_data,
         exchange_names=exchange_names,
         exchange_balances=exchange_balances,
-        total_balance_all_exchanges=sum(exchange_balances)  # Calculate total balance across all exchanges
+        total_balance_all_exchanges=sum(exchange_balances),
+        all_transactions=all_transactions  # Pass transaction history to the template
     )
     
 @app.route("/delete_api_key/<int:api_id>", methods=["POST"])
