@@ -159,7 +159,7 @@
 {% block content %}
 <div class="min-h-screen dark-bg text-white py-12 px-4 sm:px-6 lg:px-8" style="margin-top:75px;">
     <div class="max-w-6xl mx-auto">
-        <h1 class="crypto-heading text-center">Wallets</h1>
+        <h1 class="crypto-heading text-center">Wallet Management</h1>
 
         <!-- List of Exchanges -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -221,8 +221,10 @@
                     {% if exchange.api_key_exists %}
                         <div class="mt-6">
                             {% if exchange.balances %}
-                                {% if exchange.total_balance_usd %}
+                                {% if exchange.total_balance_usd and not exchange.total_balance_usd == 'NaN' %}
                                     <p class="total-balance">Total Balance: ${{ exchange.total_balance_usd | round(2) }}</p>
+                                {% else %}
+                                    <p class="total-balance">Total Balance: $0.00</p>
                                 {% endif %}
                                 <table class="crypto-table">
                                     <thead>
