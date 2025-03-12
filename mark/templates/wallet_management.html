@@ -192,7 +192,7 @@
 
                     <!-- API Key Form (Hidden by Default) -->
                     {% if not exchange.api_key_exists %}
-                        <div class="center-button">
+                        <div class="center-button mt-6">
                             <button onclick="toggleForm('{{ exchange.name }}')"
                                     class="crypto-button btn-hover">
                                 Submit API Key
@@ -222,7 +222,7 @@
                     {% if exchange.api_key_exists %}
                         <div class="mt-6">
                             {% if exchange.balances %}
-                                {% if exchange.total_balance_usd and not exchange.total_balance_usd == 'NaN' %}
+                                {% if exchange.total_balance_usd and not isNaN(exchange.total_balance_usd) %}
                                     <p class="total-balance">Total Balance: ${{ exchange.total_balance_usd | round(2) }}</p>
                                 {% else %}
                                     <p class="total-balance">Total Balance: $0.00</p>
@@ -261,8 +261,18 @@
         form.classList.toggle('show');
     }
 
+    // Replace NaN or invalid values with 0.00
+    document.querySelectorAll('.total-balance').forEach(element => {
+        let balanceText = element.textContent.replace('Total Balance: $', '').trim();
+        if (isNaN(balanceText) || balanceText === 'NaN') {
+            element.textContent = 'Total Balance: $0.00';
+        } else {
+            element.textContent = `Total Balance: $${parseFloat(balanceText).toFixed(2)}`;
+        }
+    });
+
     // Truncate balances to 2 decimal points
-    document.querySelectorAll('.total-balance, .crypto-table td').forEach(element => {
+    document.querySelectorAll('.crypto-table td').forEach(element => {
         if (element.textContent.includes('.')) {
             element.textContent = parseFloat(element.textContent).toFixed(2);
         }
