@@ -939,4 +939,22 @@ def delete_api_key(api_id):
 
     flash("API key removed successfully!", "success")
     return redirect(url_for("wallet_management"))
- 
+
+@app.route('/refresh_balances')
+def refresh_balances():
+    exchange_name = request.args.get('exchange')
+    if not exchange_name:
+        return jsonify({"success": False, "message": "Exchange name is required."}), 400
+
+    try:
+        # Fetch updated balances from the exchange
+        balances = your_exchange_api_module.get_balances(exchange_name)  # Replace with your logic
+        total_balance_usd = your_exchange_api_module.calculate_total_balance_usd(balances)  # Replace with your logic
+
+        return jsonify({
+            "success": True,
+            "balances": balances,
+            "total_balance_usd": total_balance_usd
+        })
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
