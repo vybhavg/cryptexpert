@@ -818,37 +818,29 @@ async def get_binance_balances_async(api_key, api_secret):
             await client.close_connection()
             logging.debug("Binance client connection closed.")
 
-
-
-
-from binance import AsyncClient, BinanceAPIException
-import logging
-
 async def get_binance_transactions_async(api_key, api_secret):
-    """Fetches transaction history from Binance for all symbols asynchronously."""
+    """Fetches ALL transaction history from Binance asynchronously."""
     client = None
     try:
         client = await AsyncClient.create(api_key, api_secret)
 
-        # Fetch all available symbols from Binance exchange info
+        # Step 1: Fetch all trading pairs (symbols) available on Binance
         exchange_info = await client.get_exchange_info()
-        symbols = [s['symbol'] for s in exchange_info['symbols']]  # Extract all trading pairs
-        
-        all_trades = []
+        symbols = [symbol['symbol'] for symbol in exchange_info['symbols']]
 
+        # Step 2: Fetch trade history for each symbol
+        all_trades = []
         for symbol in symbols:
             try:
                 trades = await client.get_my_trades(symbol=symbol)
                 if trades:
-                    for trade in trades:
-                        trade["symbol"] = symbol  # Ensure each trade has its symbol
-                    all_trades.extend(trades)  # Add all trades for this symbol
+                    all_trades.extend(trades)  # Add trades to the list
             except BinanceAPIException as e:
-                logging.error(f"Binance API Error for {symbol}: {e}")
+                logging.error(f"Binance API Error for symbol {symbol}: {e}")
             except Exception as e:
-                logging.error(f"Unexpected error fetching trades for {symbol}: {e}")
+                logging.error(f"Unexpected error for symbol {symbol}: {e}")
 
-        return all_trades
+        return all_trades  # Return all trades across all symbols
 
     except BinanceAPIException as e:
         logging.error(f"Binance API Error: {e}")
@@ -861,9 +853,6 @@ async def get_binance_transactions_async(api_key, api_secret):
             await client.close_connection()
 
 
-
-
-
 from datetime import datetime
 
 @app.template_filter('datetimeformat')
@@ -871,10 +860,6 @@ def datetimeformat(value):
     return datetime.utcfromtimestamp(value / 1000).strftime('%Y-%m-%d %H:%M:%S')
 
 app.jinja_env.filters['datetimeformat'] = datetimeformat
-
-
-
-
 
 
 # Function to get wallet balances from Coinbase
@@ -900,21 +885,6 @@ def get_coinbase_balances(api_key, api_secret):
     except Exception as e:
         print(f"Coinbase API Error: {e}")
         return None
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
