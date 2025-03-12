@@ -752,15 +752,14 @@ import logging
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
-
 def get_wallet_balances(api_key, api_secret, exchange):
     """Fetches wallet balances from different exchanges."""
     try:
         if exchange.lower() == "binance":
             return asyncio.run(get_binance_balances_async(api_key, api_secret))
 
-        elif exchange.lower() == "coinbase":
-            return get_coinbase_balances(api_key, api_secret)
+        elif exchange.lower() == "coindcx":
+            return get_coindcx_balances(api_key, api_secret)
 
         else:
             logging.error(f"Unsupported exchange: {exchange}")
@@ -866,68 +865,53 @@ async def get_binance_transactions_async(api_key, api_secret):
             await client.close_connection()
 
 
-from datetime import datetime
 
-@app.template_filter('datetimeformat')
-def datetimeformat(value):
-    return datetime.utcfromtimestamp(value / 1000).strftime('%Y-%m-%d %H:%M:%S')
-
-app.jinja_env.filters['datetimeformat'] = datetimeformat
-
-import requests
-import time
-import hmac
-import hashlib
-import logging
-
-def get_coinbase_balances(api_key, api_secret):
-    """Fetches wallet balances from Coinbase."""
+def get_coindcx_balances(api_key, api_secret):
+    """Fetches wallet balances from CoinDCX."""
     try:
-        # Step 1: Get the current timestamp (in seconds)
-        timestamp = str(int(time.time()))
+        # Step 1: Get the current timestamp (in milliseconds)
+        timestamp = str(int(time.time() * 1000))
 
         # Step 2: Create the message to sign
-        # Format: timestamp + HTTP method + request path
-        message = timestamp + "GET" + "/v2/accounts"
+        # Format: timestamp + HTTP method + request path + body (if any)
+        message = timestamp + "GET" + "/exchange/v1/users/balances"
 
         # Step 3: Generate the signature using HMAC-SHA256
         signature = hmac.new(api_secret.encode(), message.encode(), hashlib.sha256).hexdigest()
 
         # Step 4: Set up the headers
         headers = {
-            "Accept": "application/json",
-            "CB-ACCESS-KEY": api_key,          # Your API key
-            "CB-ACCESS-SIGN": signature,       # Generated signature
-            "CB-ACCESS-TIMESTAMP": timestamp,  # Current timestamp
+            "Content-Type": "application/json",
+            "X-AUTH-APIKEY": api_key,          # Your API key
+            "X-AUTH-SIGNATURE": signature,     # Generated signature
+            "X-AUTH-TIMESTAMP": timestamp,     # Current timestamp
         }
 
         # Step 5: Make the request
-        response = requests.get("https://api.coinbase.com/v2/accounts", headers=headers)
+        response = requests.get("https://api.coindcx.com/exchange/v1/users/balances", headers=headers)
 
         # Step 6: Handle the response
         if response.status_code == 200:
             data = response.json()
             # Extract non-zero balances
             balances = {
-                account["currency"]: float(account["balance"]["amount"])
-                for account in data["data"]
-                if float(account["balance"]["amount"]) > 0
+                balance["currency"]: float(balance["balance"])
+                for balance in data
+                if float(balance["balance"]) > 0
             }
             # Calculate total balance in USD (if needed)
-            total_balance_usd = sum(balances.values())
+            total_balance_usd = sum(balances.values())  # This assumes all balances are already in USD
             return balances, total_balance_usd
 
         else:
             # Log the error if the request fails
-            logging.error(f"Coinbase API Error: {response.status_code} - {response.text}")
+            logging.error(f"CoinDCX API Error: {response.status_code} - {response.text}")
             return None, 0.0
 
     except Exception as e:
         # Log any unexpected errors
-        logging.error(f"Coinbase API Error: {e}")
+        logging.error(f"CoinDCX API Error: {e}")
         return None, 0.0
-
-
 
 @app.route("/wallet_management", methods=["GET", "POST"])
 @login_required
@@ -977,8 +961,8 @@ def wallet_management():
     exchange_data = []
     exchange_names = []
     exchange_balances = []
-    all_transactions= []
-    for exchange in ["Binance", "OKX", "Coinbase"]:
+    all_transactions = []
+    for exchange in ["Binance", "OKX", "CoinDCX"]:  # Replace Coinbase with CoinDCX
         api_key_entry = UserAPIKey.query.filter_by(user_id=user_id, exchange=exchange).first()
         balances = None
         total_balance_usd = None
@@ -989,7 +973,7 @@ def wallet_management():
         elif exchange == "OKX":
             logo_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Logo-OKX.png/768px-Logo-OKX.png"
         else:
-            logo_url = "https://www.pngall.com/wp-content/uploads/15/Coinbase-Logo-PNG-Images.png"
+            logo_url = "https://www.coindcx.com/static/media/logo.3d1a0e8a.svg"  # Replace with CoinDCX logo URL
 
         if api_key_entry:
             # Fetch balances and transactions if API key exists
