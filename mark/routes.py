@@ -818,29 +818,40 @@ async def get_binance_balances_async(api_key, api_secret):
             await client.close_connection()
             logging.debug("Binance client connection closed.")
 
+
+# Define the specific coins you want to fetch trades for
+specific_coins_trades = [
+    "BTCUSDT", "ETHUSDT", "XRPUSDT", "SOLUSDT", "BNBUSDT",
+    "DOGEUSDT", "ADAUSDT", "TRXUSDT", "LINKUSDT", "AVAXUSDT", 
+    "PEPEUSDT", "SUIUSDT", "TONUSDT", "FLOKIUSDT", "BCHUSDT",
+    "SHIBUSDT", "XMRUSDT", "DOTUSDT", "LTCUSDT"
+]
+
 async def get_binance_transactions_async(api_key, api_secret):
-    """Fetches ALL transaction history from Binance asynchronously."""
+    """Fetches transaction history for specific coins from Binance asynchronously."""
     client = None
     try:
         client = await AsyncClient.create(api_key, api_secret)
 
-        # Step 1: Fetch all trading pairs (symbols) available on Binance
-        exchange_info = await client.get_exchange_info()
-        symbols = [symbol['symbol'] for symbol in exchange_info['symbols']]
-
-        # Step 2: Fetch trade history for each symbol
+        # Step 1: Fetch trade history only for the specified coins
         all_trades = []
-        for symbol in symbols:
+        for symbol in specific_coins_trades:
             try:
+                # Fetch trades for the current symbol
                 trades = await client.get_my_trades(symbol=symbol)
                 if trades:
                     all_trades.extend(trades)  # Add trades to the list
+                    logging.debug(f"Fetched {len(trades)} trades for {symbol}")
+
+                # Add a delay to respect Binance's rate limits
+                await asyncio.sleep(0.1)  # 100ms delay between requests
+
             except BinanceAPIException as e:
                 logging.error(f"Binance API Error for symbol {symbol}: {e}")
             except Exception as e:
                 logging.error(f"Unexpected error for symbol {symbol}: {e}")
 
-        return all_trades  # Return all trades across all symbols
+        return all_trades  # Return all trades for the specified coins
 
     except BinanceAPIException as e:
         logging.error(f"Binance API Error: {e}")
