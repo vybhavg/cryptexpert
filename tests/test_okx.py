@@ -4,7 +4,7 @@ from unittest.mock import patch, Mock
 from mark.routes import get_specific_prices_from_okx  # Import from app.py
 
 class TestOKXPrices(unittest.TestCase):
-    @patch('cryptexpert.app.requests.get')
+    @patch('mark.routes.requests.get')
     def test_get_specific_prices_from_okx(self, mock_get):
         # Mock the API response
         mock_response = Mock()
