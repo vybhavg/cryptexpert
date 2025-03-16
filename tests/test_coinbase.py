@@ -1,7 +1,7 @@
 # tests/test_coinbase.py
 import unittest
 from unittest.mock import patch, Mock
-from cryptexpert.app import get_specific_prices_from_coinbase  # Import from app.py
+from mark.routes import get_specific_prices_from_coinbase  # Import from app.py
 
 class TestCoinbasePrices(unittest.TestCase):
     @patch('cryptexpert.app.requests.get')
