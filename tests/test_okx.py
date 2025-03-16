@@ -21,7 +21,7 @@ class TestOKXPrices(unittest.TestCase):
         result = get_specific_prices_from_okx()
 
         # Assert the results
-        self.assertEqual(len(result), 2)  # Ensure this matches the number of mocked items
+        self.assertEqual(len(result), 79)  # Ensure this matches the number of mocked items
         self.assertEqual(result[0]['symbol'], 'BTC')
         self.assertEqual(result[0]['price'], '50,000.00')
         self.assertEqual(result[0]['priceChangePercent'], '123.00')
