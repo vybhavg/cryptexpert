@@ -1,7 +1,7 @@
 # tests/test_binance.py
 import unittest
 from unittest.mock import patch, Mock
-from cryptexpert.app import get_specific_prices_from_binance  # Import from app.py
+from mark.routes import get_specific_prices_from_binance  # Import from app.py
 
 class TestBinancePrices(unittest.TestCase):
     @patch('cryptexpert.app.requests.get')  # Mock requests.get in app.py
