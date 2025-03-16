@@ -1,6 +1,7 @@
 # tests/test_auth.py
 import unittest
-from mark.routes import app, db, User  # Import your Flask app and User model
+from mark import app, db
+from mark.models import User  # Import your Flask app and User model
 from werkzeug.security import generate_password_hash
 
 class TestAuthRoutes(unittest.TestCase):
@@ -9,6 +10,13 @@ class TestAuthRoutes(unittest.TestCase):
         self.client = app.test_client()
         app.config['TESTING'] = True
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+        app.config['WTF_CSRF_ENABLED'] = False  # Disable CSRF for testing
+
+        # Push an application context
+        self.app_context = app.app_context()
+        self.app_context.push()
+
+        # Create the database tables
         db.create_all()
 
         # Create a test user
@@ -24,6 +32,9 @@ class TestAuthRoutes(unittest.TestCase):
         # Clean up the database
         db.session.remove()
         db.drop_all()
+
+        # Pop the application context
+        self.app_context.pop()
 
     def test_login_success(self):
         # Test successful login
