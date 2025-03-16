@@ -7,6 +7,7 @@ def benchmark_function(func, *args, **kwargs):
     result = func(*args, **kwargs)  # Call the function
     end_time = time.time()
     print(f"{func.__name__} executed in {end_time - start_time:.4f} seconds")
+    print("Test passed")
     return result
 
 # API calls
