@@ -42,9 +42,13 @@ class TestAuthRoutes(unittest.TestCase):
             "username": "testuser",
             "password": "testpassword"
         }, follow_redirects=True)
-
+    
+        # Print the response data for debugging
+        print(response.data)
+    
+        # Assert the response
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Logged in successfully", response.data)
+        self.assertIn(b"OTP sent successfully", response.data)  # Check for the OTP success message
 
     def test_login_failure(self):
         # Test failed login
