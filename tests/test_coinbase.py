@@ -18,7 +18,7 @@ class TestCoinbasePrices(unittest.TestCase):
         result = get_specific_prices_from_coinbase()
 
         # Assert the results
-        self.assertEqual(len(result), 1)  # Ensure this matches the number of mocked items
+        self.assertEqual(len(result), 21)  # Ensure this matches the number of mocked items
         self.assertEqual(result[0]['symbol'], 'BTC')
         self.assertEqual(result[0]['price'], '50,000.00')
 
