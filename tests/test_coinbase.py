@@ -4,7 +4,7 @@ from unittest.mock import patch, Mock
 from mark.routes import get_specific_prices_from_coinbase  # Correct import path
 
 class TestCoinbasePrices(unittest.TestCase):
-    @patch('mark.routes.requests.get')  # Correct mock path
+    @patch('mark.routes.requests.get')
     def test_get_specific_prices_from_coinbase(self, mock_get):
         # Mock the API response
         mock_response = Mock()
@@ -13,12 +13,12 @@ class TestCoinbasePrices(unittest.TestCase):
             "data": {"amount": "50000.00"}
         }
         mock_get.return_value = mock_response
-
+    
         # Call the function
         result = get_specific_prices_from_coinbase()
-
+    
         # Assert the results
-        self.assertEqual(len(result), 1)
+        self.assertEqual(len(result), 1)  # Ensure this matches the actual logic
         self.assertEqual(result[0]['symbol'], 'BTC')
         self.assertEqual(result[0]['price'], '50,000.00')
 
