@@ -571,7 +571,10 @@ def charts():
     return render_template('charts.html', user=current_user, next=request.path)
 
 
-model_path = "/home/ec2-user/cryptexpert/mark/model.keras" 
+# Load the trained model
+model = load_model("/home/ec2-user/cryptexpert/mark/model.keras")
+
+
 
 # Initialize Binance Client (No API Key Required for Public Data)
 client = Client()
@@ -762,7 +765,7 @@ def get_wallet_balances(api_key, api_secret, exchange):
 
         elif exchange.lower() == "wazirx":
             return get_wazirx_balances(api_key, api_secret)
-            
+
         else:
             logging.error(f"Unsupported exchange: {exchange}")
             return None, 0.0
