@@ -570,11 +570,8 @@ def charts():
     # Pass the current_user object and the current path to the template
     return render_template('charts.html', user=current_user, next=request.path)
 
-# Check if running inside Docker
-if os.path.exists("/app/"):
-    model_path = "/app/mark/model.keras"  # Path inside Docker
-else:
-    model_path = "/home/ec2-user/cryptexpert/mark/model.keras" 
+
+model_path = "/home/ec2-user/cryptexpert/mark/model.keras" 
 
 # Initialize Binance Client (No API Key Required for Public Data)
 client = Client()
