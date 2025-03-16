@@ -1,10 +1,10 @@
 # tests/test_coinbase.py
 import unittest
 from unittest.mock import patch, Mock
-from mark.routes import get_specific_prices_from_coinbase  # Import from app.py
+from mark.routes import get_specific_prices_from_coinbase  # Correct import path
 
 class TestCoinbasePrices(unittest.TestCase):
-    @patch('mark.routes.requests.get')
+    @patch('mark.routes.requests.get')  # Correct mock path
     def test_get_specific_prices_from_coinbase(self, mock_get):
         # Mock the API response
         mock_response = Mock()
@@ -22,7 +22,7 @@ class TestCoinbasePrices(unittest.TestCase):
         self.assertEqual(result[0]['symbol'], 'BTC')
         self.assertEqual(result[0]['price'], '50,000.00')
 
-    @patch('cryptexpert.app.requests.get')
+    @patch('mark.routes.requests.get')  # Correct mock path
     def test_get_specific_prices_from_coinbase_error(self, mock_get):
         # Mock an error response
         mock_response = Mock()
