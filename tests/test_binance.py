@@ -1,10 +1,10 @@
 # tests/test_binance.py
 import unittest
 from unittest.mock import patch, Mock
-from mark.routes import get_specific_prices_from_binance  # Import from app.py
+from mark.routes import get_specific_prices_from_binance  # Correct import path
 
 class TestBinancePrices(unittest.TestCase):
-    @patch('mark.routes.requests.get')  # Mock requests.get in app.py
+    @patch('mark.routes.requests.get')  # Correct mock path
     def test_get_specific_prices_from_binance(self, mock_get):
         # Mock the API response
         mock_response = Mock()
@@ -21,7 +21,7 @@ class TestBinancePrices(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0]['symbol'], 'BTCUSDT')
 
-    @patch('cryptexpert.app.requests.get')
+    @patch('mark.routes.requests.get')  # Correct mock path
     def test_get_specific_prices_from_binance_error(self, mock_get):
         # Mock an error response
         mock_response = Mock()
