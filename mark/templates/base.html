@@ -145,12 +145,12 @@ html {
     position: relative;
     max-width: 1000px;
     border-radius: 50px;
-    background-color: #fff;
+    background-color: #000; /* Black background */
     padding: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
     flex-direction: row;
 }
 
@@ -159,43 +159,43 @@ html {
     top: 140px;
     left: 0;
     margin-top: 20px;
-    background: #fff; /* Keep background white */
+    background: #000; /* Black background */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     width: 100%;
-    max-width: 100%; /* Ensure it doesn't overflow */
+    max-width: 100%;
     max-height: 300px;
     overflow-y: auto;
-    overflow-x: hidden; /* Hide horizontal scroll */
+    overflow-x: hidden;
     display: none;
     border: 1px solid rgba(255, 255, 255, 0.3);
     z-index: 1000;
     border-radius: 20px;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 10px 30px rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease-in-out;
-    padding: 5px; /* Optional: Prevent right-side cutoff */
+    padding: 5px;
 }
 
 #searchResults div {
-    white-space: nowrap; /* Prevent wrapping */
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Show "..." if text is too long */
+    text-overflow: ellipsis;
     padding: 12px 15px;
     cursor: pointer;
     font-size: 1rem;
     font-weight: 500;
-    color: #333;
+    color: #fff; /* White text */
     display: flex;
     align-items: center;
     gap: 10px;
     transition: background 0.3s, transform 0.2s;
     border-radius: 20px;
-    max-width: 100%; /* Ensure it doesn't overflow */
+    max-width: 100%;
     margin-bottom: 5px;
 }
 
 #searchResults div:hover {
-    background-color: rgba(248, 188, 4, 0.2); /* Light gold highlight */
+    background-color: rgba(248, 188, 4, 0.2);
     transform: scale(1.02);
 }
 
@@ -204,8 +204,8 @@ html {
     padding: 6px;
     font-size: 1rem;
     border: none;
-    color: #333;
-    background-color: #fff;
+    color: #fff; /* White text */
+    background-color: #000; /* Black background */
 }
 
 .searchh__helper {
@@ -217,11 +217,16 @@ html {
 
 .searchh.focused .searchh__helper {
     transform: rotate(180deg);
-    color: #c68e17; /* Darker gold when active */
-}.container.mx-auto.p-8.bg-gray-900 {
-    background-color: #1a1a1a;
-    padding: 2rem;
+    color: #c68e17;
 }
+
+/* Container with Black Background */
+.container.mx-auto.p-8.bg-gray-900 {
+    background-color: #000 !important; /* Black background */
+    padding: 2rem;
+    color: #fff; /* White text */
+}
+
 
 .grid.grid-cols-1.md\:grid-cols-4.gap-8 {
     display: grid;
