@@ -1069,28 +1069,29 @@ async function performSearch() {
     }
 
     try {
-        let response = await fetch(`/search?q=${encodeURIComponent(query)}`);
-        let results = await response.json();
+    let response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+    console.log("Response:", response); // Debugging line
+    let results = await response.json();
+    console.log("Results:", results); // Debugging line
 
-        if (results.length > 0) {
-            resultsDiv.style.display = 'block';
-            resultsDiv.classList.add("show"); // Add animation class
-            resultsDiv.innerHTML = results.map((item) => {
-                let regex = new RegExp(`(${query})`, "gi");
-                let highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
+    if (results.length > 0) {
+        resultsDiv.style.display = 'block';
+        resultsDiv.classList.add("show");
+        resultsDiv.innerHTML = results.map((item) => {
+            let regex = new RegExp(`(${query})`, "gi");
+            let highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
 
-                let isExactMatch = item.name.toLowerCase() === query.toLowerCase();
-                return `<div class="${isExactMatch ? 'exact-match' : ''}" onclick="window.location.href='${item.link}'">
-                            ${highlightedName}
-                        </div>`;
-            }).join('');
-        } else {
-            resultsDiv.style.display = 'block';
-            resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center;">No results found</div>';
-        }
-    } catch (error) {
-        console.error("Error fetching search results:", error);
+            let isExactMatch = item.name.toLowerCase() === query.toLowerCase();
+            return `<div class="${isExactMatch ? 'exact-match' : ''}" onclick="window.location.href='${item.link}'">
+                        ${highlightedName}
+                    </div>`;
+        }).join('');
+    } else {
+        resultsDiv.style.display = 'block';
+        resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center;">No results found</div>';
     }
+} catch (error) {
+    console.error("Error fetching search results:", error);
 }
 
 // Navigate to selected result on Enter key press
