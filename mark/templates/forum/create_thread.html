@@ -1,16 +1,58 @@
 {% extends "base.html" %}
+
+{% block sstyle %}
+<style>
+    .create-thread {
+        padding: 30px !important;
+        margin-top: 80px !important; /* Adjust this value based on the height of your navigation bar */
+    }
+
+    .form-group {
+        margin-bottom: 20px !important;
+    }
+
+    .form-control {
+        width: 100% !important;
+        padding: 10px !important;
+        border: 1px solid #ddd !important;
+        border-radius: 5px !important;
+        font-size: 1em !important;
+    }
+
+    .form-control:focus {
+        border-color: #007bff !important;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
+    }
+
+    .btn-primary {
+        background-color: #007bff !important;
+        color: #fff !important;
+        padding: 10px 20px !important;
+        border: none !important;
+        border-radius: 5px !important;
+        cursor: pointer !important;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3 !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h1>Create Thread</h1>
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <div class="form-group">
-        {{ form.title.label }} {{ form.title(class="form-control") }}
-    </div>
-    <div class="form-group">
-        {{ form.content.label }} {{ form.content(class="form-control") }}
-    </div>
-    <div class="form-group">
-        {{ form.submit(class="btn btn-primary") }}
-    </div>
-</form>
+<div class="create-thread">
+    <h1>Create Thread</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.title.label }} {{ form.title(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.content.label }} {{ form.content(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
 {% endblock %}
