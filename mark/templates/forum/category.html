@@ -1,14 +1,72 @@
 {% extends "base.html" %}
+
+{% block style %}
+    /* General Thread Styles */
+    .forum-container {
+        padding: 30px !important;
+        margin-top: 80px !important; /* Adjust this value based on the height of your navigation bar */
+    }
+
+    .threads {
+        margin-top: 20px;
+    }
+
+    .thread {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    .thread h3 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+
+    .thread p {
+        font-size: 1em;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .thread a {
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .thread a:hover {
+        text-decoration: underline;
+    }
+
+    /* Button Style */
+    .btn-primary {
+        background-color: #007bff !important;
+        color: #fff !important;
+        padding: 10px 20px !important;
+        border: none !important;
+        border-radius: 5px !important;
+        cursor: pointer !important;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3 !important;
+    }
+{% endblock %}
+
 {% block content %}
-<h1>{{ category.name }}</h1>
-<p>{{ category.description }}</p>
-<a href="{{ url_for('create_thread', category_id=category.id) }}" class="btn btn-primary">Create Thread</a>
-<div class="threads">
-    {% for thread in threads %}
-    <div class="thread">
-        <h3><a href="{{ url_for('forum_thread', thread_id=thread.id) }}">{{ thread.title }}</a></h3>
-        <p>By {{ thread.user.username }} on {{ thread.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+    <div class="forum-container">
+        <h1>{{ category.name }}</h1>
+        <p>{{ category.description }}</p>
+        <a href="{{ url_for('create_thread', category_id=category.id) }}" class="btn btn-primary">Create Thread</a>
+        
+        <div class="threads">
+            {% for thread in threads %}
+                <div class="thread">
+                    <h3><a href="{{ url_for('forum_thread', thread_id=thread.id) }}">{{ thread.title }}</a></h3>
+                    <p>By {{ thread.user.username }} on {{ thread.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                </div>
+            {% endfor %}
+        </div>
     </div>
-    {% endfor %}
-</div>
 {% endblock %}
