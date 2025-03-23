@@ -1155,3 +1155,54 @@ def refresh_balances():
         "total_balance_usd": total_balance_usd,  # Balance for the requested exchange
         "total_balance_all_exchanges": total_balance_all_exchanges  # Total balance across all exchanges
     })
+@app.route('/forum')
+def forum_home():
+    categories = ForumCategory.query.all()
+    return render_template('forum/home.html', categories=categories)
+
+@app.route('/forum/category/<int:category_id>')
+def forum_category(category_id):
+    category = ForumCategory.query.get_or_404(category_id)
+    threads = ForumThread.query.filter_by(category_id=category_id).order_by(ForumThread.created_at.desc()).all()
+    return render_template('forum/category.html', category=category, threads=threads)
+
+@app.route('/forum/thread/<int:thread_id>')
+def forum_thread(thread_id):
+    thread = ForumThread.query.get_or_404(thread_id)
+    posts = ForumPost.query.filter_by(thread_id=thread_id).order_by(ForumPost.created_at.asc()).all()
+    return render_template('forum/thread.html', thread=thread, posts=posts)
+
+from flask import request, flash
+from mark.form import ThreadForm, PostForm
+
+@app.route('/forum/create_thread/<int:category_id>', methods=['GET', 'POST'])
+@login_required
+def create_thread(category_id):
+    form = ThreadForm()
+    if form.validate_on_submit():
+        thread = ForumThread(
+            title=form.title.data,
+            content=form.content.data,
+            user_id=current_user.id,
+            category_id=category_id
+        )
+        db.session.add(thread)
+        db.session.commit()
+        flash('Thread created successfully!', 'success')
+        return redirect(url_for('forum_thread', thread_id=thread.id))
+    return render_template('forum/create_thread.html', form=form)
+
+@app.route('/forum/post/<int:thread_id>', methods=['POST'])
+@login_required
+def create_post(thread_id):
+    form = PostForm()
+    if form.validate_on_submit():
+        post = ForumPost(
+            content=form.content.data,
+            user_id=current_user.id,
+            thread_id=thread_id
+        )
+        db.session.add(post)
+        db.session.commit()
+        flash('Post created successfully!', 'success')
+    return redirect(url_for('forum_thread', thread_id=thread_id))
