@@ -20,6 +20,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import io
 import base64
+from mark.models import ForumCategory, ForumThread, ForumPost
 from datetime import datetime
 import os
 from cryptography.fernet import Fernet
