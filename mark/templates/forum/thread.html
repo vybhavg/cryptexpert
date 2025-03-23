@@ -1,4 +1,57 @@
 {% extends "base.html" %}
+
+{% block sstyle %}
+<style>
+    .posts {
+        padding: 30px !important;
+        margin-top: 80px !important; /* Adjust this value based on the height of your navigation bar */
+    }
+
+    .post {
+        margin-bottom: 20px !important;
+        padding: 15px !important;
+        border: 1px solid #ddd !important;
+        border-radius: 5px !important;
+        background-color: #f9f9f9 !important;
+    }
+
+    .post p {
+        color: #333 !important;
+        margin-bottom: 10px !important;
+    }
+
+    .post small {
+        color: #666 !important;
+        font-size: 0.9em !important;
+    }
+
+    .form-group {
+        margin-bottom: 20px !important;
+    }
+
+    .form-control {
+        width: 100% !important;
+        padding: 10px !important;
+        border: 1px solid #ddd !important;
+        border-radius: 5px !important;
+        font-size: 1em !important;
+    }
+
+    .btn-primary {
+        background-color: #007bff !important;
+        color: #fff !important;
+        padding: 10px 20px !important;
+        border: none !important;
+        border-radius: 5px !important;
+        cursor: pointer !important;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3 !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <h1>{{ thread.title }}</h1>
 <p>By {{ thread.user.username }} on {{ thread.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
