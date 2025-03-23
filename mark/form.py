@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField,PasswordField,SubmitField
-from wtforms.validators import Length, EqualTo, Email,DataRequired,ValidationError,TextAreaField
+from wtforms import StringField,PasswordField,SubmitField,TextAreaField
+from wtforms.validators import Length, EqualTo, Email,DataRequired,ValidationError
 from mark.models import User, UserAPIKey
 
 class RegisterForm(FlaskForm):
