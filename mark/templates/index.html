@@ -405,7 +405,7 @@ small {
 }
 
 /* Updated Search Results Styling */
-#searchresults {
+#searchhresults {
     position: absolute;
     top: 140px;
     left: 0;
@@ -428,7 +428,7 @@ small {
 }
 
 /* Ensure child elements don't overflow */
-#searchresults div {
+#searchhresults div {
     white-space: nowrap; /* Prevent wrapping */
     overflow: hidden;
     text-overflow: ellipsis; /* Show "..." if text is too long */
@@ -447,22 +447,22 @@ small {
 }
 
 /* Hover & Active Effect */
-#searchresults div:hover {
+#searchhresults div:hover {
     background-color: rgba(248, 188, 4, 0.2); /* Light gold highlight */
     transform: scale(1.02);
 }
 
 /* Add subtle gradient for items */
-#searchresults div:nth-child(odd) {
+#searchhresults div:nth-child(odd) {
     background-color:  rgba(245, 245, 245); /* Light grey background for odd items */
 }
 
-#searchresults div:nth-child(even) {
+#searchhresults div:nth-child(even) {
     background-color: rgba(245, 245, 245); /* Slightly darker grey for even items */
 }
 
 /* Highlight Exact Match */
-#searchresults div.exact-match {
+#searchhresults div.exact-match {
     background-color: #f8bc04; /* Gold background for exact match */
     color: white;
     font-weight: bold;
@@ -474,7 +474,7 @@ small {
     to { opacity: 1; transform: translateY(0); }
 }
 
-#searchresults.show {
+#searchhresults.show {
     animation: fadeInn 0.3s ease-out;
 }
 
@@ -1044,7 +1044,7 @@ margin-top: 0;
 <!-- Search Form -->
 <form class="searchhh" style="position: absolute; top: 105px;" onsubmit="return false;">
     <div class="searchhh__inner" style="display: flex; width: 100%; position: relative;">
-        <input type="text" id="searchInput" class="searchhh__text" 
+        <input type="text" id="searchhInput" class="searchhh__text" 
             placeholder="Search for Crypto, Exchanges, Wallets..." 
             onkeyup="performSearch()"
             onfocus="performSearch()">  <!-- Trigger search when input is focused -->
@@ -1053,13 +1053,13 @@ margin-top: 0;
 </form>
 
 <!-- Search Results -->
-<div id="searchresults"></div>
+<div id="searchhresults"></div>
 
 <script>
     let currentIndex = -1; 
     async function performSearch() {
-    let query = document.getElementById('searchInput').value.trim();
-    let resultsDiv = document.getElementById('searchresults');
+    let query = document.getElementById('searchhInput').value.trim();
+    let resultsDiv = document.getElementById('searchhresults');
 
     if (query.length === 0) {
         resultsDiv.style.display = 'none';
@@ -1095,9 +1095,9 @@ margin-top: 0;
 
 // Navigate to selected result on Enter key press
 document.addEventListener('keydown', function (event) {
-    let resultsDiv = document.getElementById('searchresults');
+    let resultsDiv = document.getElementById('searchhresults');
     let results = resultsDiv.getElementsByTagName('div');
-    let searchBox = document.getElementById('searchInput');
+    let searchBox = document.getElementById('searchhInput');
 
     if (event.key === 'ArrowDown') {
         if (currentIndex < results.length - 1) {
@@ -1124,14 +1124,14 @@ function updateHighlight(results) {
     // Highlight the current index
     if (currentIndex >= 0 && currentIndex < results.length) {
         results[currentIndex].classList.add('highlighted');
-        document.getElementById('searchInput').value = results[currentIndex].innerText; // Set the highlighted text in the search box
+        document.getElementById('searchhInput').value = results[currentIndex].innerText; // Set the highlighted text in the search box
     }
 }
 
 // Hide search results when clicking outside
 document.addEventListener("click", function(event) {
-    let searchBox = document.getElementById("searchInput");
-    let resultsDiv = document.getElementById("searchresults");
+    let searchBox = document.getElementById("searchhInput");
+    let resultsDiv = document.getElementById("searchhresults");
 
     if (!searchBox.contains(event.target) && !resultsDiv.contains(event.target)) {
         resultsDiv.style.display = 'none';
