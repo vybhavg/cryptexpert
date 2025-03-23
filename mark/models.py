@@ -94,3 +94,25 @@ class Exchange(db.Model):
 
     def __repr__(self):
         return f"<Exchange {self.name}>"
+
+class ForumCategory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(500))
+    threads = db.relationship('ForumThread', backref='category', lazy=True)
+
+class ForumThread(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('forum_category.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    posts = db.relationship('ForumPost', backref='thread', lazy=True)
+
+class ForumPost(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    thread_id = db.Column(db.Integer, db.ForeignKey('forum_thread.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
