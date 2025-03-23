@@ -1045,20 +1045,19 @@ margin-top: 0;
     <div class="custom-search__inner" style="display: flex; width: 100%; position: relative;">
         <input type="text" id="customSearchInput" class="custom-search__text" 
             placeholder="Search for Crypto, Exchanges, Wallets..." 
-            onkeyup="performSearch()"
-            onfocus="performSearch()">  <!-- Trigger search when input is focused -->
-        <i class="zmdi zmdi-search custom-search__helper" onclick="performSearch()"></i>
+            onkeyup="performSearchCustom()"
+            onfocus="performSearchCustom()">  <!-- Trigger search when input is focused -->
+        <i class="zmdi zmdi-search custom-search__helper" onclick="performSearchCustom()"></i>
     </div>
 </form>
 
 <!-- Search Results -->
 <div id="customSearchResults" class="custom-search-results"></div>
 
-
 <script>
-let currentIndex = -1;
+let currentIndexCustom = -1; // Use a unique variable name
 
-async function performSearch() {
+async function performSearchCustom() {
     let query = document.getElementById('customSearchInput').value.trim();
     let resultsDiv = document.getElementById('customSearchResults');
 
@@ -1069,29 +1068,30 @@ async function performSearch() {
     }
 
     try {
-    let response = await fetch(`/search?q=${encodeURIComponent(query)}`);
-    console.log("Response:", response); // Debugging line
-    let results = await response.json();
-    console.log("Results:", results); // Debugging line
+        let response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+        console.log("Response:", response); // Debugging line
+        let results = await response.json();
+        console.log("Results:", results); // Debugging line
 
-    if (results.length > 0) {
-        resultsDiv.style.display = 'block';
-        resultsDiv.classList.add("show");
-        resultsDiv.innerHTML = results.map((item) => {
-            let regex = new RegExp(`(${query})`, "gi");
-            let highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
+        if (results.length > 0) {
+            resultsDiv.style.display = 'block';
+            resultsDiv.classList.add("show");
+            resultsDiv.innerHTML = results.map((item) => {
+                let regex = new RegExp(`(${query})`, "gi");
+                let highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
 
-            let isExactMatch = item.name.toLowerCase() === query.toLowerCase();
-            return `<div class="${isExactMatch ? 'exact-match' : ''}" onclick="window.location.href='${item.link}'">
-                        ${highlightedName}
-                    </div>`;
-        }).join('');
-    } else {
-        resultsDiv.style.display = 'block';
-        resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center;">No results found</div>';
+                let isExactMatch = item.name.toLowerCase() === query.toLowerCase();
+                return `<div class="${isExactMatch ? 'exact-match' : ''}" onclick="window.location.href='${item.link}'">
+                            ${highlightedName}
+                        </div>`;
+            }).join('');
+        } else {
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center;">No results found</div>';
+        }
+    } catch (error) {
+        console.error("Error fetching search results:", error);
     }
-} catch (error) {
-    console.error("Error fetching search results:", error);
 }
 
 // Navigate to selected result on Enter key press
@@ -1101,31 +1101,31 @@ document.addEventListener('keydown', function (event) {
     let searchBox = document.getElementById('customSearchInput');
 
     if (event.key === 'ArrowDown') {
-        if (currentIndex < results.length - 1) {
-            currentIndex++;
+        if (currentIndexCustom < results.length - 1) {
+            currentIndexCustom++;
         }
-        updateHighlight(results);
+        updateHighlightCustom(results);
     } else if (event.key === 'ArrowUp') {
-        if (currentIndex > 0) {
-            currentIndex--;
+        if (currentIndexCustom > 0) {
+            currentIndexCustom--;
         }
-        updateHighlight(results);
-    } else if (event.key === 'Enter' && currentIndex >= 0 && currentIndex < results.length) {
+        updateHighlightCustom(results);
+    } else if (event.key === 'Enter' && currentIndexCustom >= 0 && currentIndexCustom < results.length) {
         // Redirect to the selected link on Enter
-        window.location.href = results[currentIndex].getAttribute('onclick').replace("window.location.href='", "").replace("'", "");
+        window.location.href = results[currentIndexCustom].getAttribute('onclick').replace("window.location.href='", "").replace("'", "");
     }
 });
 
-function updateHighlight(results) {
+function updateHighlightCustom(results) {
     // Remove highlight from all results
     for (let i = 0; i < results.length; i++) {
         results[i].classList.remove('highlighted');
     }
 
     // Highlight the current index
-    if (currentIndex >= 0 && currentIndex < results.length) {
-        results[currentIndex].classList.add('highlighted');
-        document.getElementById('customSearchInput').value = results[currentIndex].innerText; // Set the highlighted text in the search box
+    if (currentIndexCustom >= 0 && currentIndexCustom < results.length) {
+        results[currentIndexCustom].classList.add('highlighted');
+        document.getElementById('customSearchInput').value = results[currentIndexCustom].innerText; // Set the highlighted text in the search box
     }
 }
 
