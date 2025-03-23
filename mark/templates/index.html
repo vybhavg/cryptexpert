@@ -390,7 +390,7 @@ small {
 
 
 /* Styling the search form */
-.searchh {
+.searchhh {
     width: 100%;
     position: relative;
     max-width: 1000px;
@@ -479,7 +479,7 @@ small {
 }
 
 /* Input styling */
-.searchh__text {
+.searchhh__text {
     width: 100%;
     padding: 6px;
     font-size: 1rem;
@@ -489,14 +489,14 @@ small {
 }
 
 /* Icon styling */
-.searchh__helper {
+.searchhh__helper {
     font-size: 2.5rem;
     color: #f8bc04;
     transition: transform 0.3s ease, color 0.3s ease;
     cursor: pointer;
 }
 
-.searchh.focused .searchh__helper {
+.searchhh.focused .searchhh__helper {
     transform: rotate(180deg);
     color: #c68e17; /* Darker gold when active */
 }
@@ -1042,13 +1042,13 @@ margin-top: 0;
             
                <!-- Search Form -->
 <!-- Search Form -->
-<form class="searchh" style="position: absolute; top: 105px;" onsubmit="return false;">
-    <div class="searchh__inner" style="display: flex; width: 100%; position: relative;">
-        <input type="text" id="searchInput" class="searchh__text" 
+<form class="searchhh" style="position: absolute; top: 105px;" onsubmit="return false;">
+    <div class="searchhh__inner" style="display: flex; width: 100%; position: relative;">
+        <input type="text" id="searchInput" class="searchhh__text" 
             placeholder="Search for Crypto, Exchanges, Wallets..." 
             onkeyup="performSearch()"
             onfocus="performSearch()">  <!-- Trigger search when input is focused -->
-        <i class="zmdi zmdi-search searchh__helper" onclick="performSearch()"></i>
+        <i class="zmdi zmdi-search searchhh__helper" onclick="performSearch()"></i>
     </div>
 </form>
 
