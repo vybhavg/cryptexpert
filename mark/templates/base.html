@@ -785,6 +785,7 @@ html {
             <a class="dropdown-item" href="{{url_for('profile')}}">View Profile</a>
             <a class="dropdown-item" href="#">Settings</a>
             <a class="dropdown-item" href="{{ url_for('logout_page') }}">Logout</a>
+            <a class="dropdown-item" href="{{ url_for('forum_home') }}">Forum</a>
         {% else %}
             <!-- Show these options if the user is not logged in -->
             <a class="dropdown-item" href="{{ url_for('login_form') }}">Log In</a>
