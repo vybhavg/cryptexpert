@@ -798,12 +798,19 @@ html {
 
                          <li class="@@typeactive"><a href="{{url_for('wallet_management')}}"><i class="zmdi zmdi-view-week"></i> Wallets</a></li>
                         <li class="@@typeactive"><a href="/charts?symbol=BTCUSDT"><i class="zmdi zmdi-library"></i> Live Charts</a></li>
-<li class="navigation__sub @@forumactive">
+<li class="navigation__sub {% if request.endpoint in ['forum_home', 'forum_categories', 'forum_threads', 'forum_posts'] %}active{% endif %}">
     <a href="#"><i class="zmdi zmdi-comment-alt"></i> Forum</a>
     <ul>
-        <li class="@@forumhomeactive"><a href="{{ url_for('forum_home') }}">Home</a></li>
-        <li class="@@forumcategoriesactive"><a href="{{ url_for('forum_category') }}">Categories</a></li>
-        <li class="@@forumthreadsactive"><a href="{{ url_for('forum_thread') }}">Threads</a></li>
+        <li class="{% if request.endpoint == 'forum_home' %}active{% endif %}">
+            <a href="{{ url_for('forum_home') }}">Home</a>
+        </li>
+        <li class="{% if request.endpoint == 'forum_categories' %}active{% endif %}">
+            <a href="{{ url_for('forum_categories') }}">Categories</a>
+        </li>
+        <li class="{% if request.endpoint == 'forum_threads' %}active{% endif %}">
+            <a href="{{ url_for('forum_threads') }}">Threads</a>
+        </li>
+
     </ul>
 </li>
                         <li class="@@typeactive"><a href="{{url_for('live_prices')}}"><i class="zmdi zmdi-format-underlined"></i> Live Prices</a></li>
