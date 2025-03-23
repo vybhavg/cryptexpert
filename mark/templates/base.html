@@ -802,9 +802,8 @@ html {
     <a href="#"><i class="zmdi zmdi-comment-alt"></i> Forum</a>
     <ul>
         <li class="@@forumhomeactive"><a href="{{ url_for('forum_home') }}">Home</a></li>
-        <li class="@@forumcategoriesactive"><a href="{{ url_for('forum_categories') }}">Categories</a></li>
-        <li class="@@forumthreadsactive"><a href="{{ url_for('forum_threads') }}">Threads</a></li>
-        <li class="@@forumpostsactive"><a href="{{ url_for('forum_posts') }}">Posts</a></li>
+        <li class="@@forumcategoriesactive"><a href="{{ url_for('forum_category') }}">Categories</a></li>
+        <li class="@@forumthreadsactive"><a href="{{ url_for('forum_thread') }}">Threads</a></li>
     </ul>
 </li>
                         <li class="@@typeactive"><a href="{{url_for('live_prices')}}"><i class="zmdi zmdi-format-underlined"></i> Live Prices</a></li>
