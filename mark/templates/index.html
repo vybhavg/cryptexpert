@@ -1041,104 +1041,103 @@ margin-top: 0;
                 </span>
             
                <!-- Search Form -->
-<!-- Search Form -->
-<form class="searchh" style="position: absolute; top: 105px;" onsubmit="return false;">
-    <div class="searchh__inner" style="display: flex; width: 100%; position: relative;">
-        <input type="text" id="searchInput" class="searchh__text" 
+               <!-- Search Form -->
+<form class="search" onsubmit="return false;">
+    <div class="search__inner" style="display: flex; width: 100%; position: relative;">
+        <input type="text" id="searchInput" class="search__text" 
             placeholder="Search for Crypto, Exchanges, Wallets..." 
             onkeyup="performSearch()"
             onfocus="performSearch()">  <!-- Trigger search when input is focused -->
-        <i class="zmdi zmdi-search searchh__helper" onclick="performSearch()"></i>
+        <i class="zmdi zmdi-search search__helper" onclick="performSearch()"></i>
     </div>
 </form>
 
 <!-- Search Results -->
-<div id="searchResults"></div>
+<div id="searchResults" style=" background: black; border: 1px solid #ccc; width: 100%; max-height: 200px; overflow-y: auto; z-index: 1000;margin-top:250px; display: none;"></div>
 
 <script>
     let currentIndex = -1; 
+
     async function performSearch() {
-    let query = document.getElementById('searchInput').value.trim();
-    let resultsDiv = document.getElementById('searchResults');
+        let query = document.getElementById('searchInput').value.trim();
+        let resultsDiv = document.getElementById('searchResults');
 
-    if (query.length === 0) {
-        resultsDiv.style.display = 'none';
-        resultsDiv.innerHTML = '';
-        return;
-    }
-
-    try {
-        let response = await fetch(`/search?q=${encodeURIComponent(query)}`);
-        let results = await response.json();
-
-        if (results.length > 0) {
-            resultsDiv.style.display = 'block';
-            resultsDiv.classList.add("show"); // Add animation class
-            resultsDiv.innerHTML = results.map((item) => {
-                let regex = new RegExp(`(${query})`, "gi");
-                let highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
-
-                let isExactMatch = item.name.toLowerCase() === query.toLowerCase();
-                return `<div class="${isExactMatch ? 'exact-match' : ''}" onclick="window.location.href='${item.link}'">
-                            ${highlightedName}
-                        </div>`;
-            }).join('');
-        } else {
-            resultsDiv.style.display = 'block';
-            resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center;">No results found</div>';
+        if (query.length === 0) {
+            resultsDiv.style.display = 'none';
+            resultsDiv.innerHTML = '';
+            return;
         }
-    } catch (error) {
-        console.error("Error fetching search results:", error);
-    }
-}
 
+        try {
+            let response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+            let results = await response.json();
 
-// Navigate to selected result on Enter key press
-document.addEventListener('keydown', function (event) {
-    let resultsDiv = document.getElementById('searchResults');
-    let results = resultsDiv.getElementsByTagName('div');
-    let searchBox = document.getElementById('searchInput');
+            if (results.length > 0) {
+                resultsDiv.style.display = 'block';
+                resultsDiv.classList.add("show"); // Add animation class
+                resultsDiv.innerHTML = results.map((item) => {
+                    let regex = new RegExp(`(${query})`, "gi");
+                    let highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
 
-    if (event.key === 'ArrowDown') {
-        if (currentIndex < results.length - 1) {
-            currentIndex++;
+                    let isExactMatch = item.name.toLowerCase() === query.toLowerCase();
+                    return `<div class="${isExactMatch ? 'exact-match' : ''}" onclick="window.location.href='${item.link}'">
+                                ${highlightedName}
+                            </div>`;
+                }).join('');
+            } else {
+                resultsDiv.style.display = 'block';
+                resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center;">No results found</div>';
+            }
+        } catch (error) {
+            console.error("Error fetching search results:", error);
         }
-        updateHighlight(results);
-    } else if (event.key === 'ArrowUp') {
-        if (currentIndex > 0) {
-            currentIndex--;
+    }
+
+    // Navigate to selected result on Enter key press
+    document.addEventListener('keydown', function (event) {
+        let resultsDiv = document.getElementById('searchResults');
+        let results = resultsDiv.getElementsByTagName('div');
+        let searchBox = document.getElementById('searchInput');
+
+        if (event.key === 'ArrowDown') {
+            if (currentIndex < results.length - 1) {
+                currentIndex++;
+            }
+            updateHighlight(results);
+        } else if (event.key === 'ArrowUp') {
+            if (currentIndex > 0) {
+                currentIndex--;
+            }
+            updateHighlight(results);
+        } else if (event.key === 'Enter' && currentIndex >= 0 && currentIndex < results.length) {
+            // Redirect to the selected link on Enter
+            window.location.href = results[currentIndex].getAttribute('onclick').replace("window.location.href='", "").replace("'", "");
         }
-        updateHighlight(results);
-    } else if (event.key === 'Enter' && currentIndex >= 0 && currentIndex < results.length) {
-        // Redirect to the selected link on Enter
-        window.location.href = results[currentIndex].getAttribute('onclick').replace("window.location.href='", "").replace("'", "");
-    }
-});
+    });
 
-function updateHighlight(results) {
-    // Remove highlight from all results
-    for (let i = 0; i < results.length; i++) {
-        results[i].classList.remove('highlighted');
+    function updateHighlight(results) {
+        // Remove highlight from all results
+        for (let i = 0; i < results.length; i++) {
+            results[i].classList.remove('highlighted');
+        }
+
+        // Highlight the current index
+        if (currentIndex >= 0 && currentIndex < results.length) {
+            results[currentIndex].classList.add('highlighted');
+            document.getElementById('searchInput').value = results[currentIndex].innerText; // Set the highlighted text in the search box
+        }
     }
 
-    // Highlight the current index
-    if (currentIndex >= 0 && currentIndex < results.length) {
-        results[currentIndex].classList.add('highlighted');
-        document.getElementById('searchInput').value = results[currentIndex].innerText; // Set the highlighted text in the search box
-    }
-}
+    // Hide search results when clicking outside
+    document.addEventListener("click", function(event) {
+        let searchBox = document.getElementById("searchInput");
+        let resultsDiv = document.getElementById("searchResults");
 
-// Hide search results when clicking outside
-document.addEventListener("click", function(event) {
-    let searchBox = document.getElementById("searchInput");
-    let resultsDiv = document.getElementById("searchResults");
-
-    if (!searchBox.contains(event.target) && !resultsDiv.contains(event.target)) {
-        resultsDiv.style.display = 'none';
-    }
-});
+        if (!searchBox.contains(event.target) && !resultsDiv.contains(event.target)) {
+            resultsDiv.style.display = 'none';
+        }
+    });
 </script>
-
 
 
                
