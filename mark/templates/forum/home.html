@@ -1,5 +1,13 @@
 {% extends "base.html" %}
+
+{% block sstyle %}
+.categories{
+padding:30px;
+margin-top:200px;
+}
+
 {% block content %}
+
 <h1>Forum</h1>
 <div class="categories">
     {% for category in categories %}
