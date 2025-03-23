@@ -38,7 +38,7 @@
 
 .swiper-slide-active {
   filter: blur(0px);
-  
+
 }
 
 .swiper-pagination-bullet,
@@ -390,7 +390,7 @@ small {
 
 
 /* Styling the search form */
-.searchhh {
+.searchh {
     width: 100%;
     position: relative;
     max-width: 1000px;
@@ -405,7 +405,7 @@ small {
 }
 
 /* Updated Search Results Styling */
-#searchhresults {
+#searchResults {
     position: absolute;
     top: 140px;
     left: 0;
@@ -428,7 +428,7 @@ small {
 }
 
 /* Ensure child elements don't overflow */
-#searchhresults div {
+#searchResults div {
     white-space: nowrap; /* Prevent wrapping */
     overflow: hidden;
     text-overflow: ellipsis; /* Show "..." if text is too long */
@@ -447,22 +447,22 @@ small {
 }
 
 /* Hover & Active Effect */
-#searchhresults div:hover {
+#searchResults div:hover {
     background-color: rgba(248, 188, 4, 0.2); /* Light gold highlight */
     transform: scale(1.02);
 }
 
 /* Add subtle gradient for items */
-#searchhresults div:nth-child(odd) {
+#searchResults div:nth-child(odd) {
     background-color:  rgba(245, 245, 245); /* Light grey background for odd items */
 }
 
-#searchhresults div:nth-child(even) {
+#searchResults div:nth-child(even) {
     background-color: rgba(245, 245, 245); /* Slightly darker grey for even items */
 }
 
 /* Highlight Exact Match */
-#searchhresults div.exact-match {
+#searchResults div.exact-match {
     background-color: #f8bc04; /* Gold background for exact match */
     color: white;
     font-weight: bold;
@@ -474,12 +474,12 @@ small {
     to { opacity: 1; transform: translateY(0); }
 }
 
-#searchhresults.show {
+#searchResults.show {
     animation: fadeInn 0.3s ease-out;
 }
 
 /* Input styling */
-.searchhh__text {
+.searchh__text {
     width: 100%;
     padding: 6px;
     font-size: 1rem;
@@ -489,14 +489,14 @@ small {
 }
 
 /* Icon styling */
-.searchhh__helper {
+.searchh__helper {
     font-size: 2.5rem;
     color: #f8bc04;
     transition: transform 0.3s ease, color 0.3s ease;
     cursor: pointer;
 }
 
-.searchhh.focused .searchhh__helper {
+.searchh.focused .searchh__helper {
     transform: rotate(180deg);
     color: #c68e17; /* Darker gold when active */
 }
@@ -583,7 +583,7 @@ small {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        
+
         .price-selection {
             display: flex;
             background: #232222;
@@ -591,11 +591,11 @@ small {
             border-radius: 30px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
+
         .price-selection input[type="radio"] {
             display: none; /* Hide default radio buttons */
         }
-        
+
         .price-selection label {
             display: inline-block;
             padding: 5px 10px;
@@ -607,12 +607,12 @@ small {
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .price-selection input[type="radio"]:checked + label {
             background: #232222;
             color: #f8bc04;
         }
-        
+
         .price-selection label:hover {
             background: #111112;
             color: #f8bc04;
@@ -657,8 +657,8 @@ small {
             animation: slideInLeft 1s ease-out forwards;
         }
 
- 
-     
+
+
     .middle-box {
       background-color: #f8bc04;
       padding-top: 45px;
@@ -1039,107 +1039,29 @@ margin-top: 0;
                     </span><br>
                     <span class="sidetext">Your Gateway to Decentralized Finance</span>
                 </span>
-            
+
                <!-- Search Form -->
 <!-- Search Form -->
-<form class="searchhh" style="position: absolute; top: 105px;" onsubmit="return false;">
-    <div class="searchhh__inner" style="display: flex; width: 100%; position: relative;">
-        <input type="text" id="searchhInput" class="searchhh__text" 
+<form class="searchh" style="position: absolute; top: 105px;" onsubmit="return false;">
+    <div class="searchh__inner" style="display: flex; width: 100%; position: relative;">
+        <input type="text" id="searchInput" class="searchh__text" 
             placeholder="Search for Crypto, Exchanges, Wallets..." 
             onkeyup="performSearch()"
             onfocus="performSearch()">  <!-- Trigger search when input is focused -->
-        <i class="zmdi zmdi-search searchhh__helper" onclick="performSearch()"></i>
+        <i class="zmdi zmdi-search searchh__helper" onclick="performSearch()"></i>
     </div>
 </form>
 
 <!-- Search Results -->
-<div id="searchhresults"></div>
-
-<script>
-    let currentIndex = -1; 
-    async function performSearch() {
-    let query = document.getElementById('searchhInput').value.trim();
-    let resultsDiv = document.getElementById('searchhresults');
-
-    if (query.length === 0) {
-        resultsDiv.style.display = 'none';
-        resultsDiv.innerHTML = '';
-        return;
-    }
-
-    try {
-        let response = await fetch(`/search?q=${encodeURIComponent(query)}`);
-        let results = await response.json();
-
-        if (results.length > 0) {
-            resultsDiv.style.display = 'block';
-            resultsDiv.classList.add("show"); // Add animation class
-            resultsDiv.innerHTML = results.map((item) => {
-                let regex = new RegExp(`(${query})`, "gi");
-                let highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
-
-                let isExactMatch = item.name.toLowerCase() === query.toLowerCase();
-                return `<div class="${isExactMatch ? 'exact-match' : ''}" onclick="window.location.href='${item.link}'">
-                            ${highlightedName}
-                        </div>`;
-            }).join('');
-        } else {
-            resultsDiv.style.display = 'block';
-            resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center;">No results found</div>';
-        }
-    } catch (error) {
-        console.error("Error fetching search results:", error);
-    }
-}
+<div id="searchResults"></div>
 
 
-// Navigate to selected result on Enter key press
-document.addEventListener('keydown', function (event) {
-    let resultsDiv = document.getElementById('searchhresults');
-    let results = resultsDiv.getElementsByTagName('div');
-    let searchBox = document.getElementById('searchhInput');
-
-    if (event.key === 'ArrowDown') {
-        if (currentIndex < results.length - 1) {
-            currentIndex++;
-        }
-        updateHighlight(results);
-    } else if (event.key === 'ArrowUp') {
-        if (currentIndex > 0) {
-            currentIndex--;
-        }
-        updateHighlight(results);
-    } else if (event.key === 'Enter' && currentIndex >= 0 && currentIndex < results.length) {
-        // Redirect to the selected link on Enter
-        window.location.href = results[currentIndex].getAttribute('onclick').replace("window.location.href='", "").replace("'", "");
-    }
-});
-
-function updateHighlight(results) {
-    // Remove highlight from all results
-    for (let i = 0; i < results.length; i++) {
-        results[i].classList.remove('highlighted');
-    }
-
-    // Highlight the current index
-    if (currentIndex >= 0 && currentIndex < results.length) {
-        results[currentIndex].classList.add('highlighted');
-        document.getElementById('searchhInput').value = results[currentIndex].innerText; // Set the highlighted text in the search box
-    }
-}
-
-// Hide search results when clicking outside
-document.addEventListener("click", function(event) {
-    let searchBox = document.getElementById("searchhInput");
-    let resultsDiv = document.getElementById("searchhresults");
-
-    if (!searchBox.contains(event.target) && !resultsDiv.contains(event.target)) {
-        resultsDiv.style.display = 'none';
-    }
-});
-</script>
 
                
+
+
+
+
             </div>
             </header>
             <section class="content">
@@ -1151,7 +1073,7 @@ document.addEventListener("click", function(event) {
                         </h1>
                         <p class="text-lg mb-8 text-gray-400">
                             At Crypt Expert, we simplify your digital asset experience with fast, transparent, and seamless transactions       </p>
-                                
+
 <div class="space-y-4">
     <div class="flex items-center">
         <div class="bg-[#f8bc04] p-3 rounded-full">
@@ -1172,44 +1094,44 @@ document.addEventListener("click", function(event) {
         <span class="ml-4 text-lg" style="color: #fff;">Seamless Integration</span>
     </div>
 </div>
-                                
+
                     </div>
-            
+
                     <!-- Image Section -->
                     <div class="lg:w-1/2 mt-12 lg:mt-0 relative opacity-0 transition-opacity duration-1000 ease-out" id="image-section">
                         <img alt="Laptop with dashboard" class="rounded-lg shadow-lg w-full" src="https://dtdigibit.wpengine.com/wp-content/uploads/2018/01/data-charts-on-stage-screen.png" />
-                        
+
                     </div>
                 </div>
-            
+
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         const textSection = document.getElementById("text-section");
                         const imageSection = document.getElementById("image-section");
-            
+
                         function checkVisibility() {
                             const textSectionPosition = textSection.getBoundingClientRect().top;
                             const imageSectionPosition = imageSection.getBoundingClientRect().top;
                             const screenPosition = window.innerHeight / 1.3;
-            
+
                             if (textSectionPosition < screenPosition) {
                                 textSection.classList.add("slide-in-left", "opacity-100");
                                 textSection.classList.remove("opacity-0");
                             }
-            
+
                             if (imageSectionPosition < screenPosition) {
                                 imageSection.classList.add("slide-in-right", "opacity-100");
                                 imageSection.classList.remove("opacity-0");
                             }
                         }
-            
+
                         window.addEventListener("scroll", checkVisibility);
                         checkVisibility(); // Initial check in case elements are already in view
                     });
                 </script>
 
                 <h1 class="info-sec" style="color: #f8bc04;">Our Features</h1><br>
-            
+
                 <div class="container mx-auto p-4">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="md:col-span-1 flex flex-col space-y-8">
@@ -1222,7 +1144,7 @@ document.addEventListener("click", function(event) {
                                     Track real-time cryptocurrency prices across multiple exchanges with interactive charts.
                                 </p>
                             </div>
-                
+
                             <div class="boxes opacity-0 bg-black-800 p-8 rounded-lg flex flex-col items-center text-center slide-up fade-in scale-up glow-border" style="border-radius: 40px;">
                                 <div class="bg-[#f8bc04] p-4 rounded-full mb-4">
                                     <i class="fas fa-wallet text-2xl text-black"></i>
@@ -1233,7 +1155,7 @@ document.addEventListener("click", function(event) {
                                 </p>
                             </div>
                         </div>
-                
+
                         <div class="md:col-span-1 flex flex-col items-center">
                             <div class="boxes opacity-0 middle-box section-about-featured w-full p-8" style="border-radius: 40px;">
                                 <h3 class="title-small-uppercase section-about-featured">Cryptexpert Web App</h3>
@@ -1244,7 +1166,7 @@ document.addEventListener("click", function(event) {
                                 <div class="image section-about-featured-shadow"></div>
                             </div>
                         </div>
-                
+
                         <div class="md:col-span-1 flex flex-col space-y-8">
                             <div class="boxes opacity-0 bg-black-800 p-8 rounded-lg flex flex-col items-center text-center slide-up fade-in scale-up glow-border" style="border-radius: 40px;">
                                 <div class="bg-[#f8bc04] p-4 rounded-full mb-4">
@@ -1255,7 +1177,7 @@ document.addEventListener("click", function(event) {
                                     Get AI-driven insights for smarter crypto trades based on real-time market trends.
                                 </p>
                             </div>
-                
+
                             <div class="boxes opacity-0 bg-black-800 p-8 rounded-lg flex flex-col items-center text-center slide-up fade-in scale-up glow-border" style="border-radius: 40px;">
                                 <div class="bg-[#f8bc04] p-4 rounded-full mb-4">
                                     <i class="fas fa-exchange-alt text-2xl text-black"></i>
@@ -1268,7 +1190,7 @@ document.addEventListener("click", function(event) {
                         </div>
                     </div>
                 </div>
-                
+
                    <script>
  document.addEventListener("DOMContentLoaded", function () {
     const boxes = document.querySelectorAll(".boxes"); // Select all elements with class 'boxes'
@@ -1289,15 +1211,15 @@ document.addEventListener("click", function(event) {
 
 
                    </script>
-                  
+
          <br>         
     <div class="container mx-auto px-4 py-16 flex flex-col lg:flex-row items-center">
-    
+
     <!-- Image Section -->
     <div class="lg:w-1/2 mt-12 lg:mt-0 relative opacity-0 transition-opacity duration-1000 ease-out glow-box" id="img-section">
         <img alt="Cryptexpert Feature Icon" class="rounded-lg shadow-lg" src="https://cdn.prod.website-files.com/67574dca69a4f5afd6b37697/67574dca69a4f5afd6b38057_Feature%20Icon%208.svg"/>
     </div>
-                
+
     <!-- Text Section -->
     <div class="lg:w-1/2 opacity-0 transition-opacity duration-1000 ease-out" id="txt-section">
         <h1 class="text-4xl lg:text-5xl font-bold mb-6" style="color: #fff;">
@@ -1333,28 +1255,28 @@ document.addEventListener("click", function(event) {
             document.addEventListener("DOMContentLoaded", function () {
                 const textSection = document.getElementById("txt-section");
                 const imageSection = document.getElementById("img-section");
-    
+
                 function checkVisibility() {
                     const textSectionPosition = textSection.getBoundingClientRect().top;
                     const imageSectionPosition = imageSection.getBoundingClientRect().top;
                     const screenPosition = window.innerHeight / 1.3;
-    
+
                     if (textSectionPosition < screenPosition) {
                         textSection.classList.add("slide-in-right", "opacity-100");
                         textSection.classList.remove("opacity-0");
                     }
-    
+
                     if (imageSectionPosition < screenPosition) {
                         imageSection.classList.add("slide-in-left", "opacity-100");
                         imageSection.classList.remove("opacity-0");
                     }
                 }
-    
+
                 window.addEventListener("scroll", checkVisibility);
                 checkVisibility(); // Initial check in case elements are already in view
             });
         </script>
-      
+
 <!-- Dropdown or Radio Buttons to Choose between Binance, okx, and CoinBase -->
     <div class="select-container">
         <div class="price-selection">
@@ -1560,7 +1482,7 @@ coinbaseRadio.addEventListener("change", () => {
     console.log("Coinbase radio button clicked");
     toggleTickers();
 });
-           
+
             async function fetchPrices() {
                 try {
                     const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
@@ -1644,7 +1566,7 @@ coinbaseRadio.addEventListener("change", () => {
                         }
                     });
 
-                  
+
 
                 } catch (error) {
                     console.error('Error fetching prices:', error);
@@ -1656,7 +1578,7 @@ coinbaseRadio.addEventListener("change", () => {
             setInterval(fetchPrices, 10000);
         });
 
-        
+
     document.querySelectorAll(".swiper-slide").forEach(slide => {
                 slide.addEventListener("click", function () {
                     let symbol = this.getAttribute("data-symbol");
@@ -1929,37 +1851,37 @@ coinbaseRadio.addEventListener("change", () => {
         </div>
     </div>
 </div>
-                
-               
-                
+
+
+
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         const textSection = document.getElementById("cta-content");
                         const imageSection = document.getElementById("cta-image");
-                
+
                         function checkVisibility() {
                             if (!textSection || !imageSection) return;
-                
+
                             const textSectionPosition = textSection.getBoundingClientRect().top;
                             const imageSectionPosition = imageSection.getBoundingClientRect().top;
                             const screenPosition = window.innerHeight / 1.3;
-                
+
                             if (textSectionPosition < screenPosition) {
                                 textSection.classList.add("slide-in-right");
                                 textSection.classList.remove("opacity-0");
                             }
-                
+
                             if (imageSectionPosition < screenPosition) {
                                 imageSection.classList.add("slide-in-left");
                                 imageSection.classList.remove("opacity-0");
                             }
                         }
-                
+
                         window.addEventListener("scroll", checkVisibility);
                         checkVisibility(); // Initial check in case elements are already in view
                     });
                 </script>
-                
+
 
             </section>
         </main>
@@ -2026,6 +1948,5 @@ coinbaseRadio.addEventListener("change", () => {
         </div>
     </div>
 </div>
-    
-        {% endblock %}
 
+        {% endblock %}
