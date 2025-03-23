@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ thread.title }}</h1>
+<p>By {{ thread.user.username }} on {{ thread.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+<div class="posts">
+    {% for post in posts %}
+    <div class="post">
+        <p>{{ post.content }}</p>
+        <small>By {{ post.user.username }} on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+    </div>
+    {% endfor %}
+</div>
+<form method="POST" action="{{ url_for('create_post', thread_id=thread.id) }}">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.content.label }} {{ form.content(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+{% endblock %}
