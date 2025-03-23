@@ -1141,11 +1141,7 @@ document.addEventListener("click", function(event) {
 
 
 
-                {% if not current_user.is_authenticated %}
-                <a href="{{ url_for('login_form') }}">Login</a>
-                <a href="{{ url_for('register_form') }}">Register</a>
-            {% endif %}
-            
+               
             </div>
             </header>
             <section class="content">
