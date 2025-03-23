@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Forum</h1>
+<div class="categories">
+    {% for category in categories %}
+    <div class="category">
+        <h2><a href="{{ url_for('forum_category', category_id=category.id) }}">{{ category.name }}</a></h2>
+        <p>{{ category.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
