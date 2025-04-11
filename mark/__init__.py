@@ -14,11 +14,11 @@ app = Flask(__name__)
 db_user = "postgres"
 db_password = "Gvbh@1781"
 db_name = "cryptexpert"
-db_host = "127.0.0.1:5432"  # ✅ Use TCP instead of Unix socket
+db_host = "/cloudsql/cryptexpert:asia-southeast1:cryptexpert-db"
 
 encoded_password = urllib.parse.quote_plus(db_password)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql+psycopg2://{db_user}:{encoded_password}@{db_host}/{db_name}"
+app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql+psycopg2://{db_user}:{encoded_password}@/{db_name}?host={db_host}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = os.urandom(24)
 # Flask-Mail Configuration
