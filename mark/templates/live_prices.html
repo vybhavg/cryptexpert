@@ -613,7 +613,10 @@ body {
         <tbody id="table-body" style="color:white;font-size:14px;">
             {% for ticker in binance_prices %}
             <tr class="binance-row">
-                <td><img src="{{ crypto_logos[ticker.symbol[:-4]] }}" width="35px" height="35px"></td>
+                <td><img class="crypto-image" 
+     src="/static/img/crypto/{{ ticker.symbol[:-4] }}.png" 
+     onerror="this.src='/static/img/crypto/BTC.png'" 
+     alt="{{ ticker.symbol[:-4] }}" width="35px" height="35px"></td>
                 <td>{{ ticker.symbol[:-4] }}</td>
                 <td>${{ ticker.price }}</td>
                 <td class="percentage-change">
@@ -630,7 +633,10 @@ body {
 
             {% for ticker in okx_prices %}
             <tr class="okx-row" style="display:none;">
-                <td><img src="{{ crypto_logos[ticker.symbol] }}" width="35px" height="35px"></td>
+                <td><img class="crypto-image" 
+     src="/static/img/crypto/{{ ticker.symbol }}.png" 
+     onerror="this.src='/static/img/crypto/BTC.png'" 
+     alt="{{ ticker.symbol[:-4] }}" width="35px" height="35px"></td>
                 <td>{{ ticker.symbol }}</td>
                 <td>${{ ticker.price }}</td>
                 <td class="percentage-change">
@@ -647,7 +653,10 @@ body {
 
             {% for ticker in coinbase_prices %}
             <tr class="coinbase-row" style="display:none;">
-                <td><img src="{{ crypto_logos[ticker.symbol] }}" width="35px" height="35px"></td>
+                <td><img class="crypto-image" 
+     src="/static/img/crypto/{{ ticker.symbol }}.png" 
+     onerror="this.src='/static/img/crypto/BTC.png'" 
+     alt="{{ ticker.symbol[:-4] }}" width="35px" height="35px"></td>
                 <td>{{ ticker.symbol }}</td>
                 <td>${{ ticker.price }}</td>
                 <td class="percentage-change">
