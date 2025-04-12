@@ -129,8 +129,8 @@ def get_specific_prices_from_binance():
     specific_coins_usdt = [
         'BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'BNBUSDT', 'SOLUSDT', 'USDCUSDT', 'ADAUSDT', 'DOGEUSDT', 'TRXUSDT',
         'LINKUSDT', 'HBARUSDT', 'XLMUSDT', 'AVAXUSDT', 'LEOUSDT', 'SUIUSDT', 'LTCUSDT', 'TONUSDT', 'SHIBUSDT',
-        'DOTUSDT', 'OMUSDT', 'BCHUSDT', 'HYPEUSDT', 'USDeUSDT', 'DAIUSDT', 'BGBUSDT', 'UNIUSDT', 'XMRUSDT', 'NEARUSDT',
-        'APTUSDT', 'ONDOUSDT', 'PEPEUSDT'
+        'DOTUSDT', 'OMUSDT', 'BCHUSDT',  'DAIUSDT', 'UNIUSDT', 'XMRUSDT', 'NEARUSDT',
+        'APTUSDT',  'PEPEUSDT'
     ]
 
 
@@ -155,8 +155,8 @@ def get_specific_prices_from_okx():
     specific_coins = [
     'BTC-USDT', 'ETH-USDT', 'XRP-USDT', 'BNB-USDT', 'SOL-USDT', 'USDC-USDT', 'ADA-USDT', 'DOGE-USDT', 'TRX-USDT',
     'LINK-USDT', 'HBAR-USDT', 'XLM-USDT', 'AVAX-USDT', 'LEO-USDT', 'SUI-USDT', 'LTC-USDT', 'TON-USDT', 'SHIB-USDT',
-    'DOT-USDT', 'OM-USDT', 'BCH-USDT', 'HYPE-USDT', 'USDe-USDT', 'DAI-USDT', 'BGB-USDT', 'UNI-USDT', 'XMR-USDT', 'NEAR-USDT',
-    'APT-USDT', 'ONDO-USDT', 'PEPE-USDT'
+    'DOT-USDT', 'OM-USDT', 'BCH-USDT', 'DAI-USDT', 'UNI-USDT', 'XMR-USDT', 'NEAR-USDT',
+    'APT-USDT',  'PEPE-USDT'
 ]
 
     prices = []
