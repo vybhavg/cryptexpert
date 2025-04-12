@@ -2172,11 +2172,19 @@ coinbaseRadio.addEventListener("change", () => {
                     binancePrices.forEach((ticker, index) => {
                         const price = (ticker.price);
                         const percentChange = parseFloat(ticker.priceChangePercent).toFixed(2);
+    const symbol = ticker.symbol; // remove 'USDT' or 'USD' suffix
 
-                        const tickerElement = document.getElementById(`binance-${index}`);
-                        if (tickerElement) {
-                            const priceElement = tickerElement.querySelector('h2');
-                            priceElement.textContent = `$${price}`;
+    const tickerElement = document.getElementById(`binance-${index}`);
+    if (tickerElement) {
+        // Update price
+        const priceElement = tickerElement.querySelector('h2');
+        priceElement.textContent = `$${price}`;
+
+        // Update symbol name
+        const symbolElement = tickerElement.querySelector('span');
+        if (symbolElement) {
+            symbolElement.textContent = symbol;
+        }
 
                             const percentageElement = tickerElement.querySelector('.percentage-change');
                             let percentageText = `${percentChange}%`;
