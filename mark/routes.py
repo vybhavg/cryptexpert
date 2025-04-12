@@ -1215,4 +1215,4 @@ def create_post(thread_id):
         db.session.add(post)
         db.session.commit()
         flash('Post created successfully!', 'success')
-    return redirect(url_for('forum_thread', thread_id=thread_id)
+    return redirect(url_for('forum_thread', thread_id=thread_id))
