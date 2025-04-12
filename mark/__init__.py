@@ -11,7 +11,7 @@ import os
 app = Flask(__name__)
 
 db_user = "postgres"
-db_password = "Gvbh@1781"  # Use an env var for production
+db_password = "Gvbh1781"  # Use an env var for production
 db_name = "cryptexpert"
 db_host = "cryptexpert-db.cjs6a2mg6ff2.ap-southeast-1.rds.amazonaws.com"
 db_port = 5432
