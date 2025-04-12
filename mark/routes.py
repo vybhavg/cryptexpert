@@ -251,8 +251,8 @@ def get_specific_prices_from_coinbase():
 @app.route('/')
 @app.route('/home')
 def home():
-
-    return render_template('index.html',binance_prices=[{}]*6,okx_prices=[{}]*6,coinbase_prices=[{}]*6,crypto_logos=crypto_logos)
+    dummy_ticker = {'symbol': 'BTCUSDT','price': '0.00','priceChangePercent': 0}
+    return render_template('index.html',binance_prices=[dummy_ticker]*6,okx_prices=[dummy_ticker]*6,coinbase_prices=[dummy_ticker]*6,crypto_logos=crypto_logos)
 
 @app.route('/binance_prices')
 def binance_prices():
