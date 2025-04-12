@@ -266,8 +266,8 @@ def get_initial_crypto_data():
     for symbol in common_symbols:
         initial_data.append({
             'symbol': symbol,
-            'price': "0.00",
-            'priceChangePercent': "0.00"
+            'price': 0.00,
+            'priceChangePercent': 0.00
         })
     
     return initial_data
