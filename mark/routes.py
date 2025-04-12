@@ -130,7 +130,12 @@ def get_specific_prices_from_binance():
         'BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'BNBUSDT', 'SOLUSDT', 'USDCUSDT', 'ADAUSDT', 'DOGEUSDT', 'TRXUSDT',
         'LINKUSDT', 'HBARUSDT', 'XLMUSDT', 'AVAXUSDT', 'LEOUSDT', 'SUIUSDT', 'LTCUSDT', 'TONUSDT', 'SHIBUSDT',
         'DOTUSDT', 'OMUSDT', 'BCHUSDT', 'HYPEUSDT', 'USDeUSDT', 'DAIUSDT', 'BGBUSDT', 'UNIUSDT', 'XMRUSDT', 'NEARUSDT',
-        'APTUSDT', 'ONDOUSDT'
+        'APTUSDT', 'ONDOUSDT', 'PEPEUSDT', 'ICPUSDT', 'ETCUSDT', 'AAVEUSDT', 'TRUMPUSDT', 'OKBUSDT', 'TAOUSDT',
+        'MNTUSDT', 'VETUSDT', 'POLUSDT', 'ALGOUSDT', 'KASUSDT', 'CROUSDT', 'RENDERUSDT', 'FILUSDT', 'FDUSDUSDT',
+        'TIAUSDT', 'JUPUSDT', 'GTUSDT', 'SUSDT', 'ARBUSDT', 'KNCUSDT', 'BALUSDT', 'YFIUSDT', 'MKUSDT', 'SUSHIUSDT',
+        'ZRXUSDT', 'UMAUSDT', 'RARIUSDT', 'CVCUSDT', 'MITHUSDT', 'LOOMUSDT', 'GNOUSDT', 'GRTUSDT', '1INCHUSDT',
+        'DIAUSDT', 'LRCUSDT', 'STMXUSDT', 'PERLUSDT', 'RENUSDT', 'FETUSDT', 'DODOUSDT', 'MTAUSDT', 'HNTUSDT', 'FILUSDT',
+        'RUNEUSDT', 'SANDUSDT', 'CELOUSDT', 'DASHUSDT'
     ]
 
 
@@ -156,7 +161,12 @@ def get_specific_prices_from_okx():
     'BTC-USDT', 'ETH-USDT', 'XRP-USDT', 'BNB-USDT', 'SOL-USDT', 'USDC-USDT', 'ADA-USDT', 'DOGE-USDT', 'TRX-USDT',
     'LINK-USDT', 'HBAR-USDT', 'XLM-USDT', 'AVAX-USDT', 'LEO-USDT', 'SUI-USDT', 'LTC-USDT', 'TON-USDT', 'SHIB-USDT',
     'DOT-USDT', 'OM-USDT', 'BCH-USDT', 'HYPE-USDT', 'USDe-USDT', 'DAI-USDT', 'BGB-USDT', 'UNI-USDT', 'XMR-USDT', 'NEAR-USDT',
-    'APT-USDT', 'ONDO-USDT'
+    'APT-USDT', 'ONDO-USDT', 'PEPE-USDT', 'ICP-USDT', 'ETC-USDT', 'AAVE-USDT', 'TRUMP-USDT', 'OKB-USDT', 'TAO-USDT',
+    'MNT-USDT', 'VET-USDT', 'POL-USDT', 'ALGO-USDT', 'KAS-USDT', 'CRO-USDT', 'RENDER-USDT', 'FIL-USDT', 'FDUSD-USDT',
+    'TIA-USDT', 'JUP-USDT', 'GT-USDT', 'SU-USDT', 'ARB-USDT', 'KNC-USDT', 'BAL-USDT', 'YFI-USDT', 'MK-USDT', 'SUSHI-USDT',
+    'ZRX-USDT', 'UMA-USDT', 'RARI-USDT', 'CVC-USDT', 'MITH-USDT', 'LOOM-USDT', 'GNO-USDT', 'GRT-USDT', '1INCH-USDT',
+    'DIA-USDT', 'LRC-USDT', 'STMX-USDT', 'PERL-USDT', 'REN-USDT', 'FET-USDT', 'DODO-USDT', 'MTA-USDT', 'HNT-USDT', 'FIL-USDT',
+    'RUNE-USDT', 'SAND-USDT', 'CELO-USDT', 'DASH-USDT'
 ]
 
     prices = []
@@ -236,40 +246,24 @@ def get_specific_prices_from_coinbase():
         print(f"Request error: {e}")
 
     return prices
-# Static initial data (will be updated by JavaScript later)
-def get_initial_crypto_data():
-    # Common list of cryptocurrencies we want to track
-    common_symbols = [
-        'BTC', 'ETH', 'XRP', 'BNB', 'SOL', 'USDC', 'ADA', 'DOGE', 'TRX',
-        'LINK', 'HBAR', 'XLM', 'AVAX', 'LEO', 'SUI', 'LTC', 'TON', 'SHIB',
-        'DOT', 'OM', 'BCH', 'HYPE', 'USDe', 'DAI', 'BGB', 'UNI', 'XMR', 'NEAR',
-        'APT', 'ONDO', 'PEPE', 'ICP', 'ETC', 'AAVE', 'TRUMP', 'OKB', 'TAO',
-        'MNT', 'VET', 'POL', 'ALGO', 'KAS', 'CRO', 'RENDER', 'FIL', 'FDUSD',
-        'TIA', 'JUP', 'GT', 'S', 'ARB', 'KNC', 'BAL', 'YFI', 'MK', 'SUSHI',
-        'ZRX', 'UMA', 'RARI', 'CVC', 'MITH', 'LOOM', 'GNO', 'GRT', '1INCH',
-        'DIA', 'LRC', 'STMX', 'PERL', 'REN', 'FET', 'DODO', 'MTA', 'HNT',
-        'RUNE', 'SAND', 'CELO', 'DASH'
-    ]
-    
-    # Create initial data structure with empty/zero values
-    initial_data = []
-    for symbol in common_symbols:
-        initial_data.append({
-            'symbol': symbol,
-            'price': 0.00,
-            'priceChangePercent': 0.00
-        })
-    
-    return initial_data
+
 
 @app.route('/')
 @app.route('/home')
 def home():
-    # Initialize with empty/zero values
-    binance_prices = get_initial_crypto_data()
-    okx_prices = get_initial_crypto_data()
-    coinbase_prices = get_initial_crypto_data()
-    
+    binance_prices = get_specific_prices_from_binance()
+    okx_prices = get_specific_prices_from_okx()
+    coinbase_prices = get_specific_prices_from_coinbase()
+
+    for ticker in binance_prices:
+        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
+
+    for ticker in okx_prices:
+        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
+
+    for ticker in coinbase_prices:
+        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
+
     return render_template('index.html', binance_prices=binance_prices, okx_prices=okx_prices, coinbase_prices=coinbase_prices,crypto_logos=crypto_logos)
 
 
@@ -580,16 +574,8 @@ def charts():
 
 # Load the trained model
 # Load the trained model
-# Remove the global model loading and replace with a function
-_model = None
+model = load_model("/home/ec2-user/cryptexpert/mark/model.keras")
 
-def get_model():
-    global _model
-    if _model is None:
-        _model = load_model("/home/ec2-user/cryptexpert/mark/model.keras")
-    return _model
-
-# Then in your route, call get_model() when needed
 
 
 # Initialize Binance Client (No API Key Required for Public Data)
@@ -671,7 +657,7 @@ def ai_predictor():
             y_data.append(scaled_data[i])
 
         x_data, y_data = np.array(x_data), np.array(y_data)
-        model = get_model()
+
         # Make Predictions
         predictions = model.predict(x_data)
         inv_predictions = scaler.inverse_transform(predictions)
