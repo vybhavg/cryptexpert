@@ -10,15 +10,18 @@ import os
 
 app = Flask(__name__)
 
-# Database Configuration
 db_user = "postgres"
-db_password = "Gvbh@1781"
+db_password = "Gvbh@1781"  # Use an env var for production
 db_name = "cryptexpert"
-db_host = "/cloudsql/cryptexpert:asia-southeast1:cryptexpert-db"
+db_host = "cryptexpert-db.cjs6a2mg6ff2.ap-southeast-1.rds.amazonaws.com"
+db_port = 5432
 
+# Safely encode special characters
 encoded_password = urllib.parse.quote_plus(db_password)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql+psycopg2://{db_user}:{encoded_password}@/{db_name}?host={db_host}"
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"postgresql+psycopg2://{db_user}:{encoded_password}@{db_host}:{db_port}/{db_name}"
+)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = os.urandom(24)
 # Flask-Mail Configuration
