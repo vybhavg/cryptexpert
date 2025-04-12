@@ -574,8 +574,16 @@ def charts():
 
 # Load the trained model
 # Load the trained model
-model = load_model("/home/ec2-user/cryptexpert/mark/model.keras")
+# Remove the global model loading and replace with a function
+_model = None
 
+def get_model():
+    global _model
+    if _model is None:
+        _model = load_model("/home/ec2-user/cryptexpert/mark/model.keras")
+    return _model
+
+# Then in your route, call get_model() when needed
 
 
 # Initialize Binance Client (No API Key Required for Public Data)
@@ -657,7 +665,7 @@ def ai_predictor():
             y_data.append(scaled_data[i])
 
         x_data, y_data = np.array(x_data), np.array(y_data)
-
+        model = get_model()
         # Make Predictions
         predictions = model.predict(x_data)
         inv_predictions = scaler.inverse_transform(predictions)
