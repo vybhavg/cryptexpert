@@ -1374,31 +1374,38 @@ document.addEventListener("click", function(event) {
         </div>
     </div>
 
-    <section id="binance-section">
-        <div class="swiper">
-            <div class="swiper-wrapper">
-                {% for ticker in binance_prices %}
-                <div class="swiper-slide swiper-slide--one" id="binance-{{ loop.index0 }}" data-symbol="{{ ticker.symbol[:-4] }}">
-                    <div class="image-container">
-        <img class="crypto-image" src="{{ crypto_logos.get(ticker.symbol[:-4], 'static/img/crypto/BTC.png') }}" alt="{{ ticker.symbol[:-4] }}">
-                    </div>
-                    <span>{{ ticker.symbol[:-4] }}</span>
-                    <h2>${{ ticker.price }}</h2>
-                    <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
-                        {% if ticker.priceChangePercent > 0 %}
-                        <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                        {% elif ticker.priceChangePercent < 0 %}
-                        <span class="negative">{{ ticker.priceChangePercent }}%</span>
-                        {% else %}
-                        <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                        {% endif %}
-                    </h5>
+<section id="binance-section">
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            {% for i in range(6) %}
+            <div class="swiper-slide swiper-slide--one" id="binance-{{ i }}" data-symbol="{{ binance_prices[i].symbol[:-4] if binance_prices and binance_prices[i] and 'symbol' in binance_prices[i] else '' }}">
+                <div class="image-container">
+                    <img class="crypto-image"
+                         src="{{ crypto_logos.get(binance_prices[i].symbol[:-4], 'static/img/crypto/BTC.png') if binance_prices and binance_prices[i] and 'symbol' in binance_prices[i] else 'static/img/crypto/BTC.png' }}"
+                         alt="{{ binance_prices[i].symbol[:-4] if binance_prices and binance_prices[i] and 'symbol' in binance_prices[i] else 'BTC' }}">
                 </div>
-                {% endfor %}
+                <span>{{ binance_prices[i].symbol[:-4] if binance_prices and binance_prices[i] and 'symbol' in binance_prices[i] else '--' }}</span>
+                <h2>${{ binance_prices[i].price if binance_prices and binance_prices[i] and 'price' in binance_prices[i] else '--' }}</h2>
+                <h5 id="percentage-change-{{ i }}" class="percentage-change">
+                    {% if binance_prices and binance_prices[i] and 'priceChangePercent' in binance_prices[i] %}
+                        {% if binance_prices[i].priceChangePercent > 0 %}
+                        <span class="positive">+{{ binance_prices[i].priceChangePercent }}%</span>
+                        {% elif binance_prices[i].priceChangePercent < 0 %}
+                        <span class="negative">{{ binance_prices[i].priceChangePercent }}%</span>
+                        {% else %}
+                        <span class="neutral">{{ binance_prices[i].priceChangePercent }}%</span>
+                        {% endif %}
+                    {% else %}
+                    <span class="neutral">--%</span>
+                    {% endif %}
+                </h5>
             </div>
-            <br><br>
+            {% endfor %}
         </div>
-    </section>
+        <br><br>
+    </div>
+</section>
+
 
     <section id="okx-section" style="display:none;">
         <div class="cmpswiper">
