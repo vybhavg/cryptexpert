@@ -246,24 +246,40 @@ def get_specific_prices_from_coinbase():
         print(f"Request error: {e}")
 
     return prices
-
+# Static initial data (will be updated by JavaScript later)
+def get_initial_crypto_data():
+    # Common list of cryptocurrencies we want to track
+    common_symbols = [
+        'BTC', 'ETH', 'XRP', 'BNB', 'SOL', 'USDC', 'ADA', 'DOGE', 'TRX',
+        'LINK', 'HBAR', 'XLM', 'AVAX', 'LEO', 'SUI', 'LTC', 'TON', 'SHIB',
+        'DOT', 'OM', 'BCH', 'HYPE', 'USDe', 'DAI', 'BGB', 'UNI', 'XMR', 'NEAR',
+        'APT', 'ONDO', 'PEPE', 'ICP', 'ETC', 'AAVE', 'TRUMP', 'OKB', 'TAO',
+        'MNT', 'VET', 'POL', 'ALGO', 'KAS', 'CRO', 'RENDER', 'FIL', 'FDUSD',
+        'TIA', 'JUP', 'GT', 'S', 'ARB', 'KNC', 'BAL', 'YFI', 'MK', 'SUSHI',
+        'ZRX', 'UMA', 'RARI', 'CVC', 'MITH', 'LOOM', 'GNO', 'GRT', '1INCH',
+        'DIA', 'LRC', 'STMX', 'PERL', 'REN', 'FET', 'DODO', 'MTA', 'HNT',
+        'RUNE', 'SAND', 'CELO', 'DASH'
+    ]
+    
+    # Create initial data structure with empty/zero values
+    initial_data = []
+    for symbol in common_symbols:
+        initial_data.append({
+            'symbol': symbol,
+            'price': "0.00",
+            'priceChangePercent': "0.00"
+        })
+    
+    return initial_data
 
 @app.route('/')
 @app.route('/home')
 def home():
-    binance_prices = get_specific_prices_from_binance()
-    okx_prices = get_specific_prices_from_okx()
-    coinbase_prices = get_specific_prices_from_coinbase()
-
-    for ticker in binance_prices:
-        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-
-    for ticker in okx_prices:
-        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-
-    for ticker in coinbase_prices:
-        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-
+    # Initialize with empty/zero values
+    binance_prices = get_initial_crypto_data()
+    okx_prices = get_initial_crypto_data()
+    coinbase_prices = get_initial_crypto_data()
+    
     return render_template('index.html', binance_prices=binance_prices, okx_prices=okx_prices, coinbase_prices=coinbase_prices,crypto_logos=crypto_logos)
 
 
