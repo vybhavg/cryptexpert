@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
 import os
+import urllib.parse  # Add this import
 from dotenv import load_dotenv
 
 # Load environment variables from the .env file
