@@ -251,20 +251,8 @@ def get_specific_prices_from_coinbase():
 @app.route('/')
 @app.route('/home')
 def home():
-    binance_prices = get_specific_prices_from_binance()
-    okx_prices = get_specific_prices_from_okx()
-    coinbase_prices = get_specific_prices_from_coinbase()
 
-    for ticker in binance_prices:
-        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-
-    for ticker in okx_prices:
-        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-
-    for ticker in coinbase_prices:
-        ticker['priceChangePercent'] = float(ticker['priceChangePercent'])
-
-    return render_template('index.html', binance_prices=binance_prices, okx_prices=okx_prices, coinbase_prices=coinbase_prices,crypto_logos=crypto_logos)
+    return render_template('index.html',binance_prices=[{}]*6,okx_prices=[{}]*6,coinbase_prices=[{}]*6,crypto_logos=crypto_logos)
 
 @app.route('/binance_prices')
 def binance_prices():
