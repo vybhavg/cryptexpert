@@ -1380,7 +1380,10 @@ document.addEventListener("click", function(event) {
                 {% for ticker in binance_prices %}
                 <div class="swiper-slide swiper-slide--one" id="binance-{{ loop.index0 }}" data-symbol="{{ ticker.symbol[:-4] }}">
                     <div class="image-container">
-        <img class="crypto-image" src="{{ crypto_logos.get(ticker.symbol[:-4], 'static/img/crypto/BTC.png') }}" alt="{{ ticker.symbol[:-4] }}">
+<img class="crypto-image" 
+     src="/static/img/crypto/{{ ticker.symbol[:-4] }}.png" 
+     onerror="this.src='/static/img/crypto/BTC.png'" 
+     alt="{{ ticker.symbol[:-4] }}">
                     </div>
                     <span>{{ ticker.symbol[:-4] }}</span>
                     <h2>${{ ticker.price }}</h2>
@@ -1413,7 +1416,10 @@ document.addEventListener("click", function(event) {
                 {% for ticker in okx_prices %}
                 <div class="swiper-slide swiper-slide--one" id="okx-{{ loop.index0 }}" data-symbol="{{ ticker.symbol }}">
                     <div class="image-container">
-        <img class="crypto-image" src="{{ crypto_logos.get(ticker.symbol, 'static/img/crypto/BTC.png') }}" alt="{{ ticker.symbol }}">
+<img class="crypto-image" 
+     src="/static/img/crypto/{{ ticker.symbol }}.png" 
+     onerror="this.src='/static/img/crypto/BTC.png'" 
+     alt="{{ ticker.symbol[:-4] }}">                    
                     </div>
                     <span>{{ ticker.symbol }}</span>
                     <h2>${{ ticker.price }}</h2>
@@ -1439,7 +1445,10 @@ document.addEventListener("click", function(event) {
                 {% for ticker in coinbase_prices %}
                 <div class="swiper-slide swiper-slide--one" id="coinbase-{{ loop.index0 }}" data-symbol="{{ ticker.symbol }}">
                     <div class="image-container">
-        <img class="crypto-image" src="{{ crypto_logos.get(ticker.symbol, 'static/img/crypto/BTC.png') }}" alt="{{ ticker.symbol }}">
+<img class="crypto-image" 
+     src="/static/img/crypto/{{ ticker.symbol }}.png" 
+     onerror="this.src='/static/img/crypto/BTC.png'" 
+     alt="{{ ticker.symbol[:-4] }}">                    
                     </div>
                     <span>{{ ticker.symbol }}</span>
                     <h2>${{ ticker.price }}</h2>
