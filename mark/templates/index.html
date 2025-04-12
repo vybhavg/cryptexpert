@@ -1586,28 +1586,42 @@ coinbaseRadio.addEventListener("change", () => {
                     const coinbasePrices = await coinbaseResponse.json();
                     console.log(okxPrices)
                     // Update Binance prices
-                    binancePrices.forEach((ticker, index) => {
-                        const price = (ticker.price);
-                        const percentChange = parseFloat(ticker.priceChangePercent).toFixed(2);
+                   binancePrices.forEach((ticker, index) => {
+    const price = ticker.price;
+    const percentChange = parseFloat(ticker.priceChangePercent).toFixed(2);
+    const symbol = ticker.symbol.slice(0, -4);  // Removes 'USDT' or similar
 
-                        const tickerElement = document.getElementById(`binance-${index}`);
-                        if (tickerElement) {
-                            const priceElement = tickerElement.querySelector('h2');
-                            priceElement.textContent = `$${price}`;
+    const tickerElement = document.getElementById(`binance-${index}`);
+    if (tickerElement) {
+        // ✅ Update symbol
+        const symbolElement = tickerElement.querySelector('span');
+        if (symbolElement) {
+            symbolElement.textContent = symbol;
+        }
 
-                            const percentageElement = tickerElement.querySelector('.percentage-change');
-                            let percentageText = `${percentChange}%`;
-                            if (percentChange > 0) {
-                                percentageText = `+${percentageText}`;
-                                percentageElement.style.color = 'green';
-                            } else if (percentChange < 0) {
-                                percentageElement.style.color = 'red';
-                            } else {
-                                percentageElement.style.color = 'gray';
-                            }
-                            percentageElement.textContent = percentageText;
-                        }
-                    });
+        // ✅ Update price
+        const priceElement = tickerElement.querySelector('h2');
+        if (priceElement) {
+            priceElement.textContent = `$${price}`;
+        }
+
+        // ✅ Update percentage change
+        const percentageElement = tickerElement.querySelector('.percentage-change');
+        if (percentageElement) {
+            let percentageText = `${percentChange}%`;
+            if (percentChange > 0) {
+                percentageText = `+${percentageText}`;
+                percentageElement.style.color = 'green';
+            } else if (percentChange < 0) {
+                percentageElement.style.color = 'red';
+            } else {
+                percentageElement.style.color = 'gray';
+            }
+            percentageElement.textContent = percentageText;
+        }
+    }
+});
+
 
                     // Update okx prices
                     okxPrices.forEach((ticker, index) => {
