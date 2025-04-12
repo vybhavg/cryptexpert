@@ -574,7 +574,7 @@ def charts():
 
 # Load the trained model
 # Load the trained model
-model = load_model("/app/mark/model.keras")
+model = load_model("/home/ec2-user/cryptexpert/mark/model.keras")
 
 
 
