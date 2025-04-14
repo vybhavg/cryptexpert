@@ -114,8 +114,6 @@ sniffio
 SQLAlchemy  
 tensorboard  
 tensorboard-data-server  
-tensorflow  
-tensorflow-io-gcs-filesystem  
 termcolor  
 threadpoolctl  
 tqdm  
@@ -131,3 +129,4 @@ wsproto
 WTForms  
 yarl  
 zipp  
+keras
