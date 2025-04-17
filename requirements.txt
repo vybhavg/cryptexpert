@@ -92,7 +92,6 @@ pydantic_core
 Pygments  
 pyotp  
 pyparsing  
-PyPDF2  
 python-binance  
 python-dateutil  
 python-docx  
@@ -103,7 +102,6 @@ pytz
 qrcode  
 regex  
 requests  
-rich  
 scikit-learn  
 scipy  
 seaborn  
@@ -112,14 +110,9 @@ simple-websocket
 six  
 sniffio  
 SQLAlchemy  
-tensorboard  
-tensorboard-data-server  
 termcolor  
 threadpoolctl  
 tqdm  
-typing_extensions  
-tzdata  
-tzlocal  
 urllib3  
 websockets  
 Werkzeug  
@@ -130,3 +123,6 @@ WTForms
 yarl  
 zipp  
 keras
+Flask
+tensorflow
+cryptography
