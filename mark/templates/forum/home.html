@@ -8,26 +8,26 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        /* Custom Colors */
-        .text-yellow-custom { color: #F8BC04; }
+        /* Custom Colors with importance */
+        .text-yellow-custom { color: #F8BC04 !important; }
         /* Card background on black page */
-        .card-bg { background-color: #1f1f1f; border-radius: 1rem; padding: 1.5rem; overflow: hidden; }
+        .card-bg { background-color: #1f1f1f !important; border-radius: 1rem; padding: 1.5rem; overflow: hidden; }
         /* General hover transformations */
-        .card-hover { transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.5s ease; }
+        .card-hover { transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.5s ease !important; }
         .card-hover:hover {
-            transform: translateY(-6px) scale(1.03);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.7);
-            background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+            transform: translateY(-6px) scale(1.03) !important;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.7) !important;
+            background: linear-gradient(135deg, #2a2a2a, #1f1f1f) !important;
         }
-        /* Icon hover effect */
-        .card-bg .material-icons { transition: transform 0.4s ease; }
-        .card-hover:hover .material-icons { transform: rotate(15deg) scale(1.2); }
-        /* Title color shift on hover */
-        .card-bg h2 { transition: color 0.4s ease; }
-        .card-hover:hover h2 { color: #F8BC04; }
-        /* Description opacity change */
-        .card-bg p { opacity: 0.8; transition: opacity 0.4s ease; }
-        .card-hover:hover p { opacity: 1; }
+        /* Icon color override */
+        .card-bg .material-icons { color: #fff !important; transition: transform 0.4s ease; }
+        .card-hover:hover .material-icons { transform: rotate(15deg) scale(1.2) !important; }
+        /* Title color override */
+        .card-bg h2 { color: #fff !important; transition: color 0.4s ease; }
+        .card-hover:hover h2 { color: #F8BC04 !important; }
+        /* Description styling */
+        .card-bg p { color: #e2e8f0 !important; opacity: 0.8 !important; transition: opacity 0.4s ease; }
+        .card-hover:hover p { opacity: 1 !important; }
         /* Animations */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
@@ -37,8 +37,8 @@
             from { opacity: 0; transform: translateY(-20px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-in-up { opacity: 0; animation: fadeInUp 0.8s ease-out forwards; }
-        .animate-slide-down { opacity: 0; animation: slideDown 0.8s ease-out forwards; }
+        .animate-fade-in-up { opacity: 0; animation: fadeInUp 0.8s ease-out forwards !important; }
+        .animate-slide-down { opacity: 0; animation: slideDown 0.8s ease-out forwards !important; }
     </style>
 {% endblock %}
 
@@ -53,7 +53,7 @@
                class="block card-bg card-hover animate-fade-in-up"
                style="animation-delay: {{ loop.index0 * 150 }}ms">
                 <div class="flex items-center justify-center mb-4">
-                    <span class="material-icons text-white text-4xl">forum</span>
+                    <span class="material-icons text-yellow-custom text-4xl">forum</span>
                 </div>
                 <h2 class="text-2xl font-semibold text-white mb-2">{{ category.name }}</h2>
                 {% if category.description %}
@@ -65,4 +65,3 @@
     </div>
 </div>
 {% endblock %}
-
