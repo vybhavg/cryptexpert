@@ -8,21 +8,38 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        /* Custom Yellow Color */
+        /* Custom Colors */
         .text-yellow-custom { color: #F8BC04; }
         /* Card background on black page */
         .card-bg { background-color: #1f1f1f; border-radius: 1rem; padding: 1.5rem; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.6); transition: all 0.3s ease; }
+        /* Hover effects */
+        .card-hover:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 12px 24px rgba(0,0,0,0.7); }
+        .card-hover { transition: transform 0.4s ease, box-shadow 0.4s ease; }
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up { opacity: 0; animation: fadeInUp 0.8s ease-out forwards; }
+        .animate-slide-down { opacity: 0; animation: slideDown 0.8s ease-out forwards; }
+        /* Staggered animation delays */
     </style>
 {% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-black py-16 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-black to-gray-900 pt-32 pb-16 px-4 sm:px-6 lg:px-8">
     <div class="max-w-5xl mx-auto text-center">
-        <h1 class="text-5xl font-bold text-yellow-custom mb-12">Forum</h1>
+        <!-- Animated Heading -->
+        <h1 class="text-5xl font-bold text-yellow-custom mb-12 animate-slide-down">Forum</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for category in categories %}
-            <a href="{{ url_for('forum_category', category_id=category.id) }}" class="block card-bg card-hover">
+            <a href="{{ url_for('forum_category', category_id=category.id) }}"
+               class="block card-bg card-hover animate-fade-in-up"
+               style="animation-delay: {{ loop.index0 * 150 }}ms">
                 <div class="flex items-center justify-center mb-4">
                     <span class="material-icons text-yellow-custom text-4xl">forum</span>
                 </div>
