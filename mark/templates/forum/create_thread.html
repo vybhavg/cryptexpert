@@ -1,82 +1,82 @@
 {% extends "base.html" %}
 
-{% block head %}
-<style>
-    /* Wrapper spacing */
+{% block style %}
+
+
     .create-thread {
         padding: 30px !important;
-        margin-top: 100px !important;
-        background-color: #1a1a1a;
-        color: #e2e8f0;
-        border-radius: 1rem;
-        max-width: 800px;
-        margin-left: auto;
-        margin-right: auto;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
-        animation: fadeInUp 0.8s ease-out forwards;
+        margin-top: 80px !important; /* Adjust this value based on the height of your navigation bar */
+
+
+
+
+
+
+
+
     }
 
-    /* Form input spacing */
+
     .form-group {
         margin-bottom: 20px !important;
     }
 
-    /* Inputs and textarea styling */
+
     .form-control {
         width: 100% !important;
-        padding: 12px !important;
-        background-color: #2b2b2b !important;
-        border: 1px solid #444 !important;
-        border-radius: 8px !important;
-        color: #fff !important;
+        padding: 10px !important;
+        border: 1px solid #ddd !important;
+        border-radius: 5px !important;
+
+
         font-size: 1em !important;
-        transition: border 0.3s ease, box-shadow 0.3s ease;
+
     }
 
     .form-control:focus {
-        border-color: #F8BC04 !important;
-        box-shadow: 0 0 8px rgba(248, 188, 4, 0.6) !important;
-        outline: none !important;
+        border-color: #007bff !important;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
+
     }
 
-    /* Button styling */
+
     .btn-primary {
-        background-color: #F8BC04 !important;
-        color: #1a1a1a !important;
-        padding: 12px 24px !important;
+        background-color: #007bff !important;
+        color: #fff !important;
+        padding: 10px 20px !important;
         border: none !important;
-        border-radius: 8px !important;
-        font-weight: bold;
-        font-size: 1em;
-        transition: background-color 0.3s ease, transform 0.3s ease;
+        border-radius: 5px !important;
+        cursor: pointer !important;
+
+
     }
 
     .btn-primary:hover {
-        background-color: #d9a703 !important;
-        transform: translateY(-2px) scale(1.02);
+        background-color: #0056b3 !important;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
-    /* Form heading */
-    .create-thread h1 {
-        font-size: 2.5rem;
-        color: #F8BC04;
-        text-align: center;
-        margin-bottom: 30px;
-        animation: slideDown 0.8s ease-out forwards;
-    }
 
-    /* Animations */
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-20px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-
-</style>
 {% endblock %}
 
 
