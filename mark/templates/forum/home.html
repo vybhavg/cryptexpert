@@ -1,50 +1,46 @@
 {% extends "base.html" %}
 
-{% block style %}
-    h1{
-    margin-top:100px;
-    }
-        
-.categories {
-    padding: 30px !important;
-    margin-top: 100px !important; /* Adjust this value based on the height of your navigation bar */
-}
+{% block title %}Forum{% endblock %}
 
-.category {
-    margin-bottom: 20px !important;
-    padding: 15px !important;
-    border: 1px solid #ddd !important;
-    border-radius: 5px !important;
-    background-color: #f9f9f9 !important;
-}
-
-.category h2 {
-    margin-top: 100px !important;
-    color: #333 !important;
-}
-
-.category p {
-    color: #666 !important;
-}
-
-.category a {
-    text-decoration: none !important;
-    color: #007bff !important;
-}
-
-.category a:hover {
-    text-decoration: underline !important;
-}
+{% block head %}
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Custom Styles -->
+    <style>
+        .card-bg {
+            @apply bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6;
+        }
+        .card-hover:hover {
+            @apply transform -translate-y-2 shadow-2xl transition-all duration-300;
+        }
+        .category-icon {
+            font-size: 2.5rem;
+            color: #F8BC04;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<h1>Forum</h1>
-<div class="categories">
-    {% for category in categories %}
-    <div class="category">
-        <h2><a href="{{ url_for('forum_category', category_id=category.id) }}">{{ category.name }}</a></h2>
-        <p>{{ category.description }}</p>
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 mt-20">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-8">Forum Categories</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for category in categories %}
+            <a href="{{ url_for('forum_category', category_id=category.id) }}" class="block card-bg card-hover">
+                <div class="flex items-center space-x-4 mb-4">
+                    <span class="material-icons category-icon">forum</span>
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">{{ category.name }}</h2>
+                </div>
+                {% if category.description %}
+                <p class="text-gray-600 dark:text-gray-300">{{ category.description }}</p>
+                {% else %}
+                <p class="text-gray-400 italic">No description provided.</p>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
     </div>
-    {% endfor %}
 </div>
 {% endblock %}
