@@ -1,119 +1,67 @@
 {% extends "base.html" %}
 
+{% block title %}Forum{% endblock %}
+
 {% block head %}
-<style>
-    /* General Thread Styles */
-    .forum-container {
-        padding: 30px !important;
-        margin-top: 80px !important; /* Adjust this value based on the height of your navigation bar */
-        background-color: #f4f7fc;
-        border-radius: 8px;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
-    }
-
-    .forum-container h1 {
-        font-size: 2em;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 15px;
-    }
-
-    .forum-container p {
-        font-size: 1.1em;
-        color: #777;
-        margin-bottom: 20px;
-        line-height: 1.5;
-    }
-
-    .threads {
-        margin-top: 30px;
-    }
-
-    .thread {
-        padding: 20px;
-        margin-bottom: 25px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #ffffff;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .thread:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .thread h3 {
-        font-size: 1.7em;
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: #333;
-    }
-
-    .thread p {
-        font-size: 1.05em;
-        color: #777;
-        margin-bottom: 15px;
-        line-height: 1.6;
-    }
-
-    .thread a {
-        text-decoration: none;
-        color: #007bff;
-        font-weight: 600;
-        transition: color 0.3s ease;
-    }
-
-    .thread a:hover {
-        color: #0056b3;
-        text-decoration: underline;
-    }
-
-    /* Button Style */
-    .btn-primary {
-        background-color: #007bff !important;
-        color: #fff !important;
-        padding: 12px 30px !important;
-        border: none !important;
-        border-radius: 5px !important;
-        cursor: pointer !important;
-        text-align: center;
-        font-weight: bold;
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary:hover {
-        background-color: #0056b3 !important;
-        transform: scale(1.05);
-    }
-
-    .btn-primary:active {
-        background-color: #003d80 !important;
-        transform: scale(0.98);
-    }
-
-    /* Add some space between the threads */
-    .threads .thread + .thread {
-        margin-top: 15px;
-    }
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Custom Colors with importance */
+        .text-yellow-custom { color: #F8BC04 !important; }
+        /* Card background on black page */
+        .card-bg { background-color: #1f1f1f !important; border-radius: 1rem; padding: 1.5rem; overflow: hidden; }
+        /* General hover transformations */
+        .card-hover { transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.5s ease !important; }
+        .card-hover:hover {
+            transform: translateY(-6px) scale(1.03) !important;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.7) !important;
+            background: linear-gradient(135deg, #2a2a2a, #1f1f1f) !important;
+        }
+        /* Icon color override with yellow */
+        .card-bg .material-icons { color: #F8BC04 !important; transition: transform 0.4s ease; }
+        .card-hover:hover .material-icons { transform: rotate(15deg) scale(1.2) !important; }
+        /* Title color override */
+        .card-bg h2 { color: #fff !important; transition: color 0.4s ease; }
+        .card-hover:hover h2 { color: #F8BC04 !important; }
+        /* Description styling */
+        .card-bg p { color: #e2e8f0 !important; opacity: 0.8 !important; transition: opacity 0.4s ease; }
+        .card-hover:hover p { opacity: 1 !important; }
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up { opacity: 0; animation: fadeInUp 0.8s ease-out forwards !important; }
+        .animate-slide-down { opacity: 0; animation: slideDown 0.8s ease-out forwards !important; }
     </style>
 {% endblock %}
 
-
 {% block content %}
-    <div class="forum-container">
-        <h1>{{ category.name }}</h1>
-        <p>{{ category.description }}</p>
-        <a href="{{ url_for('create_thread', category_id=category.id) }}" class="btn btn-primary">Create Thread</a>
-        
-        <div class="threads">
-            {% for thread in threads %}
-                <div class="thread">
-                    <h3><a href="{{ url_for('forum_thread', thread_id=thread.id) }}">{{ thread.title }}</a></h3>
-                    <p>By {{ thread.user.username }} on {{ thread.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+<div class="min-h-screen bg-gradient-to-br from-black to-gray-900 pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-5xl mx-auto text-center">
+        <!-- Animated Heading -->
+        <h1 class="text-5xl font-bold text-yellow-custom mb-12 animate-slide-down">Forum</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for category in categories %}
+            <a href="{{ url_for('forum_category', category_id=category.id) }}"
+               class="block card-bg card-hover animate-fade-in-up"
+               style="animation-delay: {{ loop.index0 * 150 }}ms">
+                <div class="flex items-center justify-center mb-4">
+                    <span class="material-icons text-yellow-custom text-4xl">forum</span>
                 </div>
+                <h2 class="text-2xl font-semibold text-white mb-2">{{ category.name }}</h2>
+                {% if category.description %}
+                <p class="text-gray-400">{{ category.description }}</p>
+                {% endif %}
+            </a>
             {% endfor %}
         </div>
     </div>
+</div>
 {% endblock %}
