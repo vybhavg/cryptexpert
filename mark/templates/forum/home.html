@@ -11,10 +11,23 @@
         /* Custom Colors */
         .text-yellow-custom { color: #F8BC04; }
         /* Card background on black page */
-        .card-bg { background-color: #1f1f1f; border-radius: 1rem; padding: 1.5rem; }
-        /* Hover effects */
-        .card-hover:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 12px 24px rgba(0,0,0,0.7); }
-        .card-hover { transition: transform 0.4s ease, box-shadow 0.4s ease; }
+        .card-bg { background-color: #1f1f1f; border-radius: 1rem; padding: 1.5rem; overflow: hidden; }
+        /* General hover transformations */
+        .card-hover { transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.5s ease; }
+        .card-hover:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.7);
+            background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+        }
+        /* Icon hover effect */
+        .card-bg .material-icons { transition: transform 0.4s ease; }
+        .card-hover:hover .material-icons { transform: rotate(15deg) scale(1.2); }
+        /* Title color shift on hover */
+        .card-bg h2 { transition: color 0.4s ease; }
+        .card-hover:hover h2 { color: #F8BC04; }
+        /* Description opacity change */
+        .card-bg p { opacity: 0.8; transition: opacity 0.4s ease; }
+        .card-hover:hover p { opacity: 1; }
         /* Animations */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
@@ -26,7 +39,6 @@
         }
         .animate-fade-in-up { opacity: 0; animation: fadeInUp 0.8s ease-out forwards; }
         .animate-slide-down { opacity: 0; animation: slideDown 0.8s ease-out forwards; }
-        /* Staggered animation delays */
     </style>
 {% endblock %}
 
