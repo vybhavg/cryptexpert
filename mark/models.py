@@ -120,4 +120,3 @@ class ForumPost(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     thread_id = db.Column(db.Integer, db.ForeignKey('forum_thread.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    user = db.relationship('User', backref='threads', lazy=True)
