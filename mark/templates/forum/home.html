@@ -7,36 +7,28 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Custom Styles -->
     <style>
-        .card-bg {
-            @apply bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6;
-        }
-        .card-hover:hover {
-            @apply transform -translate-y-2 shadow-2xl transition-all duration-300;
-        }
-        .category-icon {
-            font-size: 2.5rem;
-            color: #F8BC04;
-        }
+        /* Custom Yellow Color */
+        .text-yellow-custom { color: #F8BC04; }
+        /* Card background on black page */
+        .card-bg { background-color: #1f1f1f; border-radius: 1rem; padding: 1.5rem; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.6); transition: all 0.3s ease; }
     </style>
 {% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-100 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 mt-20">
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-8">Forum Categories</h1>
+<div class="min-h-screen bg-black py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-5xl mx-auto text-center">
+        <h1 class="text-5xl font-bold text-yellow-custom mb-12">Forum</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for category in categories %}
             <a href="{{ url_for('forum_category', category_id=category.id) }}" class="block card-bg card-hover">
-                <div class="flex items-center space-x-4 mb-4">
-                    <span class="material-icons category-icon">forum</span>
-                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">{{ category.name }}</h2>
+                <div class="flex items-center justify-center mb-4">
+                    <span class="material-icons text-yellow-custom text-4xl">forum</span>
                 </div>
+                <h2 class="text-2xl font-semibold text-white mb-2">{{ category.name }}</h2>
                 {% if category.description %}
-                <p class="text-gray-600 dark:text-gray-300">{{ category.description }}</p>
-                {% else %}
-                <p class="text-gray-400 italic">No description provided.</p>
+                <p class="text-gray-400">{{ category.description }}</p>
                 {% endif %}
             </a>
             {% endfor %}
