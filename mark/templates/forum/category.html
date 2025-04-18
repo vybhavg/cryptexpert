@@ -8,141 +8,150 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-    /* General Forum Container */
-    .forum-container {
-        padding: 40px 20px;
-        margin-top: 80px !important; /* Adjust based on navbar height */
-        background: linear-gradient(135deg, #1f1f1f, #333333);
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
+        /* Custom Colors with importance */
+        .text-yellow-custom { color: #F8BC04 !important; }
 
-    .forum-container h1 {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #F8BC04 !important;
-        margin-bottom: 20px;
-        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-        transition: color 0.4s ease;
-    }
-
-    .forum-container h1:hover {
-        color: #fff !important;
-    }
-
-    /* Threads Section */
-    .threads {
-        margin-top: 30px;
-    }
-
-    /* Individual Thread Card */
-    .thread {
-        padding: 20px;
-        margin-bottom: 25px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        background-color: #2a2a2a;
-        transition: transform 0.4s ease, box-shadow 0.4s ease;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-    }
-
-    .thread:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-    }
-
-    .thread h3 {
-        font-size: 1.7em;
-        margin-bottom: 12px;
-        color: #F8BC04 !important;
-        transition: color 0.3s ease;
-    }
-
-    .thread h3 a {
-        text-decoration: none;
-        color: inherit;
-    }
-
-    .thread h3 a:hover {
-        text-decoration: underline;
-        color: #fff;
-    }
-
-    .thread p {
-        font-size: 1em;
-        color: #b3b3b3;
-        margin-bottom: 10px;
-        opacity: 0.85;
-        transition: opacity 0.3s ease;
-    }
-
-    .thread:hover p {
-        opacity: 1;
-    }
-
-    /* Button Style */
-    .btn-primary {
-        background-color: #007bff !important;
-        color: #fff !important;
-        padding: 12px 24px !important;
-        border: none !important;
-        border-radius: 5px !important;
-        cursor: pointer !important;
-        font-size: 1.1em;
-        text-transform: uppercase;
-        font-weight: bold;
-        transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-
-    .btn-primary:hover {
-        background-color: #0056b3 !important;
-        transform: scale(1.05);
-    }
-
-    /* Animation for elements */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
+        /* General Forum Container Styling */
+        .forum-container {
+            padding: 30px !important;
+            margin-top: 80px !important;
+            background-color: #f4f7fc;
+            border-radius: 8px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+
+        /* Heading Styling */
+        .forum-container h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            animation: slideDown 0.8s ease-out;
         }
-    }
 
-    .animate-fade-in-up {
-        opacity: 0;
-        animation: fadeInUp 0.8s ease-out forwards !important;
-    }
+        .forum-container p {
+            font-size: 1.1em;
+            color: #777;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
 
-    .animate-delay {
-        animation-delay: 150ms;
-    }
+        /* Thread Container */
+        .threads {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
 
+        /* Individual Thread Styling */
+        .thread {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ffffff, #f4f7fc);
+        }
+
+        .thread:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #e2e8f0, #ffffff);
+        }
+
+        .thread h3 {
+            font-size: 1.7em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .thread p {
+            font-size: 1.05em;
+            color: #777;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .thread a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .thread a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* Button Style */
+        .btn-primary {
+            background-color: #007bff !important;
+            color: #fff !important;
+            padding: 12px 30px !important;
+            border: none !important;
+            border-radius: 5px !important;
+            cursor: pointer !important;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3 !important;
+            transform: scale(1.05);
+        }
+
+        .btn-primary:active {
+            background-color: #003d80 !important;
+            transform: scale(0.98);
+        }
+
+        /* Grid Layout for Threads */
+        .threads .thread + .thread {
+            margin-top: 15px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Apply animation to thread items */
+        .thread {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        .thread:nth-child(odd) {
+            animation-delay: 0.1s;
+        }
+        .thread:nth-child(even) {
+            animation-delay: 0.2s;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-black to-gray-900 pt-32 pb-16 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-5xl mx-auto text-center">
-        <!-- Animated Heading -->
-        <h1 class="text-5xl font-bold text-yellow-custom mb-12 animate-slide-down">Forum</h1>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {% for category in categories %}
-            <a href="{{ url_for('forum_category', category_id=category.id) }}"
-               class="block card-bg card-hover animate-fade-in-up"
-               style="animation-delay: {{ loop.index0 * 150 }}ms">
-                <div class="flex items-center justify-center mb-4">
-                    <span class="material-icons text-yellow-custom text-4xl">forum</span>
+    <div class="forum-container">
+        <h1 class="animate-slide-down">{{ category.name }}</h1>
+        <p>{{ category.description }}</p>
+        <a href="{{ url_for('create_thread', category_id=category.id) }}" class="btn btn-primary">Create Thread</a>
+
+        <div class="threads">
+            {% for thread in threads %}
+                <div class="thread animate-fade-in-up">
+                    <h3><a href="{{ url_for('forum_thread', thread_id=thread.id) }}">{{ thread.title }}</a></h3>
+                    <p>By {{ thread.user.username }} on {{ thread.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
                 </div>
-                <h2 class="text-2xl font-semibold text-white mb-2">{{ category.name }}</h2>
-                {% if category.description %}
-                <p class="text-gray-400">{{ category.description }}</p>
-                {% endif %}
-            </a>
             {% endfor %}
         </div>
     </div>
-</div>
 {% endblock %}
