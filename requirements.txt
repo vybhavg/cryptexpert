@@ -124,5 +124,5 @@ yarl
 zipp  
 keras
 Flask
-tensorflow
+tensorflow-cpu
 cryptography
