@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Forum{% endblock %}
+{% block title %}{{ category.name }} | Forum{% endblock %}
 
 {% block head %}
     <!-- Tailwind CSS -->
@@ -8,150 +8,139 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        /* Custom Colors with importance */
+        /* Custom Colors */
         .text-yellow-custom { color: #F8BC04 !important; }
-
-        /* General Forum Container Styling */
-        .forum-container {
-            padding: 30px !important;
-            margin-top: 80px !important;
-            background-color: #f4f7fc;
-            border-radius: 8px;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+        .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
+        
+        /* Card Styling */
+        .thread-card {
+            background: linear-gradient(135deg, #1e1e1e, #252525) !important;
+            border-radius: 0.75rem !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+            overflow: hidden !important;
         }
-
-        /* Heading Styling */
-        .forum-container h1 {
-            font-size: 2.5em;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 20px;
-            animation: slideDown 0.8s ease-out;
+        
+        .thread-card:hover {
+            transform: translateY(-5px) scale(1.02) !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
+            border-color: rgba(248, 188, 4, 0.2) !important;
         }
-
-        .forum-container p {
-            font-size: 1.1em;
-            color: #777;
-            margin-bottom: 20px;
-            line-height: 1.5;
+        
+        /* Thread Title */
+        .thread-title {
+            position: relative;
+            color: white !important;
+            transition: color 0.3s ease !important;
         }
-
-        /* Thread Container */
-        .threads {
-            margin-top: 30px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
+        
+        .thread-card:hover .thread-title {
+            color: #F8BC04 !important;
         }
-
-        /* Individual Thread Styling */
-        .thread {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            background: linear-gradient(135deg, #ffffff, #f4f7fc);
+        
+        /* Meta Info */
+        .thread-meta {
+            color: rgba(255, 255, 255, 0.6) !important;
+            transition: color 0.3s ease !important;
         }
-
-        .thread:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(135deg, #e2e8f0, #ffffff);
+        
+        .thread-card:hover .thread-meta {
+            color: rgba(255, 255, 255, 0.8) !important;
         }
-
-        .thread h3 {
-            font-size: 1.7em;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
+        
+        /* Create Button */
+        .create-btn {
+            background: linear-gradient(135deg, #F8BC04, #e6a905) !important;
+            color: #1a1a1a !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
         }
-
-        .thread p {
-            font-size: 1.05em;
-            color: #777;
-            margin-bottom: 15px;
-            line-height: 1.6;
+        
+        .create-btn:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2) !important;
         }
-
-        .thread a {
-            text-decoration: none;
-            color: #007bff;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .thread a:hover {
-            color: #0056b3;
-            text-decoration: underline;
-        }
-
-        /* Button Style */
-        .btn-primary {
-            background-color: #007bff !important;
-            color: #fff !important;
-            padding: 12px 30px !important;
-            border: none !important;
-            border-radius: 5px !important;
-            cursor: pointer !important;
-            text-align: center;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3 !important;
-            transform: scale(1.05);
-        }
-
-        .btn-primary:active {
-            background-color: #003d80 !important;
-            transform: scale(0.98);
-        }
-
-        /* Grid Layout for Threads */
-        .threads .thread + .thread {
-            margin-top: 15px;
-        }
-
+        
         /* Animations */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to   { opacity: 1; transform: translateY(0); }
+        
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
-
-        /* Apply animation to thread items */
-        .thread {
-            animation: fadeInUp 0.8s ease-out forwards;
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards !important;
         }
-        .thread:nth-child(odd) {
-            animation-delay: 0.1s;
+        
+        .animate-slide-in-left {
+            animation: slideInLeft 0.6s ease-out forwards !important;
         }
-        .thread:nth-child(even) {
-            animation-delay: 0.2s;
+        
+        /* Delay animations for staggered effect */
+        .thread-card {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+            animation-delay: calc(var(--animation-order) * 100ms);
         }
     </style>
 {% endblock %}
 
 {% block content %}
-    <div class="forum-container">
-        <h1 class="animate-slide-down">{{ category.name }}</h1>
-        <p>{{ category.description }}</p>
-        <a href="{{ url_for('create_thread', category_id=category.id) }}" class="btn btn-primary">Create Thread</a>
-
-        <div class="threads">
+<div class="min-h-screen bg-dark-gradient pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Category Header -->
+        <div class="mb-10 animate-slide-in-left" style="--animation-order: 0">
+            <h1 class="text-4xl font-bold text-white mb-2">{{ category.name }}</h1>
+            <p class="text-gray-400">{{ category.description }}</p>
+            <div class="mt-6">
+                <a href="{{ url_for('create_thread', category_id=category.id) }}" 
+                   class="create-btn inline-flex items-center px-6 py-3 rounded-lg">
+                    <span class="material-icons mr-2">add</span>
+                    Create New Thread
+                </a>
+            </div>
+        </div>
+        
+        <!-- Threads Grid -->
+        <div class="grid grid-cols-1 gap-6">
             {% for thread in threads %}
-                <div class="thread animate-fade-in-up">
-                    <h3><a href="{{ url_for('forum_thread', thread_id=thread.id) }}">{{ thread.title }}</a></h3>
-                    <p>By {{ thread.user.username }} on {{ thread.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+            <a href="{{ url_for('forum_thread', thread_id=thread.id) }}" 
+               class="thread-card p-6 flex flex-col"
+               style="--animation-order: {{ loop.index }}">
+                <h3 class="thread-title text-xl font-semibold mb-2">{{ thread.title }}</h3>
+                <p class="text-gray-300 mb-4 line-clamp-2">{{ thread.content|truncate(200) }}</p>
+                <div class="mt-auto flex items-center justify-between">
+                    <span class="thread-meta text-sm">
+                        <span class="material-icons align-middle text-yellow-custom mr-1" style="font-size: 1rem;">person</span>
+                        {{ thread.user.username }}
+                    </span>
+                    <span class="thread-meta text-sm">
+                        <span class="material-icons align-middle text-yellow-custom mr-1" style="font-size: 1rem;">schedule</span>
+                        {{ thread.created_at|time_ago }}
+                    </span>
                 </div>
+            </a>
             {% endfor %}
         </div>
+        
+        {% if not threads %}
+        <div class="text-center py-16 animate-fade-in-up">
+            <span class="material-icons text-yellow-custom text-6xl mb-4">forum</span>
+            <h3 class="text-xl text-white mb-2">No threads yet</h3>
+            <p class="text-gray-400 mb-6">Be the first to start a discussion in this category</p>
+            <a href="{{ url_for('create_thread', category_id=category.id) }}" 
+               class="create-btn inline-flex items-center px-6 py-3 rounded-lg">
+                <span class="material-icons mr-2">add</span>
+                Create First Thread
+            </a>
+        </div>
+        {% endif %}
     </div>
+</div>
 {% endblock %}
