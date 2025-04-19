@@ -295,166 +295,263 @@ html {
         opacity: 1;
     }
 }
-           .dropdown-menu--block {
-        background: linear-gradient(135deg, #1e1e1e, #252525) !important;
-        border: 1px solid rgba(255, 255, 255, 0.05) !important;
-        border-radius: 0.75rem !important;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
-        width: 350px;
-        padding: 0;
-        overflow: hidden;
-    }
+      /* Notification Dropdown Container */
+.dropdown-menu--block {
+    background: linear-gradient(135deg, #1a1a1a, #222) !important;
+    border: 1px solid rgba(248, 188, 4, 0.15) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+    width: 380px;
+    padding: 0;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transform-origin: top right;
+    animation: fadeInScale 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 
-    .dropdown-header {
-        color: white !important;
-        font-weight: 600;
-        font-size: 1.1rem;
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        background: rgba(0, 0, 0, 0.2);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
     }
-
-    .actions__item {
-        color: rgba(255, 255, 255, 0.6) !important;
-        transition: all 0.2s ease;
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
     }
+}
 
-    .actions__item:hover {
-        color: #F8BC04 !important;
-        transform: scale(1.1);
-    }
+/* Dropdown Header */
+.dropdown-header {
+    padding: 16px 20px;
+    color: white !important;
+    font-weight: 600;
+    font-size: 1.1rem;
+    font-family: 'Inter', sans-serif;
+    border-bottom: 1px solid rgba(248, 188, 4, 0.1);
+    background: rgba(15, 15, 15, 0.9);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
 
-    .listview {
-        max-height: 400px;
-        overflow-y: auto;
-    }
+/* Action Buttons */
+.actions__item {
+    color: rgba(255, 255, 255, 0.6) !important;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+    padding: 4px;
+    border-radius: 4px;
+}
 
-    .listview__item {
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        transition: all 0.3s ease;
-        display: block;
-    }
+.actions__item:hover {
+    color: #F8BC04 !important;
+    transform: scale(1.1);
+    background: rgba(248, 188, 4, 0.1);
+}
 
-    .listview__item:last-child {
-        border-bottom: none;
-    }
+/* Notification List Container */
+.listview {
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #F8BC04 rgba(255, 255, 255, 0.05);
+}
 
-    .listview__item:hover {
-        background: rgba(248, 188, 4, 0.1) !important;
-    }
+/* Notification Items */
+.listview__item {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
+}
 
-    .listview__item.unread {
-        background: linear-gradient(90deg, rgba(248, 188, 4, 0.1), transparent);
-        border-left: 3px solid #F8BC04;
-    }
+.listview__item:last-child {
+    border-bottom: none;
+}
 
-    .listview__heading {
-        color: white !important;
-        font-weight: 500;
-        font-size: 1rem;
-        margin-bottom: 0.25rem;
-        display: flex;
-        justify-content: space-between;
-    }
+.listview__item:hover {
+    background: rgba(248, 188, 4, 0.08) !important;
+    transform: translateX(2px);
+}
 
-    .listview__heading small {
-        color: rgba(255, 255, 255, 0.5) !important;
-        font-size: 0.75rem;
-        font-weight: 400;
-    }
+.listview__item.unread {
+    background: linear-gradient(90deg, rgba(248, 188, 4, 0.08), transparent);
+    border-left: 3px solid #F8BC04;
+}
 
-    .listview__content small {
-        color: rgba(255, 255, 255, 0.6) !important;
-        font-size: 0.85rem;
-    }
+/* Notification Content */
+.listview__content {
+    flex: 1;
+}
 
-    .view-more {
-        display: block;
-        text-align: center;
-        padding: 0.75rem;
-        color: #F8BC04 !important;
-        font-weight: 500;
-        transition: all 0.2s ease;
-    }
+.listview__heading {
+    color: white !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+}
 
-    .view-more:hover {
-        background: rgba(248, 188, 4, 0.1) !important;
-    }
+.listview__heading .notification-text {
+    flex: 1;
+}
 
-    /* Custom scrollbar */
-    .listview::-webkit-scrollbar {
-        width: 6px;
-    }
+.notification-text .mention {
+    color: #F8BC04;
+    font-weight: 500;
+}
 
-    .listview::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
-    }
+.notification-text .action {
+    color: #4CAF50;
+    font-weight: 500;
+}
 
-    .listview::-webkit-scrollbar-thumb {
-        background: #F8BC04;
-        border-radius: 3px;
-    }
+.listview__heading small {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-size: 0.75rem;
+    font-weight: 400;
+    margin-left: 8px;
+    white-space: nowrap;
+}
 
-    /* Badge styling */
-    .badge-pill {
-        background-color: #F8BC04 !important;
-        color: #1a1a1a !important;
-        font-weight: 600;
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        font-size: 0.65rem;
-        min-width: 18px;
-        height: 18px;
-        line-height: 18px;
-        padding: 0 4px;
-    }
+.listview__content small {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 0.8rem;
+    display: block;
+}
 
-    /* Notification icon */
-    .top-nav__notify {
-        position: relative;
-        transition: all 0.2s ease;
-    }
-
-    .top-nav__notify:hover {
-
-        transform: scale(1.1);
-    }
-
-    /* Animation for new notifications */
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-        100% { transform: scale(1); }
-    }
-
-    .has-notifications {
-        animation: pulse 1s infinite;
-    }
-        .view-more {
+/* View More Link */
+.view-more {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 12px;
+    padding: 14px;
     color: #F8BC04 !important;
     font-weight: 500;
     text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.2s ease;
+    border-top: 1px solid rgba(248, 188, 4, 0.1);
+    transition: all 0.3s ease;
+    background: rgba(15, 15, 15, 0.8);
+    position: sticky;
+    bottom: 0;
 }
 
 .view-more:hover {
-    background: rgba(248, 188, 4, 0.1) !important;
+    background: rgba(248, 188, 4, 0.15) !important;
     text-decoration: none;
+    letter-spacing: 0.5px;
 }
 
 .view-more i {
     font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+.view-more:hover i {
+    transform: translateX(2px);
+}
+
+/* Custom scrollbar */
+.listview::-webkit-scrollbar {
+    width: 6px;
+}
+
+.listview::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.listview::-webkit-scrollbar-thumb {
+    background: #F8BC04;
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+
+.listview::-webkit-scrollbar-thumb:hover {
+    background: #e6a905;
+}
+
+/* Badge styling */
+.badge-pill {
+    background-color: #F8BC04 !important;
+    color: #1a1a1a !important;
+    font-weight: 600;
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 0.7rem;
+    min-width: 18px;
+    height: 18px;
+    line-height: 18px;
+    padding: 0 5px;
+    border: 2px solid #1a1a1a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Notification icon */
+.top-nav__notify {
+    position: relative;
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+    font-size: 1.3rem;
+}
+
+.top-nav__notify:hover {
+    color: #F8BC04 !important;
+    transform: scale(1.1);
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.has-notifications {
+    animation: pulse 1.5s infinite;
+}
+
+/* Unread indicator dot */
+.unread-dot {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background: #F8BC04;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(248, 188, 4, 0.3);
+}
+
+/* Empty state */
+.empty-notification {
+    padding: 30px 20px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.empty-notification i {
+    font-size: 2.5rem;
+    color: rgba(255, 255, 255, 0.2);
+    margin-bottom: 12px;
+    display: block;
+}
+
+.empty-notification p {
+    margin: 0;
+    font-size: 0.9rem;
 }
         {% block style %}{% endblock %}
     </style>
@@ -1091,20 +1188,42 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const date = new Date(dateString);
             if (isNaN(date.getTime())) {
-                // If direct parsing fails, try alternative formats
-                return dateString; // fallback to original string
+                return { time: '', date: '' };
             }
+            
+            const now = new Date();
+            const diffInHours = Math.abs(now - date) / 36e5;
+            
+            // Show relative time for recent notifications
+            if (diffInHours < 24) {
+                if (diffInHours < 1) {
+                    const mins = Math.floor(diffInHours * 60);
+                    return { time: `${mins}m ago`, date: '' };
+                }
+                return { time: `${Math.floor(diffInHours)}h ago`, date: '' };
+            }
+            
             return {
                 time: date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                 date: date.toLocaleDateString()
             };
         } catch (e) {
-            console.error('Error formatting date:', e);
-            return {
-                time: '',
-                date: dateString // fallback to original string
-            };
+            return { time: '', date: '' };
         }
+    }
+
+    function enhanceNotificationText(content) {
+        // Highlight usernames
+        content = content.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
+        
+        // Highlight action words
+        const actions = ['replied', 'mentioned', 'liked', 'shared'];
+        actions.forEach(action => {
+            content = content.replace(new RegExp(action, 'gi'), 
+                `<span class="action">${action}</span>`);
+        });
+        
+        return content;
     }
 
     function updateNotificationBadge() {
@@ -1117,7 +1236,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.count > 0) {
                     if (!badge) {
                         const newBadge = document.createElement('span');
-                        newBadge.className = 'badge badge-pill';
+                        newBadge.className = 'badge badge-pill pulse';
                         newBadge.textContent = data.count;
                         notificationIcon.appendChild(newBadge);
                         notificationIcon.classList.add('has-notifications');
@@ -1129,7 +1248,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     notificationIcon.classList.remove('has-notifications');
                 }
             })
-            .catch(error => console.error('Error updating badge:', error));
+            .catch(console.error);
     }
 
     document.querySelector('.top-nav__notifications a').addEventListener('click', function(e) {
@@ -1143,26 +1262,38 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.notifications.length > 0) {
                     notificationsHtml = data.notifications.slice(0, 5).map(n => {
                         const formattedDate = formatNotificationDate(n.created_at);
+                        const enhancedContent = enhanceNotificationText(n.content);
+                        
                         return `
-                            <a href="/forum/thread/${n.thread_id}#post-${n.post_id}" class="listview__item ${n.is_read ? '' : 'unread'}">
-                                <div class="listview__content">
-                                    <div class="listview__heading">
-                                        ${n.content}
-                                        ${formattedDate.time ? `<small>${formattedDate.time}</small>` : ''}
-                                    </div>
-                                    ${formattedDate.date ? `<small>${formattedDate.date}</small>` : ''}
+                        <a href="/forum/thread/${n.thread_id}#post-${n.post_id}" class="listview__item ${n.is_read ? '' : 'unread'}">
+                            <div class="notification-avatar">
+                                <i class="zmdi zmdi-account-circle"></i>
+                            </div>
+                            <div class="listview__content">
+                                <div class="notification-text">
+                                    ${enhancedContent}
                                 </div>
-                            </a>`;
+                                <div class="notification-meta">
+                                    ${formattedDate.time ? `<span class="time">${formattedDate.time}</span>` : ''}
+                                    ${formattedDate.date ? `<span class="date">${formattedDate.date}</span>` : ''}
+                                </div>
+                            </div>
+                            ${n.is_read ? '' : '<span class="unread-dot"></span>'}
+                        </a>`;
                     }).join('');
                 } else {
-                    notificationsHtml = '<div class="listview__item"><div class="listview__content text-center py-3">No new notifications</div></div>';
+                    notificationsHtml = `
+                    <div class="empty-notification">
+                        <i class="zmdi zmdi-notifications-off"></i>
+                        <p>No new notifications</p>
+                    </div>`;
                 }
 
                 dropdown.innerHTML = `
                     <div class="dropdown-header">
-                        Notifications
+                        <span>Your Notifications</span>
                         <div class="actions">
-                            <a href="#" class="actions__item zmdi zmdi-check-all" id="markAllRead"></a>
+                            <a href="#" class="actions__item zmdi zmdi-check-all" id="markAllRead" title="Mark all as read"></a>
                         </div>
                     </div>
                     <div class="listview listview--hover" id="notificationList">
@@ -1173,7 +1304,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     </a>
                 `;
                 
-                // Add click handler for mark all read
                 document.getElementById('markAllRead')?.addEventListener('click', function(e) {
                     e.preventDefault();
                     fetch('/notifications/mark_all_read', { method: 'POST' })
@@ -1183,15 +1313,15 @@ document.addEventListener('DOMContentLoaded', function () {
                             });
                             updateNotificationBadge();
                         })
-                        .catch(error => console.error('Error marking all as read:', error));
+                        .catch(console.error);
                 });
                 
                 updateNotificationBadge();
             })
-            .catch(error => console.error('Error loading notifications:', error));
+            .catch(console.error);
     });
 
-    // Update notification badge periodically
+    // Update every 30 seconds
     setInterval(updateNotificationBadge, 30000);
     updateNotificationBadge();
 });
