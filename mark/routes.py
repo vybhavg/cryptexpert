@@ -1241,7 +1241,7 @@ def create_thread(category_id):
     db.session.commit()
     
     flash('Thread created successfully!', 'success')
-    return redirect(url_for('forum_thread', thread_id=thread.id))
+    return redirect(url_for('forum_category', category_id=category_id))
 
 
 
