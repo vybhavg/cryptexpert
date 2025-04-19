@@ -1145,22 +1145,26 @@ def refresh_balances():
         "total_balance_usd": total_balance_usd,  # Balance for the requested exchange
         "total_balance_all_exchanges": total_balance_all_exchanges  # Total balance across all exchanges
     })
-from flask import jsonify, request, flash, abort, render_template, redirect, url_for
-from werkzeug.utils import secure_filename
-import os
-from datetime import datetime
+
+from flask import jsonify
+from flask import request, flash
 from mark.form import ThreadForm, PostForm
-from mark.models import ForumCategory, ForumThread, ForumPost, User
-from mark import db, app
+from flask import request, flash, abort
+from werkzeug.utils import secure_filename
 
-# Configure upload folder
-UPLOAD_FOLDER = 'static/uploads/posts'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.route('/forum')
 def forum_home():
@@ -1173,170 +1177,208 @@ def forum_category(category_id):
     threads = ForumThread.query.filter_by(category_id=category_id).order_by(ForumThread.created_at.desc()).all()
     return render_template('forum/category.html', category=category, threads=threads)
 
-@app.route('/forum/thread/<int:thread_id>')
+@app.route('/forum/thread/<int:thread_id>', methods=['GET', 'POST'])
 def forum_thread(thread_id):
     thread = ForumThread.query.get_or_404(thread_id)
+    # Get all top-level posts and their replies
     posts = ForumPost.query.filter_by(thread_id=thread_id, reply_to=None).order_by(ForumPost.created_at.asc()).all()
-    
-    # Get all users for mentions
-    all_users = User.query.all()
-    
-    # Get replies for each post
-    for post in posts:
-        post.replies = ForumPost.query.filter_by(reply_to=post.id).order_by(ForumPost.created_at.asc()).all()
-    
-    return render_template('forum/thread.html', 
-                         thread=thread, 
-                         posts=posts,
-                         all_users=all_users)
+    all_users = User.query.all()  # For mention functionality
 
-@app.route('/forum/thread/<int:thread_id>/post', methods=['POST'])
-@login_required
-def create_post(thread_id):
-    if not request.is_json:
-        # Handle form data with potential file upload
-        content = request.form.get('content')
-        reply_to = request.form.get('reply_to', None)
-        image = request.files.get('image')
-        
-        if not content and not image:
-            return jsonify({'success': False, 'error': 'Content or image is required'}), 400
-        
-        # Process image upload
-        image_url = None
-        if image and allowed_file(image.filename):
-            filename = secure_filename(f"{datetime.now().timestamp()}_{image.filename}")
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            os.makedirs(os.path.dirname(filepath), exist_ok=True)
-            image.save(filepath)
-            image_url = url_for('static', filename=f'uploads/posts/{filename}')
-        
-        # Process mentions
-        if content:
-            mentioned_usernames = extract_mentions(content)
-            # Here you would typically notify mentioned users
-        
-        post = ForumPost(
-            content=content,
-            user_id=current_user.id,
-            thread_id=thread_id,
-            reply_to=reply_to,
-            image_url=image_url
-        )
-        db.session.add(post)
-        db.session.commit()
-        
-        return jsonify({
-            'success': True,
-            'post': {
-                'id': post.id,
-                'content': post.content,
-                'created_at': post.created_at.strftime('%H:%M · %b %d, %Y'),
-                'username': current_user.username,
-                'user_initial': current_user.username[0].upper(),
-                'image_url': post.image_url,
-                'reply_to': post.reply_to
-            }
-        })
-    else:
-        # Handle JSON data
-        data = request.get_json()
-        content = data.get('content')
-        reply_to = data.get('reply_to', None)
-        
-        if not content:
-            return jsonify({'success': False, 'error': 'Content is required'}), 400
-        
-        # Process mentions
-        mentioned_usernames = extract_mentions(content)
-        # Here you would typically notify mentioned users
-        
-        post = ForumPost(
-            content=content,
-            user_id=current_user.id,
-            thread_id=thread_id,
-            reply_to=reply_to
-        )
-        db.session.add(post)
-        db.session.commit()
-        
-        return jsonify({
-            'success': True,
-            'post': {
-                'id': post.id,
-                'content': post.content,
-                'created_at': post.created_at.strftime('%H:%M · %b %d, %Y'),
-                'username': current_user.username,
-                'user_initial': current_user.username[0].upper(),
-                'reply_to': post.reply_to
-            }
-        })
+    form = PostForm()
+
+
+    if request.method == 'GET':
+        return render_template('forum/thread.html', 
+                            thread=thread, 
+                            posts=posts,
+                            all_users=all_users,
+                            form=form)
+
+    # AJAX requests will be handled by the separate API endpoint
+    return redirect(url_for('forum_thread', thread_id=thread_id))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.route('/forum/thread/<int:thread_id>/edit', methods=['POST'])
 @login_required
 def edit_thread(thread_id):
     thread = ForumThread.query.get_or_404(thread_id)
-    
+
     if thread.user_id != current_user.id:
         abort(403)  # Forbidden
-    
-    if request.is_json:
-        data = request.get_json()
-        title = data.get('title')
-        content = data.get('content')
-    else:
-        title = request.form.get('title')
-        content = request.form.get('content')
-    
+
+    # Get data from form submission
+    title = request.form.get('title')
+    content = request.form.get('content')
+
+
+
+
+
     if not title or not content:
-        return jsonify({'success': False, 'error': 'Title and content are required'}), 400
-    
+        flash('Title and content are required', 'error')
+        return redirect(url_for('forum_category', category_id=thread.category_id))
+
     thread.title = title
     thread.content = content
     db.session.commit()
-    
-    return jsonify({'success': True, 'message': 'Thread updated successfully!'})
+
+    flash('Thread updated successfully!', 'success')
+    return redirect(url_for('forum_thread', thread_id=thread.id))
 
 @app.route('/forum/thread/<int:thread_id>/delete', methods=['POST'])
 @login_required
 def delete_thread(thread_id):
     thread = ForumThread.query.get_or_404(thread_id)
-    
+
     if thread.user_id != current_user.id:
         abort(403)  # Forbidden
-    
+
     category_id = thread.category_id
     db.session.delete(thread)
     db.session.commit()
-    
-    if request.is_json:
-        return jsonify({'success': True, 'redirect': url_for('forum_category', category_id=category_id)})
-    else:
-        flash('Thread deleted successfully!', 'success')
-        return redirect(url_for('forum_category', category_id=category_id))
+    flash('Thread deleted successfully!', 'success')
+    return redirect(url_for('forum_category', category_id=category_id))
 
-@app.route('/forum/post/<int:post_id>/delete', methods=['POST'])
+
+
+
+
+@app.route('/forum/thread/<int:thread_id>/post', methods=['POST'])
 @login_required
-def delete_post(post_id):
-    post = ForumPost.query.get_or_404(post_id)
+def create_post(thread_id):
+    thread = ForumThread.query.get_or_404(thread_id)
+    content = request.form.get('content', '').strip()
+    reply_to = request.form.get('reply_to')
+    image = request.files.get('image')
     
-    if post.user_id != current_user.id:
-        abort(403)  # Forbidden
-    
-    thread_id = post.thread_id
-    db.session.delete(post)
-    db.session.commit()
-    
-    if request.is_json:
-        return jsonify({'success': True})
-    else:
-        flash('Post deleted successfully!', 'success')
-        return redirect(url_for('forum_thread', thread_id=thread_id))
+    # Validate input
+    if not content and not image:
+        return jsonify({'success': False, 'error': 'Message or image is required'}), 400
 
-def extract_mentions(text):
-    """Extract mentioned usernames from text (format @username)"""
-    import re
-    return re.findall(r'@(\w+)', text)
+    if len(content) > 2000:
+        return jsonify({'success': False, 'error': 'Message too long (max 2000 characters)'}), 400
+    
+    # Handle image upload
+    image_url = None
+    if image and allowed_file(image.filename):
+        filename = secure_filename(image.filename)
+        unique_filename = f"{uuid.uuid4().hex}_{filename}"
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+        image.save(filepath)
+        image_url = url_for('static', filename=f'uploads/{unique_filename}')
+
+    # Create the post
+    post = ForumPost(
+        content=content,
+        user_id=current_user.id,
+        thread_id=thread_id,
+        reply_to=reply_to if reply_to else None,
+        image_url=image_url
+    )
+    db.session.add(post)
+    db.session.commit()
+
+    # Return the created post data
+    return jsonify({
+        'success': True,
+        'post': {
+            'id': post.id,
+            'content': post.content,
+            'created_at': post.created_at.strftime('%H:%M · %b %d, %Y'),
+            'username': current_user.username,
+            'user_initial': current_user.username[0].upper(),
+            'reply_to': post.reply_to,
+            'image_url': post.image_url
+        }
+    })
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
+
 @app.template_filter('time_ago')
 def time_ago_filter(dt):
     now = datetime.utcnow()
