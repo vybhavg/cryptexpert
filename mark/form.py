@@ -50,13 +50,15 @@ class APIKeyForm(FlaskForm):
     api_secret = StringField("API Secret", validators=[Length(min=10), DataRequired()])
     submit = SubmitField("Save API Key")
 
+from wtforms import StringField, TextAreaField, SubmitField
+from wtforms.validators import DataRequired, Length
 
 class ThreadForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
+    title = StringField('Title', validators=[DataRequired(), Length(max=200)])
     content = TextAreaField('Content', validators=[DataRequired()])
     submit = SubmitField('Create Thread')
 
 class PostForm(FlaskForm):
-    content = TextAreaField('Content', validators=[DataRequired()])
+    content = TextAreaField('Message', validators=[Length(max=2000)])
     submit = SubmitField('Post')
 
