@@ -94,12 +94,13 @@ class Exchange(db.Model):
 
     def __repr__(self):
         return f"<Exchange {self.name}>"
+from datetime import datetime
 
 class ForumCategory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(500))
-    threads = db.relationship('ForumThread', backref='category', lazy=True)
+    threads = db.relationship('ForumThread', backref='category', lazy=True, cascade='all, delete-orphan')
 
 class ForumThread(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -108,9 +109,8 @@ class ForumThread(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('forum_category.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    posts = db.relationship('ForumPost', backref='thread', lazy=True)
+    posts = db.relationship('ForumPost', backref='thread', lazy=True, cascade='all, delete-orphan')
     
-    # Define the relationship
     user = db.relationship('User', backref='threads')
 
 class ForumPost(db.Model):
@@ -118,7 +118,18 @@ class ForumPost(db.Model):
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     thread_id = db.Column(db.Integer, db.ForeignKey('forum_thread.id'), nullable=False)
+    reply_to = db.Column(db.Integer, db.ForeignKey('forum_post.id'))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    image_url = db.Column(db.String(255))
+    
+    user = db.relationship('User', backref='posts')
+    replies = db.relationship('ForumPost', backref=db.backref('parent_post', remote_side=[id]))
+    likes = db.relationship('PostLike', backref='post', lazy=True, cascade='all, delete-orphan')
+
+class PostLike(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('forum_post.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # Add this relationship
-    user = db.relationship('User', backref='posts')
+    user = db.relationship('User', backref='post_likes')
