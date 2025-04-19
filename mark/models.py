@@ -133,3 +133,22 @@ class PostLike(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     user = db.relationship('User', backref='post_likes')
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('forum_post.id'))
+    thread_id = db.Column(db.Integer, db.ForeignKey('forum_thread.id'))
+    content = db.Column(db.String(500))
+    is_read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    notification_type = db.Column(db.String(20))  # 'mention', 'reply', 'like', etc.
+
+    user = db.relationship('User', foreign_keys=[user_id])
+    sender = db.relationship('User', foreign_keys=[sender_id])
+    post = db.relationship('ForumPost')
+    thread = db.relationship('ForumThread')
+
+    def __repr__(self):
+        return f'<Notification {self.id} for user {self.user_id}>'
