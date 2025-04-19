@@ -7,6 +7,9 @@ from flask_migrate import Migrate
 import urllib.parse
 import os
 from dotenv import load_dotenv
+from flask_socketio import SocketIO, emit
+
+
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -50,6 +53,13 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login_form'  # Adjust as needed
 migrate = Migrate(app, db)
+# Initialize SocketIO after your Flask app
+socketio = SocketIO(app, cors_allowed_origins="*")
 
+# Add this WebSocket handler
+@socketio.on('new_message')
+def handle_new_message(data):
+    """Broadcast new messages to all clients"""
+    emit('message_received', data, broadcast=True)
 # Import routes
 from mark import routes
