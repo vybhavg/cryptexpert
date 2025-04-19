@@ -921,6 +921,66 @@ html {
     });
 </script>
         <script src="/static/js/app.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function updateNotificationBadge() {
+        fetch('/notifications/count')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.querySelector('.top-nav__notifications .badge');
+                if (data.count > 0) {
+                    if (!badge) {
+                        const newBadge = document.createElement('span');
+                        newBadge.className = 'badge badge-pill badge-danger';
+                        newBadge.textContent = data.count;
+                        document.querySelector('.top-nav__notifications a').appendChild(newBadge);
+                    } else {
+                        badge.textContent = data.count;
+                    }
+                } else if (badge) {
+                    badge.remove();
+                }
+            });
+    }
+
+    document.querySelector('.top-nav__notifications a').addEventListener('click', function(e) {
+        e.preventDefault();
+        fetch('/notifications')
+            .then(response => response.json())
+            .then(data => {
+                const dropdown = document.querySelector('.top-nav__notifications .dropdown-menu');
+                dropdown.innerHTML = `
+                    <div class="dropdown-header">
+                        Notifications
+                        <div class="actions">
+                            <a href="#" class="actions__item zmdi zmdi-check-all" id="markAllRead"></a>
+                        </div>
+                    </div>
+                    <div class="listview listview--hover" id="notificationList">
+                        ${data.notifications.length > 0 ? 
+                            data.notifications.map(n => `
+                                <a href="/forum/thread/${n.thread_id}#post-${n.post_id}" class="listview__item ${n.is_read ? '' : 'unread'}">
+                                    <div class="listview__content">
+                                        <div class="listview__heading">${n.content}</div>
+                                        <small>${n.created_at}</small>
+                                    </div>
+                                </a>
+                            `).join('') :
+                            '<div class="listview__item"><div class="listview__content">No notifications</div></div>'
+                        }
+                    </div>
+                `;
+                
+                // Update badge after loading
+                updateNotificationBadge();
+            });
+    });
+
+    // Update notification badge periodically
+    setInterval(updateNotificationBadge, 30000); // Every 30 seconds
+    updateNotificationBadge(); // Initial load
+});
+</script>
 
  {% block script %}
 
