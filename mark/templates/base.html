@@ -1053,20 +1053,35 @@ html {
     </div>
 </div>
 
-                    <ul class="navigation">
-                        <li class="navigation__active"><a href="index-2.html"><i class="zmdi zmdi-home"></i> Home</a></li>
-                    
-                         <li class="@@typeactive"><a href="{{url_for('wallet_management')}}"><i class="zmdi zmdi-view-week"></i> Wallets</a></li>
-                        <li class="@@typeactive"><a href="/charts?symbol=BTCUSDT"><i class="zmdi zmdi-library"></i> Live Charts</a></li>
+                   <ul class="navigation">
+    <li class="{% if request.endpoint in ['index', 'home'] %}navigation__active{% endif %}">
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('index') }}"><i class="zmdi zmdi-home"></i> Home</a>
+        {% else %}
+            <a href="{{ url_for('home') }}"><i class="zmdi zmdi-home"></i> Home</a>
+        {% endif %}
+    </li>
+    
+    <li class="{% if request.endpoint == 'wallet_management' %}navigation__active{% endif %}">
+        <a href="{{url_for('wallet_management')}}"><i class="zmdi zmdi-view-week"></i> Wallets</a>
+    </li>
+    
+    <li class="{% if request.path.startswith('/charts') %}navigation__active{% endif %}">
+        <a href="/charts?symbol=BTCUSDT"><i class="zmdi zmdi-library"></i> Live Charts</a>
+    </li>
 
-                        <li class="@@typeactive"><a href="{{url_for('live_prices')}}"><i class="zmdi zmdi-format-underlined"></i> Live Prices</a></li>
+    <li class="{% if request.endpoint == 'live_prices' %}navigation__active{% endif %}">
+        <a href="{{url_for('live_prices')}}"><i class="zmdi zmdi-format-underlined"></i> Live Prices</a>
+    </li>
 
-                        <li class="@@widgetactive"><a href="{{url_for('ai_predictor')}}"><i class="zmdi zmdi-widgets"></i> Price Predictor AI</a></li>
- <li class="@@typeactive">
-    <a href="{{ url_for('forum_home') }}">
-        <i class="zmdi zmdi-comment-more"></i> Discussion Forums </a>
-</li>
-                    </ul>
+    <li class="{% if request.endpoint == 'ai_predictor' %}navigation__active{% endif %}">
+        <a href="{{url_for('ai_predictor')}}"><i class="zmdi zmdi-widgets"></i> Price Predictor AI</a>
+    </li>
+    
+    <li class="{% if request.endpoint == 'forum_home' %}navigation__active{% endif %}">
+        <a href="{{ url_for('forum_home') }}"><i class="zmdi zmdi-comment-more"></i> Discussion Forums</a>
+    </li>
+</ul>
                 </div>
             </aside>
           
