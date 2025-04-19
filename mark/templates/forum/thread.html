@@ -81,12 +81,12 @@
             border-left: 4px solid var(--primary-color);
         }
 
-        .message-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
+     .message-header {
+    display: flex;
+    align-items: flex-start; /* Changed from center to flex-start */
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
 
         .user-avatar {
             width: 44px;
@@ -133,12 +133,12 @@
        
 /* Better Typography */
 .message-content {
-    margin-left: 30px;
+    margin-left: 54px; /* Reduced from 60px to match avatar + gap */
     margin-bottom: 0.5rem;
     line-height: 1.7;
-    letter-spacing: 0.01em;
     white-space: pre-wrap;
     font-size: 1.0625rem;
+
     color: var(--text-primary);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
@@ -166,12 +166,12 @@
             transform: scale(1.02);
         }
 
-        .message-actions {
-            display: flex;
-            gap: 1rem;
-            margin-left: 60px;
-            margin-top: 1rem;
-        }
+    .message-actions {
+    display: flex;
+    gap: 1rem;
+    margin-left: 54px; /* Match message-content */
+    margin-top: 1rem;
+}
 
         .action-btn {
             display: flex;
