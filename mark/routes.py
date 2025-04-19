@@ -1266,6 +1266,15 @@ def create_post(thread_id):
     db.session.add(post)
     db.session.commit()
 
+    # Handle mentions and notifications
+    mentioned_usernames = extract_mentions(content)
+    if mentioned_usernames:
+        create_mention_notifications(mentioned_usernames, post, current_user, thread)
+
+    # Handle reply notifications
+    if reply_to:
+        create_reply_notification(reply_to, post, current_user, thread)
+
     # Return the created post data
     return jsonify({
         'success': True,
@@ -1279,6 +1288,39 @@ def create_post(thread_id):
             'image_url': post.image_url
         }
     })
+
+def extract_mentions(text):
+    import re
+    return set(re.findall(r'@(\w+)', text))
+
+def create_mention_notifications(usernames, post, sender, thread):
+    for username in usernames:
+        user = User.query.filter_by(username=username).first()
+        if user and user.id != sender.id:  # Don't notify yourself
+            notification = Notification(
+                user_id=user.id,
+                sender_id=sender.id,
+                post_id=post.id,
+                thread_id=thread.id,
+                content=f"{sender.username} mentioned you in a post",
+                notification_type='mention'
+            )
+            db.session.add(notification)
+    db.session.commit()
+
+def create_reply_notification(reply_to_id, post, sender, thread):
+    original_post = ForumPost.query.get(reply_to_id)
+    if original_post and original_post.user_id != sender.id:  # Don't notify yourself
+        notification = Notification(
+            user_id=original_post.user_id,
+            sender_id=sender.id,
+            post_id=post.id,
+            thread_id=thread.id,
+            content=f"{sender.username} replied to your post",
+            notification_type='reply'
+        )
+        db.session.add(notification)
+        db.session.commit()
 
 @app.route('/forum/post/<int:post_id>/like', methods=['POST'])
 @login_required
@@ -1370,3 +1412,35 @@ def create_thread(category_id):
 def replace_mentions_filter(content):
     import re
     return re.sub(r'@(\w+)', r'<a href="#" class="mention">@\1</a>', content)
+
+@app.route('/notifications')
+@login_required
+def get_notifications():
+    notifications = Notification.query.filter_by(user_id=current_user.id)\
+                                    .order_by(Notification.created_at.desc())\
+                                    .limit(10).all()
+    
+    # Mark as read when fetched
+    for notification in notifications:
+        if not notification.is_read:
+            notification.is_read = True
+    db.session.commit()
+    
+    return jsonify({
+        'notifications': [{
+            'id': n.id,
+            'content': n.content,
+            'created_at': n.created_at.strftime('%H:%M · %b %d, %Y'),
+            'is_read': n.is_read,
+            'type': n.notification_type,
+            'thread_id': n.thread_id,
+            'post_id': n.post_id,
+            'sender': n.sender.username if n.sender else None
+        } for n in notifications]
+    })
+
+@app.route('/notifications/count')
+@login_required
+def get_unread_notification_count():
+    count = Notification.query.filter_by(user_id=current_user.id, is_read=False).count()
+    return jsonify({'count': count})
