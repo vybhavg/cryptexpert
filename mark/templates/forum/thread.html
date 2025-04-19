@@ -142,7 +142,9 @@
     color: var(--text-primary);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
-
+.normal-text{
+    margin-left:-22px;
+}
         .message-content a.mention {
             color: var(--primary-color);
             font-weight: 500;
@@ -933,10 +935,13 @@
                     </div>
                 </div>
                 
-                <div class="message-content">
-                    ${post.content.replace(/@(\w+)/g, '<a href="#" class="mention">@$1</a>')}
-                    ${post.image_url ? `<img src="${post.image_url}" class="message-image" alt="Post image">` : ''}
-                </div>
+<div class="message-content">
+    <span class="normal-text">
+        ${post.content.replace(/@(\w+)/g, '<a href="#" class="mention">@$1</a>')}
+    </span>
+    ${post.image_url ? `<img src="${post.image_url}" class="message-image" alt="Post image">` : ''}
+</div>
+
                 
                 <div class="message-actions">
                     <div class="action-btn reply-btn" data-post-id="${post.id}">
