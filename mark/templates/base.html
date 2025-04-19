@@ -1087,6 +1087,26 @@ html {
         <script src="/static/js/app.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    function formatNotificationDate(dateString) {
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                // If direct parsing fails, try alternative formats
+                return dateString; // fallback to original string
+            }
+            return {
+                time: date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                date: date.toLocaleDateString()
+            };
+        } catch (e) {
+            console.error('Error formatting date:', e);
+            return {
+                time: '',
+                date: dateString // fallback to original string
+            };
+        }
+    }
+
     function updateNotificationBadge() {
         fetch('/notifications/count')
             .then(response => response.json())
@@ -1108,7 +1128,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     badge.remove();
                     notificationIcon.classList.remove('has-notifications');
                 }
-            });
+            })
+            .catch(error => console.error('Error updating badge:', error));
     }
 
     document.querySelector('.top-nav__notifications a').addEventListener('click', function(e) {
@@ -1117,6 +1138,26 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 const dropdown = document.querySelector('.top-nav__notifications .dropdown-menu');
+                
+                let notificationsHtml;
+                if (data.notifications.length > 0) {
+                    notificationsHtml = data.notifications.slice(0, 5).map(n => {
+                        const formattedDate = formatNotificationDate(n.created_at);
+                        return `
+                            <a href="/forum/thread/${n.thread_id}#post-${n.post_id}" class="listview__item ${n.is_read ? '' : 'unread'}">
+                                <div class="listview__content">
+                                    <div class="listview__heading">
+                                        ${n.content}
+                                        ${formattedDate.time ? `<small>${formattedDate.time}</small>` : ''}
+                                    </div>
+                                    ${formattedDate.date ? `<small>${formattedDate.date}</small>` : ''}
+                                </div>
+                            </a>`;
+                    }).join('');
+                } else {
+                    notificationsHtml = '<div class="listview__item"><div class="listview__content text-center py-3">No new notifications</div></div>';
+                }
+
                 dropdown.innerHTML = `
                     <div class="dropdown-header">
                         Notifications
@@ -1125,20 +1166,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     </div>
                     <div class="listview listview--hover" id="notificationList">
-                        ${data.notifications.length > 0 ? 
-                            data.notifications.slice(0, 5).map(n => `
-                                <a href="/forum/thread/${n.thread_id}#post-${n.post_id}" class="listview__item ${n.is_read ? '' : 'unread'}">
-                                    <div class="listview__content">
-                                        <div class="listview__heading">
-                                            ${n.content}
-                                            <small>${new Date(n.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>
-                                        </div>
-                                        <small>${new Date(n.created_at).toLocaleDateString()}</small>
-                                    </div>
-                                </a>
-                            `).join('') :
-                            '<div class="listview__item"><div class="listview__content text-center py-3">No new notifications</div></div>'
-                        }
+                        ${notificationsHtml}
                     </div>
                     <a href="{{ url_for('view_notifications') }}" class="view-more">
                         <i class="zmdi zmdi-format-list-bulleted"></i> View All Notifications
@@ -1154,12 +1182,13 @@ document.addEventListener('DOMContentLoaded', function () {
                                 item.classList.remove('unread');
                             });
                             updateNotificationBadge();
-                        });
+                        })
+                        .catch(error => console.error('Error marking all as read:', error));
                 });
                 
-                // Update badge after loading
                 updateNotificationBadge();
-            });
+            })
+            .catch(error => console.error('Error loading notifications:', error));
     });
 
     // Update notification badge periodically
