@@ -6,6 +6,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 import random, requests
 from flask_mail import Message
 from flask_socketio import SocketIO
+from flask_socketio import emit
 import time
 from threading import Thread
 import pyotp
@@ -32,6 +33,7 @@ import plotly.graph_objects as go
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import pandas as pd
 import numpy as np
+from mark import socketio
 
 crypto_logos = {
     "BTC": "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
@@ -1275,7 +1277,22 @@ def create_post(thread_id):
     if reply_to:
         create_reply_notification(reply_to, post, current_user, thread)
 
-    # Return the created post data
+  # Emit the new post to all connected clients
+    socketio.emit('new_post', {
+        'post': {
+            'id': post.id,
+            'content': post.content,
+            'created_at': post.created_at.strftime('%H:%M · %b %d, %Y'),
+            'username': current_user.username,
+            'user_initial': current_user.username[0].upper(),
+            'reply_to': post.reply_to,
+            'image_url': post.image_url,
+            'thread_id': thread_id,
+            'user_id': current_user.id,
+            'is_op': current_user.id == thread.user_id
+        }
+    }, room=f'thread_{thread_id}')
+    
     return jsonify({
         'success': True,
         'post': {
@@ -1288,6 +1305,18 @@ def create_post(thread_id):
             'image_url': post.image_url
         }
     })
+
+# Add these new Socket.IO handlers
+@socketio.on('join_thread')
+def handle_join_thread(data):
+    thread_id = data['thread_id']
+    join_room(f'thread_{thread_id}')
+
+@socketio.on('leave_thread')
+def handle_leave_thread(data):
+    thread_id = data['thread_id']
+    leave_room(f'thread_{thread_id}')
+
 
 def extract_mentions(text):
     import re
