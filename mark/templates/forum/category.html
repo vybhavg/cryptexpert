@@ -103,7 +103,7 @@
 
         .form-dropdown.active {
             display: block;
-            animation: fadeIn 0.3s ease-out;
+            animation: fadeeIn 0.3s ease-out;
         }
 
         /* Form Styling */
@@ -154,33 +154,33 @@
         }
 
         /* Animations */
-        @keyframes fadeIn {
+        @keyframes fadeeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes fadeInUp {
+        @keyframes fadeeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes slideInLeft {
+        @keyframes slideeInLeft {
             from { opacity: 0; transform: translateX(-20px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
-        .animate-fade-in-up {
-            animation: fadeInUp 0.6s ease-out forwards !important;
+        .animate-fadee-in-up {
+            animation: fadeeInUp 0.6s ease-out forwards !important;
         }
 
-        .animate-slide-in-left {
-            animation: slideInLeft 0.6s ease-out forwards !important;
+        .animate-slidee-in-left {
+            animation: slideeInLeft 0.6s ease-out forwards !important;
         }
 
         /* Delay animations for staggered effect */
         .thread-card {
             opacity: 0;
-            animation: fadeInUp 0.6s ease-out forwards;
+            animation: fadeeInUp 0.6s ease-out forwards;
             animation-delay: calc(var(--animation-order) * 100ms);
         }
     </style>
@@ -190,7 +190,7 @@
 <div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
         <!-- Category Header with more spacing -->
-        <div class="mb-10 animate-slide-in-left" style="--animation-order: 0; margin-top: 2rem;">
+        <div class="mb-10 animate-slidee-in-left" style="--animation-order: 0; margin-top: 2rem;">
             <h1 class="text-4xl font-bold text-white mb-4">{{ category.name }}</h1>
             <p class="text-gray-400 mb-6">{{ category.description }}</p>
             <div class="mt-6">
@@ -276,7 +276,7 @@
         </div>
 
         {% if not threads %}
-        <div class="text-center py-16 animate-fade-in-up">
+        <div class="text-center py-16 animate-fadee-in-up">
             <span class="material-icons text-yellow-custom text-6xl mb-4">forum</span>
             <h3 class="text-xl text-white mb-2">No threads yet</h3>
             <p class="text-gray-400 mb-6">Be the first to start a discussion in this category</p>
