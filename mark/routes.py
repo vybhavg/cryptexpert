@@ -1197,5 +1197,20 @@ def create_thread(category_id):
         flash('Thread created successfully!', 'success')
         return redirect(url_for('forum_thread', thread_id=thread.id))
     return render_template('forum/create_thread.html', form=form)
-
+@app.template_filter('time_ago')
+def time_ago_filter(dt):
+    now = datetime.utcnow()
+    diff = now - dt
+    
+    if diff.days > 365:
+        return f"{diff.days // 365} years ago"
+    if diff.days > 30:
+        return f"{diff.days // 30} months ago"
+    if diff.days > 0:
+        return f"{diff.days} days ago"
+    if diff.seconds > 3600:
+        return f"{diff.seconds // 3600} hours ago"
+    if diff.seconds > 60:
+        return f"{diff.seconds // 60} minutes ago"
+    return "just now"
 
