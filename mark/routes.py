@@ -1156,11 +1156,27 @@ def forum_category(category_id):
     threads = ForumThread.query.filter_by(category_id=category_id).order_by(ForumThread.created_at.desc()).all()
     return render_template('forum/category.html', category=category, threads=threads)
 
-@app.route('/forum/thread/<int:thread_id>')
+@app.route('/forum/thread/<int:thread_id>', methods=['GET', 'POST'])  # Add POST method
 def forum_thread(thread_id):
     thread = ForumThread.query.get_or_404(thread_id)
     posts = ForumPost.query.filter_by(thread_id=thread_id).order_by(ForumPost.created_at.asc()).all()
-    return render_template('forum/thread.html', thread=thread, posts=posts)
+    form = PostForm()
+    
+    if form.validate_on_submit():
+        post = ForumPost(
+            content=form.content.data,
+            user_id=current_user.id,
+            thread_id=thread_id
+        )
+        db.session.add(post)
+        db.session.commit()
+        flash('Post created successfully!', 'success')
+        return redirect(url_for('forum_thread', thread_id=thread_id))
+    
+    return render_template('forum/thread.html', 
+                         thread=thread, 
+                         posts=posts,
+                         form=form)  # Pass form to template
 
 from flask import request, flash
 from mark.form import ThreadForm, PostForm
@@ -1182,17 +1198,4 @@ def create_thread(category_id):
         return redirect(url_for('forum_thread', thread_id=thread.id))
     return render_template('forum/create_thread.html', form=form)
 
-@app.route('/forum/post/<int:thread_id>', methods=['POST'])
-@login_required
-def create_post(thread_id):
-    form = PostForm()
-    if form.validate_on_submit():
-        post = ForumPost(
-            content=form.content.data,
-            user_id=current_user.id,
-            thread_id=thread_id
-        )
-        db.session.add(post)
-        db.session.commit()
-        flash('Post created successfully!', 'success')
-    return redirect(url_for('forum_thread', thread_id=thread_id))
+
