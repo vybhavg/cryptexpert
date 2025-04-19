@@ -109,7 +109,7 @@ class ForumThread(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('forum_category.id', ondelete='SET NULL'), nullable=True)
 
     # Relationships
@@ -122,6 +122,6 @@ class ForumThread(db.Model):
 class ForumPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     thread_id = db.Column(db.Integer, db.ForeignKey('forum_thread.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
