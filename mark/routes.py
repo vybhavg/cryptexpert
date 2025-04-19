@@ -1277,7 +1277,7 @@ def create_post(thread_id):
     if reply_to:
         create_reply_notification(reply_to, post, current_user, thread)
 
-  # Emit the new post to all connected clients
+   # After creating the post and committing to DB
     socketio.emit('new_post', {
         'post': {
             'id': post.id,
@@ -1305,17 +1305,25 @@ def create_post(thread_id):
             'image_url': post.image_url
         }
     })
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
 
-# Add these new Socket.IO handlers
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
+
 @socketio.on('join_thread')
 def handle_join_thread(data):
     thread_id = data['thread_id']
     join_room(f'thread_{thread_id}')
+    print(f'Client joined thread {thread_id}')
 
 @socketio.on('leave_thread')
 def handle_leave_thread(data):
     thread_id = data['thread_id']
     leave_room(f'thread_{thread_id}')
+    print(f'Client left thread {thread_id}')
 
 
 def extract_mentions(text):
