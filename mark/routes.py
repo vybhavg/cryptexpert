@@ -1220,28 +1220,33 @@ def delete_thread(thread_id):
     flash('Thread deleted successfully!', 'success')
     return redirect(url_for('forum_category', category_id=category_id))
 
-@app.route('/forum/create_thread/<int:category_id>', methods=['POST'])
+@app.route('/forum/thread/<int:thread_id>/post', methods=['POST'])
 @login_required
-def create_thread(category_id):
-    # Get data from form submission
-    title = request.form.get('title')
+def create_post(thread_id):
+    thread = ForumThread.query.get_or_404(thread_id)
     content = request.form.get('content')
     
-    if not title or not content:
-        flash('Title and content are required', 'error')
-        return redirect(url_for('forum_category', category_id=category_id))
+    if not content:
+        return jsonify({'success': False, 'error': 'Content is required'}), 400
     
-    thread = ForumThread(
-        title=title,
+    post = ForumPost(
         content=content,
         user_id=current_user.id,
-        category_id=category_id
+        thread_id=thread_id
     )
-    db.session.add(thread)
+    db.session.add(post)
     db.session.commit()
     
-    flash('Thread created successfully!', 'success')
-    return redirect(url_for('forum_category', category_id=category_id))
+    return jsonify({
+        'success': True,
+        'post': {
+            'content': post.content,
+            'created_at': post.created_at.strftime('%B %d, %Y at %H:%M'),
+            'username': current_user.username,
+            'user_initial': current_user.username[0].upper()
+        }
+    })
+
 
 
 
