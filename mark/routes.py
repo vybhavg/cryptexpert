@@ -1364,3 +1364,9 @@ def create_thread(category_id):
 
     flash('Thread created successfully!', 'success')
     return redirect(url_for('forum_category', category_id=category_id))
+
+# Add this custom filter to convert @mentions to links
+@app.template_filter('replace_mentions')
+def replace_mentions_filter(content):
+    import re
+    return re.sub(r'@(\w+)', r'<a href="#" class="mention">@\1</a>', content)
