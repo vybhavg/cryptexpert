@@ -99,6 +99,23 @@
                     }, 300);
                 }, 3000);
             }
+
+            // Scroll to top button
+            const scrollToTopBtn = document.getElementById('scrollToTop');
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    scrollToTopBtn.classList.remove('hidden');
+                } else {
+                    scrollToTopBtn.classList.add('hidden');
+                }
+            });
+
+            scrollToTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
         });
     </script>
     <style>
@@ -111,7 +128,7 @@
         .thread-container {
             min-height: calc(100vh - 80px);
             padding-top: 80px;
-            padding-bottom: 4rem;
+            padding-bottom: 180px; /* Extra space for fixed form */
         }
 
         /* Thread Header */
@@ -149,6 +166,7 @@
         /* Posts Container */
         .posts-container {
             margin-top: 2rem;
+            margin-bottom: 180px; /* Space for fixed form */
         }
 
         .post-card {
@@ -200,18 +218,27 @@
             font-weight: bold;
         }
 
-        /* Reply Form */
+        /* Fixed Reply Form */
         .reply-form-container {
-            margin-top: 3rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, #1e1e1e, #252525);
-            border-radius: 0.75rem;
-            border: 1px solid rgba(248, 188, 4, 0.1);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #1a1a1a, #252525);
+            border-top: 1px solid rgba(248, 188, 4, 0.2);
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .reply-form-wrapper {
+            max-width: 4xl;
+            margin: 0 auto;
         }
 
         .form-title {
             font-size: 1.25rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             color: #F8BC04;
         }
 
@@ -222,7 +249,7 @@
             border-radius: 0.5rem;
             padding: 1rem;
             width: 100%;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             transition: all 0.3s ease;
         }
 
@@ -233,7 +260,7 @@
         }
 
         textarea.form-input {
-            min-height: 150px;
+            min-height: 100px;
             resize: vertical;
         }
 
@@ -251,6 +278,35 @@
         .form-submit:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(248, 188, 4, 0.3);
+        }
+
+        /* Scroll to Top Button */
+        #scrollToTop {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #F8BC04, #e6a905);
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+
+        #scrollToTop:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        #scrollToTop.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
         /* Animations */
@@ -282,12 +338,22 @@
             }
             
             .reply-form-container {
-                padding: 1.5rem;
+                padding: 1rem;
+            }
+            
+            textarea.form-input {
+                min-height: 80px;
+            }
+            
+            #scrollToTop {
+                bottom: 90px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
             }
         }
     </style>
 {% endblock %}
-
 
 {% block content %}
 <div class="bg-dark-gradient thread-container px-4 sm:px-6 lg:px-8">
@@ -324,20 +390,27 @@
             </div>
             {% endfor %}
         </div>
-
-        <!-- Reply Form -->
-        <div class="reply-form-container">
-            <h3 class="form-title">Post a Reply</h3>
-            <form id="replyForm" method="POST">
-                {{ form.hidden_tag() }}
-                <div class="form-group">
-                    {{ form.content(class="form-input form-textarea", placeholder="Write your reply here...") }}
-                </div>
-                <div class="form-actions">
-                    <button type="submit" id="submitPost" class="form-submit">Post Reply</button>
-                </div>
-            </form>
-        </div>
     </div>
 </div>
+
+<!-- Fixed Reply Form -->
+<div class="reply-form-container">
+    <div class="max-w-4xl mx-auto reply-form-wrapper">
+        <h3 class="form-title">Post a Reply</h3>
+        <form id="replyForm" method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.content(class="form-input form-textarea", placeholder="Write your reply here...") }}
+            </div>
+            <div class="form-actions">
+                <button type="submit" id="submitPost" class="form-submit">Post Reply</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Scroll to Top Button -->
+<button id="scrollToTop" class="hidden">
+    <span class="material-icons">arrow_upward</span>
+</button>
 {% endblock %}
