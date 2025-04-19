@@ -1177,15 +1177,24 @@ def forum_category(category_id):
     threads = ForumThread.query.filter_by(category_id=category_id).order_by(ForumThread.created_at.desc()).all()
     return render_template('forum/category.html', category=category, threads=threads)
 
+from werkzeug.utils import secure_filename
+from . import app, db
+from .models import ForumCategory, ForumThread, ForumPost, PostLike
+from .forms import ThreadForm, PostForm
+import os
+import uuid
+from datetime import datetime
+
+# ... (keep existing forum_home and forum_category routes) ...
+
 @app.route('/forum/thread/<int:thread_id>', methods=['GET', 'POST'])
 def forum_thread(thread_id):
     thread = ForumThread.query.get_or_404(thread_id)
     # Get all top-level posts and their replies
-    posts = ForumPost.query.filter_by(thread_id=thread_id, reply_to=None).order_by(ForumPost.created_at.asc()).all()
+    posts = ForumPost.query.filter_by(thread_id=thread_id, reply_to=None)\
+                          .order_by(ForumPost.created_at.asc()).all()
     all_users = User.query.all()  # For mention functionality
-
     form = PostForm()
-
 
     if request.method == 'GET':
         return render_template('forum/thread.html', 
@@ -1193,92 +1202,8 @@ def forum_thread(thread_id):
                             posts=posts,
                             all_users=all_users,
                             form=form)
-
-    # AJAX requests will be handled by the separate API endpoint
+    
     return redirect(url_for('forum_thread', thread_id=thread_id))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @app.route('/forum/thread/<int:thread_id>/edit', methods=['POST'])
@@ -1323,9 +1248,6 @@ def delete_thread(thread_id):
     return redirect(url_for('forum_category', category_id=category_id))
 
 
-
-
-
 @app.route('/forum/thread/<int:thread_id>/post', methods=['POST'])
 @login_required
 def create_post(thread_id):
@@ -1338,15 +1260,18 @@ def create_post(thread_id):
     if not content and not image:
         return jsonify({'success': False, 'error': 'Message or image is required'}), 400
 
-    if len(content) > 2000:
+    if content and len(content) > 2000:
         return jsonify({'success': False, 'error': 'Message too long (max 2000 characters)'}), 400
     
     # Handle image upload
     image_url = None
     if image and allowed_file(image.filename):
+        if image.content_length > 5 * 1024 * 1024:  # 5MB limit
+            return jsonify({'success': False, 'error': 'Image size should be less than 5MB'}), 400
+            
         filename = secure_filename(image.filename)
         unique_filename = f"{uuid.uuid4().hex}_{filename}"
-        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
         image.save(filepath)
         image_url = url_for('static', filename=f'uploads/{unique_filename}')
 
@@ -1373,6 +1298,48 @@ def create_post(thread_id):
             'reply_to': post.reply_to,
             'image_url': post.image_url
         }
+    })
+
+@app.route('/forum/post/<int:post_id>/like', methods=['POST'])
+@login_required
+def like_post(post_id):
+    post = ForumPost.query.get_or_404(post_id)
+    
+    # Check if user already liked this post
+    existing_like = PostLike.query.filter_by(
+        user_id=current_user.id,
+        post_id=post_id
+    ).first()
+    
+    if existing_like:
+        db.session.delete(existing_like)
+        db.session.commit()
+        return jsonify({'success': True, 'action': 'unlike', 'likes_count': len(post.likes)})
+    else:
+        new_like = PostLike(
+            user_id=current_user.id,
+            post_id=post_id
+        )
+        db.session.add(new_like)
+        db.session.commit()
+        return jsonify({'success': True, 'action': 'like', 'likes_count': len(post.likes)})
+
+@app.route('/forum/post/<int:post_id>/delete', methods=['POST'])
+@login_required
+def delete_post(post_id):
+    post = ForumPost.query.get_or_404(post_id)
+    
+    if post.user_id != current_user.id and not current_user.is_admin:
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 403
+    
+    thread_id = post.thread_id
+    db.session.delete(post)
+    db.session.commit()
+    
+    return jsonify({
+        'success': True,
+        'message': 'Post deleted successfully',
+        'thread_id': thread_id
     })
 
 def allowed_file(filename):
