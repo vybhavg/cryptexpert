@@ -20,6 +20,7 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
             overflow: hidden !important;
+            position: relative;
         }
         
         .thread-card:hover {
@@ -33,6 +34,7 @@
             position: relative;
             color: white !important;
             transition: color 0.3s ease !important;
+            padding-right: 40px; /* Space for action buttons */
         }
         
         .thread-card:hover .thread-title {
@@ -61,6 +63,30 @@
         .create-btn:hover {
             transform: translateY(-2px) !important;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        /* Action Buttons */
+        .thread-actions {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            color: rgba(255,255,255,0.5);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .action-btn:hover {
+            color: #F8BC04;
+            transform: scale(1.1);
+        }
+        
+        .delete-btn:hover {
+            color: #ef4444;
         }
         
         /* Animations */
@@ -92,12 +118,12 @@
 {% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-dark-gradient pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">  <!-- Increased pt-24 to pt-32 -->
     <div class="max-w-6xl mx-auto">
-        <!-- Category Header -->
-        <div class="mb-10 animate-slide-in-left" style="--animation-order: 0">
-            <h1 class="text-4xl font-bold text-white mb-2">{{ category.name }}</h1>
-            <p class="text-gray-400">{{ category.description }}</p>
+        <!-- Category Header with more spacing -->
+        <div class="mb-10 animate-slide-in-left" style="--animation-order: 0; margin-top: 2rem;">  <!-- Added margin-top -->
+            <h1 class="text-4xl font-bold text-white mb-4">{{ category.name }}</h1>  <!-- Increased mb-2 to mb-4 -->
+            <p class="text-gray-400 mb-6">{{ category.description }}</p>  <!-- Added mb-6 -->
             <div class="mt-6">
                 <a href="{{ url_for('create_thread', category_id=category.id) }}" 
                    class="create-btn inline-flex items-center px-6 py-3 rounded-lg">
@@ -110,11 +136,36 @@
         <!-- Threads Grid -->
         <div class="grid grid-cols-1 gap-6">
             {% for thread in threads %}
-            <a href="{{ url_for('forum_thread', thread_id=thread.id) }}" 
-               class="thread-card p-6 flex flex-col"
+            <div class="thread-card p-6 flex flex-col"
                style="--animation-order: {{ loop.index }}">
-                <h3 class="thread-title text-xl font-semibold mb-2">{{ thread.title }}</h3>
-                <p class="text-gray-300 mb-4 line-clamp-2">{{ thread.content|truncate(200) }}</p>
+                <!-- Thread Content -->
+                <div class="flex-grow">
+                    <div class="flex justify-between items-start">
+                        <a href="{{ url_for('forum_thread', thread_id=thread.id) }}" class="flex-grow">
+                            <h3 class="thread-title text-xl font-semibold mb-2">{{ thread.title }}</h3>
+                        </a>
+                        {% if current_user.is_authenticated and thread.user_id == current_user.id %}
+                        <div class="thread-actions">
+                            <!-- Edit Button -->
+                            <a href="{{ url_for('edit_thread', thread_id=thread.id) }}" 
+                               class="action-btn"
+                               title="Edit Thread">
+                                <span class="material-icons">edit</span>
+                            </a>
+                            <!-- Delete Button Form -->
+                            <form action="{{ url_for('delete_thread', thread_id=thread.id) }}" method="POST" 
+                                  onsubmit="return confirm('Are you sure you want to delete this thread?');">
+                                <button type="submit" class="action-btn delete-btn" title="Delete Thread">
+                                    <span class="material-icons">delete</span>
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <p class="text-gray-300 mb-4 line-clamp-2">{{ thread.content|truncate(200) }}</p>
+                </div>
+                
+                <!-- Thread Meta -->
                 <div class="mt-auto flex items-center justify-between">
                     <span class="thread-meta text-sm">
                         <span class="material-icons align-middle text-yellow-custom mr-1" style="font-size: 1rem;">person</span>
@@ -122,10 +173,10 @@
                     </span>
                     <span class="thread-meta text-sm">
                         <span class="material-icons align-middle text-yellow-custom mr-1" style="font-size: 1rem;">schedule</span>
-                        {{ thread.created_at|time_ago }}
+                        {{ thread.created_at.strftime('%b %d, %Y') }}
                     </span>
                 </div>
-            </a>
+            </div>
             {% endfor %}
         </div>
         
