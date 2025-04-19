@@ -1164,24 +1164,21 @@ def forum_category(category_id):
 @app.route('/forum/thread/<int:thread_id>', methods=['GET', 'POST'])
 def forum_thread(thread_id):
     thread = ForumThread.query.get_or_404(thread_id)
-    posts = ForumPost.query.filter_by(thread_id=thread_id).order_by(ForumPost.created_at.asc()).all()
+    # Get all top-level posts and their replies
+    posts = ForumPost.query.filter_by(thread_id=thread_id, reply_to=None).order_by(ForumPost.created_at.asc()).all()
+    all_users = User.query.all()  # For mention functionality
+    
     form = PostForm()
     
-    if form.validate_on_submit():
-        post = ForumPost(
-            content=form.content.data,
-            user_id=current_user.id,
-            thread_id=thread_id
-        )
-        db.session.add(post)
-        db.session.commit()
-        flash('Post created successfully!', 'success')
-        return redirect(url_for('forum_thread', thread_id=thread_id))
+    if request.method == 'GET':
+        return render_template('forum/thread.html', 
+                            thread=thread, 
+                            posts=posts,
+                            all_users=all_users,
+                            form=form)
     
-    return render_template('forum/thread.html', 
-                         thread=thread, 
-                         posts=posts,
-                         form=form)
+    # AJAX requests will be handled by the separate API endpoint
+    return redirect(url_for('forum_thread', thread_id=thread_id))
 
 @app.route('/forum/thread/<int:thread_id>/edit', methods=['POST'])
 @login_required
@@ -1224,29 +1221,54 @@ def delete_thread(thread_id):
 @login_required
 def create_post(thread_id):
     thread = ForumThread.query.get_or_404(thread_id)
-    content = request.form.get('content')
+    content = request.form.get('content', '').strip()
+    reply_to = request.form.get('reply_to')
+    image = request.files.get('image')
     
-    if not content:
-        return jsonify({'success': False, 'error': 'Content is required'}), 400
+    # Validate input
+    if not content and not image:
+        return jsonify({'success': False, 'error': 'Message or image is required'}), 400
     
+    if len(content) > 2000:
+        return jsonify({'success': False, 'error': 'Message too long (max 2000 characters)'}), 400
+    
+    # Handle image upload
+    image_url = None
+    if image and allowed_file(image.filename):
+        filename = secure_filename(image.filename)
+        unique_filename = f"{uuid.uuid4().hex}_{filename}"
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+        image.save(filepath)
+        image_url = url_for('static', filename=f'uploads/{unique_filename}')
+    
+    # Create the post
     post = ForumPost(
         content=content,
         user_id=current_user.id,
-        thread_id=thread_id
+        thread_id=thread_id,
+        reply_to=reply_to if reply_to else None,
+        image_url=image_url
     )
     db.session.add(post)
     db.session.commit()
     
+    # Return the created post data
     return jsonify({
         'success': True,
         'post': {
+            'id': post.id,
             'content': post.content,
-            'created_at': post.created_at.strftime('%B %d, %Y at %H:%M'),
+            'created_at': post.created_at.strftime('%H:%M · %b %d, %Y'),
             'username': current_user.username,
-            'user_initial': current_user.username[0].upper()
+            'user_initial': current_user.username[0].upper(),
+            'reply_to': post.reply_to,
+            'image_url': post.image_url
         }
     })
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
 
 
 
