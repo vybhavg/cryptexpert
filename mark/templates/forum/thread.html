@@ -1,189 +1,161 @@
 {% extends "base.html" %}
 
-{% block style %}
+{% block title %}{{ thread.title }} | Forum{% endblock %}
+
+{% block head %}
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #F8BC04;  /* Your yellow */
-            --secondary-color: #e6a905; /* Darker yellow */
-            --accent-color: #4361ee;
-            --dark-color: #1a1a2e;
-            --light-color: #f8f9fa;
-            --text-dark: #2b2d42;
-            --text-light: #f8f9fa;
-            --success-color: #4cc9f0;
-            --warning-color: #f72585;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+        /* Custom Colors */
+        .text-yellow-custom { color: #F8BC04 !important; }
+        .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
+        .bg-dark-card { background: linear-gradient(135deg, #1e1e1e, #252525) !important; }
+
+        /* Main Container */
+        .thread-container {
+            min-height: calc(100vh - 80px);
+            padding-top: 80px;
+            padding-bottom: 4rem;
         }
 
-        body {
-            margin-top: 80px;
-            background-color: #f5f7fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--text-dark);
-        }
-
+        /* Thread Header */
         .thread-header {
-            background-color: white;
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            border-left: 4px solid #F8BC04;
+            padding-left: 1.5rem;
             margin-bottom: 2rem;
-            border-left: 5px solid var(--primary-color);
         }
 
         .thread-title {
-            font-size: 2rem;
+            font-size: 2.25rem;
+            line-height: 1.2;
             font-weight: 700;
-            color: var(--dark-color);
+            background: linear-gradient(to right, #F8BC04, #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             margin-bottom: 0.5rem;
         }
 
         .thread-meta {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            color: #6c757d;
-            font-size: 0.9rem;
+            gap: 1.5rem;
         }
 
-        .thread-meta .author {
+        .meta-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-weight: 600;
-            color: var(--primary-color); /* Yellow username */
+            color: rgba(255, 255, 255, 0.7);
         }
 
+        /* Posts Container */
         .posts-container {
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            overflow: hidden;
-            margin-bottom: 2rem;
+            margin-top: 2rem;
         }
 
-        .post {
+        .post-card {
+            background: linear-gradient(135deg, #1e1e1e, #252525);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 1.5rem;
-            border-bottom: 1px solid #e9ecef;
-            transition: var(--transition);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .post:hover {
-            background-color: #faf8f0; /* Light yellow tint on hover */
-        }
-
-        .post:last-child {
-            border-bottom: none;
+        .post-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            border-color: rgba(248, 188, 4, 0.3);
         }
 
         .post-content {
-            font-size: 1.1rem;
-            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.7;
             margin-bottom: 1rem;
-            color: var(--text-dark);
+            font-size: 1.05rem;
         }
 
-        .post-meta {
+        .post-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.85rem;
-            color: #6c757d;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
         }
 
         .post-author {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-weight: 600;
         }
 
-        .post-author-avatar {
-            width: 30px;
-            height: 30px;
+        .author-avatar {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            background-color: var(--primary-color); /* Yellow avatar */
-            color: #1a1a1a; /* Dark text on yellow */
+            background-color: #F8BC04;
+            color: #1a1a1a;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
         }
 
-        .reply-form {
-            background-color: white;
+        /* Reply Form */
+        .reply-form-container {
+            margin-top: 3rem;
             padding: 2rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            border-top: 3px solid var(--primary-color); /* Yellow accent */
+            background: linear-gradient(135deg, #1e1e1e, #252525);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(248, 188, 4, 0.1);
         }
 
-        .form-group {
+        .form-title {
+            font-size: 1.25rem;
             margin-bottom: 1.5rem;
+            color: #F8BC04;
         }
 
-        .form-control {
-            width: 100%;
+        .form-input {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 0.5rem;
             padding: 1rem;
-            border: 1px solid #ced4da;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
+            width: 100%;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
         }
 
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(248, 188, 4, 0.25); /* Yellow focus */
+        .form-input:focus {
             outline: none;
+            border-color: #F8BC04;
+            box-shadow: 0 0 0 2px rgba(248, 188, 4, 0.2);
         }
 
-        textarea.form-control {
+        textarea.form-input {
             min-height: 150px;
             resize: vertical;
         }
 
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: #1a1a1a; /* Dark text on yellow */
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
+        .form-submit {
+            background: linear-gradient(135deg, #F8BC04, #e6a905);
+            color: #1a1a1a;
             font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
+        .form-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(248, 188, 4, 0.3); /* Yellow shadow */
-        }
-
-        /* Highlight important elements with your yellow */
-        .thread-header {
-            border-left-color: var(--primary-color);
-        }
-        
-        .reply-form {
-            border-top-color: var(--primary-color);
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .thread-title {
-                font-size: 1.5rem;
-            }
-            
-            .post {
-                padding: 1rem;
-            }
-            
-            .reply-form {
-                padding: 1rem;
-            }
+            box-shadow: 0 4px 12px rgba(248, 188, 4, 0.3);
         }
 
         /* Animations */
@@ -192,54 +164,84 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .post {
-            animation: fadeIn 0.3s ease-out forwards;
+        .post-card {
+            animation: fadeIn 0.4s ease-out forwards;
             animation-delay: calc(var(--post-index) * 0.1s);
             opacity: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .thread-title {
+                font-size: 1.75rem;
+            }
+            
+            .thread-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .post-card {
+                padding: 1rem;
+            }
+            
+            .reply-form-container {
+                padding: 1.5rem;
+            }
         }
     </style>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="thread-header">
-        <h1 class="thread-title">{{ thread.title }}</h1>
-        <div class="thread-meta">
-            <span class="author">
-                <span class="post-author-avatar">{{ thread.user.username|first|upper }}</span>
-                {{ thread.user.username }}
-            </span>
-            <span>Posted on {{ thread.created_at.strftime('%B %d, %Y at %H:%M') }}</span>
-        </div>
-    </div>
-
-    <div class="posts-container">
-        {% for post in posts %}
-        <div class="post" style="--post-index: {{ loop.index }};">
-            <div class="post-content">{{ post.content }}</div>
-            <div class="post-meta">
-                <div class="post-author">
-                    <span class="post-author-avatar">{{ post.user.username|first|upper }}</span>
-                    {{ post.user.username }}
+<div class="bg-dark-gradient thread-container px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Thread Header -->
+        <div class="thread-header">
+            <h1 class="thread-title">{{ thread.title }}</h1>
+            <div class="thread-meta">
+                <div class="meta-item">
+                    <span class="material-icons text-yellow-custom">person</span>
+                    <span>{{ thread.user.username }}</span>
                 </div>
-                <span>{{ post.created_at.strftime('%B %d, %Y at %H:%M') }}</span>
+                <div class="meta-item">
+                    <span class="material-icons text-yellow-custom">schedule</span>
+                    <span>{{ thread.created_at.strftime('%B %d, %Y at %H:%M') }}</span>
+                </div>
             </div>
         </div>
-        {% endfor %}
-    </div>
 
-    <div class="reply-form">
-        <h3>Post a Reply</h3>
-        <form method="POST" action="{{ url_for('forum_thread', thread_id=thread.id) }}">
-            {{ form.hidden_tag() }}
-            <div class="form-group">
-                {{ form.content.label(class="form-label") }}
-                {{ form.content(class="form-control", placeholder="Write your reply here...") }}
+        <!-- Posts Container -->
+        <div class="posts-container">
+            {% for post in posts %}
+            <div class="post-card" style="--post-index: {{ loop.index }};">
+                <div class="post-content">{{ post.content }}</div>
+                <div class="post-footer">
+                    <div class="post-author">
+                        <div class="author-avatar">{{ post.user.username|first|upper }}</div>
+                        <span>{{ post.user.username }}</span>
+                    </div>
+                    <div class="post-date">
+                        {{ post.created_at.strftime('%b %d, %Y %H:%M') }}
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-primary") }}
-            </div>
-        </form>
+            {% endfor %}
+        </div>
+
+        <!-- Reply Form -->
+        <div class="reply-form-container">
+            <h3 class="form-title">Post a Reply</h3>
+            <form method="POST" action="{{ url_for('forum_thread', thread_id=thread.id) }}">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.content(class="form-input form-textarea", placeholder="Write your reply here...") }}
+                </div>
+                <div class="form-actions">
+                    {{ form.submit(class="form-submit") }}
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
