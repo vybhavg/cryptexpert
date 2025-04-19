@@ -11,7 +11,7 @@
         /* Custom Colors */
         .text-yellow-custom { color: #F8BC04 !important; }
         .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
-        
+
         /* Card Styling */
         .thread-card {
             background: linear-gradient(135deg, #1e1e1e, #252525) !important;
@@ -22,35 +22,35 @@
             overflow: hidden !important;
             position: relative;
         }
-        
+
         .thread-card:hover {
             transform: translateY(-5px) scale(1.02) !important;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
             border-color: rgba(248, 188, 4, 0.2) !important;
         }
-        
+
         /* Thread Title */
         .thread-title {
             position: relative;
             color: white !important;
             transition: color 0.3s ease !important;
-            padding-right: 40px;
+            padding-right: 40px; /* Space for action buttons */
         }
-        
+
         .thread-card:hover .thread-title {
             color: #F8BC04 !important;
         }
-        
+
         /* Meta Info */
         .thread-meta {
             color: rgba(255, 255, 255, 0.6) !important;
             transition: color 0.3s ease !important;
         }
-        
+
         .thread-card:hover .thread-meta {
             color: rgba(255, 255, 255, 0.8) !important;
         }
-        
+
         /* Create Button */
         .create-btn {
             background: linear-gradient(135deg, #F8BC04, #e6a905) !important;
@@ -59,12 +59,12 @@
             transition: all 0.3s ease !important;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
         }
-        
+
         .create-btn:hover {
             transform: translateY(-2px) !important;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2) !important;
         }
-        
+
         /* Action Buttons */
         .thread-actions {
             position: absolute;
@@ -73,85 +73,110 @@
             display: flex;
             gap: 0.5rem;
         }
-        
+
         .action-btn {
             color: rgba(255,255,255,0.5);
             transition: all 0.2s ease;
             cursor: pointer;
         }
-        
+
         .action-btn:hover {
             color: #F8BC04;
             transform: scale(1.1);
         }
-        
+
         .delete-btn:hover {
             color: #ef4444;
         }
-        
-        /* Form Styling */
-        .thread-form {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-out;
-            background: #2a2a2a;
-            border-radius: 0.5rem;
+
+        /* Form Dropdown */
+        .form-dropdown {
+            display: none;
+            position: relative;
             margin-top: 1rem;
-        }
-        
-        .thread-form.active {
-            max-height: 1000px;
             padding: 1.5rem;
-            margin-bottom: 1rem;
-            border: 1px solid rgba(248, 188, 4, 0.2);
+            background: linear-gradient(135deg, #252525, #2d2d2d);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            z-index: 10;
         }
-        
+
+        .form-dropdown.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Form Styling */
         .form-input {
-            width: 100%;
-            padding: 0.75rem;
-            background: #1e1e1e;
+            background-color: #1a1a1a;
             border: 1px solid #333;
-            border-radius: 0.375rem;
             color: white;
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            width: 100%;
             margin-bottom: 1rem;
         }
-        
+
         .form-input:focus {
             outline: none;
             border-color: #F8BC04;
             box-shadow: 0 0 0 2px rgba(248, 188, 4, 0.2);
         }
-        
+
         .form-textarea {
-            min-height: 150px;
+            min-height: 120px;
             resize: vertical;
         }
-        
+
         .form-actions {
             display: flex;
-            gap: 1rem;
             justify-content: flex-end;
+            gap: 0.5rem;
         }
-        
+
+        .form-submit {
+            background: linear-gradient(135deg, #F8BC04, #e6a905);
+            color: #1a1a1a;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        .form-cancel {
+            background: #333;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            border: none;
+        }
+
         /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         @keyframes slideInLeft {
             from { opacity: 0; transform: translateX(-20px); }
             to { opacity: 1; transform: translateX(0); }
         }
-        
+
         .animate-fade-in-up {
             animation: fadeInUp 0.6s ease-out forwards !important;
         }
-        
+
         .animate-slide-in-left {
             animation: slideInLeft 0.6s ease-out forwards !important;
         }
-        
+
         /* Delay animations for staggered effect */
         .thread-card {
             opacity: 0;
@@ -164,41 +189,31 @@
 {% block content %}
 <div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
-        <!-- Category Header -->
+        <!-- Category Header with more spacing -->
         <div class="mb-10 animate-slide-in-left" style="--animation-order: 0; margin-top: 2rem;">
             <h1 class="text-4xl font-bold text-white mb-4">{{ category.name }}</h1>
             <p class="text-gray-400 mb-6">{{ category.description }}</p>
-            
-            <!-- Create Thread Button -->
-            <button onclick="toggleCreateForm()" class="create-btn inline-flex items-center px-6 py-3 rounded-lg">
-                <span class="material-icons mr-2">add</span>
-                Create New Thread
-            </button>
+            <div class="mt-6">
+                <button onclick="toggleCreateForm()" 
+                   class="create-btn inline-flex items-center px-6 py-3 rounded-lg">
+                    <span class="material-icons mr-2">add</span>
+                    Create New Thread
+                </button>
+            </div>
             
             <!-- Create Thread Form (Hidden by default) -->
-            <div id="createThreadForm" class="thread-form">
-                <form method="POST" action="{{ url_for('create_thread', category_id=category.id) }}">
-                    {{ form.hidden_tag() }}
-                    <div class="mb-4">
-                        <label class="block text-gray-300 mb-2">Title</label>
-                        <input type="text" name="title" class="form-input" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-300 mb-2">Content</label>
-                        <textarea name="content" class="form-input form-textarea" required></textarea>
-                    </div>
+            <div id="createThreadForm" class="form-dropdown">
+                <form id="newThreadForm" method="POST" action="{{ url_for('create_thread', category_id=category.id) }}">
+                    <input type="text" name="title" class="form-input" placeholder="Thread Title" required>
+                    <textarea name="content" class="form-input form-textarea" placeholder="Write your thread content here..." required></textarea>
                     <div class="form-actions">
-                        <button type="button" onclick="toggleCreateForm()" class="px-4 py-2 bg-gray-600 text-white rounded-lg">
-                            Cancel
-                        </button>
-                        <button type="submit" class="px-4 py-2 bg-yellow-500 text-gray-900 font-semibold rounded-lg">
-                            Create Thread
-                        </button>
+                        <button type="button" onclick="toggleCreateForm()" class="form-cancel">Cancel</button>
+                        <button type="submit" class="form-submit">Create Thread</button>
                     </div>
                 </form>
             </div>
         </div>
-        
+
         <!-- Threads Grid -->
         <div class="grid grid-cols-1 gap-6">
             {% for thread in threads %}
@@ -213,7 +228,7 @@
                         {% if current_user.is_authenticated and thread.user_id == current_user.id %}
                         <div class="thread-actions">
                             <!-- Edit Button -->
-                            <button onclick="toggleEditForm('editForm{{ thread.id }}')" 
+                            <button onclick="toggleEditForm('editThreadForm{{ thread.id }}')" 
                                class="action-btn"
                                title="Edit Thread">
                                 <span class="material-icons">edit</span>
@@ -229,33 +244,22 @@
                         {% endif %}
                     </div>
                     <p class="text-gray-300 mb-4 line-clamp-2">{{ thread.content|truncate(200) }}</p>
-                </div>
-                
-                <!-- Edit Thread Form (Hidden by default) -->
-                {% if current_user.is_authenticated and thread.user_id == current_user.id %}
-                <div id="editForm{{ thread.id }}" class="thread-form">
-                    <form method="POST" action="{{ url_for('edit_thread', thread_id=thread.id) }}">
-                        {{ form.hidden_tag() }}
-                        <div class="mb-4">
-                            <label class="block text-gray-300 mb-2">Title</label>
+                    
+                    <!-- Edit Thread Form (Hidden by default) -->
+                    {% if current_user.is_authenticated and thread.user_id == current_user.id %}
+                    <div id="editThreadForm{{ thread.id }}" class="form-dropdown">
+                        <form method="POST" action="{{ url_for('edit_thread', thread_id=thread.id) }}">
                             <input type="text" name="title" class="form-input" value="{{ thread.title }}" required>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-300 mb-2">Content</label>
                             <textarea name="content" class="form-input form-textarea" required>{{ thread.content }}</textarea>
-                        </div>
-                        <div class="form-actions">
-                            <button type="button" onclick="toggleEditForm('editForm{{ thread.id }}')" class="px-4 py-2 bg-gray-600 text-white rounded-lg">
-                                Cancel
-                            </button>
-                            <button type="submit" class="px-4 py-2 bg-yellow-500 text-gray-900 font-semibold rounded-lg">
-                                Update Thread
-                            </button>
-                        </div>
-                    </form>
+                            <div class="form-actions">
+                                <button type="button" onclick="toggleEditForm('editThreadForm{{ thread.id }}')" class="form-cancel">Cancel</button>
+                                <button type="submit" class="form-submit">Update Thread</button>
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %}
                 </div>
-                {% endif %}
-                
+
                 <!-- Thread Meta -->
                 <div class="mt-auto flex items-center justify-between">
                     <span class="thread-meta text-sm">
@@ -270,13 +274,14 @@
             </div>
             {% endfor %}
         </div>
-        
+
         {% if not threads %}
         <div class="text-center py-16 animate-fade-in-up">
             <span class="material-icons text-yellow-custom text-6xl mb-4">forum</span>
             <h3 class="text-xl text-white mb-2">No threads yet</h3>
             <p class="text-gray-400 mb-6">Be the first to start a discussion in this category</p>
-            <button onclick="toggleCreateForm()" class="create-btn inline-flex items-center px-6 py-3 rounded-lg">
+            <button onclick="toggleCreateForm()" 
+               class="create-btn inline-flex items-center px-6 py-3 rounded-lg">
                 <span class="material-icons mr-2">add</span>
                 Create First Thread
             </button>
@@ -289,11 +294,46 @@
     function toggleCreateForm() {
         const form = document.getElementById('createThreadForm');
         form.classList.toggle('active');
+        
+        // Scroll to form if opening
+        if (form.classList.contains('active')) {
+            form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     }
     
     function toggleEditForm(formId) {
         const form = document.getElementById(formId);
         form.classList.toggle('active');
+        
+        // Scroll to form if opening
+        if (form.classList.contains('active')) {
+            form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     }
+    
+    // Close forms when clicking outside
+    document.addEventListener('click', function(event) {
+        // Create form
+        const createForm = document.getElementById('createThreadForm');
+        const createButton = document.querySelector('.create-btn');
+        
+        if (createForm && createForm.classList.contains('active') && 
+            !createForm.contains(event.target) && 
+            !createButton.contains(event.target)) {
+            createForm.classList.remove('active');
+        }
+        
+        // Edit forms
+        document.querySelectorAll('.form-dropdown[id^="editThreadForm"]').forEach(form => {
+            const threadCard = form.closest('.thread-card');
+            const editButton = threadCard.querySelector('.action-btn:not(.delete-btn)');
+            
+            if (form.classList.contains('active') && 
+                !form.contains(event.target) && 
+                !editButton.contains(event.target)) {
+                form.classList.remove('active');
+            }
+        });
+    });
 </script>
 {% endblock %}
