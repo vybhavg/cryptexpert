@@ -436,6 +436,27 @@ html {
     .has-notifications {
         animation: pulse 1s infinite;
     }
+        .view-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    color: #F8BC04 !important;
+    font-weight: 500;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+.view-more:hover {
+    background: rgba(248, 188, 4, 0.1) !important;
+    text-decoration: none;
+}
+
+.view-more i {
+    font-size: 18px;
+}
         {% block style %}{% endblock %}
     </style>
 </head>
@@ -937,18 +958,17 @@ html {
 
                     <ul class="navigation">
                         <li class="navigation__active"><a href="index-2.html"><i class="zmdi zmdi-home"></i> Home</a></li>
-                        <li class="@@typeactive"><a href="{{url_for('view_notifications')}}"><i class="zmdi zmdi-notifications"></i> Notifications</a></li>
-                        <li class="@@typeactive">
-    <a href="{{ url_for('forum_home') }}">
-        <i class="zmdi zmdi-comment-more"></i> Discussion Forums </a>
-</li>
+                    
                          <li class="@@typeactive"><a href="{{url_for('wallet_management')}}"><i class="zmdi zmdi-view-week"></i> Wallets</a></li>
                         <li class="@@typeactive"><a href="/charts?symbol=BTCUSDT"><i class="zmdi zmdi-library"></i> Live Charts</a></li>
 
                         <li class="@@typeactive"><a href="{{url_for('live_prices')}}"><i class="zmdi zmdi-format-underlined"></i> Live Prices</a></li>
 
                         <li class="@@widgetactive"><a href="{{url_for('ai_predictor')}}"><i class="zmdi zmdi-widgets"></i> Price Predictor AI</a></li>
-
+ <li class="@@typeactive">
+    <a href="{{ url_for('forum_home') }}">
+        <i class="zmdi zmdi-comment-more"></i> Discussion Forums </a>
+</li>
                     </ul>
                 </div>
             </aside>
@@ -1107,7 +1127,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                     <div class="listview listview--hover" id="notificationList">
                         ${data.notifications.length > 0 ? 
-                            data.notifications.map(n => `
+                            data.notifications.slice(0, 5).map(n => `
                                 <a href="/forum/thread/${n.thread_id}#post-${n.post_id}" class="listview__item ${n.is_read ? '' : 'unread'}">
                                     <div class="listview__content">
                                         <div class="listview__heading">
@@ -1120,8 +1140,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             `).join('') :
                             '<div class="listview__item"><div class="listview__content text-center py-3">No new notifications</div></div>'
                         }
-                        ${data.notifications.length > 3 ? '<a href="{{ url_for("view_notifications") }}" class="view-more">View All Notifications</a>' : ''}
                     </div>
+                    <a href="{{ url_for('view_notifications') }}" class="view-more">
+                        <i class="zmdi zmdi-format-list-bulleted"></i> View All Notifications
+                    </a>
                 `;
                 
                 // Add click handler for mark all read
@@ -1142,8 +1164,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Update notification badge periodically
-    setInterval(updateNotificationBadge, 30000); // Every 30 seconds
-    updateNotificationBadge(); // Initial load
+    setInterval(updateNotificationBadge, 30000);
+    updateNotificationBadge();
 });
 </script>
 
