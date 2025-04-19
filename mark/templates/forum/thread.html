@@ -670,6 +670,30 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Connect to Socket.IO
+const socket = io();
+
+// Join the thread room when page loads
+socket.emit('join_thread', { thread_id: {{ thread.id }} });
+
+// Listen for new posts
+socket.on('new_post', function(data) {
+    // Only add if it's not our own post (we already added it via AJAX)
+    if (data.post.user_id !== {{ current_user.id if current_user.is_authenticated else 'null' }}) {
+        addNewMessage(data.post);
+        
+        // Play a notification sound if the tab is not active
+        if (document.hidden) {
+            playNotificationSound();
+        }
+    }
+});
+
+// Function to play notification sound
+function playNotificationSound() {
+    const audio = new Audio('{{ url_for("static", filename="sounds/notification.mp3") }}');
+    audio.play().catch(e => console.log("Audio play failed:", e));
+}
         const replyForm = document.getElementById('replyForm');
         const messageInput = document.getElementById('messageInput');
         const mentionBtn = document.getElementById('mentionBtn');
@@ -860,179 +884,179 @@
             });
         });
         
-        // Handle form submission with AJAX
-        replyForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+     // Handle form submission with AJAX
+replyForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const threadId = {{ thread.id }};
+    const content = messageInput.value.trim();
+    
+    if (!content && !imageUpload.files[0]) {
+        alert('Please enter a message or attach an image');
+        return;
+    }
+    
+    fetch(`/forum/thread/${threadId}/post`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reset form
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            imagePreview.src = '';
+            imagePreviewContainer.style.display = 'none';
+            imageUpload.value = '';
+            replyToInput.value = '';
+            replyingIndicator.style.display = 'none';
+            charCount.textContent = '0/2000';
             
-            const formData = new FormData(this);
-            const threadId = {{ thread.id }};
-            const content = messageInput.value.trim();
-            
-            if (!content && !imageUpload.files[0]) {
-                alert('Please enter a message or attach an image');
-                return;
+            // Remove highlight from replied message
+            document.querySelectorAll('.message-card').forEach(card => {
+                card.classList.remove('replying-to');
+            });
+        } else {
+            alert(data.error || 'Error posting message');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while posting your message');
+    });
+});
+        
+ function addNewMessage(post) {
+    // Check if this post already exists (to prevent duplicates)
+    if (document.getElementById(`post-${post.id}`)) {
+        return;
+    }
+
+    // Create the new message element
+    const messageElement = document.createElement('div');
+    messageElement.className = 'message-card';
+    messageElement.id = `post-${post.id}`;
+    messageElement.dataset.postId = post.id;
+    
+    // Set the message HTML
+    messageElement.innerHTML = `
+        <div class="message-header">
+            <div class="user-avatar">${post.user_initial}</div>
+            <div class="user-info">
+                <div class="user-name">
+                    ${post.username}
+                    ${post.is_op ? '<span class="badge">OP</span>' : ''}
+                </div>
+                <div class="message-time">Just now</div>
+            </div>
+        </div>
+        
+        <div class="message-content">
+            ${post.content.replace(/@(\w+)/g, '<a href="#" class="mention">@$1</a>')}
+            ${post.image_url ? `<img src="${post.image_url}" class="message-image" alt="Post image">` : ''}
+        </div>
+        
+        <div class="message-actions">
+            <div class="action-btn reply-btn" data-post-id="${post.id}">
+                <span class="material-icons">reply</span>
+                <span>Reply</span>
+            </div>
+            <div class="action-btn like-btn" data-post-id="${post.id}">
+                <span class="material-icons">favorite_border</span>
+                <span>Like</span>
+                <span class="like-count">0</span>
+            </div>
+        </div>
+    `;
+    
+    // If it's a reply, find the parent message and append to its reply thread
+    if (post.reply_to) {
+        const parentMessage = document.getElementById(`post-${post.reply_to}`);
+        if (parentMessage) {
+            let replyThread = parentMessage.querySelector('.reply-thread');
+            if (!replyThread) {
+                replyThread = document.createElement('div');
+                replyThread.className = 'reply-thread';
+                parentMessage.appendChild(replyThread);
             }
-            
-            fetch(`/forum/thread/${threadId}/post`, {
-                method: 'POST',
-                body: formData,
+            replyThread.appendChild(messageElement);
+        } else {
+            // If parent message not found (shouldn't happen), append to main container
+            messagesContainer.appendChild(messageElement);
+        }
+    } else {
+        // If it's a top-level message, append to main container
+        messagesContainer.appendChild(messageElement);
+    }
+    
+    // Add event listeners to the new message's buttons
+    messageElement.querySelector('.reply-btn').addEventListener('click', function() {
+        const postId = this.getAttribute('data-post-id');
+        const postElement = document.getElementById(`post-${postId}`);
+        const username = postElement.querySelector('.user-name').textContent.trim();
+        
+        replyToInput.value = postId;
+        replyingToUser.textContent = username;
+        replyingIndicator.style.display = 'flex';
+        messageInput.focus();
+        
+        document.querySelectorAll('.message-card').forEach(card => {
+            card.classList.remove('replying-to');
+        });
+        postElement.classList.add('replying-to');
+        postElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+    
+    // Add like button event listener
+    messageElement.querySelector('.like-btn').addEventListener('click', async function() {
+        const postId = this.getAttribute('data-post-id');
+        const isLiked = this.classList.contains('liked');
+        
+        try {
+            const response = await fetch(`/forum/post/${postId}/like`, {
+                method: isLiked ? 'DELETE' : 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Add new message to the UI
-                    addNewMessage(data.post);
-                    
-                    // Reset form
-                    messageInput.value = '';
-                    messageInput.style.height = 'auto';
-                    imagePreview.src = '';
-                    imagePreviewContainer.style.display = 'none';
-                    imageUpload.value = '';
-                    replyToInput.value = '';
-                    replyingIndicator.style.display = 'none';
-                    charCount.textContent = '0/2000';
-                    
-                    // Remove highlight from replied message
-                    document.querySelectorAll('.message-card').forEach(card => {
-                        card.classList.remove('replying-to');
-                    });
-                    
-                    // Scroll to the new message
-                    const newMessage = document.getElementById(`post-${data.post.id}`);
-                    if (newMessage) {
-                        newMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
-                } else {
-                    alert(data.error || 'Error posting message');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while posting your message');
             });
-        });
-        
-        function addNewMessage(post) {
-            // Create the new message element
-            const messageElement = document.createElement('div');
-            messageElement.className = 'message-card';
-            messageElement.id = `post-${post.id}`;
-            messageElement.dataset.postId = post.id;
             
-            // Set the message HTML
-            messageElement.innerHTML = `
-                <div class="message-header">
-                    <div class="user-avatar">${post.user_initial}</div>
-                    <div class="user-info">
-                        <div class="user-name">
-                            ${post.username}
-                            ${post.username === '{{ thread.user.username }}' ? '<span class="badge">OP</span>' : ''}
-                        </div>
-                        <div class="message-time">Just now</div>
-                    </div>
-                </div>
+            if (response.ok) {
+                const data = await response.json();
                 
-<div class="message-content">
-        ${post.content.replace(/@(\w+)/g, '<a href="#" class="mention">@$1</a>')}
-    ${post.image_url ? `<img src="${post.image_url}" class="message-image" alt="Post image">` : ''}
-</div>
-
+                // Update like count
+                const likeCountElement = this.querySelector('.like-count');
+                likeCountElement.textContent = data.likes_count;
                 
-                <div class="message-actions">
-                    <div class="action-btn reply-btn" data-post-id="${post.id}">
-                        <span class="material-icons">reply</span>
-                        <span>Reply</span>
-                    </div>
-                    <div class="action-btn like-btn" data-post-id="${post.id}">
-                        <span class="material-icons">favorite_border</span>
-                        <span>Like</span>
-                        <span class="like-count">0</span>
-                    </div>
-                </div>
-            `;
-            
-            // If it's a reply, find the parent message and append to its reply thread
-            if (post.reply_to) {
-                const parentMessage = document.getElementById(`post-${post.reply_to}`);
-                if (parentMessage) {
-                    let replyThread = parentMessage.querySelector('.reply-thread');
-                    if (!replyThread) {
-                        replyThread = document.createElement('div');
-                        replyThread.className = 'reply-thread';
-                        parentMessage.appendChild(replyThread);
-                    }
-                    replyThread.appendChild(messageElement);
-                } else {
-                    // If parent message not found (shouldn't happen), append to main container
-                    messagesContainer.appendChild(messageElement);
+                // Update button state
+                this.classList.toggle('liked');
+                const icon = this.querySelector('.material-icons');
+                icon.textContent = this.classList.contains('liked') ? 'favorite' : 'favorite_border';
+                
+                // Visual feedback
+                if (!isLiked) {
+                    this.style.animation = 'none';
+                    void this.offsetWidth; // Trigger reflow
+                    this.style.animation = 'heartBeat 0.5s';
                 }
             } else {
-                // If it's a top-level message, append to main container
-                messagesContainer.appendChild(messageElement);
+                console.error('Error toggling like');
             }
-            
-            // Add event listeners to the new message's buttons
-            messageElement.querySelector('.reply-btn').addEventListener('click', function() {
-                const postId = this.getAttribute('data-post-id');
-                const postElement = document.getElementById(`post-${postId}`);
-                const username = postElement.querySelector('.user-name').textContent.trim();
-                
-                replyToInput.value = postId;
-                replyingToUser.textContent = username;
-                replyingIndicator.style.display = 'flex';
-                messageInput.focus();
-                
-                document.querySelectorAll('.message-card').forEach(card => {
-                    card.classList.remove('replying-to');
-                });
-                postElement.classList.add('replying-to');
-                postElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            });
-            
-            // Add like button event listener
-            messageElement.querySelector('.like-btn').addEventListener('click', async function() {
-                const postId = this.getAttribute('data-post-id');
-                const isLiked = this.classList.contains('liked');
-                
-                try {
-                    const response = await fetch(`/forum/post/${postId}/like`, {
-                        method: isLiked ? 'DELETE' : 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        
-                        // Update like count
-                        const likeCountElement = this.querySelector('.like-count');
-                        likeCountElement.textContent = data.likes_count;
-                        
-                        // Update button state
-                        this.classList.toggle('liked');
-                        const icon = this.querySelector('.material-icons');
-                        icon.textContent = this.classList.contains('liked') ? 'favorite' : 'favorite_border';
-                        
-                        // Visual feedback
-                        if (!isLiked) {
-                            this.style.animation = 'none';
-                            void this.offsetWidth; // Trigger reflow
-                            this.style.animation = 'heartBeat 0.5s';
-                        }
-                    } else {
-                        console.error('Error toggling like');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                }
-            });
+        } catch (error) {
+            console.error('Error:', error);
         }
+    });
+    
+    // Scroll to the new message if it's not a reply
+    if (!post.reply_to) {
+        messageElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+}
         
         function insertAtCursor(textarea, text) {
             const startPos = textarea.selectionStart;
