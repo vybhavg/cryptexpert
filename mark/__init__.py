@@ -56,10 +56,6 @@ migrate = Migrate(app, db)
 # Initialize SocketIO after your Flask app
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# Add this WebSocket handler
-@socketio.on('new_message')
-def handle_new_message(data):
-    """Broadcast new messages to all clients"""
-    emit('message_received', data, broadcast=True)
+
 # Import routes
 from mark import routes
