@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 import urllib.parse
 import os
 from dotenv import load_dotenv
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, join_room, leave_room, emit
 
 
 
