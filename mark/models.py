@@ -109,6 +109,9 @@ class ForumThread(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('forum_category.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     posts = db.relationship('ForumPost', backref='thread', lazy=True)
+    
+    # Define the relationship
+    user = db.relationship('User', backref='threads')
 
 
 class ForumPost(db.Model):
