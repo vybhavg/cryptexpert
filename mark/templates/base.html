@@ -1226,32 +1226,88 @@ document.addEventListener('DOMContentLoaded', function () {
         
         return content;
     }
+let audioContextInitialized = false;
+let audioContext;
+let notificationSoundBuffer;
 
-    function updateNotificationBadge() {
-        fetch('/notifications/count')
-            .then(response => response.json())
-            .then(data => {
-                const notificationIcon = document.querySelector('.top-nav__notifications a');
-                const badge = notificationIcon.querySelector('.badge');
-                
-                if (data.count > 0) {
-                    if (!badge) {
-                        const newBadge = document.createElement('span');
-                        newBadge.className = 'badge badge-pill pulse';
-                        newBadge.textContent = data.count;
-                        notificationIcon.appendChild(newBadge);
-                        notificationIcon.classList.add('has-notifications');
-                    } else {
-                        badge.textContent = data.count;
-                    }
-                } else if (badge) {
-                    badge.remove();
-                    notificationIcon.classList.remove('has-notifications');
-                }
+// Initialize audio context on first user interaction
+function initAudioContext() {
+    if (audioContextInitialized) return;
+    
+    try {
+        // Create audio context
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Load notification sound
+        fetch('{{ url_for("static", filename="sounds/notification.mp3") }}')
+            .then(response => response.arrayBuffer())
+            .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+            .then(audioBuffer => {
+                notificationSoundBuffer = audioBuffer;
+                audioContextInitialized = true;
             })
             .catch(console.error);
+    } catch (e) {
+        console.error("Audio initialization failed:", e);
     }
+}
 
+// Play sound using Web Audio API
+function playNotificationSound() {
+    if (localStorage.getItem('notificationsMuted') === 'true') return;
+    if (document.visibilityState === 'visible') return;
+    
+    if (!audioContextInitialized) {
+        console.log("Audio not initialized yet");
+        return;
+    }
+    
+    try {
+        const source = audioContext.createBufferSource();
+        source.buffer = notificationSoundBuffer;
+        source.connect(audioContext.destination);
+        source.start(0);
+    } catch (e) {
+        console.error("Error playing sound:", e);
+    }
+}
+
+// Initialize audio on first user interaction
+document.addEventListener('click', initAudioContext, { once: true });
+document.addEventListener('keydown', initAudioContext, { once: true });
+function updateNotificationBadge() {
+    fetch('/notifications/count')
+        .then(response => response.json())
+        .then(data => {
+            const notificationIcon = document.querySelector('.top-nav__notifications a');
+            const badge = notificationIcon.querySelector('.badge');
+            const currentCount = badge ? parseInt(badge.textContent) : 0;
+            
+            if (data.count > 0) {
+                if (!badge) {
+                    const newBadge = document.createElement('span');
+                    newBadge.className = 'badge badge-pill pulse';
+                    newBadge.textContent = data.count;
+                    notificationIcon.appendChild(newBadge);
+                    notificationIcon.classList.add('has-notifications');
+                    
+                    // Only play sound if audio is initialized
+                    if (audioContextInitialized) {
+                        playNotificationSound();
+                    }
+                } else {
+                    if (data.count > currentCount && audioContextInitialized) {
+                        playNotificationSound();
+                    }
+                    badge.textContent = data.count;
+                }
+            } else if (badge) {
+                badge.remove();
+                notificationIcon.classList.remove('has-notifications');
+            }
+        })
+        .catch(console.error);
+}
     document.querySelector('.top-nav__notifications a').addEventListener('click', function(e) {
         e.preventDefault();
         fetch('/notifications')
