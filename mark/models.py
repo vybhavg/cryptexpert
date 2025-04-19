@@ -99,7 +99,9 @@ class ForumCategory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(500))
-    threads = db.relationship('ForumThread', backref='category', lazy=True)
+    
+    # Relationship with ForumThread (1-to-many)
+    threads = db.relationship('ForumThread', backref='category', lazy=True)  # Changed backref to 'threads'
 
 class ForumThread(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -108,6 +110,7 @@ class ForumThread(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
+    # Foreign key to User and ForumCategory
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('forum_category.id', ondelete='SET NULL'), nullable=True)
 
@@ -115,9 +118,6 @@ class ForumThread(db.Model):
     posts = db.relationship('ForumPost', backref='thread', lazy=True, cascade='all, delete-orphan')
     user = db.relationship('User', backref=db.backref('threads', lazy=True, cascade='all, delete-orphan'))
     category = db.relationship('ForumCategory', backref=db.backref('forum_threads', lazy=True))  # Renamed backref to 'forum_threads'
-
-
-
 
 class ForumPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
