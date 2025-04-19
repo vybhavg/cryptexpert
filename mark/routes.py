@@ -1444,3 +1444,10 @@ def get_notifications():
 def get_unread_notification_count():
     count = Notification.query.filter_by(user_id=current_user.id, is_read=False).count()
     return jsonify({'count': count})
+@app.route('/profile/notifications')
+@login_required
+def view_notifications():
+    notifications = Notification.query.filter_by(user_id=current_user.id)\
+                                    .order_by(Notification.created_at.desc())\
+                                    .paginate(page=1, per_page=20)
+    return render_template('profile/notifications.html', notifications=notifications)
