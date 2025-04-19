@@ -885,7 +885,7 @@ function playNotificationSound() {
             });
         });
         
-     // Handle form submission with AJAX
+// Handle form submission with AJAX
 replyForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
@@ -908,6 +908,9 @@ replyForm.addEventListener('submit', function(e) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            // Add the message immediately for the sender
+            addNewMessage(data.post);
+            
             // Reset form
             messageInput.value = '';
             messageInput.style.height = 'auto';
@@ -922,6 +925,12 @@ replyForm.addEventListener('submit', function(e) {
             document.querySelectorAll('.message-card').forEach(card => {
                 card.classList.remove('replying-to');
             });
+            
+            // Scroll to the new message
+            const newMessage = document.getElementById(`post-${data.post.id}`);
+            if (newMessage) {
+                newMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         } else {
             alert(data.error || 'Error posting message');
         }
