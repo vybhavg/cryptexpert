@@ -7,6 +7,100 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const replyForm = document.getElementById('replyForm');
+            
+            replyForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(replyForm);
+                const threadId = {{ thread.id }};
+                const submitBtn = document.getElementById('submitPost');
+                
+                // Disable button during submission
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = 'Posting...';
+                
+                fetch(`/forum/thread/${threadId}/post`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Add new post to the thread
+                        addNewPost(data.post);
+                        // Clear the form
+                        replyForm.reset();
+                        // Show success message
+                        showFlashMessage('Post created successfully!', 'success');
+                    } else {
+                        showFlashMessage(data.error || 'Error creating post', 'error');
+                    }
+                })
+                .catch(error => {
+                    showFlashMessage('An error occurred', 'error');
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Post Reply';
+                });
+            });
+            
+            function addNewPost(postData) {
+                const postsContainer = document.querySelector('.posts-container');
+                const newPost = document.createElement('div');
+                newPost.className = 'post-card';
+                newPost.innerHTML = `
+                    <div class="post-content">${postData.content}</div>
+                    <div class="post-footer">
+                        <div class="post-author">
+                            <div class="author-avatar">${postData.user_initial}</div>
+                            <span>${postData.username}</span>
+                        </div>
+                        <div class="post-date">
+                            ${postData.created_at}
+                        </div>
+                    </div>
+                `;
+                postsContainer.appendChild(newPost);
+                
+                // Scroll to the new post
+                newPost.scrollIntoView({ behavior: 'smooth' });
+                
+                // Add fade-in animation
+                newPost.style.opacity = 0;
+                setTimeout(() => {
+                    newPost.style.transition = 'opacity 0.3s ease';
+                    newPost.style.opacity = 1;
+                }, 10);
+            }
+            
+            function showFlashMessage(message, type) {
+                const flashDiv = document.createElement('div');
+                flashDiv.className = `flash-message flash-${type}`;
+                flashDiv.textContent = message;
+                
+                document.body.appendChild(flashDiv);
+                
+                setTimeout(() => {
+                    flashDiv.style.opacity = 1;
+                }, 10);
+                
+                setTimeout(() => {
+                    flashDiv.style.opacity = 0;
+                    setTimeout(() => {
+                        document.body.removeChild(flashDiv);
+                    }, 300);
+                }, 3000);
+            }
+        });
+    </script>
     <style>
         /* Custom Colors */
         .text-yellow-custom { color: #F8BC04 !important; }
@@ -194,6 +288,7 @@
     </style>
 {% endblock %}
 
+
 {% block content %}
 <div class="bg-dark-gradient thread-container px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto">
@@ -215,15 +310,15 @@
         <!-- Posts Container -->
         <div class="posts-container">
             {% for post in posts %}
-            <div class="post-card" style="--post-index: {{ loop.index }};">
+            <div class="post-card">
                 <div class="post-content">{{ post.content }}</div>
                 <div class="post-footer">
                     <div class="post-author">
-                        <div class="author-avatar">{{ post.user.username|first|upper }}</div>
+                        <div class="author-avatar">{{ post.user.username[0]|upper }}</div>
                         <span>{{ post.user.username }}</span>
                     </div>
                     <div class="post-date">
-                        {{ post.created_at.strftime('%b %d, %Y %H:%M') }}
+                        {{ post.created_at.strftime('%B %d, %Y at %H:%M') }}
                     </div>
                 </div>
             </div>
@@ -233,13 +328,13 @@
         <!-- Reply Form -->
         <div class="reply-form-container">
             <h3 class="form-title">Post a Reply</h3>
-            <form method="POST" action="{{ url_for('forum_thread', thread_id=thread.id) }}">
+            <form id="replyForm" method="POST">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
                     {{ form.content(class="form-input form-textarea", placeholder="Write your reply here...") }}
                 </div>
                 <div class="form-actions">
-                    {{ form.submit(class="form-submit") }}
+                    <button type="submit" id="submitPost" class="form-submit">Post Reply</button>
                 </div>
             </form>
         </div>
