@@ -99,25 +99,17 @@ class ForumCategory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(500))
-    
-    # Relationship with ForumThread (1-to-many)
-    threads = db.relationship('ForumThread', backref='category', lazy=True)  # Changed backref to 'threads'
+    threads = db.relationship('ForumThread', backref='category', lazy=True)
 
 class ForumThread(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('forum_category.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    posts = db.relationship('ForumPost', backref='thread', lazy=True)
 
-    # Foreign key to User and ForumCategory
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
-    category_id = db.Column(db.Integer, db.ForeignKey('forum_category.id', ondelete='SET NULL'), nullable=True)
-
-    # Relationships
-    posts = db.relationship('ForumPost', backref='thread', lazy=True, cascade='all, delete-orphan')
-    user = db.relationship('User', backref=db.backref('threads', lazy=True, cascade='all, delete-orphan'))
-    category = db.relationship('ForumCategory', backref=db.backref('forum_threads', lazy=True))  # Renamed backref to 'forum_threads'
 
 class ForumPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
