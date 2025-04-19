@@ -1342,4 +1342,25 @@ def time_ago_filter(dt):
     if diff.seconds > 60:
         return f"{diff.seconds // 60} minutes ago"
     return "just now"
+@app.route('/forum/create_thread/<int:category_id>', methods=['POST'])
+@login_required
+def create_thread(category_id):
+    # Get data from form submission
+    title = request.form.get('title')
+    content = request.form.get('content')
 
+    if not title or not content:
+        flash('Title and content are required', 'error')
+        return redirect(url_for('forum_category', category_id=category_id))
+
+    thread = ForumThread(
+        title=title,
+        content=content,
+        user_id=current_user.id,
+        category_id=category_id
+    )
+    db.session.add(thread)
+    db.session.commit()
+
+    flash('Thread created successfully!', 'success')
+    return redirect(url_for('forum_category', category_id=category_id))
