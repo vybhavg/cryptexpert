@@ -1185,6 +1185,7 @@ html {
         <script src="/static/js/app.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    
     function formatNotificationDate(dateString) {
         try {
             const date = new Date(dateString);
@@ -1226,41 +1227,40 @@ document.addEventListener('DOMContentLoaded', function () {
         
         return content;
     }
-let audioContextInitialized = false;
+
+    // Audio context variables (add at the top of your script)
 let audioContext;
 let notificationSoundBuffer;
+let audioAllowed = false;
 
-// Initialize audio context on first user interaction
-function initAudioContext() {
-    if (audioContextInitialized) return;
+// Initialize audio on first user interaction
+function initAudio() {
+    if (audioContext) return;
     
     try {
-        // Create audio context
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
-        // Load notification sound
-        fetch('{{ url_for("static", filename="sounds/notification.mp3") }}')
-            .then(response => response.arrayBuffer())
-            .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-            .then(audioBuffer => {
-                notificationSoundBuffer = audioBuffer;
-                audioContextInitialized = true;
-            })
-            .catch(console.error);
+        loadNotificationSound();
+        document.removeEventListener('click', initAudio);
     } catch (e) {
         console.error("Audio initialization failed:", e);
     }
 }
 
-// Play sound using Web Audio API
+// Load the sound file
+function loadNotificationSound() {
+    fetch('{{ url_for("static", filename="sounds/notification.mp3") }}')
+        .then(response => response.arrayBuffer())
+        .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+        .then(buffer => {
+            notificationSoundBuffer = buffer;
+            audioAllowed = true;
+        })
+        .catch(e => console.error("Sound loading failed:", e));
+}
+
+// Play sound function
 function playNotificationSound() {
-    if (localStorage.getItem('notificationsMuted') === 'true') return;
-    if (document.visibilityState === 'visible') return;
-    
-    if (!audioContextInitialized) {
-        console.log("Audio not initialized yet");
-        return;
-    }
+    if (!audioAllowed || localStorage.getItem('notificationsMuted') === 'true') return;
     
     try {
         const source = audioContext.createBufferSource();
@@ -1272,9 +1272,9 @@ function playNotificationSound() {
     }
 }
 
-// Initialize audio on first user interaction
-document.addEventListener('click', initAudioContext, { once: true });
-document.addEventListener('keydown', initAudioContext, { once: true });
+// Set up initial audio interaction
+document.addEventListener('click', initAudio, { once: true });
+    
 function updateNotificationBadge() {
     fetch('/notifications/count')
         .then(response => response.json())
@@ -1291,12 +1291,12 @@ function updateNotificationBadge() {
                     notificationIcon.appendChild(newBadge);
                     notificationIcon.classList.add('has-notifications');
                     
-                    // Only play sound if audio is initialized
-                    if (audioContextInitialized) {
+                    // Play sound if audio is ready and count increased
+                    if (audioAllowed && data.count > currentCount) {
                         playNotificationSound();
                     }
                 } else {
-                    if (data.count > currentCount && audioContextInitialized) {
+                    if (data.count > currentCount && audioAllowed) {
                         playNotificationSound();
                     }
                     badge.textContent = data.count;
