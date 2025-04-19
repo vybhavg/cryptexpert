@@ -11,19 +11,21 @@
     <link href="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.12.0" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #252525;
-            --bg-tertiary: #2d2d2d;
-            --accent-yellow: #F8BC04;
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-tertiary: #2a2a2a;
+            --accent-primary: #5865F2;
+            --accent-secondary: #3BA55C;
             --text-primary: #ffffff;
             --text-secondary: #b0b0b0;
-            --highlight: rgba(248, 188, 4, 0.1);
+            --highlight: rgba(88, 101, 242, 0.1);
+            --border-color: #333333;
         }
 
         body {
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         /* Thread Container */
@@ -36,16 +38,16 @@
 
         /* Thread Header */
         .thread-header {
-            border-left: 4px solid var(--accent-yellow);
+            border-left: 4px solid var(--accent-primary);
             padding-left: 16px;
             margin-bottom: 24px;
         }
 
         .thread-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
             margin-bottom: 8px;
-            color: var(--accent-yellow);
+            color: var(--text-primary);
         }
 
         .thread-meta {
@@ -59,15 +61,21 @@
         .messages-container {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 24px;
         }
 
         /* Message Card */
         .message-card {
             background-color: var(--bg-secondary);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 16px;
             transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .message-card.replying-to {
+            background-color: var(--highlight);
+            border-left: 4px solid var(--accent-primary);
         }
 
         .message-card:hover {
@@ -78,74 +86,109 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .user-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: var(--accent-yellow);
-            color: #000;
+            background-color: var(--accent-primary);
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            flex-grow: 1;
         }
 
         .user-name {
             font-weight: 600;
             color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge {
+            font-size: 12px;
+            background-color: var(--accent-secondary);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
         }
 
         .message-time {
             color: var(--text-secondary);
-            font-size: 12px;
+            font-size: 13px;
+            margin-top: 2px;
         }
 
         .message-content {
             margin-left: 52px;
             margin-bottom: 8px;
-            line-height: 1.5;
+            line-height: 1.6;
             white-space: pre-wrap;
+            font-size: 15px;
         }
 
         .message-image {
             max-width: 100%;
             max-height: 400px;
             border-radius: 8px;
-            margin-top: 8px;
+            margin-top: 12px;
             cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .message-image:hover {
+            transform: scale(1.02);
         }
 
         .message-actions {
             display: flex;
             gap: 16px;
             margin-left: 52px;
-            margin-top: 8px;
+            margin-top: 12px;
         }
 
         .action-btn {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             color: var(--text-secondary);
             cursor: pointer;
-            transition: color 0.2s ease;
+            transition: all 0.2s ease;
             font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
         }
 
         .action-btn:hover {
-            color: var(--accent-yellow);
+            color: var(--accent-primary);
+            background-color: rgba(88, 101, 242, 0.1);
+        }
+
+        .action-btn .material-icons {
+            font-size: 18px;
         }
 
         /* Reply Thread */
         .reply-thread {
             margin-left: 40px;
-            margin-top: 8px;
-            border-left: 2px solid var(--bg-tertiary);
-            padding-left: 12px;
+            margin-top: 16px;
+            border-left: 2px solid var(--border-color);
+            padding-left: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
         /* Fixed Reply Box */
@@ -155,9 +198,10 @@
             left: 0;
             right: 0;
             background-color: var(--bg-secondary);
-            border-top: 1px solid var(--bg-tertiary);
+            border-top: 1px solid var(--border-color);
             padding: 16px;
             z-index: 100;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .reply-box-container {
@@ -167,31 +211,36 @@
 
         .reply-input-container {
             display: flex;
-            gap: 8px;
+            gap: 12px;
             align-items: flex-end;
         }
 
         .reply-input {
             flex-grow: 1;
             background-color: var(--bg-tertiary);
-            border: none;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 12px 16px;
+            padding: 14px 16px;
             color: var(--text-primary);
             resize: none;
             min-height: 60px;
             max-height: 200px;
+            font-size: 15px;
+            line-height: 1.5;
+            transition: border-color 0.2s ease;
         }
 
         .reply-input:focus {
             outline: none;
-            box-shadow: 0 0 0 2px var(--accent-yellow);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.2);
         }
 
         .reply-toolbar {
             display: flex;
             gap: 8px;
-            margin-top: 8px;
+            margin-top: 12px;
+            align-items: center;
         }
 
         .tool-btn {
@@ -199,28 +248,44 @@
             border: none;
             color: var(--text-secondary);
             cursor: pointer;
-            padding: 4px;
+            padding: 6px;
             border-radius: 4px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .tool-btn:hover {
             background-color: var(--highlight);
-            color: var(--accent-yellow);
+            color: var(--accent-primary);
+        }
+
+        .tool-btn .material-icons {
+            font-size: 20px;
         }
 
         .submit-btn {
-            background-color: var(--accent-yellow);
-            color: #000;
+            background-color: var(--accent-primary);
+            color: #fff;
             border: none;
             border-radius: 8px;
-            padding: 8px 16px;
+            padding: 10px 20px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .submit-btn:hover {
-            transform: translateY(-2px);
+            background-color: #4752C4;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
         }
 
         /* Mention Popup */
@@ -233,55 +298,117 @@
             overflow-y: auto;
             z-index: 101;
             display: none;
+            width: 250px;
+            border: 1px solid var(--border-color);
         }
 
         .mention-item {
-            padding: 8px 16px;
+            padding: 8px 12px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s ease;
         }
 
         .mention-item:hover {
             background-color: var(--highlight);
         }
 
+        .mention-item .user-avatar {
+            width: 28px;
+            height: 28px;
+            font-size: 14px;
+        }
+
         /* Image Preview */
+        .image-preview-container {
+            margin-top: 12px;
+            display: none;
+        }
+
         .image-preview {
-            max-width: 100px;
-            max-height: 100px;
-            border-radius: 4px;
-            margin-top: 8px;
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
             position: relative;
+            border: 1px solid var(--border-color);
         }
 
         .remove-image {
             position: absolute;
-            top: -8px;
-            right: -8px;
+            top: -10px;
+            right: -10px;
             background-color: #ff4444;
             color: white;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 14px;
             cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .remove-image:hover {
+            transform: scale(1.1);
+        }
+
+        /* Replying indicator */
+        .replying-indicator {
+            background-color: var(--highlight);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--accent-primary);
+        }
+
+        .cancel-reply {
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
+        }
+
+        .cancel-reply:hover {
+            color: var(--text-primary);
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .thread-container {
-                padding: 12px;
+                padding: 16px;
                 padding-bottom: 160px;
             }
             
+            .thread-title {
+                font-size: 24px;
+            }
+            
             .reply-thread {
-                margin-left: 20px;
+                margin-left: 24px;
             }
             
             .message-content, .message-actions {
                 margin-left: 0;
+            }
+            
+            .message-header {
+                margin-bottom: 16px;
+            }
+            
+            .reply-input-container {
+                gap: 8px;
+            }
+            
+            .submit-btn {
+                padding: 8px 16px;
             }
         }
     </style>
@@ -295,17 +422,23 @@
         <div class="thread-meta">
             <span>Started by {{ thread.user.username }}</span>
             <span>{{ thread.created_at.strftime('%B %d, %Y') }}</span>
+            <span>{{ thread.posts|length }} replies</span>
         </div>
     </div>
 
     <!-- Messages Container -->
     <div class="messages-container" id="messagesContainer">
         {% for post in posts %}
-        <div class="message-card" data-post-id="{{ post.id }}">
+        <div class="message-card" id="post-{{ post.id }}" data-post-id="{{ post.id }}">
             <div class="message-header">
                 <div class="user-avatar">{{ post.user.username[0]|upper }}</div>
-                <div>
-                    <div class="user-name">{{ post.user.username }}</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        {{ post.user.username }}
+                        {% if post.user == thread.user %}
+                        <span class="badge">OP</span>
+                        {% endif %}
+                    </div>
                     <div class="message-time">{{ post.created_at.strftime('%H:%M · %b %d, %Y') }}</div>
                 </div>
             </div>
@@ -319,12 +452,13 @@
             
             <div class="message-actions">
                 <div class="action-btn reply-btn" data-post-id="{{ post.id }}">
-                    <span class="material-icons" style="font-size:18px;">reply</span>
+                    <span class="material-icons">reply</span>
                     <span>Reply</span>
                 </div>
-                <div class="action-btn">
-                    <span class="material-icons" style="font-size:18px;">favorite_border</span>
+                <div class="action-btn like-btn" data-post-id="{{ post.id }}">
+                    <span class="material-icons">favorite_border</span>
                     <span>Like</span>
+                    <span class="like-count">{% if post.likes %}{{ post.likes|length }}{% else %}0{% endif %}</span>
                 </div>
             </div>
             
@@ -332,16 +466,35 @@
             {% if post.replies %}
             <div class="reply-thread">
                 {% for reply in post.replies %}
-                <div class="message-card">
+                <div class="message-card" id="post-{{ reply.id }}" data-post-id="{{ reply.id }}">
                     <div class="message-header">
                         <div class="user-avatar">{{ reply.user.username[0]|upper }}</div>
-                        <div>
-                            <div class="user-name">{{ reply.user.username }}</div>
+                        <div class="user-info">
+                            <div class="user-name">
+                                {{ reply.user.username }}
+                                {% if reply.user == thread.user %}
+                                <span class="badge">OP</span>
+                                {% endif %}
+                            </div>
                             <div class="message-time">{{ reply.created_at.strftime('%H:%M · %b %d, %Y') }}</div>
                         </div>
                     </div>
                     <div class="message-content">
                         {{ reply.content }}
+                        {% if reply.image_url %}
+                        <img src="{{ reply.image_url }}" class="message-image" alt="Reply image">
+                        {% endif %}
+                    </div>
+                    <div class="message-actions">
+                        <div class="action-btn reply-btn" data-post-id="{{ reply.id }}">
+                            <span class="material-icons">reply</span>
+                            <span>Reply</span>
+                        </div>
+                        <div class="action-btn like-btn" data-post-id="{{ reply.id }}">
+                            <span class="material-icons">favorite_border</span>
+                            <span>Like</span>
+                            <span class="like-count">{% if reply.likes %}{{ reply.likes|length }}{% else %}0{% endif %}</span>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
@@ -359,6 +512,11 @@
             {{ form.hidden_tag() }}
             <input type="hidden" name="reply_to" id="replyTo" value="">
             
+            <div id="replyingIndicator" class="replying-indicator" style="display: none;">
+                <span>Replying to <span id="replyingToUser"></span></span>
+                <span class="cancel-reply" id="cancelReply">Cancel</span>
+            </div>
+            
             <div class="reply-input-container">
                 <textarea 
                     id="messageInput" 
@@ -367,25 +525,30 @@
                     placeholder="Write your message..." 
                     rows="1"
                 ></textarea>
-                <button type="submit" class="submit-btn">Send</button>
+                <button type="submit" class="submit-btn">
+                    <span class="material-icons">send</span>
+                    <span>Send</span>
+                </button>
             </div>
             
             <div class="reply-toolbar">
-                <button type="button" class="tool-btn" id="mentionBtn">
+                <button type="button" class="tool-btn" id="mentionBtn" title="Mention user">
                     <span class="material-icons">alternate_email</span>
                 </button>
-                <button type="button" class="tool-btn" id="emojiBtn">
+                <button type="button" class="tool-btn" id="emojiBtn" title="Add emoji">
                     <span class="material-icons">mood</span>
                 </button>
-                <label for="imageUpload" class="tool-btn">
+                <label for="imageUpload" class="tool-btn" title="Upload image">
                     <span class="material-icons">image</span>
                     <input type="file" id="imageUpload" name="image" accept="image/*" style="display:none;">
                 </label>
+                <div class="flex-grow"></div>
+                <span id="charCount" class="text-sm text-gray-400">0/2000</span>
             </div>
             
-            <div id="imagePreviewContainer" style="display:none;">
-                <div class="image-preview">
-                    <img id="imagePreview" src="" alt="Preview">
+            <div id="imagePreviewContainer" class="image-preview-container">
+                <div class="relative inline-block">
+                    <img id="imagePreview" src="" class="image-preview" alt="Preview">
                     <div class="remove-image" id="removeImageBtn">×</div>
                 </div>
             </div>
@@ -397,16 +560,14 @@
 <div class="mention-popup" id="mentionPopup">
     {% for user in all_users %}
     <div class="mention-item" data-username="{{ user.username }}">
-        <div class="user-avatar" style="width:24px;height:24px;font-size:12px;display:inline-block;">
-            {{ user.username[0]|upper }}
-        </div>
-        <span style="margin-left:8px;">{{ user.username }}</span>
+        <div class="user-avatar">{{ user.username[0]|upper }}</div>
+        <span>{{ user.username }}</span>
     </div>
     {% endfor %}
 </div>
 
 <!-- Emoji Picker -->
-<emoji-picker id="emojiPicker" style="position:fixed;bottom:80px;right:20px;display:none;"></emoji-picker>
+<emoji-picker id="emojiPicker" style="position:fixed;bottom:80px;right:20px;display:none;z-index:1000;"></emoji-picker>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -422,15 +583,56 @@
         const removeImageBtn = document.getElementById('removeImageBtn');
         const replyToInput = document.getElementById('replyTo');
         const messagesContainer = document.getElementById('messagesContainer');
+        const replyingIndicator = document.getElementById('replyingIndicator');
+        const replyingToUser = document.getElementById('replyingToUser');
+        const cancelReply = document.getElementById('cancelReply');
+        const charCount = document.getElementById('charCount');
+        
+        // Character counter
+        messageInput.addEventListener('input', function() {
+            const currentLength = this.value.length;
+            charCount.textContent = `${currentLength}/2000`;
+            
+            if (currentLength > 1900) {
+                charCount.classList.add('text-yellow-400');
+                charCount.classList.remove('text-gray-400');
+            } else {
+                charCount.classList.remove('text-yellow-400');
+                charCount.classList.add('text-gray-400');
+            }
+        });
         
         // Reply buttons
         document.querySelectorAll('.reply-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const postId = this.getAttribute('data-post-id');
+                const postElement = document.querySelector(`.message-card[data-post-id="${postId}"]`);
+                const username = postElement.querySelector('.user-name').textContent.trim();
+                
                 replyToInput.value = postId;
+                replyingToUser.textContent = username;
+                replyingIndicator.style.display = 'flex';
+                
+                // Scroll to reply box
                 messageInput.focus();
+                
                 // Highlight the message being replied to
-                document.querySelector(`.message-card[data-post-id="${postId}"]`).style.backgroundColor = 'rgba(248, 188, 4, 0.1)';
+                document.querySelectorAll('.message-card').forEach(card => {
+                    card.classList.remove('replying-to');
+                });
+                postElement.classList.add('replying-to');
+                
+                // Scroll to the message if it's not visible
+                postElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+        });
+        
+        // Cancel reply
+        cancelReply.addEventListener('click', function() {
+            replyToInput.value = '';
+            replyingIndicator.style.display = 'none';
+            document.querySelectorAll('.message-card').forEach(card => {
+                card.classList.remove('replying-to');
             });
         });
         
@@ -438,7 +640,7 @@
         mentionBtn.addEventListener('click', function() {
             const rect = messageInput.getBoundingClientRect();
             mentionPopup.style.display = 'block';
-            mentionPopup.style.top = `${rect.top - 210}px`;
+            mentionPopup.style.top = `${rect.top - mentionPopup.offsetHeight - 10}px`;
             mentionPopup.style.left = `${rect.left}px`;
         });
         
@@ -447,13 +649,26 @@
                 const username = this.getAttribute('data-username');
                 insertAtCursor(messageInput, `@${username} `);
                 mentionPopup.style.display = 'none';
+                messageInput.focus();
             });
         });
         
+        // Close mention popup when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!mentionBtn.contains(e.target) && !mentionPopup.contains(e.target)) {
+                mentionPopup.style.display = 'none';
+            }
+        });
+        
         // Emoji picker
-        emojiBtn.addEventListener('click', function() {
-            if (emojiPicker.style.display === 'none') {
+        emojiBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const rect = emojiBtn.getBoundingClientRect();
+            
+            if (emojiPicker.style.display === 'none' || !emojiPicker.style.display) {
                 emojiPicker.style.display = 'block';
+                emojiPicker.style.bottom = `${window.innerHeight - rect.top + 10}px`;
+                emojiPicker.style.left = `${rect.left}px`;
             } else {
                 emojiPicker.style.display = 'none';
             }
@@ -461,11 +676,25 @@
         
         emojiPicker.addEventListener('emoji-click', event => {
             insertAtCursor(messageInput, event.detail.unicode);
+            messageInput.focus();
+        });
+        
+        // Close emoji picker when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!emojiBtn.contains(e.target) && !emojiPicker.contains(e.target)) {
+                emojiPicker.style.display = 'none';
+            }
         });
         
         // Image upload preview
         imageUpload.addEventListener('change', function() {
             if (this.files && this.files[0]) {
+                if (this.files[0].size > 5 * 1024 * 1024) { // 5MB limit
+                    alert('Image size should be less than 5MB');
+                    this.value = '';
+                    return;
+                }
+                
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     imagePreview.src = e.target.result;
@@ -484,7 +713,7 @@
         // Auto-resize textarea
         messageInput.addEventListener('input', function() {
             this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
+            this.style.height = `${Math.min(this.scrollHeight, 200)}px`;
         });
         
         // Handle form submission with AJAX
@@ -493,6 +722,12 @@
             
             const formData = new FormData(this);
             const threadId = {{ thread.id }};
+            const content = messageInput.value.trim();
+            
+            if (!content && !imageUpload.files[0]) {
+                alert('Please enter a message or attach an image');
+                return;
+            }
             
             fetch(`/forum/thread/${threadId}/post`, {
                 method: 'POST',
@@ -504,27 +739,114 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Add new message to the thread
+                    // Add new message to the UI
                     addNewMessage(data.post);
+                    
                     // Reset form
-                    this.reset();
+                    messageInput.value = '';
+                    messageInput.style.height = 'auto';
                     imagePreview.src = '';
                     imagePreviewContainer.style.display = 'none';
-                    messageInput.style.height = 'auto';
+                    imageUpload.value = '';
                     replyToInput.value = '';
+                    replyingIndicator.style.display = 'none';
+                    charCount.textContent = '0/2000';
+                    
+                    // Remove highlight from replied message
+                    document.querySelectorAll('.message-card').forEach(card => {
+                        card.classList.remove('replying-to');
+                    });
+                    
+                    // Scroll to the new message
+                    const newMessage = document.getElementById(`post-${data.post.id}`);
+                    if (newMessage) {
+                        newMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
                 } else {
                     alert(data.error || 'Error posting message');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred');
+                alert('An error occurred while posting your message');
             });
         });
         
         function addNewMessage(post) {
-            // Implementation to add new message to the UI
-            // This would depend on whether it's a reply or new top-level message
+            // Create the new message element
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message-card';
+            messageElement.id = `post-${post.id}`;
+            messageElement.dataset.postId = post.id;
+            
+            // Set the message HTML
+            messageElement.innerHTML = `
+                <div class="message-header">
+                    <div class="user-avatar">${post.user_initial}</div>
+                    <div class="user-info">
+                        <div class="user-name">
+                            ${post.username}
+                            ${post.username === '{{ thread.user.username }}' ? '<span class="badge">OP</span>' : ''}
+                        </div>
+                        <div class="message-time">Just now</div>
+                    </div>
+                </div>
+                
+                <div class="message-content">
+                    ${post.content}
+                    ${post.image_url ? `<img src="${post.image_url}" class="message-image" alt="Post image">` : ''}
+                </div>
+                
+                <div class="message-actions">
+                    <div class="action-btn reply-btn" data-post-id="${post.id}">
+                        <span class="material-icons">reply</span>
+                        <span>Reply</span>
+                    </div>
+                    <div class="action-btn like-btn" data-post-id="${post.id}">
+                        <span class="material-icons">favorite_border</span>
+                        <span>Like</span>
+                        <span class="like-count">0</span>
+                    </div>
+                </div>
+            `;
+            
+            // If it's a reply, find the parent message and append to its reply thread
+            if (post.reply_to) {
+                const parentMessage = document.getElementById(`post-${post.reply_to}`);
+                if (parentMessage) {
+                    let replyThread = parentMessage.querySelector('.reply-thread');
+                    if (!replyThread) {
+                        replyThread = document.createElement('div');
+                        replyThread.className = 'reply-thread';
+                        parentMessage.appendChild(replyThread);
+                    }
+                    replyThread.appendChild(messageElement);
+                } else {
+                    // If parent message not found (shouldn't happen), append to main container
+                    messagesContainer.appendChild(messageElement);
+                }
+            } else {
+                // If it's a top-level message, append to main container
+                messagesContainer.appendChild(messageElement);
+            }
+            
+            // Add event listeners to the new message's buttons
+            messageElement.querySelector('.reply-btn').addEventListener('click', function() {
+                const postId = this.getAttribute('data-post-id');
+                const postElement = document.querySelector(`.message-card[data-post-id="${postId}"]`);
+                const username = postElement.querySelector('.user-name').textContent.trim();
+                
+                replyToInput.value = postId;
+                replyingToUser.textContent = username;
+                replyingIndicator.style.display = 'flex';
+                messageInput.focus();
+                
+                document.querySelectorAll('.message-card').forEach(card => {
+                    card.classList.remove('replying-to');
+                });
+                postElement.classList.add('replying-to');
+                postElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
         }
         
         function insertAtCursor(textarea, text) {
@@ -537,6 +859,10 @@
             textarea.selectionStart = startPos + text.length;
             textarea.selectionEnd = startPos + text.length;
             textarea.focus();
+            
+            // Trigger input event for auto-resize
+            const event = new Event('input');
+            textarea.dispatchEvent(event);
         }
     });
 </script>
