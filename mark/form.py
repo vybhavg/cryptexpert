@@ -44,6 +44,12 @@ class APIKeyForm(FlaskForm):
         if existing_key:
             raise ValidationError("API key for this exchange already exists.")
 
+    user_id = StringField("User ID", validators=[DataRequired()])  # Should be hidden in frontend
+    exchange = StringField("Exchange Name", validators=[DataRequired()])
+    api_key = StringField("API Key", validators=[Length(min=10), DataRequired()])
+    api_secret = StringField("API Secret", validators=[Length(min=10), DataRequired()])
+    submit = SubmitField("Save API Key")
+
 
 class ThreadForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
@@ -54,9 +60,3 @@ class PostForm(FlaskForm):
     content = TextAreaField('Content', validators=[DataRequired()])
     submit = SubmitField('Post')
 
-
-    user_id = StringField("User ID", validators=[DataRequired()])  # Should be hidden in frontend
-    exchange = StringField("Exchange Name", validators=[DataRequired()])
-    api_key = StringField("API Key", validators=[Length(min=10), DataRequired()])
-    api_secret = StringField("API Secret", validators=[Length(min=10), DataRequired()])
-    submit = SubmitField("Save API Key")
