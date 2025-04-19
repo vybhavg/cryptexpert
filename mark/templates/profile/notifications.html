@@ -1,35 +1,221 @@
 {% extends "base.html" %}
 
+{% block style %}
+<style>
+    /* Notification specific styles */
+    .notifications-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .notifications-header {
+        font-family: 'Audiowide', sans-serif;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.5rem;
+    }
+
+    .notification-card {
+        background-color: var(--message-bg);
+        border-radius: 0.75rem;
+        border: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+
+    .notification-list {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .listview__item {
+        padding: 1.25rem;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+    }
+
+    .listview__item:last-child {
+        border-bottom: none;
+    }
+
+    .listview__item:hover {
+        background-color: rgba(248, 188, 4, 0.05);
+    }
+
+    .listview__item.unread {
+        background-color: rgba(248, 188, 4, 0.1);
+        border-left: 3px solid var(--primary-color);
+    }
+
+    .listview__content {
+        flex-grow: 1;
+    }
+
+    .listview__heading {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+        font-size: 1.1rem;
+    }
+
+    .listview__heading a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    .listview__heading a:hover {
+        text-decoration: underline;
+    }
+
+    .listview__item small {
+        color: var(--text-tertiary);
+        font-size: 0.85rem;
+    }
+
+    .notification-actions {
+        margin-left: 1rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .notification-action-btn {
+        background: none;
+        border: none;
+        color: var(--text-tertiary);
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .notification-action-btn:hover {
+        color: var(--primary-color);
+    }
+
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .pagination-btn {
+        background-color: var(--message-bg);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        padding: 0.5rem 1.25rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+
+    .pagination-btn:hover {
+        background-color: var(--primary-color);
+        color: #1a1a1a;
+        border-color: var(--primary-color);
+        transform: translateY(-1px);
+    }
+
+    .pagination-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .empty-notifications {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-secondary);
+    }
+
+    .empty-notifications i {
+        font-size: 2.5rem;
+        color: var(--text-tertiary);
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    /* Custom scrollbar for notification list */
+    .notification-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .notification-list::-webkit-scrollbar-track {
+        background: var(--dark-bg);
+    }
+
+    .notification-list::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 3px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h2>Your Notifications</h2>
+<div class="notifications-container">
+    <h2 class="notifications-header">
+        <i class="zmdi zmdi-notifications"></i> Your Notifications
+    </h2>
     
-    <div class="card">
-        <div class="listview listview--hover">
+    <div class="notification-card">
+        <div class="notification-list">
             {% for notification in notifications.items %}
-            <a href="{{ url_for('forum_thread', thread_id=notification.thread_id) }}#post-{{ notification.post_id }}"
-               class="listview__item {% if not notification.is_read %}unread{% endif %}">
+            <div class="listview__item {% if not notification.is_read %}unread{% endif %}">
                 <div class="listview__content">
-                    <div class="listview__heading">{{ notification.content }}</div>
+                    <div class="listview__heading">
+                        {{ notification.content }}
+                        {% if notification.notification_type == 'mention' %}
+                        <span class="badge" style="background: var(--primary-color); color: #1a1a1a; margin-left: 0.5rem;">Mention</span>
+                        {% elif notification.notification_type == 'reply' %}
+                        <span class="badge" style="background: #4CAF50; color: white; margin-left: 0.5rem;">Reply</span>
+                        {% endif %}
+                    </div>
                     <small>{{ notification.created_at|time_ago }}</small>
                 </div>
-            </a>
+                <div class="notification-actions">
+                    <a href="{{ url_for('forum_thread', thread_id=notification.thread_id) }}#post-{{ notification.post_id }}"
+                       class="notification-action-btn" title="View">
+                        <i class="zmdi zmdi-eye"></i>
+                    </a>
+                </div>
+            </div>
             {% else %}
-            <div class="listview__item">
-                <div class="listview__content">No notifications yet</div>
+            <div class="empty-notifications">
+                <i class="zmdi zmdi-notifications-off"></i>
+                <p>No notifications yet</p>
+                <p class="text-muted">When you get mentions or replies, they'll appear here</p>
             </div>
             {% endfor %}
         </div>
     </div>
     
     <!-- Pagination -->
-    <div class="mt-3">
+    {% if notifications.pages > 1 %}
+    <div class="pagination-container">
         {% if notifications.has_prev %}
-        <a href="{{ url_for('view_notifications', page=notifications.prev_num) }}" class="btn btn-primary">Previous</a>
+        <a href="{{ url_for('view_notifications', page=notifications.prev_num) }}" 
+           class="pagination-btn">
+            <i class="zmdi zmdi-chevron-left"></i> Previous
+        </a>
+        {% else %}
+        <button class="pagination-btn" disabled>
+            <i class="zmdi zmdi-chevron-left"></i> Previous
+        </button>
         {% endif %}
+        
         {% if notifications.has_next %}
-        <a href="{{ url_for('view_notifications', page=notifications.next_num) }}" class="btn btn-primary">Next</a>
+        <a href="{{ url_for('view_notifications', page=notifications.next_num) }}" 
+           class="pagination-btn">
+            Next <i class="zmdi zmdi-chevron-right"></i>
+        </a>
+        {% else %}
+        <button class="pagination-btn" disabled>
+            Next <i class="zmdi zmdi-chevron-right"></i>
+        </button>
         {% endif %}
     </div>
+    {% endif %}
 </div>
 {% endblock %}
