@@ -1,221 +1,282 @@
 {% extends "base.html" %}
 
-{% block style %}
-<style>
-    /* Notification specific styles */
-    .notifications-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 2rem 1rem;
-    }
+{% block title %}Notifications | Forum{% endblock %}
 
-    .notifications-header {
-        font-family: 'Audiowide', sans-serif;
-        color: var(--primary-color);
-        margin-bottom: 1.5rem;
-        font-size: 1.8rem;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 0.5rem;
-    }
+{% block head %}
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Custom Colors */
+        .text-yellow-custom { color: #F8BC04 !important; }
+        .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
 
-    .notification-card {
-        background-color: var(--message-bg);
-        border-radius: 0.75rem;
-        border: 1px solid var(--border-color);
-        margin-bottom: 1.5rem;
-        overflow: hidden;
-    }
+        /* Notification Card Styling */
+        .notification-card {
+            background: linear-gradient(135deg, #1e1e1e, #252525) !important;
+            border-radius: 0.75rem !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+            overflow: hidden !important;
+        }
 
-    .notification-list {
-        max-height: 70vh;
-        overflow-y: auto;
-    }
+        .notification-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
 
-    .listview__item {
-        padding: 1.25rem;
-        transition: all 0.2s ease;
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        align-items: center;
-    }
+        .notification-item:last-child {
+            border-bottom: none;
+        }
 
-    .listview__item:last-child {
-        border-bottom: none;
-    }
+        .notification-item:hover {
+            background: rgba(248, 188, 4, 0.05);
+        }
 
-    .listview__item:hover {
-        background-color: rgba(248, 188, 4, 0.05);
-    }
+        .notification-item.unread {
+            background: linear-gradient(90deg, rgba(248, 188, 4, 0.1), transparent);
+            border-left: 3px solid #F8BC04;
+        }
 
-    .listview__item.unread {
-        background-color: rgba(248, 188, 4, 0.1);
-        border-left: 3px solid var(--primary-color);
-    }
+        .notification-content {
+            flex-grow: 1;
+        }
 
-    .listview__content {
-        flex-grow: 1;
-    }
+        .notification-title {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
 
-    .listview__heading {
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.25rem;
-        font-size: 1.1rem;
-    }
+        .notification-title a {
+            color: #F8BC04;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
 
-    .listview__heading a {
-        color: var(--primary-color);
-        text-decoration: none;
-    }
+        .notification-title a:hover {
+            color: white;
+            text-decoration: underline;
+        }
 
-    .listview__heading a:hover {
-        text-decoration: underline;
-    }
+        .notification-time {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+        }
 
-    .listview__item small {
-        color: var(--text-tertiary);
-        font-size: 0.85rem;
-    }
+        .notification-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
 
-    .notification-actions {
-        margin-left: 1rem;
-        display: flex;
-        gap: 0.5rem;
-    }
+        .badge-mention {
+            background: #F8BC04;
+            color: #1a1a1a;
+        }
 
-    .notification-action-btn {
-        background: none;
-        border: none;
-        color: var(--text-tertiary);
-        cursor: pointer;
-        transition: color 0.2s;
-    }
+        .badge-reply {
+            background: #4CAF50;
+            color: white;
+        }
 
-    .notification-action-btn:hover {
-        color: var(--primary-color);
-    }
+        .notification-actions {
+            margin-left: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
 
-    .pagination-container {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin-top: 2rem;
-    }
+        .notification-action-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
 
-    .pagination-btn {
-        background-color: var(--message-bg);
-        color: var(--text-primary);
-        border: 1px solid var(--border-color);
-        padding: 0.5rem 1.25rem;
-        border-radius: 0.5rem;
-        transition: all 0.2s;
-        font-weight: 500;
-    }
+        .notification-action-btn:hover {
+            color: #F8BC04;
+            transform: scale(1.1);
+        }
 
-    .pagination-btn:hover {
-        background-color: var(--primary-color);
-        color: #1a1a1a;
-        border-color: var(--primary-color);
-        transform: translateY(-1px);
-    }
+        /* Empty State */
+        .empty-notifications {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
 
-    .pagination-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
+        .empty-notifications .material-icons {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.2);
+            margin-bottom: 1rem;
+        }
 
-    .empty-notifications {
-        text-align: center;
-        padding: 2rem;
-        color: var(--text-secondary);
-    }
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
 
-    .empty-notifications i {
-        font-size: 2.5rem;
-        color: var(--text-tertiary);
-        margin-bottom: 1rem;
-        display: block;
-    }
+        .pagination-btn {
+            background: linear-gradient(135deg, #1e1e1e, #252525);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-    /* Custom scrollbar for notification list */
-    .notification-list::-webkit-scrollbar {
-        width: 6px;
-    }
+        .pagination-btn:hover {
+            background: linear-gradient(135deg, #F8BC04, #e6a905);
+            color: #1a1a1a;
+            border-color: #F8BC04;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
 
-    .notification-list::-webkit-scrollbar-track {
-        background: var(--dark-bg);
-    }
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #1e1e1e, #252525);
+            color: rgba(255, 255, 255, 0.5);
+            transform: none;
+            box-shadow: none;
+        }
 
-    .notification-list::-webkit-scrollbar-thumb {
-        background: var(--primary-color);
-        border-radius: 3px;
-    }
-</style>
+        /* Header */
+        .notifications-header {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notification-item {
+            opacity: 0;
+            animation: fadeIn 0.4s ease-out forwards;
+            animation-delay: calc(var(--animation-order) * 50ms);
+        }
+
+        /* Custom scrollbar */
+        .notification-list {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .notification-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .notification-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .notification-list::-webkit-scrollbar-thumb {
+            background: #F8BC04;
+            border-radius: 3px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<div class="notifications-container">
-    <h2 class="notifications-header">
-        <i class="zmdi zmdi-notifications"></i> Your Notifications
-    </h2>
-    
-    <div class="notification-card">
-        <div class="notification-list">
-            {% for notification in notifications.items %}
-            <div class="listview__item {% if not notification.is_read %}unread{% endif %}">
-                <div class="listview__content">
-                    <div class="listview__heading">
-                        {{ notification.content }}
-                        {% if notification.notification_type == 'mention' %}
-                        <span class="badge" style="background: var(--primary-color); color: #1a1a1a; margin-left: 0.5rem;">Mention</span>
-                        {% elif notification.notification_type == 'reply' %}
-                        <span class="badge" style="background: #4CAF50; color: white; margin-left: 0.5rem;">Reply</span>
-                        {% endif %}
-                    </div>
-                    <small>{{ notification.created_at|time_ago }}</small>
-                </div>
-                <div class="notification-actions">
-                    <a href="{{ url_for('forum_thread', thread_id=notification.thread_id) }}#post-{{ notification.post_id }}"
-                       class="notification-action-btn" title="View">
-                        <i class="zmdi zmdi-eye"></i>
-                    </a>
-                </div>
-            </div>
-            {% else %}
-            <div class="empty-notifications">
-                <i class="zmdi zmdi-notifications-off"></i>
-                <p>No notifications yet</p>
-                <p class="text-muted">When you get mentions or replies, they'll appear here</p>
-            </div>
-            {% endfor %}
+<div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <!-- Header -->
+        <div class="mb-10">
+            <h1 class="notifications-header">
+                <span class="material-icons text-yellow-custom">notifications</span>
+                Your Notifications
+            </h1>
         </div>
-    </div>
-    
-    <!-- Pagination -->
-    {% if notifications.pages > 1 %}
-    <div class="pagination-container">
-        {% if notifications.has_prev %}
-        <a href="{{ url_for('view_notifications', page=notifications.prev_num) }}" 
-           class="pagination-btn">
-            <i class="zmdi zmdi-chevron-left"></i> Previous
-        </a>
-        {% else %}
-        <button class="pagination-btn" disabled>
-            <i class="zmdi zmdi-chevron-left"></i> Previous
-        </button>
+
+        <!-- Notifications List -->
+        <div class="notification-card">
+            <div class="notification-list">
+                {% for notification in notifications.items %}
+                <div class="notification-item {% if not notification.is_read %}unread{% endif %}" 
+                     style="--animation-order: {{ loop.index }}">
+                    <div class="notification-content">
+                        <div class="notification-title">
+                            {{ notification.content }}
+                            {% if notification.notification_type == 'mention' %}
+                            <span class="notification-badge badge-mention">Mention</span>
+                            {% elif notification.notification_type == 'reply' %}
+                            <span class="notification-badge badge-reply">Reply</span>
+                            {% endif %}
+                        </div>
+                        <div class="notification-time">{{ notification.created_at|time_ago }}</div>
+                    </div>
+                    <div class="notification-actions">
+                        <a href="{{ url_for('forum_thread', thread_id=notification.thread_id) }}#post-{{ notification.post_id }}"
+                           class="notification-action-btn" title="View">
+                            <span class="material-icons">visibility</span>
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="empty-notifications">
+                    <span class="material-icons">notifications_off</span>
+                    <h3 class="text-xl text-white mb-2">No notifications yet</h3>
+                    <p class="text-gray-400">When you get mentions or replies, they'll appear here</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if notifications.pages > 1 %}
+        <div class="pagination-container">
+            {% if notifications.has_prev %}
+            <a href="{{ url_for('view_notifications', page=notifications.prev_num) }}" 
+               class="pagination-btn">
+                <span class="material-icons">chevron_left</span>
+                Previous
+            </a>
+            {% else %}
+            <button class="pagination-btn" disabled>
+                <span class="material-icons">chevron_left</span>
+                Previous
+            </button>
+            {% endif %}
+            
+            {% if notifications.has_next %}
+            <a href="{{ url_for('view_notifications', page=notifications.next_num) }}" 
+               class="pagination-btn">
+                Next
+                <span class="material-icons">chevron_right</span>
+            </a>
+            {% else %}
+            <button class="pagination-btn" disabled>
+                Next
+                <span class="material-icons">chevron_right</span>
+            </button>
+            {% endif %}
+        </div>
         {% endif %}
-        
-        {% if notifications.has_next %}
-        <a href="{{ url_for('view_notifications', page=notifications.next_num) }}" 
-           class="pagination-btn">
-            Next <i class="zmdi zmdi-chevron-right"></i>
-        </a>
-        {% else %}
-        <button class="pagination-btn" disabled>
-            Next <i class="zmdi zmdi-chevron-right"></i>
-        </button>
-        {% endif %}
     </div>
-    {% endif %}
 </div>
 {% endblock %}
