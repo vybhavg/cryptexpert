@@ -1,76 +1,245 @@
 {% extends "base.html" %}
 
 {% block style %}
-body{
-margin-top:100px;
-}
-    .posts {
-        padding: 30px !important;
-        margin-top: 80px !important; /* Adjust this value based on the height of your navigation bar */
-    }
+    <style>
+        :root {
+            --primary-color: #F8BC04;  /* Your yellow */
+            --secondary-color: #e6a905; /* Darker yellow */
+            --accent-color: #4361ee;
+            --dark-color: #1a1a2e;
+            --light-color: #f8f9fa;
+            --text-dark: #2b2d42;
+            --text-light: #f8f9fa;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
 
-    .post {
-        margin-bottom: 20px !important;
-        padding: 15px !important;
-        border: 1px solid #ddd !important;
-        border-radius: 5px !important;
-        background-color: #f9f9f9 !important;
-    }
+        body {
+            margin-top: 80px;
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+        }
 
-    .post p {
-        color: #333 !important;
-        margin-bottom: 10px !important;
-    }
+        .thread-header {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            border-left: 5px solid var(--primary-color);
+        }
 
-    .post small {
-        color: #666 !important;
-        font-size: 0.9em !important;
-    }
+        .thread-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
 
-    .form-group {
-        margin-bottom: 20px !important;
-    }
+        .thread-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
 
-    .form-control {
-        width: 100% !important;
-        padding: 10px !important;
-        border: 1px solid #ddd !important;
-        border-radius: 5px !important;
-        font-size: 1em !important;
-    }
+        .thread-meta .author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-color); /* Yellow username */
+        }
 
-    .btn-primary {
-        background-color: #007bff !important;
-        color: #fff !important;
-        padding: 10px 20px !important;
-        border: none !important;
-        border-radius: 5px !important;
-        cursor: pointer !important;
-    }
+        .posts-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
 
-    .btn-primary:hover {
-        background-color: #0056b3 !important;
-    }
+        .post {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            transition: var(--transition);
+        }
+
+        .post:hover {
+            background-color: #faf8f0; /* Light yellow tint on hover */
+        }
+
+        .post:last-child {
+            border-bottom: none;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .post-author-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-color); /* Yellow avatar */
+            color: #1a1a1a; /* Dark text on yellow */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .reply-form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border-top: 3px solid var(--primary-color); /* Yellow accent */
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(248, 188, 4, 0.25); /* Yellow focus */
+            outline: none;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: #1a1a1a; /* Dark text on yellow */
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(248, 188, 4, 0.3); /* Yellow shadow */
+        }
+
+        /* Highlight important elements with your yellow */
+        .thread-header {
+            border-left-color: var(--primary-color);
+        }
+        
+        .reply-form {
+            border-top-color: var(--primary-color);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .thread-title {
+                font-size: 1.5rem;
+            }
+            
+            .post {
+                padding: 1rem;
+            }
+            
+            .reply-form {
+                padding: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .post {
+            animation: fadeIn 0.3s ease-out forwards;
+            animation-delay: calc(var(--post-index) * 0.1s);
+            opacity: 0;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<h1>{{ thread.title }}</h1>
-<p>By {{ thread.user.username }} on {{ thread.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
-<div class="posts">
-    {% for post in posts %}
-    <div class="post">
-        <p>{{ post.content }}</p>
-        <small>By {{ post.user.username }} on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+<div class="container">
+    <div class="thread-header">
+        <h1 class="thread-title">{{ thread.title }}</h1>
+        <div class="thread-meta">
+            <span class="author">
+                <span class="post-author-avatar">{{ thread.user.username|first|upper }}</span>
+                {{ thread.user.username }}
+            </span>
+            <span>Posted on {{ thread.created_at.strftime('%B %d, %Y at %H:%M') }}</span>
+        </div>
     </div>
-    {% endfor %}
+
+    <div class="posts-container">
+        {% for post in posts %}
+        <div class="post" style="--post-index: {{ loop.index }};">
+            <div class="post-content">{{ post.content }}</div>
+            <div class="post-meta">
+                <div class="post-author">
+                    <span class="post-author-avatar">{{ post.user.username|first|upper }}</span>
+                    {{ post.user.username }}
+                </div>
+                <span>{{ post.created_at.strftime('%B %d, %Y at %H:%M') }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="reply-form">
+        <h3>Post a Reply</h3>
+        <form method="POST" action="{{ url_for('forum_thread', thread_id=thread.id) }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.content.label(class="form-label") }}
+                {{ form.content(class="form-control", placeholder="Write your reply here...") }}
+            </div>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
 </div>
-<form method="POST" action="{{ url_for('forum_thread', thread_id=thread.id) }}">
-    {{ form.hidden_tag() }}
-    <div class="form-group">
-        {{ form.content.label }} {{ form.content(class="form-control") }}
-    </div>
-    <div class="form-group">
-        {{ form.submit(class="btn btn-primary") }}
-    </div>
-</form>
 {% endblock %}
