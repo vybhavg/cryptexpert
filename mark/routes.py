@@ -1180,6 +1180,44 @@ def forum_thread(thread_id):
 
 from flask import request, flash
 from mark.form import ThreadForm, PostForm
+from flask import request, flash, abort
+from werkzeug.utils import secure_filename
+
+# ... (your existing routes)
+
+@app.route('/forum/thread/<int:thread_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_thread(thread_id):
+    thread = ForumThread.query.get_or_404(thread_id)
+    
+    # Check if current user is the thread author
+    if thread.user_id != current_user.id:
+        abort(403)  # Forbidden
+    
+    form = ThreadForm(obj=thread)
+    
+    if form.validate_on_submit():
+        thread.title = form.title.data
+        thread.content = form.content.data
+        db.session.commit()
+        flash('Thread updated successfully!', 'success')
+        return redirect(url_for('forum_thread', thread_id=thread.id))
+    
+    return render_template('forum/edit_thread.html', form=form, thread=thread)
+
+@app.route('/forum/thread/<int:thread_id>/delete', methods=['POST'])
+@login_required
+def delete_thread(thread_id):
+    thread = ForumThread.query.get_or_404(thread_id)
+    
+    # Check if current user is the thread author
+    if thread.user_id != current_user.id:
+        abort(403)  # Forbidden
+    
+    db.session.delete(thread)
+    db.session.commit()
+    flash('Thread deleted successfully!', 'success')
+    return redirect(url_for('forum_category', category_id=thread.category_id))
 
 @app.route('/forum/create_thread/<int:category_id>', methods=['GET', 'POST'])
 @login_required
