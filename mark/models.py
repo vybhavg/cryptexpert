@@ -102,7 +102,6 @@ class ForumCategory(db.Model):
     threads = db.relationship('ForumThread', backref='category', lazy=True)
 
 class ForumThread(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
@@ -115,7 +114,8 @@ class ForumThread(db.Model):
     # Relationships
     posts = db.relationship('ForumPost', backref='thread', lazy=True, cascade='all, delete-orphan')
     user = db.relationship('User', backref=db.backref('threads', lazy=True, cascade='all, delete-orphan'))
-    category = db.relationship('ForumCategory', backref=db.backref('threads', lazy=True))
+    category = db.relationship('ForumCategory', backref=db.backref('forum_threads', lazy=True))  # Renamed backref to 'forum_threads'
+
 
 
 
