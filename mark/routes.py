@@ -1,6 +1,6 @@
 from mark import app, db, mail
 from mark.form import RegisterForm, LoginForm, otpform, verifyform,Authenticationform,ThreadForm,PostForm
-from mark.models import User, Item, CryptoAsset, Exchange, UserAPIKey
+from mark.models import User, Item, CryptoAsset, Exchange, UserAPIKey, ForumCategory, ForumThread, ForumPost, PostLike
 from flask import render_template,request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 import random, requests
@@ -1146,23 +1146,6 @@ def refresh_balances():
         "total_balance_all_exchanges": total_balance_all_exchanges  # Total balance across all exchanges
     })
 
-from flask import jsonify
-from flask import request, flash
-from mark.form import ThreadForm, PostForm
-from flask import request, flash, abort
-from werkzeug.utils import secure_filename
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1178,9 +1161,6 @@ def forum_category(category_id):
     return render_template('forum/category.html', category=category, threads=threads)
 
 from werkzeug.utils import secure_filename
-from . import app, db
-from .models import ForumCategory, ForumThread, ForumPost, PostLike
-from .forms import ThreadForm, PostForm
 import os
 import uuid
 from datetime import datetime
