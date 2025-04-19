@@ -295,6 +295,147 @@ html {
         opacity: 1;
     }
 }
+           .dropdown-menu--block {
+        background: linear-gradient(135deg, #1e1e1e, #252525) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 0.75rem !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+        width: 350px;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .dropdown-header {
+        color: white !important;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .actions__item {
+        color: rgba(255, 255, 255, 0.6) !important;
+        transition: all 0.2s ease;
+    }
+
+    .actions__item:hover {
+        color: #F8BC04 !important;
+        transform: scale(1.1);
+    }
+
+    .listview {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .listview__item {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+        display: block;
+    }
+
+    .listview__item:last-child {
+        border-bottom: none;
+    }
+
+    .listview__item:hover {
+        background: rgba(248, 188, 4, 0.1) !important;
+    }
+
+    .listview__item.unread {
+        background: linear-gradient(90deg, rgba(248, 188, 4, 0.1), transparent);
+        border-left: 3px solid #F8BC04;
+    }
+
+    .listview__heading {
+        color: white !important;
+        font-weight: 500;
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .listview__heading small {
+        color: rgba(255, 255, 255, 0.5) !important;
+        font-size: 0.75rem;
+        font-weight: 400;
+    }
+
+    .listview__content small {
+        color: rgba(255, 255, 255, 0.6) !important;
+        font-size: 0.85rem;
+    }
+
+    .view-more {
+        display: block;
+        text-align: center;
+        padding: 0.75rem;
+        color: #F8BC04 !important;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .view-more:hover {
+        background: rgba(248, 188, 4, 0.1) !important;
+    }
+
+    /* Custom scrollbar */
+    .listview::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .listview::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .listview::-webkit-scrollbar-thumb {
+        background: #F8BC04;
+        border-radius: 3px;
+    }
+
+    /* Badge styling */
+    .badge-pill {
+        background-color: #F8BC04 !important;
+        color: #1a1a1a !important;
+        font-weight: 600;
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        font-size: 0.65rem;
+        min-width: 18px;
+        height: 18px;
+        line-height: 18px;
+        padding: 0 4px;
+    }
+
+    /* Notification icon */
+    .top-nav__notify {
+        position: relative;
+        color: rgba(255, 255, 255, 0.7) !important;
+        transition: all 0.2s ease;
+    }
+
+    .top-nav__notify:hover {
+        color: #F8BC04 !important;
+        transform: scale(1.1);
+    }
+
+    /* Animation for new notifications */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    .has-notifications {
+        animation: pulse 1s infinite;
+    }
         {% block style %}{% endblock %}
     </style>
 </head>
@@ -931,18 +1072,22 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch('/notifications/count')
             .then(response => response.json())
             .then(data => {
-                const badge = document.querySelector('.top-nav__notifications .badge');
+                const notificationIcon = document.querySelector('.top-nav__notifications a');
+                const badge = notificationIcon.querySelector('.badge');
+                
                 if (data.count > 0) {
                     if (!badge) {
                         const newBadge = document.createElement('span');
-                        newBadge.className = 'badge badge-pill badge-danger';
+                        newBadge.className = 'badge badge-pill';
                         newBadge.textContent = data.count;
-                        document.querySelector('.top-nav__notifications a').appendChild(newBadge);
+                        notificationIcon.appendChild(newBadge);
+                        notificationIcon.classList.add('has-notifications');
                     } else {
                         badge.textContent = data.count;
                     }
                 } else if (badge) {
                     badge.remove();
+                    notificationIcon.classList.remove('has-notifications');
                 }
             });
     }
@@ -965,15 +1110,31 @@ document.addEventListener('DOMContentLoaded', function () {
                             data.notifications.map(n => `
                                 <a href="/forum/thread/${n.thread_id}#post-${n.post_id}" class="listview__item ${n.is_read ? '' : 'unread'}">
                                     <div class="listview__content">
-                                        <div class="listview__heading">${n.content}</div>
-                                        <small>${n.created_at}</small>
+                                        <div class="listview__heading">
+                                            ${n.content}
+                                            <small>${new Date(n.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>
+                                        </div>
+                                        <small>${new Date(n.created_at).toLocaleDateString()}</small>
                                     </div>
                                 </a>
                             `).join('') :
-                            '<div class="listview__item"><div class="listview__content">No notifications</div></div>'
+                            '<div class="listview__item"><div class="listview__content text-center py-3">No new notifications</div></div>'
                         }
+                        ${data.notifications.length > 3 ? '<a href="{{ url_for("view_notifications") }}" class="view-more">View All Notifications</a>' : ''}
                     </div>
                 `;
+                
+                // Add click handler for mark all read
+                document.getElementById('markAllRead')?.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    fetch('/notifications/mark_all_read', { method: 'POST' })
+                        .then(() => {
+                            document.querySelectorAll('.listview__item.unread').forEach(item => {
+                                item.classList.remove('unread');
+                            });
+                            updateNotificationBadge();
+                        });
+                });
                 
                 // Update badge after loading
                 updateNotificationBadge();
