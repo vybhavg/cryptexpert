@@ -173,7 +173,7 @@
     .message-actions {
     display: flex;
     gap: 1rem;
-    margin-left: 54px; /* Match message-content */
+    margin-left: 0px; /* Match message-content */
     margin-top: 1rem;
 }
 
@@ -936,9 +936,7 @@
                 </div>
                 
 <div class="message-content">
-    <span class="normal-text">
         ${post.content.replace(/@(\w+)/g, '<a href="#" class="mention">@$1</a>')}
-    </span>
     ${post.image_url ? `<img src="${post.image_url}" class="message-image" alt="Post image">` : ''}
 </div>
 
