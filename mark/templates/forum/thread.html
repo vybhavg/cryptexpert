@@ -64,7 +64,7 @@ margin-top:100px;
     </div>
     {% endfor %}
 </div>
-<form method="POST" action="{{ url_for('create_post', thread_id=thread.id) }}">
+<form method="POST" action="{{ url_for('forum_thread', thread_id=thread.id) }}">
     {{ form.hidden_tag() }}
     <div class="form-group">
         {{ form.content.label }} {{ form.content(class="form-control") }}
