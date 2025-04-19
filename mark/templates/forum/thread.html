@@ -133,7 +133,7 @@
        
 /* Better Typography */
 .message-content {
-    margin-left: 54px; /* Reduced from 60px to match avatar + gap */
+    margin-left: 0px; /* Reduced from 60px to match avatar + gap */
     margin-bottom: 0.5rem;
     line-height: 1.7;
     white-space: pre-wrap;
@@ -146,6 +146,7 @@
         .message-content a.mention {
             color: var(--primary-color);
             font-weight: 500;
+             margin-left:-22px;
             text-decoration: none;
         }
 
@@ -158,6 +159,7 @@
             max-height: 400px;
             border-radius: 0.5rem;
             margin-top: 1rem;
+            margin-left: 54px;
             cursor: pointer;
             transition: transform 0.2s ease;
         }
