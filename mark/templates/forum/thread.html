@@ -679,22 +679,70 @@ socket.emit('join_thread', { thread_id: {{ thread.id }} });
 
 // Listen for new posts
 socket.on('new_post', function(data) {
-    // Only add if it's not our own post (we already added it via AJAX)
+    // Only add if it's not our own post
     if (data.post.user_id !== {{ current_user.id if current_user.is_authenticated else 'null' }}) {
         addNewMessage(data.post);
         
-        // Play a notification sound if the tab is not active
-        if (document.hidden) {
+        // Add visual highlight for new message
+        const newMessage = document.getElementById(`post-${data.post.id}`);
+        if (newMessage) {
+            newMessage.classList.add('new-message');
+            setTimeout(() => newMessage.classList.remove('new-message'), 3000);
+        }
+
+        // Play sound if tab isn't active and audio is ready
+        if (document.hidden && audioInitialized) {
             playNotificationSound();
         }
     }
 });
+// Audio context and sound buffer variables
+let audioContext;
+let notificationSoundBuffer;
+let audioInitialized = false;
 
-// Function to play notification sound
-function playNotificationSound() {
-    const audio = new Audio('{{ url_for("static", filename="sounds/notification.mp3") }}');
-    audio.play().catch(e => console.log("Audio play failed:", e));
+// Initialize audio on first user interaction
+function initAudio() {
+    if (audioInitialized) return;
+    
+    try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        loadNotificationSound();
+        audioInitialized = true;
+    } catch (e) {
+        console.error("Audio initialization failed:", e);
+    }
 }
+
+// Load the sound file
+function loadNotificationSound() {
+    fetch('{{ url_for("static", filename="sounds/notification.mp3") }}')
+        .then(response => response.arrayBuffer())
+        .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+        .then(buffer => {
+            notificationSoundBuffer = buffer;
+        })
+        .catch(e => console.error("Sound loading failed:", e));
+}
+
+// New playNotificationSound function
+function playNotificationSound() {
+    if (localStorage.getItem('notificationsMuted') === 'true') return;
+    if (!audioInitialized || !notificationSoundBuffer) return;
+    
+    try {
+        const source = audioContext.createBufferSource();
+        source.buffer = notificationSoundBuffer;
+        source.connect(audioContext.destination);
+        source.start(0);
+    } catch (e) {
+        console.error("Error playing sound:", e);
+    }
+}
+
+// Initialize audio on first interaction
+document.addEventListener('click', initAudio, { once: true });
+        
         const replyForm = document.getElementById('replyForm');
         const messageInput = document.getElementById('messageInput');
         const mentionBtn = document.getElementById('mentionBtn');
