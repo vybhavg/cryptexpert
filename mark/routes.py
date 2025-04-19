@@ -1145,6 +1145,11 @@ def refresh_balances():
         "total_balance_usd": total_balance_usd,  # Balance for the requested exchange
         "total_balance_all_exchanges": total_balance_all_exchanges  # Total balance across all exchanges
     })
+from flask import jsonify
+from flask import request, flash
+from mark.form import ThreadForm, PostForm
+from flask import request, flash, abort
+from werkzeug.utils import secure_filename
 @app.route('/forum')
 def forum_home():
     categories = ForumCategory.query.all()
@@ -1156,7 +1161,7 @@ def forum_category(category_id):
     threads = ForumThread.query.filter_by(category_id=category_id).order_by(ForumThread.created_at.desc()).all()
     return render_template('forum/category.html', category=category, threads=threads)
 
-@app.route('/forum/thread/<int:thread_id>', methods=['GET', 'POST'])  # Add POST method
+@app.route('/forum/thread/<int:thread_id>', methods=['GET', 'POST'])
 def forum_thread(thread_id):
     thread = ForumThread.query.get_or_404(thread_id)
     posts = ForumPost.query.filter_by(thread_id=thread_id).order_by(ForumPost.created_at.asc()).all()
@@ -1176,65 +1181,70 @@ def forum_thread(thread_id):
     return render_template('forum/thread.html', 
                          thread=thread, 
                          posts=posts,
-                         form=form)  # Pass form to template
+                         form=form)
 
-from flask import request, flash
-from mark.form import ThreadForm, PostForm
-from flask import request, flash, abort
-from werkzeug.utils import secure_filename
-
-# ... (your existing routes)
-
-@app.route('/forum/thread/<int:thread_id>/edit', methods=['GET', 'POST'])
+@app.route('/forum/thread/<int:thread_id>/edit', methods=['POST'])
 @login_required
 def edit_thread(thread_id):
     thread = ForumThread.query.get_or_404(thread_id)
     
-    # Check if current user is the thread author
     if thread.user_id != current_user.id:
         abort(403)  # Forbidden
     
-    form = ThreadForm(obj=thread)
+    # Get data from form submission
+    title = request.form.get('title')
+    content = request.form.get('content')
     
-    if form.validate_on_submit():
-        thread.title = form.title.data
-        thread.content = form.content.data
-        db.session.commit()
-        flash('Thread updated successfully!', 'success')
-        return redirect(url_for('forum_thread', thread_id=thread.id))
+    if not title or not content:
+        flash('Title and content are required', 'error')
+        return redirect(url_for('forum_category', category_id=thread.category_id))
     
-    return render_template('forum/edit_thread.html', form=form, thread=thread)
+    thread.title = title
+    thread.content = content
+    db.session.commit()
+    
+    flash('Thread updated successfully!', 'success')
+    return redirect(url_for('forum_thread', thread_id=thread.id))
 
 @app.route('/forum/thread/<int:thread_id>/delete', methods=['POST'])
 @login_required
 def delete_thread(thread_id):
     thread = ForumThread.query.get_or_404(thread_id)
     
-    # Check if current user is the thread author
     if thread.user_id != current_user.id:
         abort(403)  # Forbidden
     
+    category_id = thread.category_id
     db.session.delete(thread)
     db.session.commit()
     flash('Thread deleted successfully!', 'success')
-    return redirect(url_for('forum_category', category_id=thread.category_id))
+    return redirect(url_for('forum_category', category_id=category_id))
 
-@app.route('/forum/create_thread/<int:category_id>', methods=['GET', 'POST'])
+@app.route('/forum/create_thread/<int:category_id>', methods=['POST'])
 @login_required
 def create_thread(category_id):
-    form = ThreadForm()
-    if form.validate_on_submit():
-        thread = ForumThread(
-            title=form.title.data,
-            content=form.content.data,
-            user_id=current_user.id,
-            category_id=category_id
-        )
-        db.session.add(thread)
-        db.session.commit()
-        flash('Thread created successfully!', 'success')
-        return redirect(url_for('forum_thread', thread_id=thread.id))
-    return render_template('forum/create_thread.html', form=form)
+    # Get data from form submission
+    title = request.form.get('title')
+    content = request.form.get('content')
+    
+    if not title or not content:
+        flash('Title and content are required', 'error')
+        return redirect(url_for('forum_category', category_id=category_id))
+    
+    thread = ForumThread(
+        title=title,
+        content=content,
+        user_id=current_user.id,
+        category_id=category_id
+    )
+    db.session.add(thread)
+    db.session.commit()
+    
+    flash('Thread created successfully!', 'success')
+    return redirect(url_for('forum_thread', thread_id=thread.id))
+
+
+
 @app.template_filter('time_ago')
 def time_ago_filter(dt):
     now = datetime.utcnow()
