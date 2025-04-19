@@ -8,61 +8,49 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script>
-   document.addEventListener('DOMContentLoaded', function() {
-    const replyForm = document.getElementById('replyForm');
-    
-    replyForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const threadId = {{ thread.id }};
-        const submitBtn = document.getElementById('submitPost');
-        const content = document.querySelector('#replyForm textarea').value;
-        
-        // Disable button during submission
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = 'Posting...';
-        
-        fetch(`/forum/thread/${threadId}/post`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                content: content
-            })
-        })
-        .then(response => {
-            // First check if the response is JSON
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error("Server didn't return JSON");
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                addNewPost(data.post);
-                replyForm.reset();
-                showFlashMessage('Post created successfully!', 'success');
-            } else {
-                showFlashMessage(data.error || 'Error creating post', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showFlashMessage('Failed to create post. Please try again.', 'error');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Post Reply';
-        });
-    });
-    
-    // Rest of your functions remain the same
-    function addNewPost(postData) { /* ... */ }
-    function showFlashMessage(message, type) { /* ... */ }
-});
+        document.addEventListener('DOMContentLoaded', function() {
+            const replyForm = document.getElementById('replyForm');
+            
+            replyForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(replyForm);
+                const threadId = {{ thread.id }};
+                const submitBtn = document.getElementById('submitPost');
+                
+                // Disable button during submission
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = 'Posting...';
+                
+                fetch(`/forum/thread/${threadId}/post`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Add new post to the thread
+                        addNewPost(data.post);
+                        // Clear the form
+                        replyForm.reset();
+                        // Show success message
+                        showFlashMessage('Post created successfully!', 'success');
+                    } else {
+                        showFlashMessage(data.error || 'Error creating post', 'error');
+                    }
+                })
+                .catch(error => {
+                    showFlashMessage('An error occurred', 'error');
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Post Reply';
+                });
+            });
             
             function addNewPost(postData) {
                 const postsContainer = document.querySelector('.posts-container');
