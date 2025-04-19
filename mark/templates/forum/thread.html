@@ -8,25 +8,14 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Emoji Picker -->
-<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
     <style>
-        :root {
-            --bg-primary: #121212;
-            --bg-secondary: #1e1e1e;
-            --bg-tertiary: #2a2a2a;
-            --accent-primary: #5865F2;
-            --accent-secondary: #3BA55C;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --highlight: rgba(88, 101, 242, 0.1);
-            --border-color: #333333;
-        }
-
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
+        /* Custom Colors */
+        .text-yellow-custom { color: #F8BC04 !important; }
+        .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
+        .bg-dark-secondary { background: linear-gradient(135deg, #1e1e1e, #252525) !important; }
+        .bg-dark-tertiary { background: linear-gradient(135deg, #252525, #2d2d2d) !important; }
+        .border-dark { border-color: rgba(255, 255, 255, 0.05) !important; }
 
         /* Thread Container */
         .thread-container {
@@ -38,7 +27,7 @@
 
         /* Thread Header */
         .thread-header {
-            border-left: 4px solid var(--accent-primary);
+            border-left: 4px solid #F8BC04;
             padding-left: 16px;
             margin-bottom: 24px;
         }
@@ -47,14 +36,16 @@
             font-size: 28px;
             font-weight: 700;
             margin-bottom: 8px;
-            color: var(--text-primary);
+            color: white;
+            transition: color 0.3s ease;
         }
 
         .thread-meta {
             display: flex;
             gap: 16px;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.6);
             font-size: 14px;
+            transition: color 0.3s ease;
         }
 
         /* Messages Container */
@@ -66,20 +57,23 @@
 
         /* Message Card */
         .message-card {
-            background-color: var(--bg-secondary);
+            background: linear-gradient(135deg, #1e1e1e, #252525);
             border-radius: 12px;
             padding: 16px;
-            transition: all 0.2s ease;
-            border: 1px solid var(--border-color);
-        }
-
-        .message-card.replying-to {
-            background-color: var(--highlight);
-            border-left: 4px solid var(--accent-primary);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
 
         .message-card:hover {
-            background-color: var(--bg-tertiary);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            border-color: rgba(248, 188, 4, 0.2);
+        }
+
+        .message-card.replying-to {
+            background: linear-gradient(135deg, #252525, #2d2d2d);
+            border-left: 4px solid #F8BC04;
         }
 
         .message-header {
@@ -93,8 +87,8 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: var(--accent-primary);
-            color: #fff;
+            background: linear-gradient(135deg, #F8BC04, #e6a905);
+            color: #1a1a1a;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -109,7 +103,7 @@
 
         .user-name {
             font-weight: 600;
-            color: var(--text-primary);
+            color: white;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -117,15 +111,15 @@
 
         .badge {
             font-size: 12px;
-            background-color: var(--accent-secondary);
-            color: white;
+            background: linear-gradient(135deg, #F8BC04, #e6a905);
+            color: #1a1a1a;
             padding: 2px 6px;
             border-radius: 4px;
             font-weight: 500;
         }
 
         .message-time {
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.6);
             font-size: 13px;
             margin-top: 2px;
         }
@@ -136,6 +130,7 @@
             line-height: 1.6;
             white-space: pre-wrap;
             font-size: 15px;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .message-image {
@@ -163,7 +158,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.5);
             cursor: pointer;
             transition: all 0.2s ease;
             font-size: 14px;
@@ -172,8 +167,12 @@
         }
 
         .action-btn:hover {
-            color: var(--accent-primary);
-            background-color: rgba(88, 101, 242, 0.1);
+            color: #F8BC04;
+            background-color: rgba(248, 188, 4, 0.1);
+        }
+
+        .action-btn.liked {
+            color: #ef4444;
         }
 
         .action-btn .material-icons {
@@ -184,7 +183,7 @@
         .reply-thread {
             margin-left: 40px;
             margin-top: 16px;
-            border-left: 2px solid var(--border-color);
+            border-left: 2px solid rgba(255, 255, 255, 0.05);
             padding-left: 16px;
             display: flex;
             flex-direction: column;
@@ -197,8 +196,8 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #1e1e1e, #252525);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
             padding: 16px;
             z-index: 100;
             box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
@@ -217,23 +216,23 @@
 
         .reply-input {
             flex-grow: 1;
-            background-color: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
+            background-color: #1a1a1a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             padding: 14px 16px;
-            color: var(--text-primary);
+            color: white;
             resize: none;
             min-height: 60px;
             max-height: 200px;
             font-size: 15px;
             line-height: 1.5;
-            transition: border-color 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         .reply-input:focus {
             outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.2);
+            border-color: #F8BC04;
+            box-shadow: 0 0 0 2px rgba(248, 188, 4, 0.2);
         }
 
         .reply-toolbar {
@@ -246,7 +245,7 @@
         .tool-btn {
             background: none;
             border: none;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.5);
             cursor: pointer;
             padding: 6px;
             border-radius: 4px;
@@ -257,8 +256,8 @@
         }
 
         .tool-btn:hover {
-            background-color: var(--highlight);
-            color: var(--accent-primary);
+            background-color: rgba(248, 188, 4, 0.1);
+            color: #F8BC04;
         }
 
         .tool-btn .material-icons {
@@ -266,8 +265,8 @@
         }
 
         .submit-btn {
-            background-color: var(--accent-primary);
-            color: #fff;
+            background: linear-gradient(135deg, #F8BC04, #e6a905);
+            color: #1a1a1a;
             border: none;
             border-radius: 8px;
             padding: 10px 20px;
@@ -280,8 +279,8 @@
         }
 
         .submit-btn:hover {
-            background-color: #4752C4;
             transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
 
         .submit-btn:active {
@@ -291,7 +290,7 @@
         /* Mention Popup */
         .mention-popup {
             position: absolute;
-            background-color: var(--bg-tertiary);
+            background: linear-gradient(135deg, #252525, #2d2d2d);
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             max-height: 200px;
@@ -299,7 +298,7 @@
             z-index: 101;
             display: none;
             width: 250px;
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .mention-item {
@@ -309,10 +308,12 @@
             align-items: center;
             gap: 8px;
             transition: background-color 0.2s ease;
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .mention-item:hover {
-            background-color: var(--highlight);
+            background-color: rgba(248, 188, 4, 0.1);
+            color: white;
         }
 
         .mention-item .user-avatar {
@@ -332,14 +333,14 @@
             max-height: 200px;
             border-radius: 8px;
             position: relative;
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .remove-image {
             position: absolute;
             top: -10px;
             right: -10px;
-            background-color: #ff4444;
+            background-color: #ef4444;
             color: white;
             border-radius: 50%;
             width: 24px;
@@ -359,7 +360,7 @@
 
         /* Replying indicator */
         .replying-indicator {
-            background-color: var(--highlight);
+            background-color: rgba(248, 188, 4, 0.1);
             padding: 8px 12px;
             border-radius: 8px;
             margin-bottom: 12px;
@@ -367,17 +368,28 @@
             align-items: center;
             justify-content: space-between;
             font-size: 14px;
-            color: var(--accent-primary);
+            color: #F8BC04;
         }
 
         .cancel-reply {
             cursor: pointer;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.5);
             transition: color 0.2s ease;
         }
 
         .cancel-reply:hover {
-            color: var(--text-primary);
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes fadeeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Responsive */
@@ -415,93 +427,98 @@
 {% endblock %}
 
 {% block content %}
-<div class="thread-container">
-    <!-- Thread Header -->
-    <div class="thread-header">
-        <h1 class="thread-title">{{ thread.title }}</h1>
-        <div class="thread-meta">
-            <span>Started by {{ thread.user.username }}</span>
-            <span>{{ thread.created_at.strftime('%B %d, %Y') }}</span>
-            <span>{{ thread.posts|length }} replies</span>
-        </div>
-    </div>
-
-    <!-- Messages Container -->
-    <div class="messages-container" id="messagesContainer">
-        {% for post in posts %}
-        <div class="message-card" id="post-{{ post.id }}" data-post-id="{{ post.id }}">
-            <div class="message-header">
-                <div class="user-avatar">{{ post.user.username[0]|upper }}</div>
-                <div class="user-info">
-                    <div class="user-name">
-                        {{ post.user.username }}
-                        {% if post.user == thread.user %}
-                        <span class="badge">OP</span>
-                        {% endif %}
-                    </div>
-                    <div class="message-time">{{ post.created_at.strftime('%H:%M · %b %d, %Y') }}</div>
-                </div>
+<div class="min-h-screen bg-dark-gradient pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="thread-container">
+        <!-- Thread Header -->
+        <div class="thread-header animate-slidee-in-left" style="--animation-order: 0">
+            <h1 class="thread-title">{{ thread.title }}</h1>
+            <div class="thread-meta">
+                <span>Started by {{ thread.user.username }}</span>
+                <span>{{ thread.created_at.strftime('%B %d, %Y') }}</span>
+                <span>{{ thread.posts|length }} replies</span>
             </div>
-            
-            <div class="message-content">
-                {{ post.content }}
-                {% if post.image_url %}
-                <img src="{{ post.image_url }}" class="message-image" alt="Post image">
+        </div>
+
+        <!-- Messages Container -->
+        <div class="messages-container" id="messagesContainer">
+            {% for post in posts %}
+            <div class="message-card animate-fadee-in-up" id="post-{{ post.id }}" data-post-id="{{ post.id }}" 
+                 style="--animation-order: {{ loop.index }}">
+                <div class="message-header">
+                    <div class="user-avatar">{{ post.user.username[0]|upper }}</div>
+                    <div class="user-info">
+                        <div class="user-name">
+                            {{ post.user.username }}
+                            {% if post.user == thread.user %}
+                            <span class="badge">OP</span>
+                            {% endif %}
+                        </div>
+                        <div class="message-time">{{ post.created_at.strftime('%H:%M · %b %d, %Y') }}</div>
+                    </div>
+                </div>
+                
+                <div class="message-content">
+                    {{ post.content }}
+                    {% if post.image_url %}
+                    <img src="{{ post.image_url }}" class="message-image" alt="Post image">
+                    {% endif %}
+                </div>
+                
+                <div class="message-actions">
+                    <div class="action-btn reply-btn" data-post-id="{{ post.id }}">
+                        <span class="material-icons">reply</span>
+                        <span>Reply</span>
+                    </div>
+                    <div class="action-btn like-btn {% if current_user.is_authenticated and post in current_user.liked_posts %}liked{% endif %}" 
+                         data-post-id="{{ post.id }}">
+                        <span class="material-icons">{% if current_user.is_authenticated and post in current_user.liked_posts %}favorite{% else %}favorite_border{% endif %}</span>
+                        <span>Like</span>
+                        <span class="like-count">{% if post.likes %}{{ post.likes|length }}{% else %}0{% endif %}</span>
+                    </div>
+                </div>
+                
+                <!-- Replies would go here -->
+                {% if post.replies %}
+                <div class="reply-thread">
+                    {% for reply in post.replies %}
+                    <div class="message-card" id="post-{{ reply.id }}" data-post-id="{{ reply.id }}">
+                        <div class="message-header">
+                            <div class="user-avatar">{{ reply.user.username[0]|upper }}</div>
+                            <div class="user-info">
+                                <div class="user-name">
+                                    {{ reply.user.username }}
+                                    {% if reply.user == thread.user %}
+                                    <span class="badge">OP</span>
+                                    {% endif %}
+                                </div>
+                                <div class="message-time">{{ reply.created_at.strftime('%H:%M · %b %d, %Y') }}</div>
+                            </div>
+                        </div>
+                        <div class="message-content">
+                            {{ reply.content }}
+                            {% if reply.image_url %}
+                            <img src="{{ reply.image_url }}" class="message-image" alt="Reply image">
+                            {% endif %}
+                        </div>
+                        <div class="message-actions">
+                            <div class="action-btn reply-btn" data-post-id="{{ reply.id }}">
+                                <span class="material-icons">reply</span>
+                                <span>Reply</span>
+                            </div>
+                            <div class="action-btn like-btn {% if current_user.is_authenticated and reply in current_user.liked_posts %}liked{% endif %}" 
+                                 data-post-id="{{ reply.id }}">
+                                <span class="material-icons">{% if current_user.is_authenticated and reply in current_user.liked_posts %}favorite{% else %}favorite_border{% endif %}</span>
+                                <span>Like</span>
+                                <span class="like-count">{% if reply.likes %}{{ reply.likes|length }}{% else %}0{% endif %}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
                 {% endif %}
             </div>
-            
-            <div class="message-actions">
-                <div class="action-btn reply-btn" data-post-id="{{ post.id }}">
-                    <span class="material-icons">reply</span>
-                    <span>Reply</span>
-                </div>
-                <div class="action-btn like-btn" data-post-id="{{ post.id }}">
-                    <span class="material-icons">favorite_border</span>
-                    <span>Like</span>
-                    <span class="like-count">{% if post.likes %}{{ post.likes|length }}{% else %}0{% endif %}</span>
-                </div>
-            </div>
-            
-            <!-- Replies would go here -->
-            {% if post.replies %}
-            <div class="reply-thread">
-                {% for reply in post.replies %}
-                <div class="message-card" id="post-{{ reply.id }}" data-post-id="{{ reply.id }}">
-                    <div class="message-header">
-                        <div class="user-avatar">{{ reply.user.username[0]|upper }}</div>
-                        <div class="user-info">
-                            <div class="user-name">
-                                {{ reply.user.username }}
-                                {% if reply.user == thread.user %}
-                                <span class="badge">OP</span>
-                                {% endif %}
-                            </div>
-                            <div class="message-time">{{ reply.created_at.strftime('%H:%M · %b %d, %Y') }}</div>
-                        </div>
-                    </div>
-                    <div class="message-content">
-                        {{ reply.content }}
-                        {% if reply.image_url %}
-                        <img src="{{ reply.image_url }}" class="message-image" alt="Reply image">
-                        {% endif %}
-                    </div>
-                    <div class="message-actions">
-                        <div class="action-btn reply-btn" data-post-id="{{ reply.id }}">
-                            <span class="material-icons">reply</span>
-                            <span>Reply</span>
-                        </div>
-                        <div class="action-btn like-btn" data-post-id="{{ reply.id }}">
-                            <span class="material-icons">favorite_border</span>
-                            <span>Like</span>
-                            <span class="like-count">{% if reply.likes %}{{ reply.likes|length }}{% else %}0{% endif %}</span>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </div>
 
@@ -543,7 +560,7 @@
                     <input type="file" id="imageUpload" name="image" accept="image/*" style="display:none;">
                 </label>
                 <div class="flex-grow"></div>
-                <span id="charCount" class="text-sm text-gray-400">0/2000</span>
+                <span id="charCount" class="text-sm" style="color: rgba(255,255,255,0.5)">0/2000</span>
             </div>
             
             <div id="imagePreviewContainer" class="image-preview-container">
@@ -594,11 +611,9 @@
             charCount.textContent = `${currentLength}/2000`;
             
             if (currentLength > 1900) {
-                charCount.classList.add('text-yellow-400');
-                charCount.classList.remove('text-gray-400');
+                charCount.style.color = '#F8BC04';
             } else {
-                charCount.classList.remove('text-yellow-400');
-                charCount.classList.add('text-gray-400');
+                charCount.style.color = 'rgba(255,255,255,0.5)';
             }
         });
         
@@ -636,20 +651,62 @@
             });
         });
         
-        // Mention functionality
-        mentionBtn.addEventListener('click', function() {
-            const rect = messageInput.getBoundingClientRect();
-            mentionPopup.style.display = 'block';
-            mentionPopup.style.top = `${rect.top - mentionPopup.offsetHeight - 10}px`;
-            mentionPopup.style.left = `${rect.left}px`;
+        // Enhanced mention functionality
+        let mentionStartPos = -1;
+        
+        messageInput.addEventListener('input', function() {
+            const cursorPos = this.selectionStart;
+            const text = this.value.substring(0, cursorPos);
+            
+            // Check if we're typing after an @ symbol
+            const lastAtPos = text.lastIndexOf('@');
+            
+            if (lastAtPos >= 0 && (lastAtPos === 0 || text[lastAtPos - 1].match(/\s/))) {
+                const mentionText = text.substring(lastAtPos + 1);
+                
+                // Show mention popup if we have text after @
+                if (mentionText.length > 0) {
+                    mentionStartPos = lastAtPos;
+                    filterMentionList(mentionText);
+                    
+                    const rect = messageInput.getBoundingClientRect();
+                    mentionPopup.style.display = 'block';
+                    mentionPopup.style.top = `${rect.top - mentionPopup.offsetHeight - 10}px`;
+                    mentionPopup.style.left = `${rect.left}px`;
+                } else {
+                    mentionPopup.style.display = 'none';
+                }
+            } else {
+                mentionPopup.style.display = 'none';
+            }
         });
+        
+        function filterMentionList(text) {
+            const mentionItems = mentionPopup.querySelectorAll('.mention-item');
+            const searchText = text.toLowerCase();
+            
+            mentionItems.forEach(item => {
+                const username = item.getAttribute('data-username').toLowerCase();
+                if (username.includes(searchText)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
         
         document.querySelectorAll('.mention-item').forEach(item => {
             item.addEventListener('click', function() {
-                const username = this.getAttribute('data-username');
-                insertAtCursor(messageInput, `@${username} `);
+                if (mentionStartPos >= 0) {
+                    const username = this.getAttribute('data-username');
+                    const textBefore = messageInput.value.substring(0, mentionStartPos);
+                    const textAfter = messageInput.value.substring(messageInput.selectionStart);
+                    
+                    messageInput.value = textBefore + '@' + username + ' ' + textAfter;
+                    messageInput.selectionStart = messageInput.selectionEnd = mentionStartPos + username.length + 2;
+                    messageInput.focus();
+                }
                 mentionPopup.style.display = 'none';
-                messageInput.focus();
             });
         });
         
@@ -658,6 +715,12 @@
             if (!mentionBtn.contains(e.target) && !mentionPopup.contains(e.target)) {
                 mentionPopup.style.display = 'none';
             }
+        });
+        
+        // Manual mention button
+        mentionBtn.addEventListener('click', function() {
+            insertAtCursor(messageInput, '@');
+            messageInput.focus();
         });
         
         // Emoji picker
@@ -714,6 +777,48 @@
         messageInput.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = `${Math.min(this.scrollHeight, 200)}px`;
+        });
+        
+        // Like functionality
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const postId = this.getAttribute('data-post-id');
+                const isLiked = this.classList.contains('liked');
+                
+                try {
+                    const response = await fetch(`/forum/post/${postId}/like`, {
+                        method: isLiked ? 'DELETE' : 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Update like count
+                        const likeCountElement = this.querySelector('.like-count');
+                        likeCountElement.textContent = data.likes_count;
+                        
+                        // Update button state
+                        this.classList.toggle('liked');
+                        const icon = this.querySelector('.material-icons');
+                        icon.textContent = this.classList.contains('liked') ? 'favorite' : 'favorite_border';
+                        
+                        // Visual feedback
+                        if (!isLiked) {
+                            this.style.animation = 'none';
+                            void this.offsetWidth; // Trigger reflow
+                            this.style.animation = 'heartBeat 0.5s';
+                        }
+                    } else {
+                        console.error('Error toggling like');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
         });
         
         // Handle form submission with AJAX
@@ -846,6 +951,46 @@
                 });
                 postElement.classList.add('replying-to');
                 postElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+            
+            // Add like button event listener
+            messageElement.querySelector('.like-btn').addEventListener('click', async function() {
+                const postId = this.getAttribute('data-post-id');
+                const isLiked = this.classList.contains('liked');
+                
+                try {
+                    const response = await fetch(`/forum/post/${postId}/like`, {
+                        method: isLiked ? 'DELETE' : 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Update like count
+                        const likeCountElement = this.querySelector('.like-count');
+                        likeCountElement.textContent = data.likes_count;
+                        
+                        // Update button state
+                        this.classList.toggle('liked');
+                        const icon = this.querySelector('.material-icons');
+                        icon.textContent = this.classList.contains('liked') ? 'favorite' : 'favorite_border';
+                        
+                        // Visual feedback
+                        if (!isLiked) {
+                            this.style.animation = 'none';
+                            void this.offsetWidth; // Trigger reflow
+                            this.style.animation = 'heartBeat 0.5s';
+                        }
+                    } else {
+                        console.error('Error toggling like');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
             });
         }
         
