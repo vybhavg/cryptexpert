@@ -7,410 +7,537 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const replyForm = document.getElementById('replyForm');
-            
-            replyForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(replyForm);
-                const threadId = {{ thread.id }};
-                const submitBtn = document.getElementById('submitPost');
-                
-                // Disable button during submission
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = 'Posting...';
-                
-                fetch(`/forum/thread/${threadId}/post`, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Add new post to the thread
-                        addNewPost(data.post);
-                        // Clear the form
-                        replyForm.reset();
-                        // Show success message
-                        showFlashMessage('Post created successfully!', 'success');
-                    } else {
-                        showFlashMessage(data.error || 'Error creating post', 'error');
-                    }
-                })
-                .catch(error => {
-                    showFlashMessage('An error occurred', 'error');
-                    console.error('Error:', error);
-                })
-                .finally(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Post Reply';
-                });
-            });
-            
-            function addNewPost(postData) {
-                const postsContainer = document.querySelector('.posts-container');
-                const newPost = document.createElement('div');
-                newPost.className = 'post-card';
-                newPost.innerHTML = `
-                    <div class="post-content">${postData.content}</div>
-                    <div class="post-footer">
-                        <div class="post-author">
-                            <div class="author-avatar">${postData.user_initial}</div>
-                            <span>${postData.username}</span>
-                        </div>
-                        <div class="post-date">
-                            ${postData.created_at}
-                        </div>
-                    </div>
-                `;
-                postsContainer.appendChild(newPost);
-                
-                // Scroll to the new post
-                newPost.scrollIntoView({ behavior: 'smooth' });
-                
-                // Add fade-in animation
-                newPost.style.opacity = 0;
-                setTimeout(() => {
-                    newPost.style.transition = 'opacity 0.3s ease';
-                    newPost.style.opacity = 1;
-                }, 10);
-            }
-            
-            function showFlashMessage(message, type) {
-                const flashDiv = document.createElement('div');
-                flashDiv.className = `flash-message flash-${type}`;
-                flashDiv.textContent = message;
-                
-                document.body.appendChild(flashDiv);
-                
-                setTimeout(() => {
-                    flashDiv.style.opacity = 1;
-                }, 10);
-                
-                setTimeout(() => {
-                    flashDiv.style.opacity = 0;
-                    setTimeout(() => {
-                        document.body.removeChild(flashDiv);
-                    }, 300);
-                }, 3000);
-            }
-
-            // Scroll to top button
-            const scrollToTopBtn = document.getElementById('scrollToTop');
-            window.addEventListener('scroll', function() {
-                if (window.pageYOffset > 300) {
-                    scrollToTopBtn.classList.remove('hidden');
-                } else {
-                    scrollToTopBtn.classList.add('hidden');
-                }
-            });
-
-            scrollToTopBtn.addEventListener('click', function() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-        });
-    </script>
+    <!-- Emoji Picker -->
+    <link href="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.12.0" rel="stylesheet">
     <style>
-        /* Custom Colors */
-        .text-yellow-custom { color: #F8BC04 !important; }
-        .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
-        .bg-dark-card { background: linear-gradient(135deg, #1e1e1e, #252525) !important; }
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #252525;
+            --bg-tertiary: #2d2d2d;
+            --accent-yellow: #F8BC04;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --highlight: rgba(248, 188, 4, 0.1);
+        }
 
-        /* Main Container */
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Thread Container */
         .thread-container {
-            min-height: calc(100vh - 80px);
-            padding-top: 80px;
-            padding-bottom: 180px; /* Extra space for fixed form */
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 180px;
         }
 
         /* Thread Header */
         .thread-header {
-            margin-top:30px;
-            border-left: 4px solid #F8BC04;
-            padding-left: 1.5rem;
-            margin-bottom: 2rem;
+            border-left: 4px solid var(--accent-yellow);
+            padding-left: 16px;
+            margin-bottom: 24px;
         }
 
         .thread-title {
-            font-size: 2.25rem;
-            line-height: 1.9;
+            font-size: 24px;
             font-weight: 700;
-            background: linear-gradient(to right, #F8BC04, #ffffff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
+            color: var(--accent-yellow);
         }
 
         .thread-meta {
             display: flex;
-            align-items: center;
-            gap: 1.5rem;
+            gap: 16px;
+            color: var(--text-secondary);
+            font-size: 14px;
         }
 
-        .meta-item {
+        /* Messages Container */
+        .messages-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Message Card */
+        .message-card {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .message-card:hover {
+            background-color: var(--bg-tertiary);
+        }
+
+        .message-header {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            color: rgba(255, 255, 255, 0.7);
+            gap: 12px;
+            margin-bottom: 8px;
         }
 
-        /* Posts Container */
-        .posts-container {
-            margin-top: 2rem;
-            margin-bottom: 180px; /* Space for fixed form */
-        }
-
-        .post-card {
-            background: linear-gradient(135deg, #1e1e1e, #252525);
-            border-radius: 0.75rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .post-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-            border-color: rgba(248, 188, 4, 0.3);
-        }
-
-        .post-content {
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.7;
-            margin-bottom: 1rem;
-            font-size: 1.05rem;
-        }
-
-        .post-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-        }
-
-        .post-author {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .author-avatar {
-            width: 32px;
-            height: 32px;
+        .user-avatar {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background-color: #F8BC04;
-            color: #1a1a1a;
+            background-color: var(--accent-yellow);
+            color: #000;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            font-size: 18px;
         }
 
-        /* Fixed Reply Form */
-        .reply-form-container {
+        .user-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .message-time {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .message-content {
+            margin-left: 52px;
+            margin-bottom: 8px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .message-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 16px;
+            margin-left: 52px;
+            margin-top: 8px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s ease;
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            color: var(--accent-yellow);
+        }
+
+        /* Reply Thread */
+        .reply-thread {
+            margin-left: 40px;
+            margin-top: 8px;
+            border-left: 2px solid var(--bg-tertiary);
+            padding-left: 12px;
+        }
+
+        /* Fixed Reply Box */
+        .reply-box {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, #1a1a1a, #252525);
-            border-top: 1px solid rgba(248, 188, 4, 0.2);
-            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--bg-tertiary);
+            padding: 16px;
             z-index: 100;
         }
 
-        .reply-form-wrapper {
-            max-width: 4xl;
+        .reply-box-container {
+            max-width: 800px;
             margin: 0 auto;
         }
 
-        .form-title {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            color: #F8BC04;
+        .reply-input-container {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
         }
 
-        .form-input {
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            color: white;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            width: 100%;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #F8BC04;
-            box-shadow: 0 0 0 2px rgba(248, 188, 4, 0.2);
-        }
-
-        textarea.form-input {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .form-submit {
-            background: linear-gradient(135deg, #F8BC04, #e6a905);
-            color: #1a1a1a;
-            font-weight: 600;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
+        .reply-input {
+            flex-grow: 1;
+            background-color: var(--bg-tertiary);
             border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            resize: none;
+            min-height: 60px;
+            max-height: 200px;
+        }
+
+        .reply-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--accent-yellow);
+        }
+
+        .reply-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .tool-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.3s ease;
+            padding: 4px;
+            border-radius: 4px;
         }
 
-        .form-submit:hover {
+        .tool-btn:hover {
+            background-color: var(--highlight);
+            color: var(--accent-yellow);
+        }
+
+        .submit-btn {
+            background-color: var(--accent-yellow);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(248, 188, 4, 0.3);
         }
 
-        /* Scroll to Top Button */
-        #scrollToTop {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
+        /* Mention Popup */
+        .mention-popup {
+            position: absolute;
+            background-color: var(--bg-tertiary);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 101;
+            display: none;
+        }
+
+        .mention-item {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        .mention-item:hover {
+            background-color: var(--highlight);
+        }
+
+        /* Image Preview */
+        .image-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 4px;
+            margin-top: 8px;
+            position: relative;
+        }
+
+        .remove-image {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ff4444;
+            color: white;
             border-radius: 50%;
-            background: linear-gradient(135deg, #F8BC04, #e6a905);
-            color: #1a1a1a;
+            width: 20px;
+            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 12px;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            z-index: 99;
         }
 
-        #scrollToTop:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-        }
-
-        #scrollToTop.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .post-card {
-            animation: fadeIn 0.4s ease-out forwards;
-            animation-delay: calc(var(--post-index) * 0.1s);
-            opacity: 0;
-        }
-
-        /* Responsive Design */
+        /* Responsive */
         @media (max-width: 768px) {
-            .thread-title {
-                font-size: 1.75rem;
+            .thread-container {
+                padding: 12px;
+                padding-bottom: 160px;
             }
             
-            .thread-meta {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
+            .reply-thread {
+                margin-left: 20px;
             }
             
-            .post-card {
-                padding: 1rem;
-            }
-            
-            .reply-form-container {
-                padding: 1rem;
-            }
-            
-            textarea.form-input {
-                min-height: 80px;
-            }
-            
-            #scrollToTop {
-                bottom: 90px;
-                right: 20px;
-                width: 40px;
-                height: 40px;
+            .message-content, .message-actions {
+                margin-left: 0;
             }
         }
     </style>
 {% endblock %}
 
 {% block content %}
-<div class="bg-dark-gradient thread-container px-4 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto">
-        <!-- Thread Header -->
-        <div class="thread-header">
-            <h1 class="thread-title">{{ thread.title }}</h1>
-            <div class="thread-meta">
-                <div class="meta-item">
-                    <span class="material-icons text-yellow-custom">person</span>
-                    <span>{{ thread.user.username }}</span>
-                </div>
-                <div class="meta-item">
-                    <span class="material-icons text-yellow-custom">schedule</span>
-                    <span>{{ thread.created_at.strftime('%B %d, %Y at %H:%M') }}</span>
-                </div>
-            </div>
+<div class="thread-container">
+    <!-- Thread Header -->
+    <div class="thread-header">
+        <h1 class="thread-title">{{ thread.title }}</h1>
+        <div class="thread-meta">
+            <span>Started by {{ thread.user.username }}</span>
+            <span>{{ thread.created_at.strftime('%B %d, %Y') }}</span>
         </div>
+    </div>
 
-        <!-- Posts Container -->
-        <div class="posts-container">
-            {% for post in posts %}
-            <div class="post-card">
-                <div class="post-content">{{ post.content }}</div>
-                <div class="post-footer">
-                    <div class="post-author">
-                        <div class="author-avatar">{{ post.user.username[0]|upper }}</div>
-                        <span>{{ post.user.username }}</span>
-                    </div>
-                    <div class="post-date">
-                        {{ post.created_at.strftime('%B %d, %Y at %H:%M') }}
-                    </div>
+    <!-- Messages Container -->
+    <div class="messages-container" id="messagesContainer">
+        {% for post in posts %}
+        <div class="message-card" data-post-id="{{ post.id }}">
+            <div class="message-header">
+                <div class="user-avatar">{{ post.user.username[0]|upper }}</div>
+                <div>
+                    <div class="user-name">{{ post.user.username }}</div>
+                    <div class="message-time">{{ post.created_at.strftime('%H:%M · %b %d, %Y') }}</div>
                 </div>
             </div>
-            {% endfor %}
+            
+            <div class="message-content">
+                {{ post.content }}
+                {% if post.image_url %}
+                <img src="{{ post.image_url }}" class="message-image" alt="Post image">
+                {% endif %}
+            </div>
+            
+            <div class="message-actions">
+                <div class="action-btn reply-btn" data-post-id="{{ post.id }}">
+                    <span class="material-icons" style="font-size:18px;">reply</span>
+                    <span>Reply</span>
+                </div>
+                <div class="action-btn">
+                    <span class="material-icons" style="font-size:18px;">favorite_border</span>
+                    <span>Like</span>
+                </div>
+            </div>
+            
+            <!-- Replies would go here -->
+            {% if post.replies %}
+            <div class="reply-thread">
+                {% for reply in post.replies %}
+                <div class="message-card">
+                    <div class="message-header">
+                        <div class="user-avatar">{{ reply.user.username[0]|upper }}</div>
+                        <div>
+                            <div class="user-name">{{ reply.user.username }}</div>
+                            <div class="message-time">{{ reply.created_at.strftime('%H:%M · %b %d, %Y') }}</div>
+                        </div>
+                    </div>
+                    <div class="message-content">
+                        {{ reply.content }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
         </div>
+        {% endfor %}
     </div>
 </div>
 
-<!-- Fixed Reply Form -->
-<div class="reply-form-container">
-    <div class="max-w-4xl mx-auto reply-form-wrapper">
-        <h3 class="form-title">Post a Reply</h3>
-        <form id="replyForm" method="POST">
+<!-- Fixed Reply Box -->
+<div class="reply-box">
+    <div class="reply-box-container">
+        <form id="replyForm" method="POST" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
-            <div class="form-group">
-                {{ form.content(class="form-input form-textarea", placeholder="Write your reply here...") }}
+            <input type="hidden" name="reply_to" id="replyTo" value="">
+            
+            <div class="reply-input-container">
+                <textarea 
+                    id="messageInput" 
+                    class="reply-input" 
+                    name="content" 
+                    placeholder="Write your message..." 
+                    rows="1"
+                ></textarea>
+                <button type="submit" class="submit-btn">Send</button>
             </div>
-            <div class="form-actions">
-                <button type="submit" id="submitPost" class="form-submit">Post Reply</button>
+            
+            <div class="reply-toolbar">
+                <button type="button" class="tool-btn" id="mentionBtn">
+                    <span class="material-icons">alternate_email</span>
+                </button>
+                <button type="button" class="tool-btn" id="emojiBtn">
+                    <span class="material-icons">mood</span>
+                </button>
+                <label for="imageUpload" class="tool-btn">
+                    <span class="material-icons">image</span>
+                    <input type="file" id="imageUpload" name="image" accept="image/*" style="display:none;">
+                </label>
+            </div>
+            
+            <div id="imagePreviewContainer" style="display:none;">
+                <div class="image-preview">
+                    <img id="imagePreview" src="" alt="Preview">
+                    <div class="remove-image" id="removeImageBtn">×</div>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Scroll to Top Button -->
-<button id="scrollToTop" class="hidden">
-    <span class="material-icons">arrow_upward</span>
-</button>
+<!-- Mention Popup -->
+<div class="mention-popup" id="mentionPopup">
+    {% for user in all_users %}
+    <div class="mention-item" data-username="{{ user.username }}">
+        <div class="user-avatar" style="width:24px;height:24px;font-size:12px;display:inline-block;">
+            {{ user.username[0]|upper }}
+        </div>
+        <span style="margin-left:8px;">{{ user.username }}</span>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Emoji Picker -->
+<emoji-picker id="emojiPicker" style="position:fixed;bottom:80px;right:20px;display:none;"></emoji-picker>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const replyForm = document.getElementById('replyForm');
+        const messageInput = document.getElementById('messageInput');
+        const mentionBtn = document.getElementById('mentionBtn');
+        const mentionPopup = document.getElementById('mentionPopup');
+        const emojiBtn = document.getElementById('emojiBtn');
+        const emojiPicker = document.getElementById('emojiPicker');
+        const imageUpload = document.getElementById('imageUpload');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+        const replyToInput = document.getElementById('replyTo');
+        const messagesContainer = document.getElementById('messagesContainer');
+        
+        // Reply buttons
+        document.querySelectorAll('.reply-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const postId = this.getAttribute('data-post-id');
+                replyToInput.value = postId;
+                messageInput.focus();
+                // Highlight the message being replied to
+                document.querySelector(`.message-card[data-post-id="${postId}"]`).style.backgroundColor = 'rgba(248, 188, 4, 0.1)';
+            });
+        });
+        
+        // Mention functionality
+        mentionBtn.addEventListener('click', function() {
+            const rect = messageInput.getBoundingClientRect();
+            mentionPopup.style.display = 'block';
+            mentionPopup.style.top = `${rect.top - 210}px`;
+            mentionPopup.style.left = `${rect.left}px`;
+        });
+        
+        document.querySelectorAll('.mention-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const username = this.getAttribute('data-username');
+                insertAtCursor(messageInput, `@${username} `);
+                mentionPopup.style.display = 'none';
+            });
+        });
+        
+        // Emoji picker
+        emojiBtn.addEventListener('click', function() {
+            if (emojiPicker.style.display === 'none') {
+                emojiPicker.style.display = 'block';
+            } else {
+                emojiPicker.style.display = 'none';
+            }
+        });
+        
+        emojiPicker.addEventListener('emoji-click', event => {
+            insertAtCursor(messageInput, event.detail.unicode);
+        });
+        
+        // Image upload preview
+        imageUpload.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreviewContainer.style.display = 'block';
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+        
+        removeImageBtn.addEventListener('click', function() {
+            imagePreview.src = '';
+            imagePreviewContainer.style.display = 'none';
+            imageUpload.value = '';
+        });
+        
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        
+        // Handle form submission with AJAX
+        replyForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const threadId = {{ thread.id }};
+            
+            fetch(`/forum/thread/${threadId}/post`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Add new message to the thread
+                    addNewMessage(data.post);
+                    // Reset form
+                    this.reset();
+                    imagePreview.src = '';
+                    imagePreviewContainer.style.display = 'none';
+                    messageInput.style.height = 'auto';
+                    replyToInput.value = '';
+                } else {
+                    alert(data.error || 'Error posting message');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred');
+            });
+        });
+        
+        function addNewMessage(post) {
+            // Implementation to add new message to the UI
+            // This would depend on whether it's a reply or new top-level message
+        }
+        
+        function insertAtCursor(textarea, text) {
+            const startPos = textarea.selectionStart;
+            const endPos = textarea.selectionEnd;
+            const beforeText = textarea.value.substring(0, startPos);
+            const afterText = textarea.value.substring(endPos, textarea.value.length);
+            
+            textarea.value = beforeText + text + afterText;
+            textarea.selectionStart = startPos + text.length;
+            textarea.selectionEnd = startPos + text.length;
+            textarea.focus();
+        }
+    });
+</script>
 {% endblock %}
