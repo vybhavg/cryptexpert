@@ -1,6 +1,6 @@
 from mark import app, db, mail
 from mark.form import RegisterForm, LoginForm, otpform, verifyform,Authenticationform,ThreadForm,PostForm
-from mark.models import User, Item, CryptoAsset, Exchange, UserAPIKey, ForumCategory, ForumThread, ForumPost, PostLike
+from mark.models import User, Item, CryptoAsset, Exchange, UserAPIKey, ForumCategory, ForumThread, ForumPost, PostLike,Notification
 from flask import render_template,request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 import random, requests
