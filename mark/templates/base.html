@@ -796,7 +796,18 @@ html {
 
                     <ul class="navigation">
                         <li class="navigation__active"><a href="index-2.html"><i class="zmdi zmdi-home"></i> Home</a></li>
-
+                        <li class="@@typeactive"><a href="{{url_for('view_notifications')}}"><i class="zmdi zmdi-notifications"></i> Notifications</a></li>
+                        <li class="@@typeactive">
+    <a href="{{ url_for('forum_home') }}">
+        <i class="zmdi zmdi-forum"></i> Discussion Forums
+        {% if current_user.unread_forum_notifications > 0 %}
+            <span class="badge badge-pill badge-danger" 
+                  style="position: absolute; right: 15px; top: 15px; font-size: 10px;">
+                {{ current_user.unread_forum_notifications }}
+            </span>
+        {% endif %}
+    </a>
+</li>
                          <li class="@@typeactive"><a href="{{url_for('wallet_management')}}"><i class="zmdi zmdi-view-week"></i> Wallets</a></li>
                         <li class="@@typeactive"><a href="/charts?symbol=BTCUSDT"><i class="zmdi zmdi-library"></i> Live Charts</a></li>
 
