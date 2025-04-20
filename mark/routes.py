@@ -1533,7 +1533,7 @@ def privacy_policy():
                          datetime=datetime)
 
 @app.route('/terms')
-def terms_of_service():
+def terms():
     """Render the Terms of Service page"""
     return render_template('terms.html',
                          datetime=datetime)
