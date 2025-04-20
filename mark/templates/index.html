@@ -1944,29 +1944,28 @@ async function fetchPricesOnly() {
 }
 
 function formatPrice(price) {
-    const num = parseFloat(price);
+    const cleaned = price.toString().replace(/,/g, ''); // Remove commas
+    const num = parseFloat(cleaned);
     if (isNaN(num)) return price;
     
     if (num >= 1000) {
-        // For large numbers (BTC, ETH, etc.) - show full value with commas
         return num.toLocaleString('en-US', {
             maximumFractionDigits: 2,
             minimumFractionDigits: 0
         });
     } else if (num >= 1) {
-        // For medium numbers - show 2-4 decimal places
         return num.toLocaleString('en-US', {
             maximumFractionDigits: 4,
             minimumFractionDigits: 2
         });
     } else {
-        // For small numbers - show up to 8 decimal places
         return num.toLocaleString('en-US', {
             maximumFractionDigits: 8,
             minimumFractionDigits: 2
         });
     }
 }
+
 
 function updateSwiperPrices(exchange, prices, swiperInstance) {
     const wrapper = document.querySelector(`#${exchange}-section .swiper-wrapper`);
