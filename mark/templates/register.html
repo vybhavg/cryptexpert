@@ -181,7 +181,7 @@
                 <!-- Terms and Conditions Checkbox -->
 <div class="form-group mb-3 form-check">
     {{ form.accept_tos(class="form-check-input", required="required") }}
-    <label class="form-check-label" for="{{ form.accept_tos.id }}">
+    <label class="form-check-label" for="{{ form.accept_tos.id }}" style="font-size:15px;">
         I agree to the <a href="{{ url_for('terms') }}" target="_blank">Terms and Conditions</a>
     </label>
     {% if form.accept_tos.errors %}
