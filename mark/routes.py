@@ -1537,3 +1537,141 @@ def terms():
     """Render the Terms of Service page"""
     return render_template('terms.html',
                          datetime=datetime)
+from mark.models import BlogCategory, BlogPost
+from mark.form import BlogPostForm
+from werkzeug.utils import secure_filename
+import os
+import uuid
+
+# Blog routes
+@app.route('/blog')
+def blog_home():
+    """Show all published blog posts"""
+    page = request.args.get('page', 1, type=int)
+    posts = BlogPost.query.filter_by(is_published=True)\
+                         .order_by(BlogPost.created_at.desc())\
+                         .paginate(page=page, per_page=5)
+    categories = BlogCategory.query.all()
+    return render_template('blog/index.html', 
+                         posts=posts,
+                         categories=categories)
+
+@app.route('/blog/<string:slug>')
+def blog_post(slug):
+    """Show single blog post"""
+    post = BlogPost.query.filter_by(slug=slug, is_published=True).first_or_404()
+    
+    # Increment view count
+    post.views += 1
+    db.session.commit()
+    
+    # Get related posts
+    related_posts = BlogPost.query.filter(
+        BlogPost.category_id == post.category_id,
+        BlogPost.id != post.id,
+        BlogPost.is_published == True
+    ).order_by(db.func.random()).limit(3).all()
+    
+    return render_template('blog/post.html',
+                         post=post,
+                         related_posts=related_posts)
+
+@app.route('/blog/category/<string:slug>')
+def blog_category(slug):
+    """Show posts in a category"""
+    category = BlogCategory.query.filter_by(slug=slug).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    posts = BlogPost.query.filter_by(category_id=category.id, is_published=True)\
+                         .order_by(BlogPost.created_at.desc())\
+                         .paginate(page=page, per_page=5)
+    return render_template('blog/category.html',
+                         category=category,
+                         posts=posts)
+
+# Admin routes
+@app.route('/admin/blog/create', methods=['GET', 'POST'])
+@login_required
+def create_blog_post():
+    """Create new blog post"""
+    if not current_user.is_admin:
+        abort(403)
+    
+    form = BlogPostForm()
+    form.category_id.choices = [(c.id, c.name) for c in BlogCategory.query.all()]
+    
+    if form.validate_on_submit():
+        # Handle file upload
+        featured_image = None
+        if form.featured_image.data:
+            filename = secure_filename(form.featured_image.data.filename)
+            unique_filename = f"{uuid.uuid4().hex}_{filename}"
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], 'blog', unique_filename)
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+            form.featured_image.data.save(filepath)
+            featured_image = f"blog/{unique_filename}"
+        
+        post = BlogPost(
+            title=form.title.data,
+            slug=form.slug.data,
+            content=form.content.data,
+            excerpt=form.excerpt.data,
+            featured_image=featured_image,
+            is_published=form.is_published.data,
+            author_id=current_user.id,
+            category_id=form.category_id.data
+        )
+        db.session.add(post)
+        db.session.commit()
+        flash('Blog post created successfully!', 'success')
+        return redirect(url_for('blog_post', slug=post.slug))
+    
+    return render_template('blog/create.html', form=form)
+
+@app.route('/admin/blog/<int:post_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_blog_post(post_id):
+    """Edit existing blog post"""
+    if not current_user.is_admin:
+        abort(403)
+    
+    post = BlogPost.query.get_or_404(post_id)
+    form = BlogPostForm(obj=post)
+    form.category_id.choices = [(c.id, c.name) for c in BlogCategory.query.all()]
+    
+    if form.validate_on_submit():
+        # Handle file upload
+        if form.featured_image.data:
+            # Delete old image if exists
+            if post.featured_image:
+                try:
+                    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post.featured_image))
+                except:
+                    pass
+            
+            filename = secure_filename(form.featured_image.data.filename)
+            unique_filename = f"{uuid.uuid4().hex}_{filename}"
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], 'blog', unique_filename)
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+            form.featured_image.data.save(filepath)
+            post.featured_image = f"blog/{unique_filename}"
+        
+        post.title = form.title.data
+        post.slug = form.slug.data
+        post.content = form.content.data
+        post.excerpt = form.excerpt.data
+        post.is_published = form.is_published.data
+        post.category_id = form.category_id.data
+        db.session.commit()
+        flash('Blog post updated successfully!', 'success')
+        return redirect(url_for('blog_post', slug=post.slug))
+    
+    return render_template('blog/edit.html', form=form, post=post)
+
+@app.route('/admin/blog/categories')
+@login_required
+def manage_blog_categories():
+    """Manage blog categories"""
+    if not current_user.is_admin:
+        abort(403)
+    categories = BlogCategory.query.all()
+    return render_template('blog/categories.html', categories=categories)
