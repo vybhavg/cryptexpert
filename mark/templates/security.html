@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}Security | CryptExpert{% endblock %}
+
+{% block head %}
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Custom Colors */
+        .text-yellow-custom { color: #F8BC04 !important; }
+        .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
+
+        /* Card Styling */
+        .security-card {
+            background: linear-gradient(135deg, #1e1e1e, #252525) !important;
+            border-radius: 0.75rem !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .security-card:hover {
+            transform: translateY(-3px) !important;
+            border-color: rgba(248, 188, 4, 0.2) !important;
+        }
+
+        .security-level {
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+
+        .security-level-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .feature-icon {
+            background: rgba(248, 188, 4, 0.1);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-white mb-4">Security Center</h1>
+            <p class="text-gray-400 max-w-2xl mx-auto">Protect your account and cryptocurrency assets with our advanced security features.</p>
+        </div>
+
+        <!-- Security Status -->
+        <div class="mb-16">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">Your Security Status</h2>
+            </div>
+
+            <div class="security-card p-6 mb-8">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-white mb-1">Current Security Level</h3>
+                        <p class="text-gray-400">Based on enabled security features</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <div class="flex items-center">
+                            <span class="text-2xl font-bold text-yellow-400 mr-2">{% if current_user.authenticator_enabled %}Strong{% else %}Medium{% endif %}</span>
+                            <span class="text-gray-400">/ Strong</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="security-level mb-2">
+                    <div class="security-level-bar bg-yellow-400" style="width: {% if current_user.authenticator_enabled %}100{% else %}65{% endif %}%"></div>
+                </div>
+                <p class="text-sm text-gray-400 text-right">{% if current_user.authenticator_enabled %}All security features enabled{% else %}Enable more features for better protection{% endif %}</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Password -->
+                <div class="security-card p-6">
+                    <div class="flex items-start mb-4">
+                        <div class="feature-icon mr-4">
+                            <span class="material-icons text-yellow-400">lock</span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-1">Password</h3>
+                            <p class="text-gray-400">Last changed: {% if current_user.last_password_change %}{{ current_user.last_password_change.strftime('%b %d, %Y') }}{% else %}Never{% endif %}</p>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('profile') }}" class="inline-flex items-center text-yellow-400 hover:text-yellow-300">
+                        <span class="mr-1">Change Password</span>
+                        <span class="material-icons text-sm">chevron_right</span>
+                    </a>
+                </div>
+
+                <!-- 2FA -->
+                <div class="security-card p-6">
+                    <div class="flex items-start mb-4">
+                        <div class="feature-icon mr-4">
+                            <span class="material-icons text-yellow-400">security</span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-1">Two-Factor Authentication</h3>
+                            <p class="text-gray-400">Status: {% if current_user.authenticator_enabled %}<span class="text-green-400">Enabled</span>{% else %}<span class="text-red-400">Disabled</span>{% endif %}</p>
+                        </div>
+                    </div>
+                    <a href="{% if current_user.authenticator_enabled %}{{ url_for('profile') }}{% else %}{{ url_for('setup_authenticator') }}{% endif %}" class="inline-flex items-center text-yellow-400 hover:text-yellow-300">
+                        <span class="mr-1">{% if current_user.authenticator_enabled %}Manage{% else %}Enable{% endif %} 2FA</span>
+                        <span class="material-icons text-sm">chevron_right</span>
+                    </a>
+                </div>
+
+                <!-- Session Management -->
+                <div class="security-card p-6">
+                    <div class="flex items-start mb-4">
+                        <div class="feature-icon mr-4">
+                            <span class="material-icons text-yellow-400">devices</span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-1">Active Sessions</h3>
+                            <p class="text-gray-400">{{ session_count }} active session{% if session_count != 1 %}s{% endif %}</p>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('profile') }}" class="inline-flex items-center text-yellow-400 hover:text-yellow-300">
+                        <span class="mr-1">View Sessions</span>
+                        <span class="material-icons text-sm">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Features -->
+        <div class="mb-16">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">Security Features</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Feature 1 -->
+                <div class="security-card p-6">
+                    <div class="flex items-start mb-4">
+                        <div class="feature-icon mr-4">
+                            <span class="material-icons text-yellow-400">enhanced_encryption</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Bank-Grade Encryption</h3>
+                            <p class="text-gray-400">All your data is encrypted in transit and at rest using AES-256 encryption, the same standard used by banks and military organizations.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="security-card p-6">
+                    <div class="flex items-start mb-4">
+                        <div class="feature-icon mr-4">
+                            <span class="material-icons text-yellow-400">vpn_key</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Secure API Key Storage</h3>
+                            <p class="text-gray-400">Exchange API keys are encrypted with individual encryption keys and never stored in plain text. We recommend using read-only keys.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="security-card p-6">
+                    <div class="flex items-start mb-4">
+                        <div class="feature-icon mr-4">
+                            <span class="material-icons text-yellow-400">visibility_off</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Zero-Knowledge Architecture</h3>
+                            <p class="text-gray-400">We never have access to your passwords or sensitive data. Your credentials are hashed and encrypted before reaching our servers.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="security-card p-6">
+                    <div class="flex items-start mb-4">
+                        <div class="feature-icon mr-4">
+                            <span class="material-icons text-yellow-400">notifications_active</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Real-Time Alerts</h3>
+                            <p class="text-gray-400">Get instant notifications for suspicious activities like new logins, API key changes, or unusual account behavior.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="mb-16">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">Security Best Practices</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Practice 1 -->
+                <div class="security-card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-yellow-400 bg-opacity-10 p-2 rounded-lg mr-4">
+                            <span class="material-icons text-yellow-400">password</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white">Strong Passwords</h3>
+                    </div>
+                    <ul class="text-gray-400 space-y-2">
+                        <li class="flex items-start">
+                            <span class="material-icons text-yellow-400 text-xs mr-2">check</span>
+                            Use at least 12 characters
+                        </li>
+                        <li class="flex items-start">
+                            <span class="material-icons text-yellow-400 text-xs mr-2">check</span>
+                            Include numbers, symbols, and mixed case
+                        </li>
+                        <li class="flex items-start">
+                            <span class="material-icons text-yellow-400 text-xs mr-2">check</span>
+                            Never reuse passwords across sites
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Practice 2 -->
+                <div class="security-card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-yellow-400 bg-opacity-10 p-2 rounded-lg mr-4">
+                            <span class="material-icons text-yellow-400">phonelink_lock</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white">Device Security</h3>
+                    </div>
+                    <ul class="text-gray-400 space-y-2">
+                        <li class="flex items-start">
+                            <span class="material-icons text-yellow-400 text-xs mr-2">check</span>
+                            Keep your OS and apps updated
+                        </li>
+                        <li class="flex items-start">
+                            <span class="material-icons text-yellow-400 text-xs mr-2">check</span>
+                            Use device encryption
+                        </li>
+                        <li class="flex items-start">
+                            <span class="material-icons text-yellow-400 text-xs mr-2">check</span>
+                            Avoid public computers for crypto
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Practice 3 -->
+                <div class="security-card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-yellow-400 bg-opacity-10 p-2 rounded-lg mr-4">
+                            <span class="material-icons text-yellow-400">admin_panel_settings</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white">API Key Safety</h3>
+                    </div>
+                    <ul class="text-gray-400 space-y-2">
+                        <li class="flex items-start">
+                            <span class="material-icons text-yellow-400 text-xs mr-2">check</span>
+                            Use read-only keys where possible
+                        </li>
+                        <li class="flex items-start">
+                            <span class="material-icons text-yellow-400 text-xs mr-2">check</span>
+                            Restrict IP addresses if supported
+                        </li>
+                        <li class="flex items-start">
+                            <span class="material-icons text-yellow-400 text-xs mr-2">check</span>
+                            Regularly audit and rotate keys
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Actions -->
+        <div class="help-card p-8 text-center border border-red-400 border-opacity-30">
+            <span class="material-icons text-red-400 text-5xl mb-4">warning</span>
+            <h2 class="text-2xl font-bold text-white mb-2">Security Emergency?</h2>
+            <p class="text-gray-400 mb-6">If you suspect unauthorized access to your account, take immediate action.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="{{ url_for('logout_page') }}" class="inline-flex items-center px-6 py-3 bg-red-500 bg-opacity-20 text-red-400 font-semibold rounded-lg hover:bg-opacity-30 transition">
+                    <span class="material-icons mr-2">logout</span>
+                    Log Out All Sessions
+                </a>
+                <a href="mailto:security@cryptexpert.com" class="inline-flex items-center px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 transition">
+                    <span class="material-icons mr-2">security</span>
+                    Contact Security Team
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
