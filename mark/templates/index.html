@@ -1942,6 +1942,31 @@ async function fetchPricesOnly() {
     }
 }
 
+function formatPrice(price) {
+    const num = parseFloat(price);
+    if (isNaN(num)) return price;
+    
+    if (num >= 1000) {
+        // For large numbers (BTC, ETH, etc.) - show full value with commas
+        return num.toLocaleString('en-US', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 0
+        });
+    } else if (num >= 1) {
+        // For medium numbers - show 2-4 decimal places
+        return num.toLocaleString('en-US', {
+            maximumFractionDigits: 4,
+            minimumFractionDigits: 2
+        });
+    } else {
+        // For small numbers - show up to 8 decimal places
+        return num.toLocaleString('en-US', {
+            maximumFractionDigits: 8,
+            minimumFractionDigits: 2
+        });
+    }
+}
+
 function updateSwiperPrices(exchange, prices, swiperInstance) {
     const wrapper = document.querySelector(`#${exchange}-section .swiper-wrapper`);
     
@@ -1959,25 +1984,13 @@ function updateSwiperPrices(exchange, prices, swiperInstance) {
         
         const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
         const priceChangePercent = parseFloat(ticker.priceChangePercent);
-        const price = parseFloat(ticker.price);
-        
-        // Format price properly - show more decimals for small values, fewer for large
-        let formattedPrice;
-        if (price < 1) {
-            formattedPrice = price.toFixed(6).replace(/\.?0+$/, '');
-        } else if (price < 10) {
-            formattedPrice = price.toFixed(4).replace(/\.?0+$/, '');
-        } else if (price < 1000) {
-            formattedPrice = price.toFixed(2).replace(/\.?0+$/, '');
-        } else {
-            formattedPrice = price.toFixed(0);
-        }
+        const price = formatPrice(ticker.price);
         
         // Update price and percentage elements
         const priceElement = slides[index].querySelector('h2');
         const percentElement = slides[index].querySelector('.percentage-change');
         
-        if (priceElement) priceElement.textContent = `$${formattedPrice}`;
+        if (priceElement) priceElement.textContent = `$${price}`;
         if (percentElement) {
             percentElement.innerHTML = priceChangePercent > 0 ? 
                 `<span class="positive">+${priceChangePercent.toFixed(2)}%</span>` : 
@@ -1994,19 +2007,7 @@ function createAllSlides(exchange, prices, wrapper) {
     prices.forEach(ticker => {
         const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
         const priceChangePercent = parseFloat(ticker.priceChangePercent);
-        const price = parseFloat(ticker.price);
-        
-        // Format price based on its value
-        let formattedPrice;
-        if (price < 1) {
-            formattedPrice = price.toFixed(6).replace(/\.?0+$/, '');
-        } else if (price < 10) {
-            formattedPrice = price.toFixed(4).replace(/\.?0+$/, '');
-        } else if (price < 1000) {
-            formattedPrice = price.toFixed(2).replace(/\.?0+$/, '');
-        } else {
-            formattedPrice = price.toFixed(0);
-        }
+        const price = formatPrice(ticker.price);
         
         const slide = document.createElement('div');
         slide.className = 'swiper-slide swiper-slide--one';
@@ -2019,7 +2020,7 @@ function createAllSlides(exchange, prices, wrapper) {
                      alt="${symbol}">
             </div>
             <span>${symbol}</span>
-            <h2>$${formattedPrice}</h2>
+            <h2>$${price}</h2>
             <h5 class="percentage-change">
                 ${priceChangePercent > 0 ? 
                     `<span class="positive">+${priceChangePercent.toFixed(2)}%</span>` : 
