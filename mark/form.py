@@ -3,20 +3,26 @@ from wtforms import StringField,PasswordField,SubmitField,TextAreaField
 from wtforms.validators import Length, EqualTo, Email,DataRequired,ValidationError
 from mark.models import User, UserAPIKey
 
+from wtforms import BooleanField  # Add this import at the top
+
 class RegisterForm(FlaskForm):
     def validate_username(self, myusername):
-        user=User.query.filter_by(username=myusername.data).first()
-        if(user):
+        user = User.query.filter_by(username=myusername.data).first()
+        if user:
             raise ValidationError('Username is already taken')
+    
     def validate_email(self, myemail):
-        mail=User.query.filter_by(email=myemail.data).first()
-        if(mail):
+        mail = User.query.filter_by(email=myemail.data).first()
+        if mail:
             raise ValidationError('Email is already registered')
-    username= StringField(label="Username" , validators=[Length(max=10,min=3),DataRequired()])
-    email=StringField(label="E-mail",validators=[Email(),DataRequired()])
-    password1=PasswordField(label="Password 1",validators=[Length(max=10,min=3),DataRequired()])
-    password2=PasswordField(label="Password 2",validators=[EqualTo('password1'),DataRequired()])
-    submit=SubmitField(label="Create Account")
+    
+    username = StringField(label="Username", validators=[Length(max=10, min=3), DataRequired()])
+    email = StringField(label="E-mail", validators=[Email(), DataRequired()])
+    password1 = PasswordField(label="Password 1", validators=[Length(max=10, min=3), DataRequired()])
+    password2 = PasswordField(label="Password 2", validators=[EqualTo('password1'), DataRequired()])
+    accept_tos = BooleanField('I accept the Terms of Service', 
+                            validators=[DataRequired(message="You must accept the terms and conditions")])
+    submit = SubmitField(label="Create Account")
 
 class LoginForm(FlaskForm):
     username= StringField(label="Username" , validators=[Length(max=10,min=3),DataRequired()])
