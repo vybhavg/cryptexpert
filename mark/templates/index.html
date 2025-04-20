@@ -388,26 +388,59 @@ small {
 }
 
 
-
-/* Styling the searchh form */
-.custom-searchh {
-    width: 100%;
+/* Header-specific search styles */
+.header-search {
     position: relative;
+    width: 100%;
     max-width: 1000px;
-    border-radius: 50px;
-    background-color: #fff;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    flex-direction: row;
+    margin: 0 auto;
+    z-index: 1000;
 }
 
-/* Enhanced searchh Results */
-#searchhResults {
+.header-search__inner {
+    display: flex;
+    align-items: center;
+    background: rgba(15, 15, 15, 0.8);
+    border-radius: 50px;
+    padding: 10px 20px;
+    border: 1px solid rgba(248, 188, 4, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.header-search__inner:hover {
+    border-color: rgba(248, 188, 4, 0.5);
+}
+
+.header-search__text {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    padding: 8px 0;
+    outline: none;
+}
+
+.header-search__text::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.header-search__helper {
+    color: #f8bc04;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.header-search__helper:hover {
+    transform: scale(1.1);
+}
+
+/* Header Search Results */
+#headerSearchResults {
     position: absolute;
-    top: calc(100% + 5px);
+    top: calc(100% + 10px);
     left: 0;
     right: 0;
     background: rgba(15, 15, 15, 0.98);
@@ -418,7 +451,7 @@ small {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     max-height: 500px;
     overflow-y: auto;
-    z-index: 1000;
+    z-index: 1001;
     display: none;
     padding: 10px 0;
     opacity: 0;
@@ -426,12 +459,12 @@ small {
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-#searchhResults.show {
+#headerSearchResults.show {
     opacity: 1;
     transform: translateY(0);
 }
 
-.searchh-result-item {
+.header-search-result-item {
     display: flex;
     align-items: center;
     padding: 12px 20px;
@@ -441,19 +474,19 @@ small {
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.searchh-result-item:last-child {
+.header-search-result-item:last-child {
     border-bottom: none;
 }
 
-.searchh-result-item:hover {
+.header-search-result-item:hover {
     background: rgba(248, 188, 4, 0.08);
 }
 
-.searchh-result-item.highlighted {
+.header-search-result-item.highlighted {
     background: rgba(248, 188, 4, 0.15);
 }
 
-.searchh-result-item .crypto-logo {
+.header-search-result-item .crypto-logo {
     width: 32px;
     height: 32px;
     margin-right: 15px;
@@ -462,11 +495,11 @@ small {
     border: 1px solid rgba(248, 188, 4, 0.3);
 }
 
-.searchh-result-item .result-content {
+.header-search-result-item .result-content {
     flex: 1;
 }
 
-.searchh-result-item .result-name {
+.header-search-result-item .result-name {
     font-weight: 500;
     margin-bottom: 4px;
     font-size: 0.95rem;
@@ -474,152 +507,45 @@ small {
     align-items: center;
 }
 
-.searchh-result-item .result-symbol {
+.header-search-result-item .result-symbol {
     color: #f8bc04;
     font-size: 0.85rem;
     margin-left: 8px;
     font-weight: 400;
 }
 
-.searchh-result-item .result-type {
+.header-search-result-item .result-type {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.6);
     display: flex;
     align-items: center;
 }
 
-.searchh-result-item .result-type i {
+.header-search-result-item .result-type i {
     margin-right: 5px;
     font-size: 0.9rem;
 }
 
-.searchh-result-item .result-price {
+.header-search-result-item .result-price {
     font-weight: 600;
     font-size: 0.9rem;
     text-align: right;
     margin-left: 15px;
 }
 
-.searchh-result-item .price-up {
-    color: #4CAF50;
-}
-
-.searchh-result-item .price-down {
-    color: #F44336;
-}
-
-.searchh-result-item .price-neutral {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.no-results {
+.header-no-results {
     padding: 20px;
     color: rgba(255, 255, 255, 0.7);
     text-align: center;
     font-size: 0.9rem;
 }
 
-.no-results i {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    display: block;
-    color: rgba(255, 255, 255, 0.3);
-}
-
-/* Popular searchhes section */
-.popular-searchhes {
-    padding: 15px 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.popular-searchhes h4 {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.85rem;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.popular-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.popular-tag {
-    background: rgba(248, 188, 4, 0.1);
-    color: rgba(248, 188, 4, 0.9);
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: 1px solid rgba(248, 188, 4, 0.2);
-}
-
-.popular-tag:hover {
-    background: rgba(248, 188, 4, 0.2);
-    color: #f8bc04;
-}
-
-/* Recent searchhes section */
-.recent-searchhes {
-    padding: 15px 20px;
-}
-
-.recent-searchhes h4 {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.85rem;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.recent-searchh-item {
-    display: flex;
-    align-items: center;
-    padding: 8px 0;
-    color: rgba(255, 255, 255, 0.8);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.recent-searchh-item:hover {
-    color: #f8bc04;
-}
-
-.recent-searchh-item i {
-    margin-right: 10px;
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-/* Custom scrollbar */
-#searchhResults::-webkit-scrollbar {
-    width: 6px;
-}
-
-#searchhResults::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
-}
-
-#searchhResults::-webkit-scrollbar-thumb {
-    background: rgba(248, 188, 4, 0.5);
-    border-radius: 3px;
-}
-
-#searchhResults::-webkit-scrollbar-thumb:hover {
-    background: rgba(248, 188, 4, 0.7);
-}
-
-/* Loading animation */
-.searchh-loading {
+.header-search-loading {
     padding: 20px;
     text-align: center;
 }
 
-.searchh-loading .spinner {
+.header-search-loading .spinner {
     width: 30px;
     height: 30px;
     border: 3px solid rgba(248, 188, 4, 0.2);
@@ -627,10 +553,6 @@ small {
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     margin: 0 auto 10px;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
 }
 
             .content {
@@ -1172,270 +1094,206 @@ margin-top: 0;
                     <span class="sidetext">Your Gateway to Decentralized Finance</span>
                 </span>
 
-               <!-- searchh Form -->
-<form class="searchh" onsubmit="return false;">
-    <div class="searchh__inner">
-        <input type="text" id="searchhInput" class="searchh__text" 
-               placeholder="searchh for crypto, exchanges, wallets..."
-               onkeyup="performsearchh()"
-               onfocus="performsearchh()">
-        <i class="zmdi zmdi-searchh searchh__helper" onclick="performsearchh()"></i>
+               <!-- Search Form -->
+<!-- Header Search Form (unique class names) -->
+<div class="header-search" style="position: absolute; top: 105px; width: 100%; max-width: 1000px;">
+    <div class="header-search__inner">
+        <input type="text" id="headerSearchInput" class="header-search__text" 
+               placeholder="Search for crypto, exchanges, wallets..."
+               onkeyup="performHeaderSearch()"
+               onfocus="performHeaderSearch()">
+        <i class="zmdi zmdi-search header-search__helper" onclick="performHeaderSearch()"></i>
     </div>
-    <!-- searchh Results -->
-    <div id="searchhResults"></div>
-</form>
-
+    <!-- Search Results -->
+    <div id="headerSearchResults" class="header-search-results"></div>
+</div>
+              
 <script>
-    let currentIndex = -1;
-    let searchhTimeout;
-    let lastsearchhQuery = '';
+// Header search functionality
+let headerSearchCurrentIndex = -1;
+let headerSearchTimeout;
+let headerLastSearchQuery = '';
 
-    async function performsearchh() {
-        const query = document.getElementById('searchhInput').value.trim();
-        const resultsDiv = document.getElementById('searchhResults');
-        
-        // Clear previous timeout if it exists
-        if (searchhTimeout) {
-            clearTimeout(searchhTimeout);
-        }
-
-        // Show loading state if query is not empty
-        if (query.length > 0) {
-            resultsDiv.innerHTML = `
-                <div class="searchh-loading">
-                    <div class="spinner"></div>
-                    <div>searchhing...</div>
-                </div>
-            `;
-            resultsDiv.style.display = 'block';
-            resultsDiv.classList.add("show");
-            
-            // Store the current query
-            lastsearchhQuery = query;
-            
-            // Add slight delay to prevent too many requests
-            searchhTimeout = setTimeout(async () => {
-                try {
-                    const response = await fetch(`/searchh?q=${encodeURIComponent(query)}`);
-                    const results = await response.json();
-                    
-                    // Only update if the query hasn't changed during the request
-                    if (query === lastsearchhQuery) {
-                        displaysearchhResults(results, query);
-                    }
-                } catch (error) {
-                    console.error("Error fetching searchh results:", error);
-                    if (query === lastsearchhQuery) {
-                        resultsDiv.innerHTML = `
-                            <div class="no-results">
-                                <i class="zmdi zmdi-alert-circle"></i>
-                                <div>Failed to load results. Please try again.</div>
-                            </div>
-                        `;
-                    }
-                }
-            }, 300);
-        } else {
-            // Show recent/popular searchhes when empty
-            showDefaultSuggestions();
-        }
+async function performHeaderSearch() {
+    const query = document.getElementById('headerSearchInput').value.trim();
+    const resultsDiv = document.getElementById('headerSearchResults');
+    
+    if (headerSearchTimeout) {
+        clearTimeout(headerSearchTimeout);
     }
 
-    function displaysearchhResults(results, query) {
-        const resultsDiv = document.getElementById('searchhResults');
-        
-        if (results.length > 0) {
-            resultsDiv.innerHTML = results.map((item) => {
-                // Highlight matching parts of the query
-                const regex = new RegExp(`(${query})`, "gi");
-                const highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
-                
-                // Determine price change class
-                let priceClass = 'price-neutral';
-                if (item.price_change) {
-                    priceClass = item.price_change > 0 ? 'price-up' : 'price-down';
-                }
-                
-                return `
-                    <div class="searchh-result-item" onclick="window.location.href='${item.link}'">
-                        <img src="${item.image || '/static/img/default-crypto.png'}" alt="${item.name}" class="crypto-logo">
-                        <div class="result-content">
-                            <div class="result-name">
-                                ${highlightedName}
-                                ${item.symbol ? `<span class="result-symbol">${item.symbol}</span>` : ''}
-                            </div>
-                            <div class="result-type">
-                                <i class="zmdi ${getIconForType(item.type)}"></i>
-                                ${item.type}
-                            </div>
-                        </div>
-                        ${item.price ? `
-                            <div class="result-price ${priceClass}">
-                                $${item.price.toLocaleString()}
-                                ${item.price_change ? `
-                                    <br>
-                                    <small>${item.price_change > 0 ? '+' : ''}${item.price_change}%</small>
-                                ` : ''}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            }).join('');
-            
-            // Add popular searchhes section at the bottom
-            resultsDiv.innerHTML += `
-                <div class="popular-searchhes">
-                    <h4>Popular searchhes</h4>
-                    <div class="popular-tags">
-                        <div class="popular-tag" onclick="searchhFor('Bitcoin')">Bitcoin</div>
-                        <div class="popular-tag" onclick="searchhFor('Ethereum')">Ethereum</div>
-                        <div class="popular-tag" onclick="searchhFor('Binance')">Binance</div>
-                        <div class="popular-tag" onclick="searchhFor('NFT')">NFT</div>
-                        <div class="popular-tag" onclick="searchhFor('DeFi')">DeFi</div>
-                    </div>
-                </div>
-            `;
-        } else {
-            resultsDiv.innerHTML = `
-                <div class="no-results">
-                    <i class="zmdi zmdi-searchh"></i>
-                    <div>No results found for "${query}"</div>
-                    <div class="popular-searchhes" style="margin-top: 15px; border-top: none;">
-                        <h4>Try searchhing for:</h4>
-                        <div class="popular-tags">
-                            <div class="popular-tag" onclick="searchhFor('Bitcoin')">Bitcoin</div>
-                            <div class="popular-tag" onclick="searchhFor('Ethereum')">Ethereum</div>
-                            <div class="popular-tag" onclick="searchhFor('Binance')">Binance</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        resultsDiv.style.display = 'block';
-        resultsDiv.classList.add("show");
-    }
-
-    function showDefaultSuggestions() {
-        const resultsDiv = document.getElementById('searchhResults');
-        
+    if (query.length > 0) {
         resultsDiv.innerHTML = `
-            <div class="recent-searchhes">
-                <h4>Recent searchhes</h4>
-                <div class="recent-searchh-item" onclick="searchhFor('Bitcoin')">
-                    <i class="zmdi zmdi-time"></i>
-                    <span>Bitcoin</span>
-                </div>
-                <div class="recent-searchh-item" onclick="searchhFor('Ethereum')">
-                    <i class="zmdi zmdi-time"></i>
-                    <span>Ethereum</span>
-                </div>
-                <div class="recent-searchh-item" onclick="searchhFor('Solana')">
-                    <i class="zmdi zmdi-time"></i>
-                    <span>Solana</span>
-                </div>
-            </div>
-            <div class="popular-searchhes">
-                <h4>Popular searchhes</h4>
-                <div class="popular-tags">
-                    <div class="popular-tag" onclick="searchhFor('Bitcoin')">Bitcoin</div>
-                    <div class="popular-tag" onclick="searchhFor('Ethereum')">Ethereum</div>
-                    <div class="popular-tag" onclick="searchhFor('Binance')">Binance</div>
-                    <div class="popular-tag" onclick="searchhFor('NFT')">NFT</div>
-                    <div class="popular-tag" onclick="searchhFor('DeFi')">DeFi</div>
-                    <div class="popular-tag" onclick="searchhFor('Metaverse')">Metaverse</div>
-                    <div class="popular-tag" onclick="searchhFor('Web3')">Web3</div>
-                    <div class="popular-tag" onclick="searchhFor('Stablecoins')">Stablecoins</div>
-                </div>
+            <div class="header-search-loading">
+                <div class="spinner"></div>
+                <div>Searching...</div>
             </div>
         `;
-        
         resultsDiv.style.display = 'block';
         resultsDiv.classList.add("show");
-    }
-
-    function getIconForType(type) {
-        const icons = {
-            'crypto': 'zmdi-money',
-            'exchange': 'zmdi-balance',
-            'wallet': 'zmdi-wallet',
-            'nft': 'zmdi-collection-image',
-            'defi': 'zmdi-shape',
-            'token': 'zmdi-label',
-            'coin': 'zmdi-money-box'
-        };
-        return icons[type.toLowerCase()] || 'zmdi-searchh';
-    }
-
-    function searchhFor(term) {
-        document.getElementById('searchhInput').value = term;
-        performsearchh();
-    }
-
-    // Navigate to selected result on Enter key press
-    document.addEventListener('keydown', function (event) {
-        const resultsDiv = document.getElementById('searchhResults');
-        if (!resultsDiv.style.display || resultsDiv.style.display === 'none') return;
         
-        const results = resultsDiv.querySelectorAll('.searchh-result-item');
+        headerLastSearchQuery = query;
         
-        if (event.key === 'ArrowDown') {
-            event.preventDefault();
-            if (currentIndex < results.length - 1) {
-                currentIndex++;
+        headerSearchTimeout = setTimeout(async () => {
+            try {
+                const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+                const results = await response.json();
+                
+                if (query === headerLastSearchQuery) {
+                    displayHeaderSearchResults(results, query);
+                }
+            } catch (error) {
+                console.error("Header search error:", error);
+                if (query === headerLastSearchQuery) {
+                    resultsDiv.innerHTML = `
+                        <div class="header-no-results">
+                            <i class="zmdi zmdi-alert-circle"></i>
+                            <div>Failed to load results. Please try again.</div>
+                        </div>
+                    `;
+                }
             }
-            updateHighlight(results);
-        } else if (event.key === 'ArrowUp') {
-            event.preventDefault();
-            if (currentIndex > 0) {
-                currentIndex--;
+        }, 300);
+    } else {
+        showHeaderDefaultSuggestions();
+    }
+}
+
+function displayHeaderSearchResults(results, query) {
+    const resultsDiv = document.getElementById('headerSearchResults');
+    
+    if (results.length > 0) {
+        resultsDiv.innerHTML = results.map((item) => {
+            const regex = new RegExp(`(${query})`, "gi");
+            const highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
+            
+            let priceClass = 'price-neutral';
+            if (item.price_change) {
+                priceClass = item.price_change > 0 ? 'price-up' : 'price-down';
             }
-            updateHighlight(results);
-        } else if (event.key === 'Enter' && currentIndex >= 0 && currentIndex < results.length) {
-            // Redirect to the selected link on Enter
-            window.location.href = results[currentIndex].getAttribute('onclick').replace("window.location.href='", "").replace("'", "");
-        }
-    });
+            
+            return `
+                <div class="header-search-result-item" onclick="window.location.href='${item.link}'">
+                    <img src="${item.image || '/static/img/default-crypto.png'}" alt="${item.name}" class="crypto-logo">
+                    <div class="result-content">
+                        <div class="result-name">
+                            ${highlightedName}
+                            ${item.symbol ? `<span class="result-symbol">${item.symbol}</span>` : ''}
+                        </div>
+                        <div class="result-type">
+                            <i class="zmdi ${getHeaderIconForType(item.type)}"></i>
+                            ${item.type}
+                        </div>
+                    </div>
+                    ${item.price ? `
+                        <div class="result-price ${priceClass}">
+                            $${item.price.toLocaleString()}
+                            ${item.price_change ? `
+                                <br>
+                                <small>${item.price_change > 0 ? '+' : ''}${item.price_change}%</small>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }).join('');
+    } else {
+        resultsDiv.innerHTML = `
+            <div class="header-no-results">
+                <i class="zmdi zmdi-search"></i>
+                <div>No results found for "${query}"</div>
+            </div>
+        `;
+    }
+    
+    resultsDiv.style.display = 'block';
+    resultsDiv.classList.add("show");
+}
 
-    function updateHighlight(results) {
-        // Remove highlight from all results
-        for (let i = 0; i < results.length; i++) {
-            results[i].classList.remove('highlighted');
-        }
+function showHeaderDefaultSuggestions() {
+    const resultsDiv = document.getElementById('headerSearchResults');
+    
+    resultsDiv.innerHTML = `
+        <div class="header-no-results">
+            <i class="zmdi zmdi-search"></i>
+            <div>Start typing to search</div>
+        </div>
+    `;
+    
+    resultsDiv.style.display = 'block';
+    resultsDiv.classList.add("show");
+}
 
-        // Highlight the current index
-        if (currentIndex >= 0 && currentIndex < results.length) {
-            results[currentIndex].classList.add('highlighted');
-            results[currentIndex].scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest'
-            });
+function getHeaderIconForType(type) {
+    const icons = {
+        'crypto': 'zmdi-money',
+        'exchange': 'zmdi-balance',
+        'wallet': 'zmdi-wallet',
+        'nft': 'zmdi-collection-image',
+        'defi': 'zmdi-shape',
+        'token': 'zmdi-label',
+        'coin': 'zmdi-money-box'
+    };
+    return icons[type.toLowerCase()] || 'zmdi-search';
+}
+
+// Header search navigation
+document.addEventListener('keydown', function (event) {
+    const resultsDiv = document.getElementById('headerSearchResults');
+    if (!resultsDiv.style.display || resultsDiv.style.display === 'none') return;
+    
+    const results = resultsDiv.querySelectorAll('.header-search-result-item');
+    
+    if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        if (headerSearchCurrentIndex < results.length - 1) {
+            headerSearchCurrentIndex++;
         }
+        updateHeaderHighlight(results);
+    } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (headerSearchCurrentIndex > 0) {
+            headerSearchCurrentIndex--;
+        }
+        updateHeaderHighlight(results);
+    } else if (event.key === 'Enter' && headerSearchCurrentIndex >= 0 && headerSearchCurrentIndex < results.length) {
+        window.location.href = results[headerSearchCurrentIndex].getAttribute('onclick').replace("window.location.href='", "").replace("'", "");
+    }
+});
+
+function updateHeaderHighlight(results) {
+    for (let i = 0; i < results.length; i++) {
+        results[i].classList.remove('highlighted');
     }
 
-    // Hide searchh results when clicking outside
-    document.addEventListener("click", function(event) {
-        const searchhBox = document.querySelector(".searchh");
-        const resultsDiv = document.getElementById("searchhResults");
+    if (headerSearchCurrentIndex >= 0 && headerSearchCurrentIndex < results.length) {
+        results[headerSearchCurrentIndex].classList.add('highlighted');
+        results[headerSearchCurrentIndex].scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+        });
+    }
+}
 
-        if (!searchhBox.contains(event.target)) {
-            resultsDiv.style.display = 'none';
-            resultsDiv.classList.remove("show");
-            currentIndex = -1;
-        }
-    });
+// Hide header search results when clicking outside
+document.addEventListener("click", function(event) {
+    const searchBox = document.querySelector(".header-search");
+    const resultsDiv = document.getElementById("headerSearchResults");
 
-    // Initialize with popular searchhes when input is focused and empty
-    document.getElementById('searchhInput').addEventListener('focus', function() {
-        if (this.value.trim() === '') {
-            showDefaultSuggestions();
-        }
-    });
+    if (!searchBox.contains(event.target)) {
+        resultsDiv.style.display = 'none';
+        resultsDiv.classList.remove("show");
+        headerSearchCurrentIndex = -1;
+    }
+});
+
+// Initialize header search
+document.getElementById('headerSearchInput').addEventListener('focus', function() {
+    if (this.value.trim() === '') {
+        showHeaderDefaultSuggestions();
+    }
+});
 </script>
-
-
-
-
 
 
             </div>
@@ -2080,41 +1938,41 @@ function setupExchangeSelector() {
         radio.addEventListener('change', async function() {
             if (isSwitching) return;
             isSwitching = true;
-            
+
             const newExchange = this.value;
             if (newExchange === currentExchange) {
                 isSwitching = false;
                 return;
             }
-            
+
             // Add transition class
             const oldSection = document.getElementById(`${currentExchange}-section`);
             oldSection.classList.add('fade-out');
-            
+
             await new Promise(resolve => setTimeout(resolve, 300)); // Wait for fade-out
-            
+
             // Hide all sections
             document.getElementById('binance-section').style.display = 'none';
             document.getElementById('okx-section').style.display = 'none';
             document.getElementById('coinbase-section').style.display = 'none';
-            
+
             // Show new section with fade-in
             const newSection = document.getElementById(`${newExchange}-section`);
             newSection.style.display = 'block';
             newSection.classList.add('fade-in');
-            
+
             // Update current exchange
             currentExchange = newExchange;
-            
+
             // Force reload if no data
             if (currentPrices[currentExchange].length === 0) {
                 showLoadingState();
                 await fetchPricesAndUpdateSwipers();
             }
-            
+
             // Update the active swiper
             updateActiveSwiper();
-            
+
             // Remove transition classes
             setTimeout(() => {
                 oldSection.classList.remove('fade-out');
@@ -2153,7 +2011,7 @@ function initSwipers() {
     if (binanceSwiper) binanceSwiper.destroy();
     if (okxSwiper) okxSwiper.destroy();
     if (coinbaseSwiper) coinbaseSwiper.destroy();
-    
+
     binanceSwiper = new Swiper("#binance-section .swiper", {
         effect: "coverflow",
         grabCursor: true,
@@ -2179,7 +2037,7 @@ function initSwipers() {
             clickable: true
         }
     });
-    
+
     okxSwiper = new Swiper("#okx-section .cmpswiper", {
         effect: "coverflow",
         grabCursor: true,
@@ -2205,7 +2063,7 @@ function initSwipers() {
             clickable: true
         }
     });
-    
+
     coinbaseSwiper = new Swiper("#coinbase-section .csswiper", {
         effect: "coverflow",
         grabCursor: true,
