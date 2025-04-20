@@ -142,68 +142,134 @@ html {
 .expert {
     font-weight: bold;
     color: #f8bc04; /* Gold color */
-}
-#searchResults {
-    background: black; /* Black background */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    width: 100%;
-    max-width: 100%;
-    max-height: 300px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    display: none;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    z-index: 1000;
-    border-radius: 20px;
-    box-shadow: 0px 10px 30px rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease-in-out;
-    padding: 5px;
-}
+}   .search {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
 
-#searchResults div {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 12px 15px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #fff; /* White text */
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: background 0.3s, transform 0.2s;
-    border-radius: 20px;
-    max-width: 100%;
-    margin-bottom: 5px;
-}
+    .search__inner {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(248, 188, 4, 0.3);
+        border-radius: 30px;
+        padding: 8px 20px;
+        transition: all 0.3s ease;
+    }
 
-#searchResults div:hover {
-    background-color: rgba(248, 188, 4, 0.2);
-    transform: scale(1.02);
-}
+    .search__inner:focus-within {
+        border-color: #f8bc04;
+        box-shadow: 0 0 0 2px rgba(248, 188, 4, 0.2);
+    }
 
-.searchh__text {
-    width: 100%;
-    padding: 6px;
-    font-size: 1rem;
-    border: none;
-    color: #fff; /* White text */
-    background-color: #000; /* Black background */
-}
+    .search__text {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 1rem;
+        padding: 8px 0;
+        outline: none;
+    }
 
-.searchh__helper {
-    font-size: 2.5rem;
-    color: #f8bc04;
-    transition: transform 0.3s ease, color 0.3s ease;
-    cursor: pointer;
-}
+    .search__text::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
 
-.searchh.focused .searchh__helper {
-    transform: rotate(180deg);
-    color: #c68e17;
-}
+    .search__helper {
+        color: #f8bc04;
+        font-size: 22px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .search__helper:hover {
+        transform: scale(1.1);
+    }
+
+    #searchResults {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        border: 1px solid rgba(248, 188, 4, 0.2);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        max-height: 400px;
+        overflow-y: auto;
+        z-index: 1000;
+        margin-top: 10px;
+        display: none;
+        padding: 10px 0;
+    }
+
+    .search-result-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .search-result-item:hover {
+        background: rgba(248, 188, 4, 0.1);
+    }
+
+    .search-result-item.highlighted {
+        background: rgba(248, 188, 4, 0.2);
+    }
+
+    .search-result-item .crypto-logo {
+        width: 24px;
+        height: 24px;
+        margin-right: 12px;
+        border-radius: 50%;
+    }
+
+    .search-result-item .result-content {
+        flex: 1;
+    }
+
+    .search-result-item .result-name {
+        font-weight: 500;
+        margin-bottom: 2px;
+    }
+
+    .search-result-item .result-type {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .no-results {
+        padding: 15px 20px;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
+    }
+
+    /* Custom scrollbar */
+    #searchResults::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #searchResults::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+    }
+
+    #searchResults::-webkit-scrollbar-thumb {
+        background: rgba(248, 188, 4, 0.5);
+        border-radius: 3px;
+    }
+
+    #searchResults::-webkit-scrollbar-thumb:hover {
+        background: rgba(248, 188, 4, 0.7);
+    }
 
 /* Container with Black Background */
 .container.mx-auto.p-8.bg-gray-900 {
@@ -569,26 +635,32 @@ html {
                     </a>
                 </div>
 
-                <!-- Search Form -->
+ <!-- Search Form -->
 <form class="search" onsubmit="return false;">
-    <div class="search__inner" style="display: flex; width: 100%; position: relative;">
+    <div class="search__inner">
         <input type="text" id="searchInput" class="search__text" 
-            placeholder="Search for Crypto, Exchanges, Wallets..." 
-            onkeyup="performSearch()"
-            onfocus="performSearch()">  <!-- Trigger search when input is focused -->
+               placeholder="Search for crypto, exchanges, wallets..."
+               onkeyup="performSearch()"
+               onfocus="performSearch()">
         <i class="zmdi zmdi-search search__helper" onclick="performSearch()"></i>
     </div>
+    <!-- Search Results -->
+    <div id="searchResults"></div>
 </form>
-
-<!-- Search Results -->
-<div id="searchResults" style=" background: black; border: 1px solid #ccc; width: 100%; max-height: 200px; overflow-y: auto; z-index: 1000;margin-top:250px; display: none;"></div>
-
 <script>
-    let currentIndex = -1; 
+    let currentIndex = -1;
+    let lastSearchTime = 0;
+    const searchDebounceTime = 300; // ms
 
     async function performSearch() {
-        let query = document.getElementById('searchInput').value.trim();
-        let resultsDiv = document.getElementById('searchResults');
+        const now = Date.now();
+        if (now - lastSearchTime < searchDebounceTime) {
+            return;
+        }
+        lastSearchTime = now;
+
+        const query = document.getElementById('searchInput').value.trim();
+        const resultsDiv = document.getElementById('searchResults');
 
         if (query.length === 0) {
             resultsDiv.style.display = 'none';
@@ -597,71 +669,88 @@ html {
         }
 
         try {
-            let response = await fetch(`/search?q=${encodeURIComponent(query)}`);
-            let results = await response.json();
+            const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+            const results = await response.json();
 
             if (results.length > 0) {
-                resultsDiv.style.display = 'block';
-                resultsDiv.classList.add("show"); // Add animation class
-                resultsDiv.innerHTML = results.map((item) => {
-                    let regex = new RegExp(`(${query})`, "gi");
-                    let highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
-
-                    let isExactMatch = item.name.toLowerCase() === query.toLowerCase();
-                    return `<div class="${isExactMatch ? 'exact-match' : ''}" onclick="window.location.href='${item.link}'">
-                                ${highlightedName}
-                            </div>`;
+                resultsDiv.innerHTML = results.map(item => {
+                    const regex = new RegExp(`(${query})`, "gi");
+                    const highlightedName = item.name.replace(regex, `<span class="highlight">$1</span>`);
+                    
+                    // Extract symbol from the name (assuming format "BTC - Bitcoin")
+                    const symbol = item.name.split(' - ')[0];
+                    const logoUrl = crypto_logos[symbol] || '/static/images/default-crypto.png';
+                    
+                    return `
+                        <div class="search-result-item" onclick="window.location.href='${item.link}';">
+                            <img src="${logoUrl}" class="crypto-logo" alt="${symbol}">
+                            <div class="result-content">
+                                <div class="result-name">${highlightedName}</div>
+                                <div class="result-type">${item.type || 'Cryptocurrency'}</div>
+                            </div>
+                        </div>
+                    `;
                 }).join('');
-            } else {
                 resultsDiv.style.display = 'block';
-                resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center;">No results found</div>';
+            } else {
+                resultsDiv.innerHTML = `
+                    <div class="no-results">
+                        No results found for "${query}"
+                    </div>
+                `;
+                resultsDiv.style.display = 'block';
             }
         } catch (error) {
             console.error("Error fetching search results:", error);
+            resultsDiv.innerHTML = `
+                <div class="no-results">
+                    Error loading results. Please try again.
+                </div>
+            `;
+            resultsDiv.style.display = 'block';
         }
     }
 
-    // Navigate to selected result on Enter key press
-    document.addEventListener('keydown', function (event) {
-        let resultsDiv = document.getElementById('searchResults');
-        let results = resultsDiv.getElementsByTagName('div');
-        let searchBox = document.getElementById('searchInput');
+    // Keyboard navigation
+    document.addEventListener('keydown', function(event) {
+        const resultsDiv = document.getElementById('searchResults');
+        if (!resultsDiv || resultsDiv.style.display === 'none') return;
 
+        const results = resultsDiv.querySelectorAll('.search-result-item');
+        
         if (event.key === 'ArrowDown') {
-            if (currentIndex < results.length - 1) {
-                currentIndex++;
-            }
+            event.preventDefault();
+            currentIndex = Math.min(currentIndex + 1, results.length - 1);
             updateHighlight(results);
         } else if (event.key === 'ArrowUp') {
-            if (currentIndex > 0) {
-                currentIndex--;
-            }
+            event.preventDefault();
+            currentIndex = Math.max(currentIndex - 1, -1);
             updateHighlight(results);
-        } else if (event.key === 'Enter' && currentIndex >= 0 && currentIndex < results.length) {
-            // Redirect to the selected link on Enter
-            window.location.href = results[currentIndex].getAttribute('onclick').replace("window.location.href='", "").replace("'", "");
+        } else if (event.key === 'Enter' && currentIndex >= 0) {
+            event.preventDefault();
+            results[currentIndex].click();
         }
     });
 
     function updateHighlight(results) {
-        // Remove highlight from all results
-        for (let i = 0; i < results.length; i++) {
-            results[i].classList.remove('highlighted');
-        }
-
-        // Highlight the current index
-        if (currentIndex >= 0 && currentIndex < results.length) {
-            results[currentIndex].classList.add('highlighted');
-            document.getElementById('searchInput').value = results[currentIndex].innerText; // Set the highlighted text in the search box
+        results.forEach((result, index) => {
+            result.classList.toggle('highlighted', index === currentIndex);
+        });
+        
+        if (currentIndex >= 0) {
+            results[currentIndex].scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
         }
     }
 
-    // Hide search results when clicking outside
-    document.addEventListener("click", function(event) {
-        let searchBox = document.getElementById("searchInput");
-        let resultsDiv = document.getElementById("searchResults");
-
-        if (!searchBox.contains(event.target) && !resultsDiv.contains(event.target)) {
+    // Close results when clicking outside
+    document.addEventListener('click', function(event) {
+        const searchContainer = document.querySelector('.search');
+        const resultsDiv = document.getElementById('searchResults');
+        
+        if (!searchContainer.contains(event.target)) {
             resultsDiv.style.display = 'none';
         }
     });
