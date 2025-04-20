@@ -36,39 +36,40 @@
     .text-yellow-custom { color: #F8BC04 !important; }
     .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
     
-    /* Login container */
+    /* Login container - wider */
     .login {
-        max-width: 420px;
+        max-width: 500px; /* Increased from 420px */
         margin: 0 auto;
         padding: 0 15px;
     }
     
-    /* Login block */
+    /* Login block - wider */
     .login__block {
         background-color: #000000;
         border-radius: 12px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.05);
+        width: 100%; /* Ensure it takes full width of container */
     }
     
     /* Login block header */
     .login__block__header {
         background: linear-gradient(135deg, #F8BC04, #e6a905);
         color: #1a1a1a;
-        padding: 1rem;
+        padding: 1.5rem; /* Increased padding */
         text-align: center;
         position: relative;
     }
     
     .login__block__header i {
-        font-size: 2rem;
-        margin-bottom: 0.25rem;
+        font-size: 2.5rem; /* Larger icon */
+        margin-bottom: 0.5rem;
         display: block;
     }
     
     .login__block__header p {
-        font-size: 1.1rem;
+        font-size: 1.25rem; /* Larger text */
         font-weight: 600;
         margin: 0;
     }
@@ -94,15 +95,15 @@
         color: #F8BC04;
     }
     
-    /* Login block body */
+    /* Login block body - more spacious */
     .login__block__body {
-        padding: 1rem;
+        padding: 1.5rem; /* Increased padding */
         text-align: center;
     }
     
     /* Form styles */
     .form-group {
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem; /* More spacing */
     }
     
     .form-control {
@@ -110,11 +111,14 @@
         border: 1px solid #333;
         color: white;
         border-radius: 8px;
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
+        padding: 0.75rem 1rem; /* More padding */
+        font-size: 1rem; /* Larger text */
         transition: all 0.3s;
         height: auto;
         text-align: center;
+        width: 100%; /* Full width */
+        max-width: 300px; /* But not too wide */
+        margin: 0 auto; /* Centered */
     }
     
     .form-control:focus {
@@ -129,13 +133,16 @@
         background: linear-gradient(135deg, #F8BC04, #e6a905);
         border: none;
         border-radius: 8px;
-        padding: 0.6rem;
+        padding: 0.75rem; /* More padding */
         font-weight: 600;
         color: #1a1a1a;
         letter-spacing: 0.5px;
         transition: all 0.3s;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         width: 100%;
+        max-width: 300px; /* Match input width */
+        margin: 0 auto; /* Centered */
+        font-size: 1rem; /* Larger text */
     }
     
     .btn-primary:hover {
@@ -144,22 +151,37 @@
         color: #1a1a1a;
     }
     
-    /* QR Code container */
+    /* QR Code container - more prominent */
     .qr-container {
         background-color: white;
-        padding: 1rem;
-        border-radius: 8px;
+        padding: 1.5rem; /* More padding */
+        border-radius: 12px; /* More rounded */
         display: inline-block;
-        margin: 1rem 0;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin: 1.5rem 0; /* More spacing */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25); /* Deeper shadow */
+        border: 2px solid #F8BC04; /* Accent border */
     }
     
-    /* Instructions */
+    /* Instructions - better readability */
     .instructions {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 0.9rem;
-        margin: 1rem 0;
-        text-align: left;
+        color: rgba(255, 255, 255, 0.85); /* Brighter text */
+        font-size: 0.95rem; /* Slightly larger */
+        margin: 1.5rem 0; /* More spacing */
+        text-align: center; /* Centered */
+        line-height: 1.6; /* Better line spacing */
+        padding: 0 1rem; /* Side padding */
+    }
+    
+    .instructions ol {
+        text-align: left; /* Left-align list */
+        display: inline-block; /* Natural width */
+        margin: 1rem auto; /* Centered */
+        padding-left: 1.5rem; /* Proper list indentation */
+    }
+    
+    .instructions strong {
+        color: #F8BC04; /* Accent color */
+        font-weight: 600;
     }
     
     /* Validation feedback */
@@ -174,9 +196,12 @@
     .invalid-feedback {
         display: none;
         width: 100%;
-        margin-top: 0.25rem;
-        font-size: 0.8125rem;
+        margin-top: 0.5rem; /* More spacing */
+        font-size: 0.875rem;
         color: #dc3545;
+        max-width: 300px; /* Match input width */
+        margin-left: auto; /* Centered */
+        margin-right: auto;
     }
     
     .is-invalid ~ .invalid-feedback {
@@ -184,26 +209,30 @@
     }
     
     /* Responsive adjustments */
-    @media (max-width: 400px) {
+    @media (max-width: 576px) {
+        .login {
+            max-width: 95%; /* More width on small screens */
+            padding: 0 10px;
+        }
+        
         .login__block__header {
-            padding: 0.8rem;
+            padding: 1.25rem;
         }
         
         .login__block__header i {
-            font-size: 1.8rem;
+            font-size: 2rem;
         }
         
         .login__block__header p {
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
         
-        .login__block__body {
-            padding: 0.8rem;
+        .qr-container {
+            padding: 1rem;
         }
         
-        .form-control {
-            padding: 0.5rem 0.8rem;
-            font-size: 0.85rem;
+        .form-control, .btn-primary {
+            max-width: 100%; /* Full width on small screens */
         }
     }
 
@@ -297,7 +326,7 @@
             
             <div class="login__block__body">
                 <div class="qr-container">
-                    <img src="{{ url_for('setup_authenticator_qr') }}" width="200" height="200" alt="QR Code">
+                    <img src="{{ url_for('setup_authenticator_qr') }}" width="220" height="220" alt="QR Code">
                 </div>
                 
                 <div class="instructions">
@@ -305,7 +334,7 @@
                     <ol>
                         <li>Scan the QR code with your authenticator app</li>
                         <li>Enter the 6-digit code generated by the app</li>
-                        <li>Click "Verify and Activate"</li>
+                        <li>Click "Verify and Activate" below</li>
                     </ol>
                 </div>
 
@@ -325,7 +354,7 @@
 
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary">
-                            <span class="material-icons align-middle" style="font-size: 1.2rem; margin-right: 0.5rem;">verified_user</span>
+                            <span class="material-icons align-middle" style="font-size: 1.3rem; margin-right: 0.5rem;">verified_user</span>
                             Verify and Activate
                         </button>
                     </div>
