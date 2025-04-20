@@ -1689,7 +1689,7 @@ document.getElementById('headerSearchInput').addEventListener('focus', function(
                document.addEventListener("DOMContentLoaded", function () {
     const textSection = document.querySelector(".road-head");
     const imageSection = document.querySelector(".yellow");
-    const paraSection = document.querySelector(".gray");
+    const paraSection = document.querySelector(".task-head");
 
     function checkVisibility() {
         const textSectionPosition = textSection.getBoundingClientRect().top;
@@ -1708,7 +1708,7 @@ document.getElementById('headerSearchInput').addEventListener('focus', function(
             imageSection.classList.remove("opacity-0");
         }
         if (paraSectionPosition < screenPosition) {
-            paraSection.classList.add("slide-in-left", "opacity-100");
+            paraSection.classList.add("slide-in-right", "opacity-100");
             paraSection.classList.remove("opacity-0");
         }
     }
@@ -1888,7 +1888,7 @@ document.getElementById('headerSearchInput').addEventListener('focus', function(
         <!-- Logo and Social Media -->
         <div>
             <div class="flex items-center mb-6">
-                <img alt="Cryptexpert Logo" class="w-16 h-16 mr-4" height="64" src="https://storage.googleapis.com/a1aa/image/_2ZnesKffljB9iDV0dqzTs-Eb58-AEe5Y2BcgdpLd-Q.jpg" width="64"/>
+                <img alt="Cryptexpert Logo" class="w-16 h-16 mr-4" height="64" src="static/img/cryptexpertlogo.png" width="64"/>
                 <h1 class="text-3xl font-bold text-[#f8bc04]">Cryptexpert</h1>
             </div>
             <p class="mb-6 text-lg text-[#f8bc04]">Your trusted platform for cryptocurrency trading, analytics, and portfolio management.</p>
