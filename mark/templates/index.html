@@ -1911,99 +1911,131 @@ async function fetchPricesAndUpdateSwipers() {
     }
 }
 
-// Store previous prices only for OKX and Coinbase
-let previousPrices = {
-    okx: {},
-    coinbase: {}
-};
-
 async function fetchPricesOnly() {
     try {
+        // Fetch all prices in parallel
         const [binanceRes, okxRes, coinbaseRes] = await Promise.all([
             fetch('/binance_prices'),
             fetch('/okx_prices'),
             fetch('/coinbase_prices')
         ]);
-        
+
         const [binancePrices, okxPrices, coinbasePrices] = await Promise.all([
             binanceRes.json(),
             okxRes.json(),
             coinbaseRes.json()
         ]);
+        console.log("Binance sample:", binancePrices[0]);
 
-        // Process prices - only calculate percentages for OKX and Coinbase
-        currentPrices.binance = binancePrices; // Keep Binance data as-is
-        currentPrices.okx = calculatePercentages(okxPrices, 'okx');
-        currentPrices.coinbase = calculatePercentages(coinbasePrices, 'coinbase');
+        // Store prices globally
+        currentPrices.binance = binancePrices;
+        currentPrices.okx = okxPrices;
+        currentPrices.coinbase = coinbasePrices;
+
+
+
+
+
 
         // Update all swipers
-        updateSwiperPrices('binance', currentPrices.binance, binanceSwiper);
-        updateSwiperPrices('okx', currentPrices.okx, okxSwiper);
-        updateSwiperPrices('coinbase', currentPrices.coinbase, coinbaseSwiper);
+        updateSwiperPrices('binance', binancePrices, binanceSwiper);
+        updateSwiperPrices('okx', okxPrices, okxSwiper);
+        updateSwiperPrices('coinbase', coinbasePrices, coinbaseSwiper);
 
     } catch (error) {
         console.error('Error fetching prices:', error);
+        // Don't show error for periodic updates, only for initial load
     }
 }
 
-function calculatePercentages(newPrices, exchange) {
-    return newPrices.map(ticker => {
-        const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
-        const newPrice = parseFloat(ticker.price);
-        
-        // Get previous price
-        const prevPrice = previousPrices[exchange][symbol] || newPrice;
-        
-        // Calculate percentage change
-        let priceChangePercent = 0;
-        if (prevPrice !== 0) {
-            priceChangePercent = ((newPrice - prevPrice) / prevPrice) * 100;
-        }
-        
-        // Store current price for next calculation
-        previousPrices[exchange][symbol] = newPrice;
-        
-        // Return enriched ticker data
-        return {
-            ...ticker,
-            priceChangePercent: priceChangePercent.toFixed(2)
-        };
-    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function formatPrice(price) {
+    const cleaned = price.toString().replace(/,/g, ''); // Remove commas
+    const num = parseFloat(cleaned);
+    if (isNaN(num)) return price;
+
+    if (num >= 1000) {
+        return num.toLocaleString('en-US', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 0
+        });
+    } else if (num >= 1) {
+        return num.toLocaleString('en-US', {
+            maximumFractionDigits: 4,
+            minimumFractionDigits: 2
+        });
+    } else {
+        return num.toLocaleString('en-US', {
+            maximumFractionDigits: 8,
+            minimumFractionDigits: 2
+        });
+    }
 }
+
 
 function updateSwiperPrices(exchange, prices, swiperInstance) {
     const wrapper = document.querySelector(`#${exchange}-section .swiper-wrapper`);
+
+    // Create a map of symbol to price data for quick lookup
     const priceMap = {};
-    
     prices.forEach(ticker => {
         const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
         priceMap[symbol] = ticker;
     });
 
-    // Initial load case
+    // If wrapper is empty (initial load), create all slides
     if (wrapper.children.length === 0 || wrapper.children.length === 1 && wrapper.querySelector('.spinner-border')) {
         createAllSlides(exchange, prices, wrapper);
         if (swiperInstance) swiperInstance.update();
         return;
     }
 
-    // Normal update
+    // Update existing slides by matching symbols
     const slides = wrapper.querySelectorAll('.swiper-slide');
     slides.forEach(slide => {
         const symbol = slide.getAttribute('data-symbol');
         const ticker = priceMap[symbol];
         if (!ticker) return;
 
+        const priceChangePercent = parseFloat(ticker.priceChangePercent);
         const price = formatPrice(ticker.price);
+
+        // Update price and percentage elements
         const priceElement = slide.querySelector('h2');
         const percentElement = slide.querySelector('.percentage-change');
 
         if (priceElement) priceElement.textContent = `$${price}`;
         if (percentElement) {
-            const change = parseFloat(ticker.priceChangePercent);
-            percentElement.innerHTML = change > 0 ? 
-                `<span class="positive">+${change.toFixed(2)}%</span>` : 
-                (change < 0 ? `<span class="negative">${change.toFixed(2)}%</span>` : `<span class="neutral">0.00%</span>`);
+            percentElement.innerHTML = priceChangePercent > 0 ? 
+                `<span class="positive">+${priceChangePercent.toFixed(2)}%</span>` : 
+                (priceChangePercent < 0 ? 
+                    `<span class="negative">${priceChangePercent.toFixed(2)}%</span>` : 
+                    `<span class="neutral">0.00%</span>`);
         }
     });
 }
