@@ -1543,7 +1543,6 @@ from werkzeug.utils import secure_filename
 import os
 import uuid
 
-# Blog routes
 @app.route('/blog')
 def blog_home():
     """Show all published blog posts"""
@@ -1551,10 +1550,18 @@ def blog_home():
     posts = BlogPost.query.filter_by(is_published=True)\
                          .order_by(BlogPost.created_at.desc())\
                          .paginate(page=page, per_page=5)
+    
+    # Get categories and popular posts
     categories = BlogCategory.query.all()
+    popular_posts = BlogPost.query.filter_by(is_published=True)\
+                                .order_by(BlogPost.views.desc())\
+                                .limit(3)\
+                                .all()
+    
     return render_template('blog/index.html', 
                          posts=posts,
-                         categories=categories)
+                         categories=categories,
+                         popular_posts=popular_posts)
 
 @app.route('/blog/<string:slug>')
 def blog_post(slug):
@@ -1589,13 +1596,10 @@ def blog_category(slug):
                          posts=posts)
 
 # Admin routes
-@app.route('/admin/blog/create', methods=['GET', 'POST'])
+@app.route('/blog/create', methods=['GET', 'POST'])
 @login_required
 def create_blog_post():
-    """Create new blog post"""
-    if not current_user.is_admin:
-        abort(403)
-    
+
     form = BlogPostForm()
     form.category_id.choices = [(c.id, c.name) for c in BlogCategory.query.all()]
     
@@ -1627,12 +1631,11 @@ def create_blog_post():
     
     return render_template('blog/create.html', form=form)
 
-@app.route('/admin/blog/<int:post_id>/edit', methods=['GET', 'POST'])
+@app.route('/blog/<int:post_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_blog_post(post_id):
     """Edit existing blog post"""
-    if not current_user.is_admin:
-        abort(403)
+ 
     
     post = BlogPost.query.get_or_404(post_id)
     form = BlogPostForm(obj=post)
@@ -1667,11 +1670,10 @@ def edit_blog_post(post_id):
     
     return render_template('blog/edit.html', form=form, post=post)
 
-@app.route('/admin/blog/categories')
+@app.route('/blog/categories')
 @login_required
 def manage_blog_categories():
     """Manage blog categories"""
-    if not current_user.is_admin:
-        abort(403)
+   
     categories = BlogCategory.query.all()
     return render_template('blog/categories.html', categories=categories)
