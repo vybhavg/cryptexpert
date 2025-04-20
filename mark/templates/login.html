@@ -1,57 +1,315 @@
-
 <!DOCTYPE html>
 <html lang="en">
     
 <!--Designed By ALpha-->
 <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <!-- Vendor styles -->
-        <link rel="stylesheet" href="/static/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css">
-        <link rel="stylesheet" href="/static/vendors/bower_components/animate.css/animate.min.css">
-<!-- Add this to the <head> section -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Load Bootstrap once -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Add this before the closing </body> tag -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <!-- App styles -->
-        <link rel="stylesheet" href="/static/css/app.min.css">
-<style>
-.swal2-dark {
-    background-color: #1a1a1a; /* Dark background */
-    color: #ffffff; /* White text */
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
+    <!-- Vendor styles -->
+    <link rel="stylesheet" href="/static/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css">
+    <link rel="stylesheet" href="/static/vendors/bower_components/animate.css/animate.min.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-/* Ensure the toast applies the dark mode styles correctly */
-.swal2-toast.swal2-dark {
-    background-color: #1a1a1a; /* Ensure toast inherits dark background */
-    color: #ffffff; /* White text */
-}
+    <!-- App styles -->
+    <link rel="stylesheet" href="/static/css/app.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+    /* Base styles */
+    body {
+        background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+        font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        color: white;
+        min-height: 100vh;
+        padding: 1rem 0;
+        overflow-y: hidden;
+    }
+    
+    /* Custom Colors */
+    .text-yellow-custom { color: #F8BC04 !important; }
+    .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
+    
+    /* Login container */
+    .login {
+        max-width: 420px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+    
+    /* Login block */
+    .login__block {
+        background-color: #000000;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Login block header */
+    .login__block__header {
+        background: linear-gradient(135deg, #F8BC04, #e6a905);
+        color: #1a1a1a;
+        padding: 1rem;
+        text-align: center;
+        position: relative;
+    }
+    
+    .login__block__header i {
+        font-size: 2rem;
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+    
+    .login__block__header p {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    /* Dropdown menu */
+    .dropdown-menu {
+        background: linear-gradient(135deg, #252525, #2d2d2d);
+        border: 1px solid #333;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        padding: 0.5rem 0;
+    }
+    
+    .dropdown-item {
+        color: rgba(255, 255, 255, 0.8);
+        padding: 0.5rem 1.5rem;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+    
+    .dropdown-item:hover {
+        background-color: rgba(248, 188, 4, 0.1);
+        color: #F8BC04;
+    }
+    
+    /* Login block body */
+    .login__block__body {
+        padding: 1rem;
+    }
+    
+    /* Form styles */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-control {
+        background-color: #1a1a1a;
+        border: 1px solid #333;
+        color: white;
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        height: auto;
+    }
+    
+    .form-control:focus {
+        border-color: #F8BC04;
+        box-shadow: 0 0 0 0.2rem rgba(248, 188, 4, 0.2);
+        background-color: #1a1a1a;
+        color: white;
+    }
+    
+    .form-control.text-center {
+        text-align: center;
+    }
+    
+    /* Password input container */
+    .password-input-container {
+        position: relative;
+    }
+    
+    /* Password toggle */
+    .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.5);
+        transition: color 0.2s;
+        font-size: 1.1rem;
+    }
+    
+    .password-toggle:hover {
+        color: #F8BC04;
+    }
+    
+    /* Button styles */
+    .btn-primary {
+        background: linear-gradient(135deg, #F8BC04, #e6a905);
+        border: none;
+        border-radius: 8px;
+        padding: 0.6rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        width: 100%;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 7px 14px rgba(0, 0, 0, 0.4);
+        color: #1a1a1a;
+    }
+    
+    .btn-primary:disabled {
+        background: #333;
+        color: rgba(255, 255, 255, 0.5);
+        transform: none;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+    
+    /* Checkbox styles */
+    .form-check {
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .form-check-input {
+        width:20px;
+        height: 20px;
+        margin-top:0.6em;
+        background-color: #1a1a1a;
+        border: 1px solid #333;
+    }
+    
+    .form-check-input:checked {
+        background-color: #F8BC04;
+        border-color: #F8BC04;
+    }
+    
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(248, 188, 4, 0.25);
+    }
+    
+    .form-check-label {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-left: 0.20rem;
+    }
+    
+    /* Terms link */
+    .terms-link {
+        color: #F8BC04;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    
+    .terms-link:hover {
+        color: #e6a905;
+        text-decoration: underline;
+    }
+    
+    /* Validation feedback */
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+    
+    .is-invalid:focus {
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .invalid-feedback {
+        display: none;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.8125rem;
+        color: #dc3545;
+    }
+    
+    .is-invalid ~ .invalid-feedback {
+        display: block;
+    }
+    
+    /* Responsive adjustments for very small screens */
+    @media (max-width: 400px) {
+        .login__block__header {
+            padding: 0.8rem;
+        }
+        
+        .login__block__header i {
+            font-size: 1.8rem;
+        }
+        
+        .login__block__header p {
+            font-size: 1rem;
+        }
+        
+        .login__block__body {
+            padding: 0.8rem;
+        }
+        
+        .form-control {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.85rem;
+        }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+        .login {
+            margin: 1rem auto;
+        }
+        
+        .login__block__header {
+            padding: 1.25rem;
+        }
+        
+        .login__block__body {
+            padding: 1.25rem;
+        }
+    }
 
-.swal2-toast.swal2-dark .swal2-title {
-    color: #ffffff; /* White title text */
-}
+    /* SweetAlert2 Dark Theme */
+    .swal2-dark {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
 
-.swal2-toast.swal2-dark .swal2-html-container {
-    color: #cccccc; /* Light gray content text */
-}
+    .swal2-toast.swal2-dark {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
 
-.swal2-toast.swal2-dark .swal2-icon {
-    color: #f8bc04; /* Yellow icon */
-}
+    .swal2-toast.swal2-dark .swal2-title {
+        color: #ffffff;
+    }
 
-/* Ensure the timer progress bar is styled correctly */
-.swal2-toast.swal2-dark .swal2-timer-progress-bar {
-    background: #f8bc04 !important; /* Yellow progress bar */
-}
-</style></head>
-    <body data-sa-theme="5">
- <script>
+    .swal2-toast.swal2-dark .swal2-html-container {
+        color: #cccccc;
+    }
+
+    .swal2-toast.swal2-dark .swal2-icon {
+        color: #f8bc04;
+    }
+
+    .swal2-toast.swal2-dark .swal2-timer-progress-bar {
+        background: #f8bc04 !important;
+    }
+    </style>
+</head>
+
+<body data-sa-theme="5">
+   <script>
      const iconMap = {
     success: 'success',
     error: 'error',
@@ -90,99 +348,91 @@
         });
     </script>
 
-        <div class="login">
-
-            <!-- Login -->
-            <div class="login__block box active" style="background-color: #000000;  " id="l-login">
-                <div class="login__block__header">
-                    <i class="zmdi zmdi-account-circle"></i>
-                    <p style="font-size: 18px;">Hi there! Please Sign in
-</p>
-                    <div class="actions actions--inverse login__block__actions">
-                        <div class="dropdown">
-                            <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item"></i>
-
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="{{url_for('register_form')}}">Create an account</a>
-                                <a class="dropdown-item" href="{{ url_for('forgot_password') }}">Forgot password?</a>
-                            </div>
+    <div class="login">
+        <!-- Login -->
+        <div class="login__block box active" id="l-login">
+            <div class="login__block__header">
+                <i class="zmdi zmdi-account-circle"></i>
+                <p>Hi there! Please Sign in</p>
+                <div class="actions actions--inverse login__block__actions">
+                    <div class="dropdown">
+                        <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item" style="color: #1a1a1a;"></i>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="{{url_for('register_form')}}">Create an account</a>
+                            <a class="dropdown-item" href="{{ url_for('forgot_password') }}">Forgot password?</a>
                         </div>
                     </div>
                 </div>
-                
-
-                <div class="login__block__body">
-                    <form method="POST">
-                        {{ form.hidden_tag() }}
-
-                        <div class="form-group">
-                            {{ form.username(class="form-control text-center", placeholder="Username") }}
-                        </div>
-                        <!-- Password Field -->
-                        <div class="form-group">
-                           
-                            {{ form.password(class="form-control text-center", placeholder="Password") }}
-                        </div>
-                    
-                        <!-- Submit Button -->
-                        <div class="form-group " >
-                            {{ form.submit(class="btn btn-primary") }}
-                        </div>
-                    </form>
-
-                </div>
             </div>
-
-
-
             
+            <div class="login__block__body">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <!-- Username Field -->
+                    <div class="form-group">
+                        {{ form.username(class="form-control text-center", placeholder="Username") }}
+                        {% if form.username.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.username.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <div class="password-input-container">
+                            {{ form.password(class="form-control text-center", placeholder="Password", id="password") }}
+                            <i class="zmdi zmdi-eye password-toggle" id="togglePassword"></i>
+                        </div>
+                        {% if form.password.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="material-icons align-middle" style="font-size: 1.2rem; margin-right: 0.5rem;">login</span>
+                            Sign In
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
-        <!-- Older IE warning message -->
-            <!--[if IE]>
-                <div class="ie-warning">
-                    <h1>Warning!!</h1>
-                    <p>You are using an outdated version of Internet Explorer, please upgrade to any of the following web browsers to access this website.</p>
+    <!-- Javascript -->
+    <!-- Vendors -->
+    <script src="/static/vendors/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/static/vendors/bower_components/popper.js/dist/umd/popper.min.js"></script>
+    <script src="/static/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
-                    <div class="ie-warning__downloads">
-                        <a href="http://www.google.com/chrome">
-                            <img src="img/browsers/chrome.png" alt="">
-                        </a>
-
-                        <a href="https://www.mozilla.org/en-US/firefox/new">
-                            <img src="img/browsers/firefox.png" alt="">
-                        </a>
-
-                        <a href="http://www.opera.com">
-                            <img src="img/browsers/opera.png" alt="">
-                        </a>
-
-                        <a href="https://support.apple.com/downloads/safari">
-                            <img src="img/browsers/safari.png" alt="">
-                        </a>
-
-                        <a href="https://www.microsoft.com/en-us/windows/microsoft-edge">
-                            <img src="img/browsers/edge.png" alt="">
-                        </a>
-
-                        <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
-                            <img src="img/browsers/ie.png" alt="">
-                        </a>
-                    </div>
-                    <p>Sorry for the inconvenience!</p>
-                </div>
-            <![endif]-->
-
-        <!-- Javascript -->
-        <!-- Vendors -->
-        <script src="/static/vendors/bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="/static/vendors/bower_components/popper.js/dist/umd/popper.min.js"></script>
-        <script src="/static/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-
-        <!-- App functions and actions -->
-        <script src="/static/js/app.min.js"></script>
-    </body>
-
-<!--Designed By ALpha-->
+    <!-- Password toggle script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const password = document.getElementById('password');
+            const togglePassword = document.getElementById('togglePassword');
+            
+            // Toggle password visibility
+            if (togglePassword) {
+                togglePassword.addEventListener('click', function() {
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    this.classList.toggle('zmdi-eye');
+                    this.classList.toggle('zmdi-eye-off');
+                });
+            }
+        });
+    </script>
+    
+    <!-- App functions and actions -->
+    <script src="/static/js/app.min.js"></script>
+</body>
 </html>
