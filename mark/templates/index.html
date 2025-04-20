@@ -1763,42 +1763,50 @@ document.addEventListener("click", function(event) {
 </div>
 
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    <script>
-     // Add this to your existing JavaScript
-document.querySelectorAll('input[name="price-source"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-        const selectedExchange = this.value;
-        
-        // Hide all sections
-        document.getElementById('binance-section').style.display = 'none';
-        document.getElementById('okx-section').style.display = 'none';
-        document.getElementById('coinbase-section').style.display = 'none';
-        
-        // Show selected section
-        document.getElementById(`${selectedExchange}-section`).style.display = 'block';
-        
-        // If the swiper hasn't been initialized yet for this exchange, fetch prices
-        if (document.querySelector(`#${selectedExchange}-section .swiper-slide`).length === 0) {
-            fetchPricesAndUpdateSwipers();
-        }
-    });
-});
+ <script>
+// Store Swiper instances globally
+let binanceSwiper, okxSwiper, coinbaseSwiper;
+let currentExchange = 'binance'; // Default exchange
 
-    </script>
-<script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize empty swipers first
+    // Initialize swipers with empty states
     initSwipers();
     
-    // Then fetch prices asynchronously
+    // Set up exchange selector
+    setupExchangeSelector();
+    
+    // Fetch initial prices
     fetchPricesAndUpdateSwipers();
+    
+    // Set up periodic updates
     setInterval(fetchPricesAndUpdateSwipers, 10000);
-
 });
+
+function setupExchangeSelector() {
+    document.querySelectorAll('input[name="price-source"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            currentExchange = this.value;
+            
+            // Hide all sections
+            document.getElementById('binance-section').style.display = 'none';
+            document.getElementById('okx-section').style.display = 'none';
+            document.getElementById('coinbase-section').style.display = 'none';
+            
+            // Show selected section
+            document.getElementById(`${currentExchange}-section`).style.display = 'block';
+            
+            // If the swiper is empty, force an update
+            const wrapper = document.querySelector(`#${currentExchange}-section .swiper-wrapper`);
+            if (wrapper.children.length <= 1) { // 1 for loading spinner or error
+                fetchPricesAndUpdateSwipers();
+            }
+        });
+    });
+}
 
 function initSwipers() {
     // Initialize all swipers with empty config
-    new Swiper(".swiper", {
+    binanceSwiper = new Swiper(".swiper", {
         effect: "coverflow",
         grabCursor: true,
         centeredSlides: true,
@@ -1824,9 +1832,7 @@ function initSwipers() {
         }
     });
     
-    // Similar for other swipers (okx and coinbase)
-    new Swiper(".cmpswiper", {
-        // Same config as above
+    okxSwiper = new Swiper(".cmpswiper", {
         effect: "coverflow",
         grabCursor: true,
         centeredSlides: true,
@@ -1852,8 +1858,7 @@ function initSwipers() {
         }
     });
     
-    new Swiper(".csswiper", {
-        // Same config as above
+    coinbaseSwiper = new Swiper(".csswiper", {
         effect: "coverflow",
         grabCursor: true,
         centeredSlides: true,
@@ -1882,16 +1887,15 @@ function initSwipers() {
 
 async function fetchPricesAndUpdateSwipers() {
     try {
-        // Show loading state
-        document.querySelectorAll('.swiper-wrapper').forEach(wrapper => {
-            wrapper.innerHTML = `
-                <div class="swiper-slide swiper-slide--one" style="display: flex; justify-content: center; align-items: center;">
-                    <div class="spinner-border text-warning" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+        // Show loading state only for visible swiper
+        const visibleWrapper = document.querySelector(`#${currentExchange}-section .swiper-wrapper`);
+        visibleWrapper.innerHTML = `
+            <div class="swiper-slide swiper-slide--one" style="display: flex; justify-content: center; align-items: center;">
+                <div class="spinner-border text-warning" role="status">
+                    <span class="visually-hidden">Loading...</span>
                 </div>
-            `;
-        });
+            </div>
+        `;
 
         // Fetch all prices in parallel
         const [binanceRes, okxRes, coinbaseRes] = await Promise.all([
@@ -1906,27 +1910,30 @@ async function fetchPricesAndUpdateSwipers() {
             coinbaseRes.json()
         ]);
 
-        // Update each swiper
-        updateSwiper('binance', binancePrices);
-        updateSwiper('okx', okxPrices);
-        updateSwiper('coinbase', coinbasePrices);
+        // Update all swipers but only show loading for current one
+        updateSwiper('binance', binancePrices, binanceSwiper);
+        updateSwiper('okx', okxPrices, okxSwiper);
+        updateSwiper('coinbase', coinbasePrices, coinbaseSwiper);
 
     } catch (error) {
         console.error('Error fetching prices:', error);
-        // Show error state
-        document.querySelectorAll('.swiper-wrapper').forEach(wrapper => {
-            wrapper.innerHTML = `
-                <div class="swiper-slide swiper-slide--one" style="text-align: center; padding: 20px;">
-                    <span>Error loading prices</span>
-                    <button onclick="fetchPricesAndUpdateSwipers()" class="btn btn-sm btn-warning mt-2">Retry</button>
-                </div>
-            `;
-        });
+        // Show error state for visible swiper
+        const visibleWrapper = document.querySelector(`#${currentExchange}-section .swiper-wrapper`);
+        visibleWrapper.innerHTML = `
+            <div class="swiper-slide swiper-slide--one" style="text-align: center; padding: 20px;">
+                <span>Error loading prices</span>
+                <button onclick="fetchPricesAndUpdateSwipers()" class="btn btn-sm btn-warning mt-2">Retry</button>
+            </div>
+        `;
     }
 }
 
-function updateSwiper(exchange, prices) {
+function updateSwiper(exchange, prices, swiperInstance) {
     const wrapper = document.querySelector(`#${exchange}-section .swiper-wrapper`);
+    
+    // Save current slide index if it exists
+    const currentIndex = swiperInstance && swiperInstance.activeIndex ? swiperInstance.activeIndex : 0;
+    
     wrapper.innerHTML = '';
     
     prices.forEach(ticker => {
@@ -1944,7 +1951,7 @@ function updateSwiper(exchange, prices) {
                      alt="${symbol}">
             </div>
             <span>${symbol}</span>
-            <h2>$${ticker.price}</h2>
+            <h2>$${parseFloat(ticker.price).toFixed(2)}</h2>
             <h5 class="percentage-change">
                 ${priceChangePercent > 0 ? 
                     `<span class="positive">+${priceChangePercent.toFixed(2)}%</span>` : 
@@ -1962,40 +1969,11 @@ function updateSwiper(exchange, prices) {
         wrapper.appendChild(slide);
     });
     
-    // Reinitialize swiper to recognize new slides
-    new Swiper(`.${exchange}swiper`, {
-        effect: "coverflow",
-        grabCursor: true,
-        centeredSlides: true,
-        slidesPerView: "auto",
-        loopAdditionalSlides: 1,
-        coverflowEffect: {
-            rotate: 0,
-            stretch: 0,
-            depth: 100,
-            modifier: 2,
-            slideShadows: true
-        },
-        spaceBetween: 30,
-        loop: true,
-        autoplay: {
-            delay: 3000,
-            disableOnInteraction: false,
-        },
-        speed: 800,
-        pagination: {
-            el: ".swiper-pagination",
-            clickable: true
-        }
-    });
+    // Update the swiper instance if it exists
+    if (swiperInstance) {
+        swiperInstance.update();
+        swiperInstance.slideToLoop(Math.min(currentIndex, prices.length - 1));
+    }
 }
-   document.querySelectorAll(".swiper-slide").forEach(slide => {
-                slide.addEventListener("click", function () {
-                    let symbol = this.getAttribute("data-symbol");
-                    if(symbol){
-                        window.location.href = `/charts?symbol=${symbol}USDT`;
-                    }
-                });
-            });
 </script>
         {% endblock %}
