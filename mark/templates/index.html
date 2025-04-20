@@ -1932,51 +1932,22 @@ async function fetchPricesOnly() {
             okxRes.json(),
             coinbaseRes.json()
         ]);
+        console.log("Binance sample:", binancePrices[0]);
 
-        // Calculate percentages before storing
-        const processedData = {
-            binance: calculatePercentages(binancePrices, 'binance'),
-            okx: calculatePercentages(okxPrices, 'okx'),
-            coinbase: calculatePercentages(coinbasePrices, 'coinbase')
-        };
+        // Store prices globally
+        currentPrices.binance = binancePrices;
+        currentPrices.okx = okxPrices;
+        currentPrices.coinbase = coinbasePrices;
 
-        // Store current prices as previous for next calculation
-        currentPrices = processedData;
-        
         // Update all swipers
-        updateSwiperPrices('binance', currentPrices.binance, binanceSwiper);
-        updateSwiperPrices('okx', currentPrices.okx, okxSwiper);
-        updateSwiperPrices('coinbase', currentPrices.coinbase, coinbaseSwiper);
+        updateSwiperPrices('binance', binancePrices, binanceSwiper);
+        updateSwiperPrices('okx', okxPrices, okxSwiper);
+        updateSwiperPrices('coinbase', coinbasePrices, coinbaseSwiper);
 
     } catch (error) {
         console.error('Error fetching prices:', error);
+        // Don't show error for periodic updates, only for initial load
     }
-}
-
-function calculatePercentages(newPrices, exchange) {
-    return newPrices.map(ticker => {
-        const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
-        const newPrice = parseFloat(ticker.price);
-        
-        // Get previous price if available
-        const prevPriceObj = previousPrices[exchange][symbol];
-        const prevPrice = prevPriceObj ? parseFloat(prevPriceObj.price) : newPrice;
-        
-        // Calculate percentage change
-        let priceChangePercent = 0;
-        if (prevPrice !== 0) {  // Avoid division by zero
-            priceChangePercent = ((newPrice - prevPrice) / prevPrice) * 100;
-        }
-        
-        // Store current price as previous for next calculation
-        previousPrices[exchange][symbol] = { price: newPrice.toString() };
-        
-        // Return enriched ticker data
-        return {
-            ...ticker,
-            priceChangePercent: priceChangePercent.toFixed(2)
-        };
-    });
 }
 
 function formatPrice(price) {
