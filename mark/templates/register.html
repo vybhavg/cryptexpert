@@ -17,10 +17,11 @@
     <link rel="stylesheet" href="/static/css/app.min.css">
     <style>
         .alert {
-            padding: 1rem;
+            padding: 0.75rem;
             margin-bottom: 1rem;
             border: 1px solid transparent;
             border-radius: 0.25rem;
+            font-size: 0.875rem;
         }
 
         .alert-success {
@@ -49,21 +50,34 @@
         
         /* Password requirement hints */
         .password-hints {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: #6c757d;
+            margin-top: 0.25rem;
         }
         
         .password-hints ul {
-            padding-left: 1.5rem;
-            margin-top: 0.5rem;
+            padding-left: 1.25rem;
+            margin-top: 0.25rem;
             margin-bottom: 0;
+            list-style-type: none;
         }
         
-        .password-hints .valid {
+        .password-hints li {
+            position: relative;
+            padding-left: 1.5em;
+        }
+        
+        .password-hints li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+        }
+        
+        .valid {
             color: #28a745;
         }
         
-        .password-hints .invalid {
+        .invalid {
             color: #dc3545;
         }
         
@@ -75,13 +89,86 @@
         .invalid-feedback {
             display: none;
             width: 100%;
-            margin-top: 0.25rem;
-            font-size: 0.875em;
+            margin-top: 0.1rem;
+            font-size: 0.75rem;
             color: #dc3545;
         }
         
         .is-invalid ~ .invalid-feedback {
             display: block;
+        }
+        
+        /* Form controls */
+        .form-control {
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+            height: auto;
+        }
+        
+        /* Form labels */
+        .form-check-label {
+            font-size: 0.8125rem;
+        }
+        
+        /* Terms link */
+        .terms-link {
+            font-size: 0.8125rem;
+        }
+        
+        /* Submit button */
+        .btn {
+            font-size: 0.875rem;
+            padding: 0.5rem;
+        }
+        
+        /* Header text */
+        .login__block__header p {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Form group spacing */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        /* Checkbox alignment */
+        .form-check {
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-check-input {
+            margin-top: 0.15rem;
+        }
+        
+        /* Password strength meter */
+        .password-strength {
+            height: 5px;
+            background-color: #e9ecef;
+            margin-top: 0.5rem;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+        
+        /* Password visibility toggle */
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .password-input-container {
+            position: relative;
         }
     </style>
 </head>
@@ -93,7 +180,7 @@
             {% for category, message in messages %}
                 <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                     {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="padding: 0.5rem;"></button>
                 </div>
             {% endfor %}
         {% endif %}
@@ -104,7 +191,7 @@
         <div class="login__block box active" style="background-color: #000000;" id="l-login">
             <div class="login__block__header">
                 <i class="zmdi zmdi-account-circle"></i>
-                <p style="font-size: 18px;">Hi there! Please Sign Up</p>
+                <p>Create your account</p>
                 <div class="actions actions--inverse login__block__actions">
                     <div class="dropdown">
                         <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item"></i>
@@ -121,7 +208,7 @@
                     {{ form.hidden_tag() }}
 
                     <!-- Username Field -->
-                    <div class="form-group mb-3">
+                    <div class="form-group">
                         {{ form.username(class="form-control text-center", placeholder="Username (3-10 characters)") }}
                         {% if form.username.errors %}
                             <div class="invalid-feedback">
@@ -133,7 +220,7 @@
                     </div>
 
                     <!-- Email Field -->
-                    <div class="form-group mb-3">
+                    <div class="form-group">
                         {{ form.email(class="form-control text-center", placeholder="Your email address") }}
                         {% if form.email.errors %}
                             <div class="invalid-feedback">
@@ -145,13 +232,23 @@
                     </div>
 
                     <!-- Password Field -->
-                    <div class="form-group mb-3">
-                        {{ form.password1(class="form-control text-center", placeholder="Password (3-10 characters)", 
-                                        **{'data-minlength': '3', 'data-maxlength': '10'}) }}
+                    <div class="form-group">
+                        <div class="password-input-container">
+                            {{ form.password1(class="form-control text-center", placeholder="Password (min 8 characters)", 
+                                            id="password", **{'data-minlength': '8'}) }}
+                            <i class="zmdi zmdi-eye password-toggle" id="togglePassword"></i>
+                        </div>
+                        <div class="password-strength">
+                            <div class="password-strength-bar" id="password-strength-bar"></div>
+                        </div>
                         <div class="password-hints">
-                            <small>Password must:</small>
+                            <small>Password must contain:</small>
                             <ul>
-                                <li class="length-requirement">Be between 3-10 characters</li>
+                                <li id="length-requirement">At least 8 characters</li>
+                                <li id="uppercase-requirement">At least 1 uppercase letter</li>
+                                <li id="lowercase-requirement">At least 1 lowercase letter</li>
+                                <li id="number-requirement">At least 1 number</li>
+                                <li id="special-requirement">At least 1 special character</li>
                             </ul>
                         </div>
                         {% if form.password1.errors %}
@@ -164,8 +261,14 @@
                     </div>
 
                     <!-- Confirm Password Field -->
-                    <div class="form-group mb-4">
-                        {{ form.password2(class="form-control text-center", placeholder="Confirm your password") }}
+                    <div class="form-group">
+                        <div class="password-input-container">
+                            {{ form.password2(class="form-control text-center", placeholder="Confirm your password", id="confirmPassword") }}
+                            <i class="zmdi zmdi-eye password-toggle" id="toggleConfirmPassword"></i>
+                        </div>
+                        <div class="invalid-feedback" id="password-match-feedback">
+                            Passwords do not match
+                        </div>
                         {% if form.password2.errors %}
                             <div class="invalid-feedback">
                                 {% for error in form.password2.errors %}
@@ -174,30 +277,29 @@
                             </div>
                         {% endif %}
                     </div>
-                <!-- Terms and Conditions Checkbox -->
-<div class="form-group mb-3 form-check">
-    {{ form.accept_tos(class="form-check-input", required="required") }}
-    <label class="form-check-label" for="{{ form.accept_tos.id }}" style="font-size:15px;">
-        I agree to the <a href="{{ url_for('terms') }}" target="_blank">Terms and Conditions</a>
-    </label>
-    {% if form.accept_tos.errors %}
-        <div class="invalid-feedback">
-            {% for error in form.accept_tos.errors %}
-                {{ error }}
-            {% endfor %}
-        </div>
-    {% endif %}
-</div>
+
+                    <!-- Terms and Conditions Checkbox -->
+                    <div class="form-group form-check">
+                        {{ form.accept_tos(class="form-check-input", required="required") }}
+                        <label class="form-check-label" for="{{ form.accept_tos.id }}">
+                            I agree to the <a href="{{ url_for('terms') }}" target="_blank" class="terms-link">Terms and Conditions</a>
+                        </label>
+                        {% if form.accept_tos.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.accept_tos.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
                     <!-- Submit Button -->
                     <div class="form-group">
-                        {{ form.submit(class="btn btn-primary w-100") }}
+                        <button type="submit" class="btn btn-primary w-100" id="submitButton" disabled>Register</button>
                     </div>
                 </form>
             </div>
         </div>
-
-        <!-- Rest of your template remains the same -->
-        <!-- ... -->
     </div>
 
     <!-- Javascript -->
@@ -209,78 +311,172 @@
     <!-- Password validation script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const password1 = document.querySelector('#{{ form.password1.id }}');
-            const password2 = document.querySelector('#{{ form.password2.id }}');
-            const lengthRequirement = document.querySelector('.length-requirement');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const togglePassword = document.getElementById('togglePassword');
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            const submitButton = document.getElementById('submitButton');
+            const passwordStrengthBar = document.getElementById('password-strength-bar');
             
-            if (password1) {
-                password1.addEventListener('input', function() {
-                    // Validate length
-                    const isValidLength = this.value.length >= 3 && this.value.length <= 10;
+            // Password requirements elements
+            const lengthRequirement = document.getElementById('length-requirement');
+            const uppercaseRequirement = document.getElementById('uppercase-requirement');
+            const lowercaseRequirement = document.getElementById('lowercase-requirement');
+            const numberRequirement = document.getElementById('number-requirement');
+            const specialRequirement = document.getElementById('special-requirement');
+            const passwordMatchFeedback = document.getElementById('password-match-feedback');
+            
+            // Toggle password visibility
+            if (togglePassword) {
+                togglePassword.addEventListener('click', function() {
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    this.classList.toggle('zmdi-eye');
+                    this.classList.toggle('zmdi-eye-off');
+                });
+            }
+            
+            if (toggleConfirmPassword) {
+                toggleConfirmPassword.addEventListener('click', function() {
+                    const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                    confirmPassword.setAttribute('type', type);
+                    this.classList.toggle('zmdi-eye');
+                    this.classList.toggle('zmdi-eye-off');
+                });
+            }
+            
+            // Check password strength
+            function checkPasswordStrength(password) {
+                let strength = 0;
+                
+                // Length requirement (min 8 chars)
+                if (password.length >= 8) strength += 20;
+                
+                // Contains uppercase letters
+                if (/[A-Z]/.test(password)) strength += 20;
+                
+                // Contains lowercase letters
+                if (/[a-z]/.test(password)) strength += 20;
+                
+                // Contains numbers
+                if (/[0-9]/.test(password)) strength += 20;
+                
+                // Contains special chars
+                if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+                
+                return strength;
+            }
+            
+            // Validate password requirements
+            function validatePassword(password) {
+                let isValid = true;
+                
+                // Check length
+                if (password.length < 8) {
+                    lengthRequirement.classList.add('invalid');
+                    lengthRequirement.classList.remove('valid');
+                    isValid = false;
+                } else {
+                    lengthRequirement.classList.add('valid');
+                    lengthRequirement.classList.remove('invalid');
+                }
+                
+                // Check uppercase
+                if (!/[A-Z]/.test(password)) {
+                    uppercaseRequirement.classList.add('invalid');
+                    uppercaseRequirement.classList.remove('valid');
+                    isValid = false;
+                } else {
+                    uppercaseRequirement.classList.add('valid');
+                    uppercaseRequirement.classList.remove('invalid');
+                }
+                
+                // Check lowercase
+                if (!/[a-z]/.test(password)) {
+                    lowercaseRequirement.classList.add('invalid');
+                    lowercaseRequirement.classList.remove('valid');
+                    isValid = false;
+                } else {
+                    lowercaseRequirement.classList.add('valid');
+                    lowercaseRequirement.classList.remove('invalid');
+                }
+                
+                // Check number
+                if (!/[0-9]/.test(password)) {
+                    numberRequirement.classList.add('invalid');
+                    numberRequirement.classList.remove('valid');
+                    isValid = false;
+                } else {
+                    numberRequirement.classList.add('valid');
+                    numberRequirement.classList.remove('invalid');
+                }
+                
+                // Check special character
+                if (!/[^A-Za-z0-9]/.test(password)) {
+                    specialRequirement.classList.add('invalid');
+                    specialRequirement.classList.remove('valid');
+                    isValid = false;
+                } else {
+                    specialRequirement.classList.add('valid');
+                    specialRequirement.classList.remove('invalid');
+                }
+                
+                return isValid;
+            }
+            
+            // Check if passwords match
+            function checkPasswordMatch() {
+                if (password.value && confirmPassword.value && password.value !== confirmPassword.value) {
+                    confirmPassword.classList.add('is-invalid');
+                    passwordMatchFeedback.style.display = 'block';
+                    return false;
+                } else {
+                    confirmPassword.classList.remove('is-invalid');
+                    passwordMatchFeedback.style.display = 'none';
+                    return true;
+                }
+            }
+            
+            // Update form state
+            function updateFormState() {
+                const isPasswordValid = validatePassword(password.value);
+                const isPasswordMatch = checkPasswordMatch();
+                
+                // Enable/disable submit button
+                submitButton.disabled = !(isPasswordValid && isPasswordMatch);
+            }
+            
+            // Event listeners
+            if (password) {
+                password.addEventListener('input', function() {
+                    const strength = checkPasswordStrength(this.value);
+                    passwordStrengthBar.style.width = strength + '%';
                     
-                    // Update UI
-                    if (this.value.length > 0) {
-                        if (isValidLength) {
-                            lengthRequirement.classList.add('valid');
-                            lengthRequirement.classList.remove('invalid');
-                        } else {
-                            lengthRequirement.classList.add('invalid');
-                            lengthRequirement.classList.remove('valid');
-                        }
+                    // Update color based on strength
+                    if (strength < 40) {
+                        passwordStrengthBar.style.backgroundColor = '#dc3545'; // Red
+                    } else if (strength < 80) {
+                        passwordStrengthBar.style.backgroundColor = '#ffc107'; // Yellow
                     } else {
-                        lengthRequirement.classList.remove('valid', 'invalid');
+                        passwordStrengthBar.style.backgroundColor = '#28a745'; // Green
                     }
+                    
+                    validatePassword(this.value);
+                    checkPasswordMatch();
+                    updateFormState();
                 });
             }
             
-            // Confirm password validation
-            if (password1 && password2) {
-                password2.addEventListener('input', function() {
-                    if (this.value !== password1.value) {
-                        this.classList.add('is-invalid');
-                    } else {
-                        this.classList.remove('is-invalid');
-                    }
+            if (confirmPassword) {
+                confirmPassword.addEventListener('input', function() {
+                    checkPasswordMatch();
+                    updateFormState();
                 });
             }
             
-            // Add validation classes when form is submitted
-            const form = document.querySelector('form');
-            if (form) {
-                form.addEventListener('submit', function() {
-                    // Trigger validation for all fields
-                    const inputs = form.querySelectorAll('input');
-                    inputs.forEach(input => {
-                        input.classList.add('was-validated');
-                    });
-                });
-            }
-            // Validate terms checkbox
-const acceptTos = document.querySelector('#{{ form.accept_tos.id }}');
-if (acceptTos) {
-    acceptTos.addEventListener('change', function() {
-        if (!this.checked) {
-            this.classList.add('is-invalid');
-        } else {
-            this.classList.remove('is-invalid');
-        }
-    });
-    
-    // Ensure checkbox is validated on form submit
-    form.addEventListener('submit', function(e) {
-        if (!acceptTos.checked) {
-            e.preventDefault();
-            acceptTos.classList.add('is-invalid');
-            const feedback = acceptTos.nextElementSibling.nextElementSibling;
-            if (feedback) {
-                feedback.style.display = 'block';
-            }
-        }
-    });
-}
+            // Initial form state
+            updateFormState();
         });
-
-                            
     </script>
     
     <!-- App functions and actions -->
