@@ -152,3 +152,27 @@ class Notification(db.Model):
 
     def __repr__(self):
         return f'<Notification {self.id} for user {self.user_id}>'
+class BlogCategory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    slug = db.Column(db.String(100), unique=True, nullable=False)
+    description = db.Column(db.Text, nullable=True)
+
+class BlogPost(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    slug = db.Column(db.String(200), unique=True, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    excerpt = db.Column(db.String(300), nullable=True)
+    featured_image = db.Column(db.String(300), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_published = db.Column(db.Boolean, default=False)
+    views = db.Column(db.Integer, default=0)
+    
+    # Relationships
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    author = db.relationship('User', backref=db.backref('blog_posts', lazy=True))
+    category_id = db.Column(db.Integer, db.ForeignKey('blog_category.id'))
+    category = db.relationship('BlogCategory', backref=db.backref('posts', lazy=True))
+
