@@ -1800,6 +1800,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </style>
 
+
 <div class="max-w-2xl mx-auto p-4">
     <div id="w-node-c1380584-a11d-f314-3e06-faccb2d1794f-90d8fddd" class="heading-label2">
         <p id="w-node-c1380584-a11d-f314-3e06-faccb2d17950-90d8fddd" class="yellow2">FAQ</p>
@@ -1871,27 +1872,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </p>
     </div>
 </div>
-              <script>
-               document.addEventListener("DOMContentLoaded", function () {
-    const textSection = document.querySelector(".faq-item");
-
-    function checkVisibility() {
-        const textSectionPosition = textSection.getBoundingClientRect().top;
-  
-
-        const screenPosition = window.innerHeight / 1.3;
-
-        if (textSectionPosition < screenPosition) {
-            textSection.classList.add("slide-in-left", "opacity-100");
-            textSection.classList.remove("opacity-0");
-        }
-    }
-
-    window.addEventListener("scroll", checkVisibility);
-    checkVisibility(); // Initial check in case elements are already in view
-});
-
-            </script>
 <script>
     function toggleAnswer(element) {
         const answer = element.querySelector('.faq-answer');
