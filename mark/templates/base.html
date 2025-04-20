@@ -115,9 +115,7 @@ html {
     color: white;
     text-align: center;
 }
-.dropdown-item2{
-    margin-top:15px;
-}
+
 .welcome-text {
     font-family: "Audiowide", serif;
     font-weight: 400;
@@ -674,7 +672,7 @@ html {
 
                    
 
-                    <li class="dropdown top-nav__notifications">
+                    <li class="dropdown top-nav__notifications" style="margin-bottom:10px;">
                         <a href="#" data-toggle="dropdown" class="top-nav__notify">
                             <i class="zmdi zmdi-notifications"></i>
                         </a>
@@ -836,13 +834,13 @@ html {
     <div class="dropdown-menu">
         {% if current_user.is_authenticated %}
             <!-- Show these options if the user is logged in -->
-            <a class="dropdown-item2" href="{{url_for('profile')}}">View Profile</a>
-            <a class="dropdown-item2" href="#">Settings</a>
-            <a class="dropdown-item2" href="{{ url_for('logout_page') }}">Logout</a>
+            <a class="dropdown-item" href="{{url_for('profile')}}">View Profile</a>
+            <a class="dropdown-item" href="#">Settings</a>
+            <a class="dropdown-item" href="{{ url_for('logout_page') }}">Logout</a>
         {% else %}
             <!-- Show these options if the user is not logged in -->
-            <a class="dropdown-item2" href="{{ url_for('login_form') }}">Log In</a>
-            <a class="dropdown-item2" href="{{ url_for('register_form') }}">Register</a>
+            <a class="dropdown-item" href="{{ url_for('login_form') }}">Log In</a>
+            <a class="dropdown-item" href="{{ url_for('register_form') }}">Register</a>
         {% endif %}
     </div>
 </div>
