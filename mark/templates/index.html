@@ -1140,7 +1140,7 @@ margin-top: 0;
     <!-- Search Results -->
     <div id="headerSearchResults" class="header-search-results"></div>
 </div>
-              
+
 <script>
 // Header search functionality
 let headerSearchCurrentIndex = -1;
@@ -1150,7 +1150,7 @@ let headerLastSearchQuery = '';
 async function performHeaderSearch() {
     const query = document.getElementById('headerSearchInput').value.trim();
     const resultsDiv = document.getElementById('headerSearchResults');
-    
+
     if (headerSearchTimeout) {
         clearTimeout(headerSearchTimeout);
     }
@@ -1164,14 +1164,14 @@ async function performHeaderSearch() {
         `;
         resultsDiv.style.display = 'block';
         resultsDiv.classList.add("show");
-        
+
         headerLastSearchQuery = query;
-        
+
         headerSearchTimeout = setTimeout(async () => {
             try {
                 const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
                 const results = await response.json();
-                
+
                 if (query === headerLastSearchQuery) {
                     displayHeaderSearchResults(results, query);
                 }
@@ -1194,17 +1194,17 @@ async function performHeaderSearch() {
 
 function displayHeaderSearchResults(results, query) {
     const resultsDiv = document.getElementById('headerSearchResults');
-    
+
     if (results.length > 0) {
         resultsDiv.innerHTML = results.map((item) => {
             const regex = new RegExp(`(${query})`, "gi");
             const highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
-            
+
             let priceClass = 'price-neutral';
             if (item.price_change) {
                 priceClass = item.price_change > 0 ? 'price-up' : 'price-down';
             }
-            
+
             return `
                 <div class="header-search-result-item" onclick="window.location.href='${item.link}'">
                     <img src="${item.image || '/static/img/default-crypto.png'}" alt="${item.name}" class="crypto-logo">
@@ -1238,21 +1238,21 @@ function displayHeaderSearchResults(results, query) {
             </div>
         `;
     }
-    
+
     resultsDiv.style.display = 'block';
     resultsDiv.classList.add("show");
 }
 
 function showHeaderDefaultSuggestions() {
     const resultsDiv = document.getElementById('headerSearchResults');
-    
+
     resultsDiv.innerHTML = `
         <div class="header-no-results">
             <i class="zmdi zmdi-search"></i>
             <div>Start typing to search</div>
         </div>
     `;
-    
+
     resultsDiv.style.display = 'block';
     resultsDiv.classList.add("show");
 }
@@ -1274,9 +1274,9 @@ function getHeaderIconForType(type) {
 document.addEventListener('keydown', function (event) {
     const resultsDiv = document.getElementById('headerSearchResults');
     if (!resultsDiv.style.display || resultsDiv.style.display === 'none') return;
-    
+
     const results = resultsDiv.querySelectorAll('.header-search-result-item');
-    
+
     if (event.key === 'ArrowDown') {
         event.preventDefault();
         if (headerSearchCurrentIndex < results.length - 1) {
@@ -1685,53 +1685,11 @@ document.getElementById('headerSearchInput').addEventListener('focus', function(
         </div>
     </div>
 </div>
-          
+         
             <br>
 <br>
 <br>
 <br>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    // FAQ slide-up animation
-    const faqItems = document.querySelectorAll('.faq-item');
-    
-    faqItems.forEach((item, index) => {
-        // Initial state
-        item.style.opacity = '0';
-        item.style.transform = 'translateY(20px)';
-        item.style.transition = `all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${index * 0.1}s`;
-        
-        // Animate into view
-        setTimeout(() => {
-            item.style.opacity = '1';
-            item.style.transform = 'translateY(0)';
-        }, 100);
-    });
-
-    // Toggle answer function
-    window.toggleAnswer = function(element) {
-        const answer = element.querySelector('.faq-answer');
-        const icon = element.querySelector('.faq-icon i');
-        
-        // Toggle answer
-        answer.classList.toggle('active');
-        
-        // Toggle icon
-        if (answer.classList.contains('active')) {
-            icon.classList.remove('fa-plus-circle');
-            icon.classList.add('fa-minus-circle');
-            answer.style.maxHeight = answer.scrollHeight + 'px';
-        } else {
-            icon.classList.remove('fa-minus-circle');
-            icon.classList.add('fa-plus-circle');
-            answer.style.maxHeight = '0';
-        }
-    };
-});
-</script>
-
-
-
 <div class="max-w-2xl mx-auto p-4">
     <div id="w-node-c1380584-a11d-f314-3e06-faccb2d1794f-90d8fddd" class="heading-label2">
         <p id="w-node-c1380584-a11d-f314-3e06-faccb2d17950-90d8fddd" class="yellow2">FAQ</p>
@@ -1803,7 +1761,6 @@ document.addEventListener("DOMContentLoaded", function () {
         </p>
     </div>
 </div>
- 
 <script>
     function toggleAnswer(element) {
         const answer = element.querySelector('.faq-answer');
