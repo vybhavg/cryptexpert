@@ -119,24 +119,25 @@
                     </ul>
                 </div>
 
-                <div class="bg-gray-800 rounded-lg p-6">
-                    <h3 class="text-xl font-bold text-white mb-4">Popular Posts</h3>
-                    <div class="space-y-4">
-                        {% for post in BlogPost.query.filter_by(is_published=True).order_by(BlogPost.views.desc()).limit(3).all() %}
-                        <a href="{{ url_for('blog_post', slug=post.slug) }}" class="flex items-start group">
-                            {% if post.featured_image %}
-                            <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" 
-                                 alt="{{ post.title }}" 
-                                 class="w-16 h-16 object-cover rounded-lg mr-4">
-                            {% endif %}
-                            <div>
-                                <h4 class="text-white group-hover:text-yellow-400">{{ post.title }}</h4>
-                                <p class="text-xs text-gray-400">{{ post.created_at.strftime('%b %d, %Y') }}</p>
-                            </div>
-                        </a>
-                        {% endfor %}
-                    </div>
-                </div>
+               <!-- In your sidebar section -->
+<div class="bg-gray-800 rounded-lg p-6">
+    <h3 class="text-xl font-bold text-white mb-4">Popular Posts</h3>
+    <div class="space-y-4">
+        {% for post in popular_posts %}
+        <a href="{{ url_for('blog_post', slug=post.slug) }}" class="flex items-start group">
+            {% if post.featured_image %}
+            <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" 
+                 alt="{{ post.title }}" 
+                 class="w-16 h-16 object-cover rounded-lg mr-4">
+            {% endif %}
+            <div>
+                <h4 class="text-white group-hover:text-yellow-400">{{ post.title }}</h4>
+                <p class="text-xs text-gray-400">{{ post.created_at.strftime('%b %d, %Y') }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
             </div>
         </div>
     </div>
