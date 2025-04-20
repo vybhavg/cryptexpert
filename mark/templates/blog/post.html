@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} | CryptExpert Blog{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <meta property="og:title" content="{{ post.title }}">
+    <meta property="og:description" content="{{ post.excerpt }}">
+    {% if post.featured_image %}
+    <meta property="og:image" content="{{ url_for('static', filename='uploads/' + post.featured_image, _external=True) }}">
+    {% endif %}
+    <meta name="twitter:card" content="summary_large_image">
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <!-- Post Header -->
+        <div class="mb-8">
+            <div class="flex items-center text-sm text-gray-400 mb-4">
+                <span>{{ post.created_at.strftime('%B %d, %Y') }}</span>
+                <span class="mx-2">•</span>
+                <a href="{{ url_for('blog_category', slug=post.category.slug) }}" class="text-yellow-400 hover:text-yellow-300">
+                    {{ post.category.name }}
+                </a>
+                <span class="mx-2">•</span>
+                <span>{{ post.views }} views</span>
+            </div>
+            
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-6">{{ post.title }}</h1>
+            
+            <div class="flex items-center mb-8">
+                <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold mr-3">
+                    {{ post.author.username[0].upper() }}
+                </div>
+                <div>
+                    <p class="text-white">{{ post.author.username }}</p>
+                    {% if post.created_at != post.updated_at %}
+                    <p class="text-xs text-gray-400">Updated {{ post.updated_at.strftime('%b %d, %Y') }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if post.featured_image %}
+            <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" 
+                 alt="{{ post.title }}" 
+                 class="w-full rounded-lg mb-8">
+            {% endif %}
+        </div>
+
+        <!-- Post Content -->
+        <div class="prose prose-invert max-w-none mb-12">
+            {{ post.content|safe }}
+        </div>
+
+        <!-- Related Posts -->
+        {% if related_posts %}
+        <div class="mt-16">
+            <h2 class="text-2xl font-bold text-white mb-6">Related Posts</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for post in related_posts %}
+                <a href="{{ url_for('blog_post', slug=post.slug) }}" class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition">
+                    {% if post.featured_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" 
+                         alt="{{ post.title }}" 
+                         class="w-full h-40 object-cover">
+                    {% endif %}
+                    <div class="p-4">
+                        <h3 class="text-white font-semibold mb-2">{{ post.title }}</h3>
+                        <p class="text-sm text-gray-400">{{ post.created_at.strftime('%b %d, %Y') }}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
