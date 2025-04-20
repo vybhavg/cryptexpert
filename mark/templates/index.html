@@ -1969,6 +1969,13 @@ function formatPrice(price) {
 
 function updateSwiperPrices(exchange, prices, swiperInstance) {
     const wrapper = document.querySelector(`#${exchange}-section .swiper-wrapper`);
+    
+    // Create a map of symbol to price data for quick lookup
+    const priceMap = {};
+    prices.forEach(ticker => {
+        const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
+        priceMap[symbol] = ticker;
+    });
 
     // If wrapper is empty (initial load), create all slides
     if (wrapper.children.length === 0 || wrapper.children.length === 1 && wrapper.querySelector('.spinner-border')) {
@@ -1977,19 +1984,19 @@ function updateSwiperPrices(exchange, prices, swiperInstance) {
         return;
     }
 
-    // Otherwise, just update prices in existing slides
+    // Update existing slides by matching symbols
     const slides = wrapper.querySelectorAll('.swiper-slide');
-    prices.forEach((ticker, index) => {
-        if (index >= slides.length) return;
+    slides.forEach(slide => {
+        const symbol = slide.getAttribute('data-symbol');
+        const ticker = priceMap[symbol];
+        if (!ticker) return;
 
-        const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
         const priceChangePercent = parseFloat(ticker.priceChangePercent);
-
         const price = formatPrice(ticker.price);
 
         // Update price and percentage elements
-        const priceElement = slides[index].querySelector('h2');
-        const percentElement = slides[index].querySelector('.percentage-change');
+        const priceElement = slide.querySelector('h2');
+        const percentElement = slide.querySelector('.percentage-change');
 
         if (priceElement) priceElement.textContent = `$${price}`;
         if (percentElement) {
@@ -2008,12 +2015,11 @@ function createAllSlides(exchange, prices, wrapper) {
     prices.forEach(ticker => {
         const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
         const priceChangePercent = parseFloat(ticker.priceChangePercent);
-
         const price = formatPrice(ticker.price);
 
         const slide = document.createElement('div');
         slide.className = 'swiper-slide swiper-slide--one';
-        slide.setAttribute('data-symbol', symbol);
+        slide.setAttribute('data-symbol', symbol);  // Important: store symbol as data attribute
         slide.innerHTML = `
             <div class="image-container">
                 <img class="crypto-image" 
