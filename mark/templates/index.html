@@ -1763,23 +1763,29 @@ document.addEventListener("click", function(event) {
 </div>
 
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
- <script>
-// Store Swiper instances globally
+<script>
+// Store Swiper instances and current data globally
 let binanceSwiper, okxSwiper, coinbaseSwiper;
-let currentExchange = 'binance'; // Default exchange
+let currentExchange = 'binance';
+let currentPrices = {
+    binance: [],
+    okx: [],
+    coinbase: []
+};
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize swipers with empty states
+    // Initialize swipers
     initSwipers();
     
     // Set up exchange selector
     setupExchangeSelector();
     
-    // Fetch initial prices
+    // Initial load with loading state
+    showLoadingState();
     fetchPricesAndUpdateSwipers();
     
-    // Set up periodic updates
-    setInterval(fetchPricesAndUpdateSwipers, 10000);
+    // Set up periodic updates (without loading state)
+    setInterval(fetchPricesOnly, 10000);
 });
 
 function setupExchangeSelector() {
@@ -1795,9 +1801,9 @@ function setupExchangeSelector() {
             // Show selected section
             document.getElementById(`${currentExchange}-section`).style.display = 'block';
             
-            // If the swiper is empty, force an update
-            const wrapper = document.querySelector(`#${currentExchange}-section .swiper-wrapper`);
-            if (wrapper.children.length <= 1) { // 1 for loading spinner or error
+            // If no data for this exchange, force load
+            if (currentPrices[currentExchange].length === 0) {
+                showLoadingState();
                 fetchPricesAndUpdateSwipers();
             }
         });
@@ -1805,7 +1811,6 @@ function setupExchangeSelector() {
 }
 
 function initSwipers() {
-    // Initialize all swipers with empty config
     binanceSwiper = new Swiper(".swiper", {
         effect: "coverflow",
         grabCursor: true,
@@ -1885,18 +1890,29 @@ function initSwipers() {
     });
 }
 
+function showLoadingState() {
+    const wrapper = document.querySelector(`#${currentExchange}-section .swiper-wrapper`);
+    wrapper.innerHTML = `
+        <div class="swiper-slide swiper-slide--one" style="display: flex; justify-content: center; align-items: center;">
+            <div class="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    `;
+}
+
 async function fetchPricesAndUpdateSwipers() {
     try {
-        // Show loading state only for visible swiper
-        const visibleWrapper = document.querySelector(`#${currentExchange}-section .swiper-wrapper`);
-        visibleWrapper.innerHTML = `
-            <div class="swiper-slide swiper-slide--one" style="display: flex; justify-content: center; align-items: center;">
-                <div class="spinner-border text-warning" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        `;
+        showLoadingState();
+        await fetchPricesOnly();
+    } catch (error) {
+        console.error('Error fetching prices:', error);
+        showErrorState();
+    }
+}
 
+async function fetchPricesOnly() {
+    try {
         // Fetch all prices in parallel
         const [binanceRes, okxRes, coinbaseRes] = await Promise.all([
             fetch('/binance_prices'),
@@ -1910,35 +1926,87 @@ async function fetchPricesAndUpdateSwipers() {
             coinbaseRes.json()
         ]);
 
-        // Update all swipers but only show loading for current one
-        updateSwiper('binance', binancePrices, binanceSwiper);
-        updateSwiper('okx', okxPrices, okxSwiper);
-        updateSwiper('coinbase', coinbasePrices, coinbaseSwiper);
+        // Store prices globally
+        currentPrices.binance = binancePrices;
+        currentPrices.okx = okxPrices;
+        currentPrices.coinbase = coinbasePrices;
+
+        // Update all swipers
+        updateSwiperPrices('binance', binancePrices, binanceSwiper);
+        updateSwiperPrices('okx', okxPrices, okxSwiper);
+        updateSwiperPrices('coinbase', coinbasePrices, coinbaseSwiper);
 
     } catch (error) {
         console.error('Error fetching prices:', error);
-        // Show error state for visible swiper
-        const visibleWrapper = document.querySelector(`#${currentExchange}-section .swiper-wrapper`);
-        visibleWrapper.innerHTML = `
-            <div class="swiper-slide swiper-slide--one" style="text-align: center; padding: 20px;">
-                <span>Error loading prices</span>
-                <button onclick="fetchPricesAndUpdateSwipers()" class="btn btn-sm btn-warning mt-2">Retry</button>
-            </div>
-        `;
+        // Don't show error for periodic updates, only for initial load
     }
 }
 
-function updateSwiper(exchange, prices, swiperInstance) {
+function updateSwiperPrices(exchange, prices, swiperInstance) {
     const wrapper = document.querySelector(`#${exchange}-section .swiper-wrapper`);
     
-    // Save current slide index if it exists
-    const currentIndex = swiperInstance && swiperInstance.activeIndex ? swiperInstance.activeIndex : 0;
+    // If wrapper is empty (initial load), create all slides
+    if (wrapper.children.length === 0 || wrapper.children.length === 1 && wrapper.querySelector('.spinner-border')) {
+        createAllSlides(exchange, prices, wrapper);
+        if (swiperInstance) swiperInstance.update();
+        return;
+    }
     
+    // Otherwise, just update prices in existing slides
+    const slides = wrapper.querySelectorAll('.swiper-slide');
+    prices.forEach((ticker, index) => {
+        if (index >= slides.length) return;
+        
+        const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
+        const priceChangePercent = parseFloat(ticker.priceChangePercent);
+        const price = parseFloat(ticker.price);
+        
+        // Format price properly - show more decimals for small values, fewer for large
+        let formattedPrice;
+        if (price < 1) {
+            formattedPrice = price.toFixed(6).replace(/\.?0+$/, '');
+        } else if (price < 10) {
+            formattedPrice = price.toFixed(4).replace(/\.?0+$/, '');
+        } else if (price < 1000) {
+            formattedPrice = price.toFixed(2).replace(/\.?0+$/, '');
+        } else {
+            formattedPrice = price.toFixed(0);
+        }
+        
+        // Update price and percentage elements
+        const priceElement = slides[index].querySelector('h2');
+        const percentElement = slides[index].querySelector('.percentage-change');
+        
+        if (priceElement) priceElement.textContent = `$${formattedPrice}`;
+        if (percentElement) {
+            percentElement.innerHTML = priceChangePercent > 0 ? 
+                `<span class="positive">+${priceChangePercent.toFixed(2)}%</span>` : 
+                (priceChangePercent < 0 ? 
+                    `<span class="negative">${priceChangePercent.toFixed(2)}%</span>` : 
+                    `<span class="neutral">0.00%</span>`);
+        }
+    });
+}
+
+function createAllSlides(exchange, prices, wrapper) {
     wrapper.innerHTML = '';
     
     prices.forEach(ticker => {
         const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
         const priceChangePercent = parseFloat(ticker.priceChangePercent);
+        const price = parseFloat(ticker.price);
+        
+        // Format price based on its value
+        let formattedPrice;
+        if (price < 1) {
+            formattedPrice = price.toFixed(6).replace(/\.?0+$/, '');
+        } else if (price < 10) {
+            formattedPrice = price.toFixed(4).replace(/\.?0+$/, '');
+        } else if (price < 1000) {
+            formattedPrice = price.toFixed(2).replace(/\.?0+$/, '');
+        } else {
+            formattedPrice = price.toFixed(0);
+        }
         
         const slide = document.createElement('div');
         slide.className = 'swiper-slide swiper-slide--one';
@@ -1951,7 +2019,7 @@ function updateSwiper(exchange, prices, swiperInstance) {
                      alt="${symbol}">
             </div>
             <span>${symbol}</span>
-            <h2>$${parseFloat(ticker.price).toFixed(2)}</h2>
+            <h2>$${formattedPrice}</h2>
             <h5 class="percentage-change">
                 ${priceChangePercent > 0 ? 
                     `<span class="positive">+${priceChangePercent.toFixed(2)}%</span>` : 
@@ -1961,19 +2029,22 @@ function updateSwiper(exchange, prices, swiperInstance) {
             </h5>
         `;
         
-        // Add click event to navigate to charts
         slide.addEventListener('click', function() {
             window.location.href = `/charts?symbol=${symbol}USDT`;
         });
         
         wrapper.appendChild(slide);
     });
-    
-    // Update the swiper instance if it exists
-    if (swiperInstance) {
-        swiperInstance.update();
-        swiperInstance.slideToLoop(Math.min(currentIndex, prices.length - 1));
-    }
+}
+
+function showErrorState() {
+    const wrapper = document.querySelector(`#${currentExchange}-section .swiper-wrapper`);
+    wrapper.innerHTML = `
+        <div class="swiper-slide swiper-slide--one" style="text-align: center; padding: 20px;">
+            <span>Error loading prices</span>
+            <button onclick="fetchPricesAndUpdateSwipers()" class="btn btn-sm btn-warning mt-2">Retry</button>
+        </div>
+    `;
 }
 </script>
         {% endblock %}
