@@ -1792,6 +1792,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Then fetch prices asynchronously
     fetchPricesAndUpdateSwipers();
+    setInterval(fetchPricesAndUpdateSwipers, 10000);
+
 });
 
 function initSwipers() {
