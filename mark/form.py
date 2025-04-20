@@ -68,3 +68,15 @@ class PostForm(FlaskForm):
     content = TextAreaField('Message', validators=[Length(max=2000)])
     submit = SubmitField('Post')
 
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, SelectField, BooleanField, FileField
+from wtforms.validators import DataRequired, Length
+
+class BlogPostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired(), Length(max=200)])
+    slug = StringField('Slug', validators=[DataRequired(), Length(max=200)])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    excerpt = TextAreaField('Excerpt', validators=[Length(max=300)])
+    featured_image = FileField('Featured Image')
+    is_published = BooleanField('Publish')
+    category_id = SelectField('Category', coerce=int, validators=[DataRequired()])
