@@ -1730,75 +1730,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-<style>
-.faq-item {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1.5rem 0;
-    cursor: pointer;
-    overflow: hidden;
-    will-change: transform, opacity;
-}
-
-.faq-question {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: white;
-    transition: color 0.3s ease;
-}
-
-.faq-item:hover .faq-question {
-    color: #f8bc04;
-}
-
-.faq-answer {
-    max-height: 0;
-    overflow: hidden;
-    color: rgba(255, 255, 255, 0.7);
-    padding-left: 3rem; /* Align with icon */
-    transition: max-height 0.4s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.3s ease;
-    opacity: 0;
-}
-
-.faq-answer.active {
-    opacity: 1;
-    margin-top: 1rem;
-}
-
-.faq-icon {
-    transition: transform 0.3s ease;
-}
-
-.faq-item:hover .faq-icon {
-    transform: scale(1.1);
-}
-
-/* Animation for the heading */
-.heading-label2 {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.6s ease-out;
-}
-
-.heading-label2.animated {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.yellow2 {
-    color: #f8bc04;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-/* Trigger heading animation when in view */
-document.addEventListener("DOMContentLoaded", function() {
-    const heading = document.querySelector('.heading-label2');
-    
-    setTimeout(() => {
-        heading.classList.add('animated');
-    }, 300);
-});
-</style>
 
 
 <div class="max-w-2xl mx-auto p-4">
@@ -1872,6 +1803,28 @@ document.addEventListener("DOMContentLoaded", function() {
         </p>
     </div>
 </div>
+              <script>
+               document.addEventListener("DOMContentLoaded", function () {
+    const textSection = document.querySelector(".faq-item");
+
+
+    function checkVisibility() {
+        const textSectionPosition = textSection.getBoundingClientRect().top;
+
+        const screenPosition = window.innerHeight / 1.3;
+
+        if (textSectionPosition < screenPosition) {
+            textSection.classList.add("slide-up", "opacity-100");
+            textSection.classList.remove("opacity-0");
+        }
+
+    }
+
+    window.addEventListener("scroll", checkVisibility);
+    checkVisibility(); // Initial check in case elements are already in view
+});
+
+            </script>
 <script>
     function toggleAnswer(element) {
         const answer = element.querySelector('.faq-answer');
