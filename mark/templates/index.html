@@ -1374,99 +1374,32 @@ document.addEventListener("click", function(event) {
         </div>
     </div>
 
-    <section id="binance-section">
-        <div class="swiper">
-            <div class="swiper-wrapper">
-                {% for ticker in binance_prices %}
-                <div class="swiper-slide swiper-slide--one" id="binance-{{ loop.index0 }}" data-symbol="{{ ticker.symbol[:-4] }}">
-                    <div class="image-container">
-<img class="crypto-image" 
-     src="/static/img/crypto/{{ ticker.symbol[:-4] }}.png" 
-     onerror="this.src='/static/img/crypto/BTC.png'" 
-     alt="{{ ticker.symbol[:-4] }}">
-                    </div>
-                    <span>{{ ticker.symbol[:-4] }}</span>
-                    <h2>${{ ticker.price }}</h2>
-                    <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
-                        {% if ticker.priceChangePercent > 0 %}
-                        <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                        {% elif ticker.priceChangePercent < 0 %}
-                        <span class="negative">{{ ticker.priceChangePercent }}%</span>
-
-
-
-                        {% else %}
-                        <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                        {% endif %}
-                    </h5>
-                </div>
-                {% endfor %}
-
-            </div>
-            <br><br>
+  <!-- Binance Section -->
+<section id="binance-section">
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            <!-- Slides will be added dynamically by JavaScript -->
         </div>
-    </section>
+    </div>
+</section>
 
-
-
-
-    <section id="okx-section" style="display:none;">
-        <div class="cmpswiper">
-            <div class="swiper-wrapper">
-                {% for ticker in okx_prices %}
-                <div class="swiper-slide swiper-slide--one" id="okx-{{ loop.index0 }}" data-symbol="{{ ticker.symbol }}">
-                    <div class="image-container">
-<img class="crypto-image" 
-     src="/static/img/crypto/{{ ticker.symbol }}.png" 
-     onerror="this.src='/static/img/crypto/BTC.png'" 
-     alt="{{ ticker.symbol[:-4] }}">                    
-                    </div>
-                    <span>{{ ticker.symbol }}</span>
-                    <h2>${{ ticker.price }}</h2>
-                    <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
-                        {% if ticker.priceChangePercent > 0 %}
-                        <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                        {% elif ticker.priceChangePercent < 0 %}
-                        <span class="negative">{{ ticker.priceChangePercent }}%</span>
-                        {% else %}
-                        <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                        {% endif %}
-                    </h5>
-                </div>
-                {% endfor %}
-            </div>
-            <br><br>
+<!-- OKX Section (initially hidden) -->
+<section id="okx-section" style="display:none;">
+    <div class="cmpswiper">
+        <div class="swiper-wrapper">
+            <!-- Slides will be added dynamically by JavaScript -->
         </div>
-    </section>
+    </div>
+</section>
 
-    <section id="coinbase-section" style="display:none;">
-        <div class="csswiper">
-            <div class="swiper-wrapper">
-                {% for ticker in coinbase_prices %}
-                <div class="swiper-slide swiper-slide--one" id="coinbase-{{ loop.index0 }}" data-symbol="{{ ticker.symbol }}">
-                    <div class="image-container">
-<img class="crypto-image" 
-     src="/static/img/crypto/{{ ticker.symbol }}.png" 
-     onerror="this.src='/static/img/crypto/BTC.png'" 
-     alt="{{ ticker.symbol[:-4] }}">                    
-                    </div>
-                    <span>{{ ticker.symbol }}</span>
-                    <h2>${{ ticker.price }}</h2>
-                    <h5 id="percentage-change-{{ loop.index0 }}" class="percentage-change">
-                        {% if ticker.priceChangePercent > 0 %}
-                        <span class="positive">+{{ ticker.priceChangePercent }}%</span>
-                        {% elif ticker.priceChangePercent < 0 %}
-                        <span class="negative">{{ ticker.priceChangePercent }}%</span>
-                        {% else %}
-                        <span class="neutral">{{ ticker.priceChangePercent }}%</span>
-                        {% endif %}
-                    </h5>
-                </div>
-                {% endfor %}
-            </div>
-            <br><br>
+<!-- Coinbase Section (initially hidden) -->
+<section id="coinbase-section" style="display:none;">
+    <div class="csswiper">
+        <div class="swiper-wrapper">
+            <!-- Slides will be added dynamically by JavaScript -->
         </div>
-    </section>
+    </div>
+</section>
 
 
   <br><br>
@@ -1831,214 +1764,230 @@ document.addEventListener("click", function(event) {
 
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script>
-         var swiper = new Swiper(".swiper", {
-                effect: "coverflow",
-                grabCursor: true,
-                centeredSlides: true,
-                slidesPerView: "auto",
-                loopAdditionalSlides: 1,
-                coverflowEffect: {
-                    rotate: 0,
-                    stretch: 0,
-                    depth: 100,
-                    modifier: 2,
-                    slideShadows: true
-                },
-                spaceBetween: 30,
-                loop: true,
-                autoplay: {
-                    delay: 3000,
-                    disableOnInteraction: false,
-                },
-                speed: 800,
-                pagination: {
-                    el: ".swiper-pagination",
-                    clickable: true
-                }
-            });
-var cmpswiper = new Swiper(".cmpswiper", {
-                effect: "coverflow",
-                grabCursor: true,
-                centeredSlides: true,
-                slidesPerView: "auto",
-                loopAdditionalSlides: 1,
-                coverflowEffect: {
-                    rotate: 0,
-                    stretch: 0,
-                    depth: 100,
-                    modifier: 2,
-                    slideShadows: true
-                },
-                spaceBetween: 30,
-                loop: true,
-                autoplay: {
-                    delay: 3000,
-                    disableOnInteraction: false,
-                },
-                speed: 800,
-                pagination: {
-                    el: ".swiper-pagination",
-                    clickable: true
-                }
-            });
-        var csswiper = new Swiper(".csswiper", {
-                effect: "coverflow",
-                grabCursor: true,
-                centeredSlides: true,
-                slidesPerView: "auto",
-                loopAdditionalSlides: 1,
-                coverflowEffect: {
-                    rotate: 0,
-                    stretch: 0,
-                    depth: 100,
-                    modifier: 2,
-                    slideShadows: true
-                },
-                spaceBetween: 30,
-                loop: true,
-                autoplay: {
-                    delay: 3000,
-                    disableOnInteraction: false,
-                },
-                speed: 800,
-                pagination: {
-                    el: ".swiper-pagination",
-                    clickable: true
-                }
-            });
-        document.addEventListener("DOMContentLoaded", () => {
-            const binanceRadio = document.getElementById("binance");
-            const okxRadio = document.getElementById("okx");
-            const coinbaseRadio = document.getElementById("coinbase");
-
-            const binanceSection = document.getElementById("binance-section");
-            const okxSection = document.getElementById("okx-section");
-            const coinbaseSection = document.getElementById("coinbase-section");
-
-            // Function to update displayed tickers
-            function toggleTickers() {
-                if (binanceRadio.checked) {
-                    binanceSection.style.display = "flex";
-                    okxSection.style.display = "none";
-                    coinbaseSection.style.display = "none";
-                } else if (okxRadio.checked) {
-                    binanceSection.style.display = "none";
-                    okxSection.style.display = "flex";
-                    coinbaseSection.style.display = "none";
-                } else if (coinbaseRadio.checked) {
-                    binanceSection.style.display = "none";
-                    okxSection.style.display = "none";
-                    coinbaseSection.style.display = "flex";
-                }
-            }
-
-            // Set initial display
-            toggleTickers();
-
-            // Add event listeners to radio buttons
-            binanceRadio.addEventListener("change", toggleTickers);
-            okxRadio.addEventListener("change", toggleTickers);
-coinbaseRadio.addEventListener("change", () => {
-    console.log("Coinbase radio button clicked");
-    toggleTickers();
+     // Add this to your existing JavaScript
+document.querySelectorAll('input[name="price-source"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const selectedExchange = this.value;
+        
+        // Hide all sections
+        document.getElementById('binance-section').style.display = 'none';
+        document.getElementById('okx-section').style.display = 'none';
+        document.getElementById('coinbase-section').style.display = 'none';
+        
+        // Show selected section
+        document.getElementById(`${selectedExchange}-section`).style.display = 'block';
+        
+        // If the swiper hasn't been initialized yet for this exchange, fetch prices
+        if (document.querySelector(`#${selectedExchange}-section .swiper-slide`).length === 0) {
+            fetchPricesAndUpdateSwipers();
+        }
+    });
 });
 
-            async function fetchPrices() {
-                try {
-                    const [binanceResponse, okxResponse, coinbaseResponse] = await Promise.all([
-                        fetch('/binance_prices'),
-                        fetch('/okx_prices'),
-                        fetch('/coinbase_prices')
-                    ]);
+    </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize empty swipers first
+    initSwipers();
+    
+    // Then fetch prices asynchronously
+    fetchPricesAndUpdateSwipers();
+});
 
-                    const binancePrices = await binanceResponse.json();
-                    const okxPrices = await okxResponse.json();
-                    const coinbasePrices = await coinbaseResponse.json();
-                    console.log(okxPrices)
-                    // Update Binance prices
-                    binancePrices.forEach((ticker, index) => {
-                        const price = (ticker.price);
-                        const percentChange = parseFloat(ticker.priceChangePercent).toFixed(2);
+function initSwipers() {
+    // Initialize all swipers with empty config
+    new Swiper(".swiper", {
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: "auto",
+        loopAdditionalSlides: 1,
+        coverflowEffect: {
+            rotate: 0,
+            stretch: 0,
+            depth: 100,
+            modifier: 2,
+            slideShadows: true
+        },
+        spaceBetween: 30,
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        speed: 800,
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true
+        }
+    });
+    
+    // Similar for other swipers (okx and coinbase)
+    new Swiper(".cmpswiper", {
+        // Same config as above
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: "auto",
+        loopAdditionalSlides: 1,
+        coverflowEffect: {
+            rotate: 0,
+            stretch: 0,
+            depth: 100,
+            modifier: 2,
+            slideShadows: true
+        },
+        spaceBetween: 30,
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        speed: 800,
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true
+        }
+    });
+    
+    new Swiper(".csswiper", {
+        // Same config as above
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: "auto",
+        loopAdditionalSlides: 1,
+        coverflowEffect: {
+            rotate: 0,
+            stretch: 0,
+            depth: 100,
+            modifier: 2,
+            slideShadows: true
+        },
+        spaceBetween: 30,
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        speed: 800,
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true
+        }
+    });
+}
 
-                        const tickerElement = document.getElementById(`binance-${index}`);
-                        if (tickerElement) {
-                            const priceElement = tickerElement.querySelector('h2');
-                            priceElement.textContent = `$${price}`;
-
-                            const percentageElement = tickerElement.querySelector('.percentage-change');
-                            let percentageText = `${percentChange}%`;
-                            if (percentChange > 0) {
-                                percentageText = `+${percentageText}`;
-                                percentageElement.style.color = 'green';
-                            } else if (percentChange < 0) {
-                                percentageElement.style.color = 'red';
-                            } else {
-                                percentageElement.style.color = 'gray';
-                            }
-                            percentageElement.textContent = percentageText;
-                        }
-                    });
-
-                    // Update okx prices
-                    okxPrices.forEach((ticker, index) => {
-                        const price = (ticker.price);
-                        const percentChange = parseFloat(ticker.priceChangePercent).toFixed(2);
-
-                        const tickerElement = document.getElementById(`okx-${index}`);
-                        if (tickerElement) {
-                            const priceElement = tickerElement.querySelector('h2');
-                            priceElement.textContent = `$${price}`;
-
-                            const percentageElement = tickerElement.querySelector('.percentage-change');
-                            let percentageText = `${percentChange}%`;
-                            if (percentChange > 0) {
-                                percentageText = `+${percentageText}`;
-                                percentageElement.style.color = 'green';
-                            } else if (percentChange < 0) {
-                                percentageElement.style.color = 'red';
-                            } else {
-                                percentageElement.style.color = 'gray';
-                            }
-                            percentageElement.textContent = percentageText;
-                        }
-                    });
-
-                    // Update Coinbase prices
-                    coinbasePrices.forEach((ticker, index) => {
-                        const price = (ticker.price);
-                        const percentChange = parseFloat(ticker.priceChangePercent).toFixed(2);
-
-                        const tickerElement = document.getElementById(`coinbase-${index}`);
-                        if (tickerElement) {
-                            const priceElement = tickerElement.querySelector('h2');
-                            priceElement.textContent = `$${price}`;
-                            const percentageElement = tickerElement.querySelector('.percentage-change');
-                            let percentageText = `${percentChange}%`;
-                            if (percentChange > 0) {
-                                percentageText = `+${percentageText}`;
-                                percentageElement.style.color = 'green';
-                            } else if (percentChange < 0) {
-                                percentageElement.style.color = 'red';
-                            } else {
-                                percentageElement.style.color = 'gray';
-                            }
-                            percentageElement.textContent = percentageText;
-                        }
-                    });
-
-
-
-                } catch (error) {
-                    console.error('Error fetching prices:', error);
-                }
-            }
-
-            // Call the function once when the page is loaded
-            fetchPrices();
+async function fetchPricesAndUpdateSwipers() {
+    try {
+        // Show loading state
+        document.querySelectorAll('.swiper-wrapper').forEach(wrapper => {
+            wrapper.innerHTML = `
+                <div class="swiper-slide swiper-slide--one" style="display: flex; justify-content: center; align-items: center;">
+                    <div class="spinner-border text-warning" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
         });
 
+        // Fetch all prices in parallel
+        const [binanceRes, okxRes, coinbaseRes] = await Promise.all([
+            fetch('/binance_prices'),
+            fetch('/okx_prices'),
+            fetch('/coinbase_prices')
+        ]);
+        
+        const [binancePrices, okxPrices, coinbasePrices] = await Promise.all([
+            binanceRes.json(),
+            okxRes.json(),
+            coinbaseRes.json()
+        ]);
 
-    document.querySelectorAll(".swiper-slide").forEach(slide => {
+        // Update each swiper
+        updateSwiper('binance', binancePrices);
+        updateSwiper('okx', okxPrices);
+        updateSwiper('coinbase', coinbasePrices);
+
+    } catch (error) {
+        console.error('Error fetching prices:', error);
+        // Show error state
+        document.querySelectorAll('.swiper-wrapper').forEach(wrapper => {
+            wrapper.innerHTML = `
+                <div class="swiper-slide swiper-slide--one" style="text-align: center; padding: 20px;">
+                    <span>Error loading prices</span>
+                    <button onclick="fetchPricesAndUpdateSwipers()" class="btn btn-sm btn-warning mt-2">Retry</button>
+                </div>
+            `;
+        });
+    }
+}
+
+function updateSwiper(exchange, prices) {
+    const wrapper = document.querySelector(`#${exchange}-section .swiper-wrapper`);
+    wrapper.innerHTML = '';
+    
+    prices.forEach(ticker => {
+        const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
+        const priceChangePercent = parseFloat(ticker.priceChangePercent);
+        
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide swiper-slide--one';
+        slide.setAttribute('data-symbol', symbol);
+        slide.innerHTML = `
+            <div class="image-container">
+                <img class="crypto-image" 
+                     src="/static/img/crypto/${symbol}.png" 
+                     onerror="this.src='/static/img/crypto/BTC.png'" 
+                     alt="${symbol}">
+            </div>
+            <span>${symbol}</span>
+            <h2>$${ticker.price}</h2>
+            <h5 class="percentage-change">
+                ${priceChangePercent > 0 ? 
+                    `<span class="positive">+${priceChangePercent.toFixed(2)}%</span>` : 
+                    (priceChangePercent < 0 ? 
+                        `<span class="negative">${priceChangePercent.toFixed(2)}%</span>` : 
+                        `<span class="neutral">0.00%</span>`)}
+            </h5>
+        `;
+        
+        // Add click event to navigate to charts
+        slide.addEventListener('click', function() {
+            window.location.href = `/charts?symbol=${symbol}USDT`;
+        });
+        
+        wrapper.appendChild(slide);
+    });
+    
+    // Reinitialize swiper to recognize new slides
+    new Swiper(`.${exchange}swiper`, {
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: "auto",
+        loopAdditionalSlides: 1,
+        coverflowEffect: {
+            rotate: 0,
+            stretch: 0,
+            depth: 100,
+            modifier: 2,
+            slideShadows: true
+        },
+        spaceBetween: 30,
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        speed: 800,
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true
+        }
+    });
+}
+   document.querySelectorAll(".swiper-slide").forEach(slide => {
                 slide.addEventListener("click", function () {
                     let symbol = this.getAttribute("data-symbol");
                     if(symbol){
@@ -2046,5 +1995,5 @@ coinbaseRadio.addEventListener("change", () => {
                     }
                 });
             });
-    </script>
+</script>
         {% endblock %}
