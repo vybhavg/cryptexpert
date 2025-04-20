@@ -143,62 +143,7 @@ html {
     font-weight: bold;
     color: #f8bc04; /* Gold color */
 }  
-   /* Enhanced Search Bar */
-.search {
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    z-index: 1000;
-}
 
-.search__inner {
-    position: relative;
-    display: flex;
-    align-items: center;
-    background: rgba(15, 15, 15, 0.9);
-    border: 1px solid rgba(248, 188, 4, 0.3);
-    border-radius: 30px;
-    padding: 8px 20px;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-.search__inner:focus-within {
-    border-color: #f8bc04;
-    box-shadow: 0 0 0 2px rgba(248, 188, 4, 0.2),
-                0 8px 25px rgba(248, 188, 4, 0.15);
-    transform: translateY(-1px);
-}
-
-.search__text {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 1rem;
-    padding: 10px 0;
-    outline: none;
-    font-family: 'Inter', sans-serif;
-}
-
-.search__text::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: 300;
-}
-
-.search__helper {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 22px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-left: 10px;
-}
-
-.search__helper:hover {
-    color: #f8bc04;
-    transform: scale(1.1);
-}
 
 /* Enhanced Search Results */
 #searchResults {
