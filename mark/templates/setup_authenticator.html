@@ -22,60 +22,53 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-    }
-    
+    /* Base styles */
     body {
         background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
         font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         color: white;
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
+        min-height: 100vh;
+        padding: 1rem 0;
+        overflow-y: hidden;
     }
-   
     
     /* Custom Colors */
     .text-yellow-custom { color: #F8BC04 !important; }
     .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
     
-    /* Login container - wider */
+    /* Login container */
     .login {
-        max-width: 500px; /* Increased from 420px */
+        max-width: 420px;
         margin: 0 auto;
         padding: 0 15px;
     }
     
-    /* Login block - wider */
+    /* Login block */
     .login__block {
         background-color: #000000;
         border-radius: 12px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.05);
-        width: 100%; /* Ensure it takes full width of container */
     }
     
     /* Login block header */
     .login__block__header {
         background: linear-gradient(135deg, #F8BC04, #e6a905);
         color: #1a1a1a;
-        padding: 1.5rem; /* Increased padding */
+        padding: 1rem;
         text-align: center;
         position: relative;
     }
     
     .login__block__header i {
-        font-size: 2.5rem; /* Larger icon */
-        margin-bottom: 0.5rem;
+        font-size: 2rem;
+        margin-bottom: 0.25rem;
         display: block;
     }
     
     .login__block__header p {
-        font-size: 1.25rem; /* Larger text */
+        font-size: 1.1rem;
         font-weight: 600;
         margin: 0;
     }
@@ -101,15 +94,15 @@ html, body {
         color: #F8BC04;
     }
     
-    /* Login block body - more spacious */
+    /* Login block body */
     .login__block__body {
-        padding: 1.5rem; /* Increased padding */
+        padding: 1rem;
         text-align: center;
     }
     
     /* Form styles */
     .form-group {
-        margin-bottom: 1.25rem; /* More spacing */
+        margin-bottom: 1rem;
     }
     
     .form-control {
@@ -117,14 +110,11 @@ html, body {
         border: 1px solid #333;
         color: white;
         border-radius: 8px;
-        padding: 0.75rem 1rem; /* More padding */
-        font-size: 1rem; /* Larger text */
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
         transition: all 0.3s;
         height: auto;
         text-align: center;
-        width: 100%; /* Full width */
-        max-width: 300px; /* But not too wide */
-        margin: 0 auto; /* Centered */
     }
     
     .form-control:focus {
@@ -139,16 +129,13 @@ html, body {
         background: linear-gradient(135deg, #F8BC04, #e6a905);
         border: none;
         border-radius: 8px;
-        padding: 0.75rem; /* More padding */
+        padding: 0.6rem;
         font-weight: 600;
         color: #1a1a1a;
         letter-spacing: 0.5px;
         transition: all 0.3s;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         width: 100%;
-        max-width: 300px; /* Match input width */
-        margin: 0 auto; /* Centered */
-        font-size: 1rem; /* Larger text */
     }
     
     .btn-primary:hover {
@@ -157,37 +144,22 @@ html, body {
         color: #1a1a1a;
     }
     
-    /* QR Code container - more prominent */
+    /* QR Code container */
     .qr-container {
         background-color: white;
-        padding: 1.5rem; /* More padding */
-        border-radius: 12px; /* More rounded */
+        padding: 1rem;
+        border-radius: 8px;
         display: inline-block;
-        margin: 1.5rem 0; /* More spacing */
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25); /* Deeper shadow */
-        border: 2px solid #F8BC04; /* Accent border */
+        margin: 1rem 0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
     
-    /* Instructions - better readability */
+    /* Instructions */
     .instructions {
-        color: rgba(255, 255, 255, 0.85); /* Brighter text */
-        font-size: 0.95rem; /* Slightly larger */
-        margin: 1.5rem 0; /* More spacing */
-        text-align: center; /* Centered */
-        line-height: 1.6; /* Better line spacing */
-        padding: 0 1rem; /* Side padding */
-    }
-    
-    .instructions ol {
-        text-align: left; /* Left-align list */
-        display: inline-block; /* Natural width */
-        margin: 1rem auto; /* Centered */
-        padding-left: 1.5rem; /* Proper list indentation */
-    }
-    
-    .instructions strong {
-        color: #F8BC04; /* Accent color */
-        font-weight: 600;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        margin: 1rem 0;
+        text-align: left;
     }
     
     /* Validation feedback */
@@ -202,12 +174,9 @@ html, body {
     .invalid-feedback {
         display: none;
         width: 100%;
-        margin-top: 0.5rem; /* More spacing */
-        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        font-size: 0.8125rem;
         color: #dc3545;
-        max-width: 300px; /* Match input width */
-        margin-left: auto; /* Centered */
-        margin-right: auto;
     }
     
     .is-invalid ~ .invalid-feedback {
@@ -215,30 +184,26 @@ html, body {
     }
     
     /* Responsive adjustments */
-    @media (max-width: 576px) {
-        .login {
-            max-width: 95%; /* More width on small screens */
-            padding: 0 10px;
-        }
-        
+    @media (max-width: 400px) {
         .login__block__header {
-            padding: 1.25rem;
+            padding: 0.8rem;
         }
         
         .login__block__header i {
-            font-size: 2rem;
+            font-size: 1.8rem;
         }
         
         .login__block__header p {
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
         
-        .qr-container {
-            padding: 1rem;
+        .login__block__body {
+            padding: 0.8rem;
         }
         
-        .form-control, .btn-primary {
-            max-width: 100%; /* Full width on small screens */
+        .form-control {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.85rem;
         }
     }
 
@@ -269,78 +234,6 @@ html, body {
 
     .swal2-toast.swal2-dark .swal2-timer-progress-bar {
         background: #f8bc04 !important;
-    }
-
-         /* Main container with scrollable content */
-    .main-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 0; /* Allows content to scroll */
-    }
-
-    /* Login container - responsive width */
-    .login {
-        width: 100%;
-        max-width: 500px;
-        margin: auto;
-        padding: 20px 15px;
-        box-sizing: border-box;
-    }
-    
-    /* Login block - scrollable if needed */
-    .login__block {
-        background-color: #000000;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        max-height: 95vh;
-        overflow-y: auto;
-    }
-    
-    /* Header styling */
-    .login__block__header {
-        background: linear-gradient(135deg, #F8BC04, #e6a905);
-        color: #1a1a1a;
-        padding: 1.25rem;
-        text-align: center;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
-    
-    /* Body content with proper spacing */
-    .login__block__body {
-        padding: 1.5rem;
-        text-align: center;
-    }
-
-    /* QR code container */
-    .qr-container {
-        background-color: white;
-        padding: 15px;
-        border-radius: 12px;
-        display: inline-block;
-        margin: 15px 0;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-        border: 2px solid #F8BC04;
-        max-width: 100%;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 576px) {
-        .login {
-            padding: 10px;
-            max-width: 95%;
-        }
-        
-        .login__block__header {
-            padding: 1rem;
-        }
-        
-        .qr-container {
-            padding: 10px;
-        }
     }
     </style>
 </head>
@@ -384,7 +277,7 @@ html, body {
 });
         });
     </script>
-    <div class="main-container">
+
     <div class="login">
         <!-- 2FA Setup -->
         <div class="login__block box active" id="l-login">
@@ -404,7 +297,7 @@ html, body {
             
             <div class="login__block__body">
                 <div class="qr-container">
-                    <img src="{{ url_for('setup_authenticator_qr') }}" width="220" height="220" alt="QR Code">
+                    <img src="{{ url_for('setup_authenticator_qr') }}" width="200" height="200" alt="QR Code">
                 </div>
                 
                 <div class="instructions">
@@ -412,7 +305,7 @@ html, body {
                     <ol>
                         <li>Scan the QR code with your authenticator app</li>
                         <li>Enter the 6-digit code generated by the app</li>
-                        <li>Click "Verify and Activate" below</li>
+                        <li>Click "Verify and Activate"</li>
                     </ol>
                 </div>
 
@@ -432,7 +325,7 @@ html, body {
 
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary">
-                            <span class="material-icons align-middle" style="font-size: 1.3rem; margin-right: 0.5rem;">verified_user</span>
+                            <span class="material-icons align-middle" style="font-size: 1.2rem; margin-right: 0.5rem;">verified_user</span>
                             Verify and Activate
                         </button>
                     </div>
@@ -440,7 +333,7 @@ html, body {
             </div>
         </div>
     </div>
-    </div>
+
     <!-- Javascript -->
     <!-- Vendors -->
     <script src="/static/vendors/bower_components/jquery/dist/jquery.min.js"></script>
