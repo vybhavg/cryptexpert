@@ -143,86 +143,291 @@ html {
     font-weight: bold;
     color: #f8bc04; /* Gold color */
 }  
-    #searchResults {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: rgba(0, 0, 0, 0.9);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        border: 1px solid rgba(248, 188, 4, 0.2);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-        max-height: 400px;
-        overflow-y: auto;
-        z-index: 1000;
-        margin-top: 10px;
-        display: none;
-        padding: 10px 0;
-    }
+   /* Enhanced Search Bar */
+.search {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    z-index: 1000;
+}
 
-    .search-result-item {
-        display: flex;
-        align-items: center;
-        padding: 12px 20px;
-        color: white;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
+.search__inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(15, 15, 15, 0.9);
+    border: 1px solid rgba(248, 188, 4, 0.3);
+    border-radius: 30px;
+    padding: 8px 20px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
 
-    .search-result-item:hover {
-        background: rgba(248, 188, 4, 0.1);
-    }
+.search__inner:focus-within {
+    border-color: #f8bc04;
+    box-shadow: 0 0 0 2px rgba(248, 188, 4, 0.2),
+                0 8px 25px rgba(248, 188, 4, 0.15);
+    transform: translateY(-1px);
+}
 
-    .search-result-item.highlighted {
-        background: rgba(248, 188, 4, 0.2);
-    }
+.search__text {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    padding: 10px 0;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+}
 
-    .search-result-item .crypto-logo {
-        width: 24px;
-        height: 24px;
-        margin-right: 12px;
-        border-radius: 50%;
-    }
+.search__text::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 300;
+}
 
-    .search-result-item .result-content {
-        flex: 1;
-    }
+.search__helper {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 22px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+}
 
-    .search-result-item .result-name {
-        font-weight: 500;
-        margin-bottom: 2px;
-    }
+.search__helper:hover {
+    color: #f8bc04;
+    transform: scale(1.1);
+}
 
-    .search-result-item .result-type {
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.6);
-    }
+/* Enhanced Search Results */
+#searchResults {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: rgba(15, 15, 15, 0.98);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 12px;
+    border: 1px solid rgba(248, 188, 4, 0.2);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    max-height: 500px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    padding: 10px 0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
 
-    .no-results {
-        padding: 15px 20px;
-        color: rgba(255, 255, 255, 0.7);
-        text-align: center;
-    }
+#searchResults.show {
+    opacity: 1;
+    transform: translateY(0);
+}
 
-    /* Custom scrollbar */
-    #searchResults::-webkit-scrollbar {
-        width: 6px;
-    }
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
 
-    #searchResults::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 3px;
-    }
+.search-result-item:last-child {
+    border-bottom: none;
+}
 
-    #searchResults::-webkit-scrollbar-thumb {
-        background: rgba(248, 188, 4, 0.5);
-        border-radius: 3px;
-    }
+.search-result-item:hover {
+    background: rgba(248, 188, 4, 0.08);
+}
 
-    #searchResults::-webkit-scrollbar-thumb:hover {
-        background: rgba(248, 188, 4, 0.7);
-    }
+.search-result-item.highlighted {
+    background: rgba(248, 188, 4, 0.15);
+}
+
+.search-result-item .crypto-logo {
+    width: 32px;
+    height: 32px;
+    margin-right: 15px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(248, 188, 4, 0.3);
+}
+
+.search-result-item .result-content {
+    flex: 1;
+}
+
+.search-result-item .result-name {
+    font-weight: 500;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+}
+
+.search-result-item .result-symbol {
+    color: #f8bc04;
+    font-size: 0.85rem;
+    margin-left: 8px;
+    font-weight: 400;
+}
+
+.search-result-item .result-type {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+}
+
+.search-result-item .result-type i {
+    margin-right: 5px;
+    font-size: 0.9rem;
+}
+
+.search-result-item .result-price {
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: right;
+    margin-left: 15px;
+}
+
+.search-result-item .price-up {
+    color: #4CAF50;
+}
+
+.search-result-item .price-down {
+    color: #F44336;
+}
+
+.search-result-item .price-neutral {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.no-results {
+    padding: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.no-results i {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    display: block;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* Popular searches section */
+.popular-searches {
+    padding: 15px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.popular-searches h4 {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.popular-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.popular-tag {
+    background: rgba(248, 188, 4, 0.1);
+    color: rgba(248, 188, 4, 0.9);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(248, 188, 4, 0.2);
+}
+
+.popular-tag:hover {
+    background: rgba(248, 188, 4, 0.2);
+    color: #f8bc04;
+}
+
+/* Recent searches section */
+.recent-searches {
+    padding: 15px 20px;
+}
+
+.recent-searches h4 {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.recent-search-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.recent-search-item:hover {
+    color: #f8bc04;
+}
+
+.recent-search-item i {
+    margin-right: 10px;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Custom scrollbar */
+#searchResults::-webkit-scrollbar {
+    width: 6px;
+}
+
+#searchResults::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+#searchResults::-webkit-scrollbar-thumb {
+    background: rgba(248, 188, 4, 0.5);
+    border-radius: 3px;
+}
+
+#searchResults::-webkit-scrollbar-thumb:hover {
+    background: rgba(248, 188, 4, 0.7);
+}
+
+/* Loading animation */
+.search-loading {
+    padding: 20px;
+    text-align: center;
+}
+
+.search-loading .spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(248, 188, 4, 0.2);
+    border-top-color: #f8bc04;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 10px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 
 /* Container with Black Background */
 .container.mx-auto.p-8.bg-gray-900 {
@@ -602,55 +807,207 @@ html {
 </form>
 
 <script>
-    let currentIndex = -1; 
+    let currentIndex = -1;
+    let searchTimeout;
+    let lastSearchQuery = '';
 
     async function performSearch() {
-        let query = document.getElementById('searchInput').value.trim();
-        let resultsDiv = document.getElementById('searchResults');
-
-        if (query.length === 0) {
-            resultsDiv.style.display = 'none';
-            resultsDiv.innerHTML = '';
-            return;
+        const query = document.getElementById('searchInput').value.trim();
+        const resultsDiv = document.getElementById('searchResults');
+        
+        // Clear previous timeout if it exists
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
         }
 
-        try {
-            let response = await fetch(`/search?q=${encodeURIComponent(query)}`);
-            let results = await response.json();
+        // Show loading state if query is not empty
+        if (query.length > 0) {
+            resultsDiv.innerHTML = `
+                <div class="search-loading">
+                    <div class="spinner"></div>
+                    <div>Searching...</div>
+                </div>
+            `;
+            resultsDiv.style.display = 'block';
+            resultsDiv.classList.add("show");
+            
+            // Store the current query
+            lastSearchQuery = query;
+            
+            // Add slight delay to prevent too many requests
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+                    const results = await response.json();
+                    
+                    // Only update if the query hasn't changed during the request
+                    if (query === lastSearchQuery) {
+                        displaySearchResults(results, query);
+                    }
+                } catch (error) {
+                    console.error("Error fetching search results:", error);
+                    if (query === lastSearchQuery) {
+                        resultsDiv.innerHTML = `
+                            <div class="no-results">
+                                <i class="zmdi zmdi-alert-circle"></i>
+                                <div>Failed to load results. Please try again.</div>
+                            </div>
+                        `;
+                    }
+                }
+            }, 300);
+        } else {
+            // Show recent/popular searches when empty
+            showDefaultSuggestions();
+        }
+    }
 
-            if (results.length > 0) {
-                resultsDiv.style.display = 'block';
-                resultsDiv.classList.add("show"); // Add animation class
-                resultsDiv.innerHTML = results.map((item) => {
-                    let regex = new RegExp(`(${query})`, "gi");
-                    let highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
-
-                    let isExactMatch = item.name.toLowerCase() === query.toLowerCase();
-                    return `<div class="${isExactMatch ? 'exact-match' : ''}" onclick="window.location.href='${item.link}'">
+    function displaySearchResults(results, query) {
+        const resultsDiv = document.getElementById('searchResults');
+        
+        if (results.length > 0) {
+            resultsDiv.innerHTML = results.map((item) => {
+                // Highlight matching parts of the query
+                const regex = new RegExp(`(${query})`, "gi");
+                const highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
+                
+                // Determine price change class
+                let priceClass = 'price-neutral';
+                if (item.price_change) {
+                    priceClass = item.price_change > 0 ? 'price-up' : 'price-down';
+                }
+                
+                return `
+                    <div class="search-result-item" onclick="window.location.href='${item.link}'">
+                        <img src="${item.image || '/static/img/default-crypto.png'}" alt="${item.name}" class="crypto-logo">
+                        <div class="result-content">
+                            <div class="result-name">
                                 ${highlightedName}
-                            </div>`;
-                }).join('');
-            } else {
-                resultsDiv.style.display = 'block';
-                resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center;">No results found</div>';
-            }
-        } catch (error) {
-            console.error("Error fetching search results:", error);
+                                ${item.symbol ? `<span class="result-symbol">${item.symbol}</span>` : ''}
+                            </div>
+                            <div class="result-type">
+                                <i class="zmdi ${getIconForType(item.type)}"></i>
+                                ${item.type}
+                            </div>
+                        </div>
+                        ${item.price ? `
+                            <div class="result-price ${priceClass}">
+                                $${item.price.toLocaleString()}
+                                ${item.price_change ? `
+                                    <br>
+                                    <small>${item.price_change > 0 ? '+' : ''}${item.price_change}%</small>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            // Add popular searches section at the bottom
+            resultsDiv.innerHTML += `
+                <div class="popular-searches">
+                    <h4>Popular Searches</h4>
+                    <div class="popular-tags">
+                        <div class="popular-tag" onclick="searchFor('Bitcoin')">Bitcoin</div>
+                        <div class="popular-tag" onclick="searchFor('Ethereum')">Ethereum</div>
+                        <div class="popular-tag" onclick="searchFor('Binance')">Binance</div>
+                        <div class="popular-tag" onclick="searchFor('NFT')">NFT</div>
+                        <div class="popular-tag" onclick="searchFor('DeFi')">DeFi</div>
+                    </div>
+                </div>
+            `;
+        } else {
+            resultsDiv.innerHTML = `
+                <div class="no-results">
+                    <i class="zmdi zmdi-search"></i>
+                    <div>No results found for "${query}"</div>
+                    <div class="popular-searches" style="margin-top: 15px; border-top: none;">
+                        <h4>Try searching for:</h4>
+                        <div class="popular-tags">
+                            <div class="popular-tag" onclick="searchFor('Bitcoin')">Bitcoin</div>
+                            <div class="popular-tag" onclick="searchFor('Ethereum')">Ethereum</div>
+                            <div class="popular-tag" onclick="searchFor('Binance')">Binance</div>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
+        
+        resultsDiv.style.display = 'block';
+        resultsDiv.classList.add("show");
+    }
+
+    function showDefaultSuggestions() {
+        const resultsDiv = document.getElementById('searchResults');
+        
+        resultsDiv.innerHTML = `
+            <div class="recent-searches">
+                <h4>Recent Searches</h4>
+                <div class="recent-search-item" onclick="searchFor('Bitcoin')">
+                    <i class="zmdi zmdi-time"></i>
+                    <span>Bitcoin</span>
+                </div>
+                <div class="recent-search-item" onclick="searchFor('Ethereum')">
+                    <i class="zmdi zmdi-time"></i>
+                    <span>Ethereum</span>
+                </div>
+                <div class="recent-search-item" onclick="searchFor('Solana')">
+                    <i class="zmdi zmdi-time"></i>
+                    <span>Solana</span>
+                </div>
+            </div>
+            <div class="popular-searches">
+                <h4>Popular Searches</h4>
+                <div class="popular-tags">
+                    <div class="popular-tag" onclick="searchFor('Bitcoin')">Bitcoin</div>
+                    <div class="popular-tag" onclick="searchFor('Ethereum')">Ethereum</div>
+                    <div class="popular-tag" onclick="searchFor('Binance')">Binance</div>
+                    <div class="popular-tag" onclick="searchFor('NFT')">NFT</div>
+                    <div class="popular-tag" onclick="searchFor('DeFi')">DeFi</div>
+                    <div class="popular-tag" onclick="searchFor('Metaverse')">Metaverse</div>
+                    <div class="popular-tag" onclick="searchFor('Web3')">Web3</div>
+                    <div class="popular-tag" onclick="searchFor('Stablecoins')">Stablecoins</div>
+                </div>
+            </div>
+        `;
+        
+        resultsDiv.style.display = 'block';
+        resultsDiv.classList.add("show");
+    }
+
+    function getIconForType(type) {
+        const icons = {
+            'crypto': 'zmdi-money',
+            'exchange': 'zmdi-balance',
+            'wallet': 'zmdi-wallet',
+            'nft': 'zmdi-collection-image',
+            'defi': 'zmdi-shape',
+            'token': 'zmdi-label',
+            'coin': 'zmdi-money-box'
+        };
+        return icons[type.toLowerCase()] || 'zmdi-search';
+    }
+
+    function searchFor(term) {
+        document.getElementById('searchInput').value = term;
+        performSearch();
     }
 
     // Navigate to selected result on Enter key press
     document.addEventListener('keydown', function (event) {
-        let resultsDiv = document.getElementById('searchResults');
-        let results = resultsDiv.getElementsByTagName('div');
-        let searchBox = document.getElementById('searchInput');
-
+        const resultsDiv = document.getElementById('searchResults');
+        if (!resultsDiv.style.display || resultsDiv.style.display === 'none') return;
+        
+        const results = resultsDiv.querySelectorAll('.search-result-item');
+        
         if (event.key === 'ArrowDown') {
+            event.preventDefault();
             if (currentIndex < results.length - 1) {
                 currentIndex++;
             }
             updateHighlight(results);
         } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
             if (currentIndex > 0) {
                 currentIndex--;
             }
@@ -670,17 +1027,29 @@ html {
         // Highlight the current index
         if (currentIndex >= 0 && currentIndex < results.length) {
             results[currentIndex].classList.add('highlighted');
-            document.getElementById('searchInput').value = results[currentIndex].innerText; // Set the highlighted text in the search box
+            results[currentIndex].scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
         }
     }
 
     // Hide search results when clicking outside
     document.addEventListener("click", function(event) {
-        let searchBox = document.getElementById("searchInput");
-        let resultsDiv = document.getElementById("searchResults");
+        const searchBox = document.querySelector(".search");
+        const resultsDiv = document.getElementById("searchResults");
 
-        if (!searchBox.contains(event.target) && !resultsDiv.contains(event.target)) {
+        if (!searchBox.contains(event.target)) {
             resultsDiv.style.display = 'none';
+            resultsDiv.classList.remove("show");
+            currentIndex = -1;
+        }
+    });
+
+    // Initialize with popular searches when input is focused and empty
+    document.getElementById('searchInput').addEventListener('focus', function() {
+        if (this.value.trim() === '') {
+            showDefaultSuggestions();
         }
     });
 </script>
