@@ -389,8 +389,8 @@ small {
 
 
 
-/* Styling the search form */
-.custom-search {
+/* Styling the searchh form */
+.custom-searchh {
     width: 100%;
     position: relative;
     max-width: 1000px;
@@ -404,102 +404,235 @@ small {
     flex-direction: row;
 }
 
-/* Updated Search Results Styling */
-#customSearchResults {
+/* Enhanced searchh Results */
+#searchhResults {
     position: absolute;
-    top: 140px;
+    top: calc(100% + 5px);
     left: 0;
-    margin-top: 20px;
-    background: #fff; /* Keep background white */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    width: 100%;
-    max-width: 100%; /* Ensure it doesn't overflow */
-    max-height: 300px;
+    right: 0;
+    background: rgba(15, 15, 15, 0.98);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 12px;
+    border: 1px solid rgba(248, 188, 4, 0.2);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    max-height: 500px;
     overflow-y: auto;
-    overflow-x: hidden; /* Hide horizontal scroll */
-    display: none;
-    border: 1px solid rgba(255, 255, 255, 0.3);
     z-index: 1000;
-    border-radius: 20px;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease-in-out;
-    padding: 5px; /* Optional: Prevent right-side cutoff */
+    display: none;
+    padding: 10px 0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Ensure child elements don't overflow */
-#customSearchResults div {
-    white-space: nowrap; /* Prevent wrapping */
-    overflow: hidden;
-    text-overflow: ellipsis; /* Show "..." if text is too long */
-    padding: 12px 15px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #333;
+#searchhResults.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.searchh-result-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    transition: background 0.3s, transform 0.2s;
-    border-radius: 20px;
-    max-width: 100%; /* Ensure it doesn't overflow */
-    margin-bottom: 5px;
-}
-
-/* Hover & Active Effect */
-#customSearchResults div:hover {
-    background-color: rgba(248, 188, 4, 0.2); /* Light gold highlight */
-    transform: scale(1.02);
-}
-
-/* Add subtle gradient for items */
-#customSearchResults div:nth-child(odd) {
-    background-color: rgba(245, 245, 245); /* Light grey background for odd items */
-}
-
-#customSearchResults div:nth-child(even) {
-    background-color: rgba(245, 245, 245); /* Slightly darker grey for even items */
-}
-
-/* Highlight Exact Match */
-#customSearchResults div.exact-match {
-    background-color: #f8bc04; /* Gold background for exact match */
+    padding: 12px 20px;
     color: white;
-    font-weight: bold;
-}
-
-/* Animate dropdown appearance */
-@keyframes fadeInn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-#customSearchResults.show {
-    animation: fadeInn 0.3s ease-out;
-}
-
-/* Input styling */
-.custom-search__text {
-    width: 100%;
-    padding: 6px;
-    font-size: 1rem;
-    border: none;
-    color: #333;
-    background-color: #fff;
-}
-
-/* Icon styling */
-.custom-search__helper {
-    font-size: 2.5rem;
-    color: #f8bc04;
-    transition: transform 0.3s ease, color 0.3s ease;
     cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.custom-search.focused .custom-search__helper {
-    transform: rotate(180deg);
-    color: #c68e17; /* Darker gold when active */
+.searchh-result-item:last-child {
+    border-bottom: none;
 }
+
+.searchh-result-item:hover {
+    background: rgba(248, 188, 4, 0.08);
+}
+
+.searchh-result-item.highlighted {
+    background: rgba(248, 188, 4, 0.15);
+}
+
+.searchh-result-item .crypto-logo {
+    width: 32px;
+    height: 32px;
+    margin-right: 15px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(248, 188, 4, 0.3);
+}
+
+.searchh-result-item .result-content {
+    flex: 1;
+}
+
+.searchh-result-item .result-name {
+    font-weight: 500;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+}
+
+.searchh-result-item .result-symbol {
+    color: #f8bc04;
+    font-size: 0.85rem;
+    margin-left: 8px;
+    font-weight: 400;
+}
+
+.searchh-result-item .result-type {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+}
+
+.searchh-result-item .result-type i {
+    margin-right: 5px;
+    font-size: 0.9rem;
+}
+
+.searchh-result-item .result-price {
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: right;
+    margin-left: 15px;
+}
+
+.searchh-result-item .price-up {
+    color: #4CAF50;
+}
+
+.searchh-result-item .price-down {
+    color: #F44336;
+}
+
+.searchh-result-item .price-neutral {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.no-results {
+    padding: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.no-results i {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    display: block;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* Popular searchhes section */
+.popular-searchhes {
+    padding: 15px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.popular-searchhes h4 {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.popular-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.popular-tag {
+    background: rgba(248, 188, 4, 0.1);
+    color: rgba(248, 188, 4, 0.9);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(248, 188, 4, 0.2);
+}
+
+.popular-tag:hover {
+    background: rgba(248, 188, 4, 0.2);
+    color: #f8bc04;
+}
+
+/* Recent searchhes section */
+.recent-searchhes {
+    padding: 15px 20px;
+}
+
+.recent-searchhes h4 {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.recent-searchh-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.recent-searchh-item:hover {
+    color: #f8bc04;
+}
+
+.recent-searchh-item i {
+    margin-right: 10px;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Custom scrollbar */
+#searchhResults::-webkit-scrollbar {
+    width: 6px;
+}
+
+#searchhResults::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+#searchhResults::-webkit-scrollbar-thumb {
+    background: rgba(248, 188, 4, 0.5);
+    border-radius: 3px;
+}
+
+#searchhResults::-webkit-scrollbar-thumb:hover {
+    background: rgba(248, 188, 4, 0.7);
+}
+
+/* Loading animation */
+.searchh-loading {
+    padding: 20px;
+    text-align: center;
+}
+
+.searchh-loading .spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(248, 188, 4, 0.2);
+    border-top-color: #f8bc04;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 10px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
             .content {
     width: 100%;
     max-width: 100%;
@@ -1039,105 +1172,265 @@ margin-top: 0;
                     <span class="sidetext">Your Gateway to Decentralized Finance</span>
                 </span>
 
-               <!-- Search Form -->
-<!-- Search Form -->
-<form class="custom-search" style="position: absolute; top: 105px;" onsubmit="return false;">
-    <div class="custom-search__inner" style="display: flex; width: 100%; position: relative;">
-        <input type="text" id="customSearchInput" class="custom-search__text" 
-            placeholder="Search for Crypto, Exchanges, Wallets..." 
-            onkeyup="performSearchCustom()"
-            onfocus="performSearchCustom()">  <!-- Trigger search when input is focused -->
-        <i class="zmdi zmdi-search custom-search__helper" onclick="performSearchCustom()"></i>
+               <!-- searchh Form -->
+<form class="searchh" onsubmit="return false;">
+    <div class="searchh__inner">
+        <input type="text" id="searchhInput" class="searchh__text" 
+               placeholder="searchh for crypto, exchanges, wallets..."
+               onkeyup="performsearchh()"
+               onfocus="performsearchh()">
+        <i class="zmdi zmdi-searchh searchh__helper" onclick="performsearchh()"></i>
     </div>
+    <!-- searchh Results -->
+    <div id="searchhResults"></div>
 </form>
 
-<!-- Search Results -->
-<div id="customSearchResults" class="custom-search-results"></div>
-
 <script>
-let currentIndexCustom = -1; // Use a unique variable name
+    let currentIndex = -1;
+    let searchhTimeout;
+    let lastsearchhQuery = '';
 
-async function performSearchCustom() {
-    let query = document.getElementById('customSearchInput').value.trim();
-    let resultsDiv = document.getElementById('customSearchResults');
+    async function performsearchh() {
+        const query = document.getElementById('searchhInput').value.trim();
+        const resultsDiv = document.getElementById('searchhResults');
+        
+        // Clear previous timeout if it exists
+        if (searchhTimeout) {
+            clearTimeout(searchhTimeout);
+        }
 
-    if (query.length === 0) {
-        resultsDiv.style.display = 'none';
-        resultsDiv.innerHTML = '';
-        return;
-    }
-
-    try {
-        let response = await fetch(`/search?q=${encodeURIComponent(query)}`);
-        console.log("Response:", response); // Debugging line
-        let results = await response.json();
-        console.log("Results:", results); // Debugging line
-
-        if (results.length > 0) {
+        // Show loading state if query is not empty
+        if (query.length > 0) {
+            resultsDiv.innerHTML = `
+                <div class="searchh-loading">
+                    <div class="spinner"></div>
+                    <div>searchhing...</div>
+                </div>
+            `;
             resultsDiv.style.display = 'block';
             resultsDiv.classList.add("show");
-            resultsDiv.innerHTML = results.map((item) => {
-                let regex = new RegExp(`(${query})`, "gi");
-                let highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
-
-                let isExactMatch = item.name.toLowerCase() === query.toLowerCase();
-                return `<div class="${isExactMatch ? 'exact-match' : ''}" onclick="window.location.href='${item.link}'">
-                            ${highlightedName}
-                        </div>`;
-            }).join('');
+            
+            // Store the current query
+            lastsearchhQuery = query;
+            
+            // Add slight delay to prevent too many requests
+            searchhTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/searchh?q=${encodeURIComponent(query)}`);
+                    const results = await response.json();
+                    
+                    // Only update if the query hasn't changed during the request
+                    if (query === lastsearchhQuery) {
+                        displaysearchhResults(results, query);
+                    }
+                } catch (error) {
+                    console.error("Error fetching searchh results:", error);
+                    if (query === lastsearchhQuery) {
+                        resultsDiv.innerHTML = `
+                            <div class="no-results">
+                                <i class="zmdi zmdi-alert-circle"></i>
+                                <div>Failed to load results. Please try again.</div>
+                            </div>
+                        `;
+                    }
+                }
+            }, 300);
         } else {
-            resultsDiv.style.display = 'block';
-            resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center;">No results found</div>';
+            // Show recent/popular searchhes when empty
+            showDefaultSuggestions();
         }
-    } catch (error) {
-        console.error("Error fetching search results:", error);
     }
-}
 
-// Navigate to selected result on Enter key press
-document.addEventListener('keydown', function (event) {
-    let resultsDiv = document.getElementById('customSearchResults');
-    let results = resultsDiv.getElementsByTagName('div');
-    let searchBox = document.getElementById('customSearchInput');
-
-    if (event.key === 'ArrowDown') {
-        if (currentIndexCustom < results.length - 1) {
-            currentIndexCustom++;
+    function displaysearchhResults(results, query) {
+        const resultsDiv = document.getElementById('searchhResults');
+        
+        if (results.length > 0) {
+            resultsDiv.innerHTML = results.map((item) => {
+                // Highlight matching parts of the query
+                const regex = new RegExp(`(${query})`, "gi");
+                const highlightedName = item.name.replace(regex, `<span style="color: #f8bc04; font-weight: bold;">$1</span>`);
+                
+                // Determine price change class
+                let priceClass = 'price-neutral';
+                if (item.price_change) {
+                    priceClass = item.price_change > 0 ? 'price-up' : 'price-down';
+                }
+                
+                return `
+                    <div class="searchh-result-item" onclick="window.location.href='${item.link}'">
+                        <img src="${item.image || '/static/img/default-crypto.png'}" alt="${item.name}" class="crypto-logo">
+                        <div class="result-content">
+                            <div class="result-name">
+                                ${highlightedName}
+                                ${item.symbol ? `<span class="result-symbol">${item.symbol}</span>` : ''}
+                            </div>
+                            <div class="result-type">
+                                <i class="zmdi ${getIconForType(item.type)}"></i>
+                                ${item.type}
+                            </div>
+                        </div>
+                        ${item.price ? `
+                            <div class="result-price ${priceClass}">
+                                $${item.price.toLocaleString()}
+                                ${item.price_change ? `
+                                    <br>
+                                    <small>${item.price_change > 0 ? '+' : ''}${item.price_change}%</small>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            // Add popular searchhes section at the bottom
+            resultsDiv.innerHTML += `
+                <div class="popular-searchhes">
+                    <h4>Popular searchhes</h4>
+                    <div class="popular-tags">
+                        <div class="popular-tag" onclick="searchhFor('Bitcoin')">Bitcoin</div>
+                        <div class="popular-tag" onclick="searchhFor('Ethereum')">Ethereum</div>
+                        <div class="popular-tag" onclick="searchhFor('Binance')">Binance</div>
+                        <div class="popular-tag" onclick="searchhFor('NFT')">NFT</div>
+                        <div class="popular-tag" onclick="searchhFor('DeFi')">DeFi</div>
+                    </div>
+                </div>
+            `;
+        } else {
+            resultsDiv.innerHTML = `
+                <div class="no-results">
+                    <i class="zmdi zmdi-searchh"></i>
+                    <div>No results found for "${query}"</div>
+                    <div class="popular-searchhes" style="margin-top: 15px; border-top: none;">
+                        <h4>Try searchhing for:</h4>
+                        <div class="popular-tags">
+                            <div class="popular-tag" onclick="searchhFor('Bitcoin')">Bitcoin</div>
+                            <div class="popular-tag" onclick="searchhFor('Ethereum')">Ethereum</div>
+                            <div class="popular-tag" onclick="searchhFor('Binance')">Binance</div>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
-        updateHighlightCustom(results);
-    } else if (event.key === 'ArrowUp') {
-        if (currentIndexCustom > 0) {
-            currentIndexCustom--;
+        
+        resultsDiv.style.display = 'block';
+        resultsDiv.classList.add("show");
+    }
+
+    function showDefaultSuggestions() {
+        const resultsDiv = document.getElementById('searchhResults');
+        
+        resultsDiv.innerHTML = `
+            <div class="recent-searchhes">
+                <h4>Recent searchhes</h4>
+                <div class="recent-searchh-item" onclick="searchhFor('Bitcoin')">
+                    <i class="zmdi zmdi-time"></i>
+                    <span>Bitcoin</span>
+                </div>
+                <div class="recent-searchh-item" onclick="searchhFor('Ethereum')">
+                    <i class="zmdi zmdi-time"></i>
+                    <span>Ethereum</span>
+                </div>
+                <div class="recent-searchh-item" onclick="searchhFor('Solana')">
+                    <i class="zmdi zmdi-time"></i>
+                    <span>Solana</span>
+                </div>
+            </div>
+            <div class="popular-searchhes">
+                <h4>Popular searchhes</h4>
+                <div class="popular-tags">
+                    <div class="popular-tag" onclick="searchhFor('Bitcoin')">Bitcoin</div>
+                    <div class="popular-tag" onclick="searchhFor('Ethereum')">Ethereum</div>
+                    <div class="popular-tag" onclick="searchhFor('Binance')">Binance</div>
+                    <div class="popular-tag" onclick="searchhFor('NFT')">NFT</div>
+                    <div class="popular-tag" onclick="searchhFor('DeFi')">DeFi</div>
+                    <div class="popular-tag" onclick="searchhFor('Metaverse')">Metaverse</div>
+                    <div class="popular-tag" onclick="searchhFor('Web3')">Web3</div>
+                    <div class="popular-tag" onclick="searchhFor('Stablecoins')">Stablecoins</div>
+                </div>
+            </div>
+        `;
+        
+        resultsDiv.style.display = 'block';
+        resultsDiv.classList.add("show");
+    }
+
+    function getIconForType(type) {
+        const icons = {
+            'crypto': 'zmdi-money',
+            'exchange': 'zmdi-balance',
+            'wallet': 'zmdi-wallet',
+            'nft': 'zmdi-collection-image',
+            'defi': 'zmdi-shape',
+            'token': 'zmdi-label',
+            'coin': 'zmdi-money-box'
+        };
+        return icons[type.toLowerCase()] || 'zmdi-searchh';
+    }
+
+    function searchhFor(term) {
+        document.getElementById('searchhInput').value = term;
+        performsearchh();
+    }
+
+    // Navigate to selected result on Enter key press
+    document.addEventListener('keydown', function (event) {
+        const resultsDiv = document.getElementById('searchhResults');
+        if (!resultsDiv.style.display || resultsDiv.style.display === 'none') return;
+        
+        const results = resultsDiv.querySelectorAll('.searchh-result-item');
+        
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            if (currentIndex < results.length - 1) {
+                currentIndex++;
+            }
+            updateHighlight(results);
+        } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            if (currentIndex > 0) {
+                currentIndex--;
+            }
+            updateHighlight(results);
+        } else if (event.key === 'Enter' && currentIndex >= 0 && currentIndex < results.length) {
+            // Redirect to the selected link on Enter
+            window.location.href = results[currentIndex].getAttribute('onclick').replace("window.location.href='", "").replace("'", "");
         }
-        updateHighlightCustom(results);
-    } else if (event.key === 'Enter' && currentIndexCustom >= 0 && currentIndexCustom < results.length) {
-        // Redirect to the selected link on Enter
-        window.location.href = results[currentIndexCustom].getAttribute('onclick').replace("window.location.href='", "").replace("'", "");
-    }
-});
+    });
 
-function updateHighlightCustom(results) {
-    // Remove highlight from all results
-    for (let i = 0; i < results.length; i++) {
-        results[i].classList.remove('highlighted');
+    function updateHighlight(results) {
+        // Remove highlight from all results
+        for (let i = 0; i < results.length; i++) {
+            results[i].classList.remove('highlighted');
+        }
+
+        // Highlight the current index
+        if (currentIndex >= 0 && currentIndex < results.length) {
+            results[currentIndex].classList.add('highlighted');
+            results[currentIndex].scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }
     }
 
-    // Highlight the current index
-    if (currentIndexCustom >= 0 && currentIndexCustom < results.length) {
-        results[currentIndexCustom].classList.add('highlighted');
-        document.getElementById('customSearchInput').value = results[currentIndexCustom].innerText; // Set the highlighted text in the search box
-    }
-}
+    // Hide searchh results when clicking outside
+    document.addEventListener("click", function(event) {
+        const searchhBox = document.querySelector(".searchh");
+        const resultsDiv = document.getElementById("searchhResults");
 
-// Hide search results when clicking outside
-document.addEventListener("click", function(event) {
-    let searchBox = document.getElementById("customSearchInput");
-    let resultsDiv = document.getElementById("customSearchResults");
+        if (!searchhBox.contains(event.target)) {
+            resultsDiv.style.display = 'none';
+            resultsDiv.classList.remove("show");
+            currentIndex = -1;
+        }
+    });
 
-    if (!searchBox.contains(event.target) && !resultsDiv.contains(event.target)) {
-        resultsDiv.style.display = 'none';
-    }
-});
+    // Initialize with popular searchhes when input is focused and empty
+    document.getElementById('searchhInput').addEventListener('focus', function() {
+        if (this.value.trim() === '') {
+            showDefaultSuggestions();
+        }
+    });
 </script>
 
 
