@@ -1507,16 +1507,33 @@ def view_notifications():
                                     .order_by(Notification.created_at.desc())\
                                     .paginate(page=1, per_page=20)
     return render_template('profile/notifications.html', notifications=notifications)
-@app.route('/terms')
-def terms():
-    return render_template('terms.html')  # We'll create this template next
-@app.route('/help_center')
+@app.route('/help-center')
+@login_required
 def help_center():
-    return render_template('help_center.html')  # We'll create this template next
-@app.route('/privacy_policy')
-def privacy_policy():
-    return render_template('privacy_policy.html')
-@app.route('/security')
-def security():
-    return render_template('security.html')
+    """Render the Help Center page"""
+    return render_template('help_center.html', 
+                          current_user=current_user,
+                          datetime=datetime)
 
+@app.route('/security')
+@login_required
+def security():
+    """Render the Security page with user-specific security status"""
+    # Count active sessions (simplified example - you might need to implement session tracking)
+    session_count = 1  # Default to 1 for current session
+    
+    return render_template('security.html',
+                         current_user=current_user,
+                         session_count=session_count)
+
+@app.route('/privacy-policy')
+def privacy_policy():
+    """Render the Privacy Policy page"""
+    return render_template('privacy_policy.html',
+                         datetime=datetime)
+
+@app.route('/terms')
+def terms_of_service():
+    """Render the Terms of Service page"""
+    return render_template('terms.html',
+                         datetime=datetime)
