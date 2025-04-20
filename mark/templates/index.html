@@ -1967,46 +1967,30 @@ function formatPrice(price) {
 }
 
 
-// Modify the formatPrice and update functions to handle percentage differences
-
-function formatPercentageChange(percent, exchange) {
-    // Convert to number if it's a string
-    const num = typeof percent === 'string' ? parseFloat(percent) : percent;
-    
-    // Check if the value needs to be converted from decimal to percentage
-    // (e.g., 0.05 means 5% for some exchanges)
-    if (exchange === 'okx' || exchange === 'coinbase') {
-        // If the absolute value is <= 1, assume it's a decimal and multiply by 100
-        if (Math.abs(num) <= 1) {
-            return num * 100;
-        }
-    }
-    return num;
-}
-
-// Update the price update functions to use this:
-
 function updateSwiperPrices(exchange, prices, swiperInstance) {
     const wrapper = document.querySelector(`#${exchange}-section .swiper-wrapper`);
-    
+
+    // If wrapper is empty (initial load), create all slides
     if (wrapper.children.length === 0 || wrapper.children.length === 1 && wrapper.querySelector('.spinner-border')) {
         createAllSlides(exchange, prices, wrapper);
         if (swiperInstance) swiperInstance.update();
         return;
     }
-    
+
+    // Otherwise, just update prices in existing slides
     const slides = wrapper.querySelectorAll('.swiper-slide');
     prices.forEach((ticker, index) => {
         if (index >= slides.length) return;
-        
+
         const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
-        const rawPercent = ticker.priceChangePercent || ticker.changePercent || ticker.percentChange;
-        const priceChangePercent = formatPercentageChange(rawPercent, exchange);
+        const priceChangePercent = parseFloat(ticker.priceChangePercent);
+
         const price = formatPrice(ticker.price);
-        
+
+        // Update price and percentage elements
         const priceElement = slides[index].querySelector('h2');
         const percentElement = slides[index].querySelector('.percentage-change');
-        
+
         if (priceElement) priceElement.textContent = `$${price}`;
         if (percentElement) {
             percentElement.innerHTML = priceChangePercent > 0 ? 
@@ -2020,13 +2004,13 @@ function updateSwiperPrices(exchange, prices, swiperInstance) {
 
 function createAllSlides(exchange, prices, wrapper) {
     wrapper.innerHTML = '';
-    
+
     prices.forEach(ticker => {
         const symbol = ticker.symbol.replace('USDT', '').replace('-USDT', '').replace('-USD', '');
-        const rawPercent = ticker.priceChangePercent || ticker.changePercent || ticker.percentChange;
-        const priceChangePercent = formatPercentageChange(rawPercent, exchange);
+        const priceChangePercent = parseFloat(ticker.priceChangePercent);
+
         const price = formatPrice(ticker.price);
-        
+
         const slide = document.createElement('div');
         slide.className = 'swiper-slide swiper-slide--one';
         slide.setAttribute('data-symbol', symbol);
@@ -2047,15 +2031,14 @@ function createAllSlides(exchange, prices, wrapper) {
                         `<span class="neutral">0.00%</span>`)}
             </h5>
         `;
-        
+
         slide.addEventListener('click', function() {
             window.location.href = `/charts?symbol=${symbol}USDT`;
         });
-        
+
         wrapper.appendChild(slide);
     });
 }
-
 function showErrorState() {
     const wrapper = document.querySelector(`#${currentExchange}-section .swiper-wrapper`);
     wrapper.innerHTML = `
