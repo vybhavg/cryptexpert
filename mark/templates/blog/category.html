@@ -2,64 +2,230 @@
 
 {% block title %}{{ category.name }} | CryptExpert Blog{% endblock %}
 
+{% block head %}
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Custom Colors */
+        .text-yellow-custom { color: #F8BC04 !important; }
+        .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
+
+        /* Card Styling */
+        .post-card {
+            background: linear-gradient(135deg, #1e1e1e, #252525) !important;
+            border-radius: 0.75rem !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+            overflow: hidden !important;
+            position: relative;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px) scale(1.02) !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
+            border-color: rgba(248, 188, 4, 0.2) !important;
+        }
+
+        /* Post Title */
+        .post-title {
+            position: relative;
+            color: white !important;
+            transition: color 0.3s ease !important;
+        }
+
+        .post-card:hover .post-title {
+            color: #F8BC04 !important;
+        }
+
+        /* Meta Info */
+        .post-meta {
+            color: rgba(255, 255, 255, 0.6) !important;
+            transition: color 0.3s ease !important;
+        }
+
+        .post-card:hover .post-meta {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        /* Featured Image */
+        .featured-image {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.4s ease !important;
+        }
+
+        .post-card:hover .featured-image {
+            transform: scale(1.03);
+        }
+
+        /* Create Button */
+        .create-btn {
+            background: linear-gradient(135deg, #F8BC04, #e6a905) !important;
+            color: #1a1a1a !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        /* Pagination */
+        .page-item {
+            transition: all 0.3s ease;
+        }
+
+        .page-item:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideeInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .animate-fadee-in-up {
+            animation: fadeeInUp 0.6s ease-out forwards !important;
+        }
+
+        .animate-slidee-in-left {
+            animation: slideeInLeft 0.6s ease-out forwards !important;
+        }
+
+        /* Delay animations for staggered effect */
+        .post-card {
+            opacity: 0;
+            animation: fadeeInUp 0.6s ease-out forwards;
+            animation-delay: calc(var(--animation-order) * 100ms);
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
 <div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
         <!-- Category Header -->
-        <div class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-white mb-2">{{ category.name }}</h1>
-            <p class="text-gray-400">Posts about {{ category.name.lower() }}</p>
+        <div class="mb-10 animate-slidee-in-left" style="--animation-order: 0; margin-top: 2rem;">
+            <h1 class="text-4xl font-bold text-white mb-4">{{ category.name }}</h1>
+            <p class="text-gray-400 mb-6">{{ category.description or "Posts about " + category.name.lower() }}</p>
+            
+            {% if current_user.is_authenticated %}
+            <div class="mt-6">
+                <a href="{{ url_for('create_blog_post') }}" 
+                   class="create-btn inline-flex items-center px-6 py-3 rounded-lg">
+                    <span class="material-icons mr-2">add</span>
+                    Create New Post
+                </a>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Posts Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for post in posts.items %}
-            <a href="{{ url_for('blog_post', slug=post.slug) }}" class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition">
-                {% if post.featured_image %}
-                <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" 
-                     alt="{{ post.title }}" 
-                     class="w-full h-48 object-cover">
-                {% endif %}
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-white mb-2">{{ post.title }}</h3>
-                    <p class="text-sm text-gray-400">{{ post.excerpt|truncate(100) }}</p>
-                    <div class="flex items-center mt-3 text-xs text-gray-500">
-                        <span>{{ post.created_at.strftime('%b %d, %Y') }}</span>
-                        <span class="mx-2">•</span>
-                        <span>{{ post.views }} views</span>
+            <div class="post-card" style="--animation-order: {{ loop.index }}">
+                <a href="{{ url_for('blog_post', slug=post.slug) }}">
+                    {% if post.featured_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" 
+                         alt="{{ post.title }}" 
+                         class="featured-image w-full">
+                    {% endif %}
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-grow">
+                                <h3 class="post-title text-xl font-semibold mb-2">{{ post.title }}</h3>
+                                <p class="text-gray-300 mb-4 line-clamp-2">{{ post.excerpt or post.content|truncate(150) }}</p>
+                            </div>
+                            
+                            {% if current_user.is_authenticated and post.author_id == current_user.id %}
+                            <div class="flex space-x-2">
+                                <a href="{{ url_for('edit_blog_post', post_id=post.id) }}" 
+                                   class="text-gray-400 hover:text-yellow-400 transition"
+                                   title="Edit Post">
+                                    <span class="material-icons">edit</span>
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mt-auto flex items-center justify-between">
+                            <span class="post-meta text-sm">
+                                <span class="material-icons align-middle text-yellow-custom mr-1" style="font-size: 1rem;">person</span>
+                                {{ post.author.username }}
+                            </span>
+                            <span class="post-meta text-sm">
+                                <span class="material-icons align-middle text-yellow-custom mr-1" style="font-size: 1rem;">schedule</span>
+                                {{ post.created_at.strftime('%b %d, %Y') }}
+                                <span class="ml-2">{{ post.views }} views</span>
+                            </span>
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
             {% endfor %}
         </div>
 
+        {% if not posts.items %}
+        <div class="text-center py-16 animate-fadee-in-up">
+            <span class="material-icons text-yellow-custom text-6xl mb-4">article</span>
+            <h3 class="text-xl text-white mb-2">No posts yet in this category</h3>
+            <p class="text-gray-400 mb-6">Be the first to share your knowledge</p>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('create_blog_post') }}" 
+               class="create-btn inline-flex items-center px-6 py-3 rounded-lg">
+                <span class="material-icons mr-2">add</span>
+                Create First Post
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
         <!-- Pagination -->
         {% if posts.pages > 1 %}
-        <div class="mt-8 flex justify-center">
-            {% if posts.has_prev %}
+        <div class="mt-12 flex justify-center">
+            <nav class="flex items-center space-x-1">
+                {% if posts.has_prev %}
                 <a href="{{ url_for('blog_category', slug=category.slug, page=posts.prev_num) }}" 
-                   class="px-4 py-2 bg-gray-800 text-white rounded-l-lg hover:bg-gray-700">
-                    Previous
+                   class="page-item px-4 py-2 bg-gray-800 text-white rounded-l-lg hover:bg-gray-700 transition">
+                    <span class="material-icons">chevron_left</span>
                 </a>
-            {% endif %}
-            
-            {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-                {% if page_num %}
-                    <a href="{{ url_for('blog_category', slug=category.slug, page=page_num) }}" 
-                       class="px-4 py-2 {% if page_num == posts.page %}bg-yellow-400 text-gray-900{% else %}bg-gray-800 text-white hover:bg-gray-700{% endif %}">
-                        {{ page_num }}
-                    </a>
-                {% else %}
-                    <span class="px-4 py-2 bg-gray-800 text-white">...</span>
                 {% endif %}
-            {% endfor %}
-            
-            {% if posts.has_next %}
+                
+                {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                    {% if page_num %}
+                        <a href="{{ url_for('blog_category', slug=category.slug, page=page_num) }}" 
+                           class="page-item px-4 py-2 {% if page_num == posts.page %}bg-yellow-400 text-gray-900 font-bold{% else %}bg-gray-800 text-white hover:bg-gray-700{% endif %} rounded transition">
+                            {{ page_num }}
+                        </a>
+                    {% else %}
+                        <span class="px-4 py-2 bg-gray-800 text-white rounded">...</span>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if posts.has_next %}
                 <a href="{{ url_for('blog_category', slug=category.slug, page=posts.next_num) }}" 
-                   class="px-4 py-2 bg-gray-800 text-white rounded-r-lg hover:bg-gray-700">
-                    Next
+                   class="page-item px-4 py-2 bg-gray-800 text-white rounded-r-lg hover:bg-gray-700 transition">
+                    <span class="material-icons">chevron_right</span>
                 </a>
-            {% endif %}
+                {% endif %}
+            </nav>
         </div>
         {% endif %}
     </div>
