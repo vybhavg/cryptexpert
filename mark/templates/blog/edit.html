@@ -1,27 +1,197 @@
-<!-- templates/blog/edit.html -->
 {% extends "blog/create.html" %}
 
 {% block title %}Edit {{ post.title }} | CryptExpert{% endblock %}
 
+{% block head %}
+    {{ super() }}
+    <style>
+        /* Edit-specific styles */
+        .current-image-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        .current-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .remove-image-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .remove-image-btn:hover {
+            background: rgba(220, 38, 38, 0.9);
+            transform: scale(1.1);
+        }
+        
+        .version-info {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
 <div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold text-white mb-8">Edit Blog Post</h1>
-        
-        {% if post.featured_image %}
-        <div class="mb-6">
-            <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" 
-                 alt="{{ post.title }}" 
-                 class="w-full max-h-64 object-cover rounded-lg">
-        </div>
-        {% endif %}
-        
-        <form method="POST" enctype="multipart/form-data" class="space-y-6">
-            {{ form.hidden_tag() }}
+        <div class="form-card p-8 mb-8 animate-fadee-in-up">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-white">Edit Post</h1>
+                    <p class="text-yellow-400 mt-1">{{ post.title }}</p>
+                </div>
+                <a href="{{ url_for('blog_post', slug=post.slug) }}" 
+                   class="flex items-center text-gray-400 hover:text-white transition">
+                    <span class="material-icons mr-1">visibility</span>
+                    View Live
+                </a>
+            </div>
             
-            <!-- Same form fields as create.html -->
-            {{ super() }}
-        </form>
+            {% if post.featured_image %}
+            <div class="current-image-container mb-6">
+                <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" 
+                     alt="Current featured image" 
+                     class="current-image">
+                <button type="button" 
+                        onclick="document.getElementById('remove_image').value = '1'; this.parentElement.style.display = 'none';" 
+                        class="remove-image-btn"
+                        title="Remove image">
+                    <span class="material-icons">close</span>
+                </button>
+                <p class="version-info">
+                    Last edited: {{ post.updated_at.strftime('%b %d, %Y at %H:%M') }}
+                </p>
+            </div>
+            {% endif %}
+            
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {{ form.hidden_tag() }}
+                <input type="hidden" id="remove_image" name="remove_image" value="0">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Title</label>
+                        {{ form.title(class="form-input") }}
+                    </div>
+                    
+                    <div>
+                        <label class="block text-white mb-2 font-medium">URL Slug</label>
+                        {{ form.slug(class="form-input") }}
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-white mb-2 font-medium">Category</label>
+                    {{ form.category_id(class="form-input") }}
+                </div>
+                
+                <div>
+                    <label class="block text-white mb-2 font-medium">Excerpt</label>
+                    {{ form.excerpt(class="form-input form-textarea", rows=3) }}
+                </div>
+                
+                <div>
+                    <label class="block text-white mb-2 font-medium">Update Featured Image</label>
+                    <div class="file-upload-wrapper">
+                        <label class="file-upload-label">
+                            <span class="material-icons text-yellow-400 text-4xl mb-2">image</span>
+                            <p class="text-gray-300">Click to upload new image</p>
+                            <p class="text-sm text-gray-500 mt-1">PNG, JPG, GIF (Max 5MB)</p>
+                            {{ form.featured_image(class="file-upload-input") }}
+                        </label>
+                    </div>
+                    <div class="preview-container" id="imagePreview">
+                        <span class="text-sm text-gray-400">New image preview:</span>
+                        <img class="preview-image" id="previewImage" src="#" alt="Preview" />
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-white mb-2 font-medium">Content</label>
+                    {{ form.content(class="form-input form-textarea", rows=12) }}
+                </div>
+                
+                <div class="flex items-center justify-between pt-4 border-t border-gray-800">
+                    <div class="flex items-center">
+                        <label class="toggle-switch mr-3">
+                            {{ form.is_published() }}
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-white font-medium">
+                            {% if post.is_published %}
+                                Update Published Post
+                            {% else %}
+                                Publish Now
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <a href="{{ url_for('blog_post', slug=post.slug) }}" 
+                           class="btn-cancel px-6 py-2 rounded-lg">
+                            Discard Changes
+                        </a>
+                        <button type="submit" class="btn-submit px-6 py-2 rounded-lg">
+                            <span class="material-icons mr-1">save</span>
+                            Update Post
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+<script>
+    // Initialize form with existing values
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show image preview if new image is selected
+        document.getElementById('featured_image').addEventListener('change', function(e) {
+            const previewContainer = document.getElementById('imagePreview');
+            const previewImage = document.getElementById('previewImage');
+            
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        // Auto-slug generation when title changes (only if slug is unchanged)
+        const initialSlug = document.getElementById('slug').value;
+        document.getElementById('title').addEventListener('input', function(e) {
+            const slugField = document.getElementById('slug');
+            if (slugField.value === initialSlug) {
+                const slug = this.value.toLowerCase()
+                    .replace(/[^\w\s-]/g, '')
+                    .replace(/[\s_-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+                slugField.value = slug;
+            }
+        });
+    });
+</script>
 {% endblock %}
