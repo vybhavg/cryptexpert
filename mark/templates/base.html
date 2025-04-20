@@ -1202,7 +1202,7 @@ html {
         <a href="{{url_for('ai_predictor')}}"><i class="zmdi zmdi-widgets"></i> Price Predictor AI</a>
     </li>
     <li><a href="{{ url_for('blog_home') }}" class="text-gray-400 hover:text-white">Blog</a></li>
-{% if current_user.is_admin %}
+{% if current_user.is_authenticated %}
 <li><a href="{{ url_for('create_blog_post') }}" class="text-gray-400 hover:text-white">Create Post</a></li>
 {% endif %}
     <li class="{% if request.endpoint == 'forum_home' %}navigation__active{% endif %}">
