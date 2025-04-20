@@ -209,60 +209,54 @@
         transition: width 0.4s ease, background-color 0.4s ease;
     }
     
-    /* Password requirement hints */
-    .password-hints {
-        font-size: 0.8125rem;
+    /* Password requirements container */
+    .password-requirements {
+        font-size: 0.75rem;
         color: #6c757d;
         margin-top: 0.5rem;
+        background: #f8f9fa;
+        padding: 0.75rem;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
     }
     
-    .password-hints ul {
-        padding-left: 0;
-        margin-top: 0.5rem;
-        margin-bottom: 0;
-        list-style-type: none;
+    .password-requirements-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: #495057;
     }
     
-    .password-hints li {
-        position: relative;
-        padding-left: 1.25rem;
-        margin-bottom: 0.25rem;
-        transition: all 0.3s;
+    .password-requirements-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0;
+        padding: 0;
     }
     
-    .password-hints li:before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 0.5rem;
-        height: 0.5rem;
-        border-radius: 50%;
-        background-color: #e9ecef;
-        transition: all 0.3s;
+    .password-requirement {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        background: #e9ecef;
+        transition: all 0.3s ease;
     }
     
-    .password-hints .valid {
+    .password-requirement.valid {
+        background: #e6f7eb;
         color: #28a745;
     }
     
-    .password-hints .valid:before {
-        background-color: #28a745;
-        content: "✓";
-        color: white;
-        font-size: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .password-hints .invalid {
+    .password-requirement.invalid {
+        background: #e9ecef;
         color: #6c757d;
     }
     
-    .password-hints .invalid:before {
-        background-color: #e9ecef;
+    .password-requirement-icon {
+        margin-right: 0.25rem;
+        font-size: 0.625rem;
     }
     
     /* Validation feedback */
@@ -334,6 +328,15 @@
         .login__block__body {
             padding: 1.25rem;
         }
+        
+        .password-requirements-list {
+            gap: 0.3rem;
+        }
+        
+        .password-requirement {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.7rem;
+        }
     }
 </style>
 </head>
@@ -353,7 +356,7 @@
 
     <div class="login">
         <!-- Login -->
-        <div class="login__block box active" style="background-color: #000000;" id="l-login">
+        <div class="login__block box active" id="l-login">
             <div class="login__block__header">
                 <i class="zmdi zmdi-account-circle"></i>
                 <p>Create your account</p>
@@ -399,22 +402,37 @@
                     <!-- Password Field -->
                     <div class="form-group">
                         <div class="password-input-container">
-                            {{ form.password1(class="form-control text-center", placeholder="Password (min 8 characters)", 
+                            {{ form.password1(class="form-control text-center", placeholder="Create password", 
                                             id="password", **{'data-minlength': '8'}) }}
                             <i class="zmdi zmdi-eye password-toggle" id="togglePassword"></i>
                         </div>
                         <div class="password-strength">
                             <div class="password-strength-bar" id="password-strength-bar"></div>
                         </div>
-                        <div class="password-hints">
-                            <small>Password must contain:</small>
-                            <ul>
-                                <li id="length-requirement">At least 8 characters</li>
-                                <li id="uppercase-requirement">At least 1 uppercase letter</li>
-                                <li id="lowercase-requirement">At least 1 lowercase letter</li>
-                                <li id="number-requirement">At least 1 number</li>
-                                <li id="special-requirement">At least 1 special character</li>
-                            </ul>
+                        <div class="password-requirements">
+                            <span class="password-requirements-title">Password must contain:</span>
+                            <div class="password-requirements-list">
+                                <span class="password-requirement invalid" id="length-requirement">
+                                    <span class="password-requirement-icon">✗</span>
+                                    <span>8+ chars</span>
+                                </span>
+                                <span class="password-requirement invalid" id="uppercase-requirement">
+                                    <span class="password-requirement-icon">✗</span>
+                                    <span>A-Z</span>
+                                </span>
+                                <span class="password-requirement invalid" id="lowercase-requirement">
+                                    <span class="password-requirement-icon">✗</span>
+                                    <span>a-z</span>
+                                </span>
+                                <span class="password-requirement invalid" id="number-requirement">
+                                    <span class="password-requirement-icon">✗</span>
+                                    <span>0-9</span>
+                                </span>
+                                <span class="password-requirement invalid" id="special-requirement">
+                                    <span class="password-requirement-icon">✗</span>
+                                    <span>!@#</span>
+                                </span>
+                            </div>
                         </div>
                         {% if form.password1.errors %}
                             <div class="invalid-feedback">
@@ -428,7 +446,7 @@
                     <!-- Confirm Password Field -->
                     <div class="form-group">
                         <div class="password-input-container">
-                            {{ form.password2(class="form-control text-center", placeholder="Confirm your password", id="confirmPassword") }}
+                            {{ form.password2(class="form-control text-center", placeholder="Confirm password", id="confirmPassword") }}
                             <i class="zmdi zmdi-eye password-toggle" id="toggleConfirmPassword"></i>
                         </div>
                         <div class="invalid-feedback" id="password-match-feedback">
@@ -537,54 +555,68 @@
                 let isValid = true;
                 
                 // Check length
-                if (password.length < 8) {
-                    lengthRequirement.classList.add('invalid');
-                    lengthRequirement.classList.remove('valid');
-                    isValid = false;
-                } else {
+                if (password.length >= 8) {
                     lengthRequirement.classList.add('valid');
                     lengthRequirement.classList.remove('invalid');
+                    lengthRequirement.querySelector('.password-requirement-icon').textContent = '✓';
+                } else {
+                    lengthRequirement.classList.add('invalid');
+                    lengthRequirement.classList.remove('valid');
+                    lengthRequirement.querySelector('.password-requirement-icon').textContent = '✗';
                 }
                 
                 // Check uppercase
-                if (!/[A-Z]/.test(password)) {
-                    uppercaseRequirement.classList.add('invalid');
-                    uppercaseRequirement.classList.remove('valid');
-                    isValid = false;
-                } else {
+                if (/[A-Z]/.test(password)) {
                     uppercaseRequirement.classList.add('valid');
                     uppercaseRequirement.classList.remove('invalid');
+                    uppercaseRequirement.querySelector('.password-requirement-icon').textContent = '✓';
+                } else {
+                    uppercaseRequirement.classList.add('invalid');
+                    uppercaseRequirement.classList.remove('valid');
+                    uppercaseRequirement.querySelector('.password-requirement-icon').textContent = '✗';
                 }
                 
                 // Check lowercase
-                if (!/[a-z]/.test(password)) {
-                    lowercaseRequirement.classList.add('invalid');
-                    lowercaseRequirement.classList.remove('valid');
-                    isValid = false;
-                } else {
+                if (/[a-z]/.test(password)) {
                     lowercaseRequirement.classList.add('valid');
                     lowercaseRequirement.classList.remove('invalid');
+                    lowercaseRequirement.querySelector('.password-requirement-icon').textContent = '✓';
+                } else {
+                    lowercaseRequirement.classList.add('invalid');
+                    lowercaseRequirement.classList.remove('valid');
+                    lowercaseRequirement.querySelector('.password-requirement-icon').textContent = '✗';
                 }
                 
                 // Check number
-                if (!/[0-9]/.test(password)) {
-                    numberRequirement.classList.add('invalid');
-                    numberRequirement.classList.remove('valid');
-                    isValid = false;
-                } else {
+                if (/[0-9]/.test(password)) {
                     numberRequirement.classList.add('valid');
                     numberRequirement.classList.remove('invalid');
+                    numberRequirement.querySelector('.password-requirement-icon').textContent = '✓';
+                } else {
+                    numberRequirement.classList.add('invalid');
+                    numberRequirement.classList.remove('valid');
+                    numberRequirement.querySelector('.password-requirement-icon').textContent = '✗';
                 }
                 
                 // Check special character
-                if (!/[^A-Za-z0-9]/.test(password)) {
-                    specialRequirement.classList.add('invalid');
-                    specialRequirement.classList.remove('valid');
-                    isValid = false;
-                } else {
+                if (/[^A-Za-z0-9]/.test(password)) {
                     specialRequirement.classList.add('valid');
                     specialRequirement.classList.remove('invalid');
+                    specialRequirement.querySelector('.password-requirement-icon').textContent = '✓';
+                } else {
+                    specialRequirement.classList.add('invalid');
+                    specialRequirement.classList.remove('valid');
+                    specialRequirement.querySelector('.password-requirement-icon').textContent = '✗';
                 }
+                
+                // Only valid if all requirements are met
+                isValid = (
+                    password.length >= 8 &&
+                    /[A-Z]/.test(password) &&
+                    /[a-z]/.test(password) &&
+                    /[0-9]/.test(password) &&
+                    /[^A-Za-z0-9]/.test(password)
+                );
                 
                 return isValid;
             }
