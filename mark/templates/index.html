@@ -1925,6 +1925,7 @@ async function fetchPricesOnly() {
             okxRes.json(),
             coinbaseRes.json()
         ]);
+        console.log("Binance sample:", binancePrices[0]);
 
         // Store prices globally
         currentPrices.binance = binancePrices;
