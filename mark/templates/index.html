@@ -387,24 +387,15 @@ small {
     color: #f8bc04;
 }
 
-
-/* Header-specific search styles */
-.header-search {
-    position: relative;
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    z-index: 1000;
-}
-
 .header-search__inner {
     display: flex;
     align-items: center;
-    background: rgba(15, 15, 15, 0.8);
+    background: white; /* White by default */
+    color: black;
     border-radius: 50px;
     padding: 10px 20px;
     border: 1px solid rgba(248, 188, 4, 0.3);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 }
 
@@ -412,20 +403,35 @@ small {
     border-color: rgba(248, 188, 4, 0.5);
 }
 
+/* Make inner background and text black on focus-within (when input is focused) */
+.header-search__inner:focus-within {
+    background: black;
+    color: white;
+    border-color: rgba(248, 188, 4, 0.6);
+}
+
+/* Input text styling */
 .header-search__text {
     flex: 1;
     background: transparent;
     border: none;
-    color: white;
+    color: inherit; /* Follows parent color */
     font-size: 1rem;
     padding: 8px 0;
     outline: none;
 }
 
+/* Placeholder should match color context */
 .header-search__text::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(0, 0, 0, 0.6); /* Black-ish on white */
 }
 
+/* Adjust placeholder color on dark mode */
+.header-search__inner:focus-within .header-search__text::placeholder {
+    color: rgba(255, 255, 255, 0.6); /* White-ish on black */
+}
+
+/* Helper icon */
 .header-search__helper {
     color: #f8bc04;
     font-size: 1.5rem;
@@ -502,20 +508,20 @@ small {
 .header-search-result-item .result-name {
     font-weight: 500;
     margin-bottom: 4px;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     display: flex;
     align-items: center;
 }
 
 .header-search-result-item .result-symbol {
     color: #f8bc04;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     margin-left: 8px;
     font-weight: 400;
 }
 
 .header-search-result-item .result-type {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.6);
     display: flex;
     align-items: center;
@@ -528,7 +534,7 @@ small {
 
 .header-search-result-item .result-price {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 1.05rem;
     text-align: right;
     margin-left: 15px;
 }
