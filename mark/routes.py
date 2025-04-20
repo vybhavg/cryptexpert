@@ -289,14 +289,35 @@ def live_prices():
 def register_form():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data, password=form.password1.data)
+        # Check if email already exists
+        existing_user = User.query.filter_by(email=form.email.data).first()
+        if existing_user:
+            flash('Email is already registered. Please use a different email or login.', 'error')
+            return redirect(url_for('register_form'))
+            
+        # Check if username already exists
+        existing_username = User.query.filter_by(username=form.username.data).first()
+        if existing_username:
+            flash('Username is already taken. Please choose another.', 'error')
+            return redirect(url_for('register_form'))
+            
+        # Create new user if checks pass
+        user = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=form.password1.data  # Make sure this hashes the password
+        )
         db.session.add(user)
         db.session.commit()
         session['userid'] = user.username
         return redirect(url_for('otp_form'))
+        
+    # Handle form errors
     if form.errors:
-        for err in form.errors.values():
-            flash(err,"warning")
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"{field}: {error}", "warning")
+                
     return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
