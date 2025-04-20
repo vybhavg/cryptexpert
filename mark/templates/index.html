@@ -1803,28 +1803,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </p>
     </div>
 </div>
-              <script>
-               document.addEventListener("DOMContentLoaded", function () {
-    const textSection = document.querySelector(".faq-item");
-
-
-    function checkVisibility() {
-        const textSectionPosition = textSection.getBoundingClientRect().top;
-
-        const screenPosition = window.innerHeight / 1.3;
-
-        if (textSectionPosition < screenPosition) {
-            textSection.classList.add("slide-up", "opacity-100");
-            textSection.classList.remove("opacity-0");
-        }
-
-    }
-
-    window.addEventListener("scroll", checkVisibility);
-    checkVisibility(); // Initial check in case elements are already in view
-});
-
-            </script>
+ 
 <script>
     function toggleAnswer(element) {
         const answer = element.querySelector('.faq-answer');
