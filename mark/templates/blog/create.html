@@ -1,62 +1,265 @@
-<!-- templates/blog/create.html -->
 {% extends "base.html" %}
 
 {% block title %}Create Blog Post | CryptExpert{% endblock %}
 
+{% block head %}
+    {{ super() }}
+    <style>
+        /* Enhanced Form Styling */
+        .form-card {
+            background: linear-gradient(135deg, #1e1e1e, #252525);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-input {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #F8BC04;
+            box-shadow: 0 0 0 2px rgba(248, 188, 4, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 1rem;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-label:hover {
+            border-color: rgba(248, 188, 4, 0.3);
+            background: rgba(30, 30, 30, 0.5);
+        }
+
+        .file-upload-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .preview-container {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #F8BC04;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Button Enhancements */
+        .btn-cancel {
+            background: linear-gradient(135deg, #333, #444);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background: linear-gradient(135deg, #444, #555);
+            transform: translateY(-1px);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #F8BC04, #e6a905);
+            color: #1a1a1a;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #e6a905, #F8BC04);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
 <div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold text-white mb-8">Create New Blog Post</h1>
-        
-        <form method="POST" enctype="multipart/form-data" class="space-y-6">
-            {{ form.hidden_tag() }}
+        <div class="form-card p-8 mb-8 animate-fadee-in-up">
+            <h1 class="text-3xl font-bold text-white mb-6">Create New Blog Post</h1>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    {{ form.title.label(class="block text-white mb-2") }}
-                    {{ form.title(class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:border-yellow-400 focus:ring-yellow-400") }}
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {{ form.hidden_tag() }}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Title</label>
+                        {{ form.title(class="form-input", placeholder="Enter post title") }}
+                    </div>
+                    
+                    <div>
+                        <label class="block text-white mb-2 font-medium">URL Slug</label>
+                        {{ form.slug(class="form-input", placeholder="auto-generates-if-empty") }}
+                    </div>
                 </div>
                 
                 <div>
-                    {{ form.slug.label(class="block text-white mb-2") }}
-                    {{ form.slug(class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:border-yellow-400 focus:ring-yellow-400") }}
+                    <label class="block text-white mb-2 font-medium">Category</label>
+                    {{ form.category_id(class="form-input") }}
                 </div>
-            </div>
-            
-            <div>
-                {{ form.category_id.label(class="block text-white mb-2") }}
-                {{ form.category_id(class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:border-yellow-400 focus:ring-yellow-400") }}
-            </div>
-            
-            <div>
-                {{ form.excerpt.label(class="block text-white mb-2") }}
-                {{ form.excerpt(class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:border-yellow-400 focus:ring-yellow-400", rows=3) }}
-            </div>
-            
-            <div>
-                {{ form.featured_image.label(class="block text-white mb-2") }}
-                {{ form.featured_image(class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-yellow-400 file:text-gray-900 hover:file:bg-yellow-500") }}
-            </div>
-            
-            <div>
-                {{ form.content.label(class="block text-white mb-2") }}
-                {{ form.content(class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:border-yellow-400 focus:ring-yellow-400", rows=10) }}
-            </div>
-            
-            <div class="flex items-center">
-                {{ form.is_published(class="h-4 w-4 text-yellow-400 focus:ring-yellow-400 border-gray-700 rounded") }}
-                {{ form.is_published.label(class="ml-2 block text-white") }}
-            </div>
-            
-            <div class="flex justify-end space-x-4">
-                <a href="{{ url_for('blog_home') }}" class="px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition">
-                    Cancel
-                </a>
-                <button type="submit" class="px-6 py-2 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-500 transition">
-                    Publish Post
-                </button>
-            </div>
-        </form>
+                
+                <div>
+                    <label class="block text-white mb-2 font-medium">Excerpt</label>
+                    {{ form.excerpt(class="form-input form-textarea", placeholder="Brief summary of your post (optional)", rows=3) }}
+                </div>
+                
+                <div>
+                    <label class="block text-white mb-2 font-medium">Featured Image</label>
+                    <div class="file-upload-wrapper">
+                        <label class="file-upload-label">
+                            <span class="material-icons text-yellow-400 text-4xl mb-2">image</span>
+                            <p class="text-gray-300">Click to upload or drag and drop</p>
+                            <p class="text-sm text-gray-500 mt-1">PNG, JPG, GIF (Max 5MB)</p>
+                            {{ form.featured_image(class="file-upload-input") }}
+                        </label>
+                    </div>
+                    <div class="preview-container" id="imagePreview">
+                        <span class="text-sm text-gray-400">Preview:</span>
+                        <img class="preview-image" id="previewImage" src="#" alt="Preview" />
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-white mb-2 font-medium">Content</label>
+                    {{ form.content(class="form-input form-textarea", placeholder="Write your post content here...", rows=12) }}
+                </div>
+                
+                <div class="flex items-center justify-between pt-4 border-t border-gray-800">
+                    <div class="flex items-center">
+                        <label class="toggle-switch mr-3">
+                            {{ form.is_published() }}
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-white font-medium">Publish Now</span>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <a href="{{ url_for('blog_home') }}" class="btn-cancel px-6 py-2 rounded-lg">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn-submit px-6 py-2 rounded-lg">
+                            <span class="material-icons mr-1">publish</span>
+                            Publish Post
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+<script>
+    // Image preview functionality
+    document.getElementById('featured_image').addEventListener('change', function(e) {
+        const previewContainer = document.getElementById('imagePreview');
+        const previewImage = document.getElementById('previewImage');
+        
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = 'block';
+            }
+            
+            reader.readAsDataURL(this.files[0]);
+        } else {
+            previewContainer.style.display = 'none';
+        }
+    });
+
+    // Auto-generate slug from title
+    document.getElementById('title').addEventListener('input', function(e) {
+        const slugField = document.getElementById('slug');
+        if (!slugField.value) {  // Only auto-generate if slug is empty
+            const slug = this.value.toLowerCase()
+                .replace(/[^\w\s-]/g, '')  // Remove special chars
+                .replace(/[\s_-]+/g, '-')   // Replace spaces and underscores with hyphens
+                .replace(/^-+|-+$/g, '');   // Trim hyphens from start/end
+            slugField.value = slug;
+        }
+    });
+
+    // Allow manual slug editing without auto-update
+    document.getElementById('slug').addEventListener('input', function(e) {
+        this.dataset.manual = 'true';
+    });
+</script>
 {% endblock %}
