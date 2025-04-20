@@ -22,15 +22,21 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-    /* Base styles */
+html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
     body {
         background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
         font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         color: white;
-        min-height: 100vh;
-        padding: 1rem 0;
-        overflow-y: hidden;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
     }
+   
     
     /* Custom Colors */
     .text-yellow-custom { color: #F8BC04 !important; }
@@ -264,6 +270,78 @@
     .swal2-toast.swal2-dark .swal2-timer-progress-bar {
         background: #f8bc04 !important;
     }
+
+         /* Main container with scrollable content */
+    .main-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0; /* Allows content to scroll */
+    }
+
+    /* Login container - responsive width */
+    .login {
+        width: 100%;
+        max-width: 500px;
+        margin: auto;
+        padding: 20px 15px;
+        box-sizing: border-box;
+    }
+    
+    /* Login block - scrollable if needed */
+    .login__block {
+        background-color: #000000;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        max-height: 95vh;
+        overflow-y: auto;
+    }
+    
+    /* Header styling */
+    .login__block__header {
+        background: linear-gradient(135deg, #F8BC04, #e6a905);
+        color: #1a1a1a;
+        padding: 1.25rem;
+        text-align: center;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    /* Body content with proper spacing */
+    .login__block__body {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    /* QR code container */
+    .qr-container {
+        background-color: white;
+        padding: 15px;
+        border-radius: 12px;
+        display: inline-block;
+        margin: 15px 0;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        border: 2px solid #F8BC04;
+        max-width: 100%;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+        .login {
+            padding: 10px;
+            max-width: 95%;
+        }
+        
+        .login__block__header {
+            padding: 1rem;
+        }
+        
+        .qr-container {
+            padding: 10px;
+        }
+    }
     </style>
 </head>
 
@@ -306,7 +384,7 @@
 });
         });
     </script>
-
+    <div class="main-container">
     <div class="login">
         <!-- 2FA Setup -->
         <div class="login__block box active" id="l-login">
@@ -362,7 +440,7 @@
             </div>
         </div>
     </div>
-
+    </div>
     <!-- Javascript -->
     <!-- Vendors -->
     <script src="/static/vendors/bower_components/jquery/dist/jquery.min.js"></script>
