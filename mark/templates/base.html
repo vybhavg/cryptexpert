@@ -1203,10 +1203,9 @@ html {
     <li class="{% if request.endpoint == 'ai_predictor' %}navigation__active{% endif %}">
         <a href="{{url_for('ai_predictor')}}"><i class="zmdi zmdi-widgets"></i> Price Predictor AI</a>
     </li>
-    <li><a href="{{ url_for('blog_home') }}" class="text-gray-400 hover:text-white">Blog</a></li>
-{% if current_user.is_authenticated %}
-<li><a href="{{ url_for('create_blog_post') }}" class="text-gray-400 hover:text-white">Create Post</a></li>
-{% endif %}
+<li class="{% if request.endpoint == 'blog_home' %}navigation__active{% endif %}">
+    <a href="{{ url_for('blog_home') }}"><i class="zmdi zmdi-collection-text"></i> Blog</a>
+</li>
     <li class="{% if request.endpoint == 'forum_home' %}navigation__active{% endif %}">
         <a href="{{ url_for('forum_home') }}"><i class="zmdi zmdi-comment-more"></i> Discussion Forums</a>
     </li>
