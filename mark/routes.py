@@ -737,12 +737,13 @@ def search():
             price_data = price_map.get(asset.symbol.upper())
             
             result = {
-                "name": asset.name,
-                "symbol": asset.symbol,
-                "type": "crypto",
-                "link": asset.link,
-                "image": crypto_logos.get(asset.symbol.upper(), "/static/img/default-crypto.png")
-            }
+    "name": asset.name,
+    "symbol": asset.symbol,
+    "type": "crypto",
+    "link": asset.link,
+    "image": f"/static/img/crypto/{asset.symbol.upper()}.png"
+}
+
             
             if price_data:
                 result.update({
