@@ -1504,12 +1504,12 @@ def view_notifications():
 def terms():
     return render_template('terms.html')  # We'll create this template next
 @app.route('/help_center')
-def terms():
+def help_center():
     return render_template('help_center.html')  # We'll create this template next
 @app.route('/privacy_policy')
-def terms():
+def privacy_policy():
     return render_template('privacy_policy.html')
 @app.route('/security')
-def terms():
+def security():
     return render_template('security.html')
 
