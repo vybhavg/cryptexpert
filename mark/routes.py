@@ -1677,17 +1677,4 @@ def manage_blog_categories():
    
     categories = BlogCategory.query.all()
     return render_template('blog/categories.html', categories=categories)
-@app.route('/blog/category/<string:slug>')
-def blog_category(slug):
-    """Show posts in a category"""
-    category = BlogCategory.query.filter_by(slug=slug).first_or_404()
-    page = request.args.get('page', 1, type=int)
-    
-    posts = BlogPost.query.filter_by(
-        category_id=category.id,
-        is_published=True
-    ).order_by(BlogPost.created_at.desc()).paginate(page=page, per_page=6)
-    
-    return render_template('blog/category.html',
-                         category=category,
-                         posts=posts)
+
