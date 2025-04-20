@@ -31,7 +31,8 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(255), nullable=False)
     authenticator_secret = db.Column(db.String(32), nullable=True)
     authenticator_enabled = db.Column(db.Boolean, default=False)
-
+    date_created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    last_login = db.Column(db.DateTime, nullable=True)
     api_keys = db.relationship("UserAPIKey", backref="user", lazy=True)
 
     @property
@@ -55,7 +56,7 @@ class UserAPIKey(db.Model):
     api_key_enc = db.Column(db.LargeBinary, nullable=False)
     api_secret_enc = db.Column(db.LargeBinary, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
+    
     def __init__(self, user_id, exchange, api_key, api_secret):
         self.user_id = user_id
         self.exchange = exchange
