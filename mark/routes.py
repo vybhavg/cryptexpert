@@ -1500,3 +1500,6 @@ def view_notifications():
                                     .order_by(Notification.created_at.desc())\
                                     .paginate(page=1, per_page=20)
     return render_template('profile/notifications.html', notifications=notifications)
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')  # We'll create this template next
