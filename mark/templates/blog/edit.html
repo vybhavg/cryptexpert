@@ -1,0 +1,27 @@
+<!-- templates/blog/edit.html -->
+{% extends "blog/create.html" %}
+
+{% block title %}Edit {{ post.title }} | CryptExpert{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-white mb-8">Edit Blog Post</h1>
+        
+        {% if post.featured_image %}
+        <div class="mb-6">
+            <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" 
+                 alt="{{ post.title }}" 
+                 class="w-full max-h-64 object-cover rounded-lg">
+        </div>
+        {% endif %}
+        
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {{ form.hidden_tag() }}
+            
+            <!-- Same form fields as create.html -->
+            {{ super() }}
+        </form>
+    </div>
+</div>
+{% endblock %}
