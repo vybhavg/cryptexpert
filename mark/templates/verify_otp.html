@@ -1,66 +1,226 @@
-
 <!DOCTYPE html>
 <html lang="en">
     
 <!--Designed By ALpha-->
 <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Load Bootstrap once -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        <!-- Vendor styles -->
-        <link rel="stylesheet" href="/static/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css">
-        <link rel="stylesheet" href="/static/vendors/bower_components/animate.css/animate.min.css">
+    <!-- Vendor styles -->
+    <link rel="stylesheet" href="/static/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css">
+    <link rel="stylesheet" href="/static/vendors/bower_components/animate.css/animate.min.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-        <!-- App styles -->
-        <link rel="stylesheet" href="/static/css/app.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <!-- Vendor styles -->
-        <link rel="stylesheet" href="/static/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css">
-        <link rel="stylesheet" href="/static/vendors/bower_components/animate.css/animate.min.css">
-<!-- Add this to the <head> section -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- App styles -->
+    <link rel="stylesheet" href="/static/css/app.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+    /* Base styles */
+    body {
+        background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+        font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        color: white;
+        min-height: 100vh;
+        padding: 1rem 0;
+        overflow-y: hidden;
+    }
+    
+    /* Custom Colors */
+    .text-yellow-custom { color: #F8BC04 !important; }
+    .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
+    
+    /* Login container */
+    .login {
+        max-width: 420px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+    
+    /* Login block */
+    .login__block {
+        background-color: #000000;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Login block header */
+    .login__block__header {
+        background: linear-gradient(135deg, #F8BC04, #e6a905);
+        color: #1a1a1a;
+        padding: 1rem;
+        text-align: center;
+        position: relative;
+    }
+    
+    .login__block__header i {
+        font-size: 2rem;
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+    
+    .login__block__header p {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    /* Dropdown menu */
+    .dropdown-menu {
+        background: linear-gradient(135deg, #252525, #2d2d2d);
+        border: 1px solid #333;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        padding: 0.5rem 0;
+    }
+    
+    .dropdown-item {
+        color: rgba(255, 255, 255, 0.8);
+        padding: 0.5rem 1.5rem;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+    
+    .dropdown-item:hover {
+        background-color: rgba(248, 188, 4, 0.1);
+        color: #F8BC04;
+    }
+    
+    /* Login block body */
+    .login__block__body {
+        padding: 1rem;
+    }
+    
+    /* Form styles */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-control {
+        background-color: #1a1a1a;
+        border: 1px solid #333;
+        color: white;
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        height: auto;
+        text-align: center;
+    }
+    
+    .form-control:focus {
+        border-color: #F8BC04;
+        box-shadow: 0 0 0 0.2rem rgba(248, 188, 4, 0.2);
+        background-color: #1a1a1a;
+        color: white;
+    }
+    
+    /* Button styles */
+    .btn-primary {
+        background: linear-gradient(135deg, #F8BC04, #e6a905);
+        border: none;
+        border-radius: 8px;
+        padding: 0.6rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        width: 100%;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 7px 14px rgba(0, 0, 0, 0.4);
+        color: #1a1a1a;
+    }
+    
+    /* Validation feedback */
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+    
+    .is-invalid:focus {
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .invalid-feedback {
+        display: none;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.8125rem;
+        color: #dc3545;
+    }
+    
+    .is-invalid ~ .invalid-feedback {
+        display: block;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 400px) {
+        .login__block__header {
+            padding: 0.8rem;
+        }
+        
+        .login__block__header i {
+            font-size: 1.8rem;
+        }
+        
+        .login__block__header p {
+            font-size: 1rem;
+        }
+        
+        .login__block__body {
+            padding: 0.8rem;
+        }
+        
+        .form-control {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.85rem;
+        }
+    }
 
-<!-- Add this before the closing </body> tag -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <!-- App styles -->
-        <link rel="stylesheet" href="/static/css/app.min.css">
-<style>
-.swal2-dark {
-    background-color: #1a1a1a; /* Dark background */
-    color: #ffffff; /* White text */
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
+    /* SweetAlert2 Dark Theme */
+    .swal2-dark {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
 
-/* Ensure the toast applies the dark mode styles correctly */
-.swal2-toast.swal2-dark {
-    background-color: #1a1a1a; /* Ensure toast inherits dark background */
-    color: #ffffff; /* White text */
-}
+    .swal2-toast.swal2-dark {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
 
-.swal2-toast.swal2-dark .swal2-title {
-    color: #ffffff; /* White title text */
-}
+    .swal2-toast.swal2-dark .swal2-title {
+        color: #ffffff;
+    }
 
-.swal2-toast.swal2-dark .swal2-html-container {
-    color: #cccccc; /* Light gray content text */
-}
+    .swal2-toast.swal2-dark .swal2-html-container {
+        color: #cccccc;
+    }
 
-.swal2-toast.swal2-dark .swal2-icon {
-    color: #f8bc04; /* Yellow icon */
-}
+    .swal2-toast.swal2-dark .swal2-icon {
+        color: #f8bc04;
+    }
 
-/* Ensure the timer progress bar is styled correctly */
-.swal2-toast.swal2-dark .swal2-timer-progress-bar {
-    background: #f8bc04 !important; /* Yellow progress bar */
-}
-</style>
-    </head>
+    .swal2-toast.swal2-dark .swal2-timer-progress-bar {
+        background: #f8bc04 !important;
+    }
+    </style>
+</head>
 
-    <body data-sa-theme="5">
-  <script>
+<body data-sa-theme="5">
+   <script>
      const iconMap = {
     success: 'success',
     error: 'error',
@@ -99,183 +259,84 @@
         });
     </script>
 
-        <div class="login">
-
-            <!-- Login -->
-            <div class="login__block box active" style="background-color: #000000;  " id="l-login">
-                <div class="login__block__header">
-                    <i class="zmdi zmdi-account-circle"></i>
-                    {% if show_auth_form %}
-                    <p style="font-size: 18px;">Hi {{username}}! Enter 2FA code</p>
-                    {% else %}
-                    <p style="font-size: 18px;">Hi {{username}}! Enter OTP</p>
-                    {% endif %}
-                    <div class="actions actions--inverse login__block__actions">
-                        <div class="dropdown">
-                            <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item"></i>
-
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" data-sa-action="login-switch" data-sa-target="#l-register" href="#">Create an account</a>
-                                <a class="dropdown-item" data-sa-action="login-switch" data-sa-target="#l-forget-password" href="#">Forgot password?</a>
-                            </div>
+    <div class="login">
+        <!-- OTP Verification -->
+        <div class="login__block box active" style="background-color: #000000;" id="l-login">
+            <div class="login__block__header">
+                <i class="zmdi zmdi-lock"></i>
+                {% if show_auth_form %}
+                <p>Hi {{username}}! Enter 2FA code</p>
+                {% else %}
+                <p>Hi {{username}}! Enter OTP</p>
+                {% endif %}
+                <div class="actions actions--inverse login__block__actions">
+                    <div class="dropdown">
+                        <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item" style="color: #1a1a1a;"></i>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="{{url_for('register_form')}}">Create an account</a>
+                            <a class="dropdown-item" href="{{url_for('login_form')}}">Already have an account?</a>
                         </div>
                     </div>
-                </div>
-                
-
-                <div class="login__block__body">
-                    {% if show_auth_form %}
-                    <form method="POST">
-                        {{ form.hidden_tag() }}
-
-                        <div class="form-group">
-                            {{form.authotp(class="form-control text-center",placeholder='code')}}                     
-                           </div>
-
-                    
-                        <!-- Submit Button -->
-                        <div class="form-group " >
-                            {{ form.submit(class="btn btn-primary") }}
-                        </div>
-                    </form>
-                    {% else %}
-                    <form method="POST">
-                        {{ form.hidden_tag() }}
-
-                        <div class="form-group">
-                            {{form.userotp(class="form-control text-center",placeholder='otp')}}                     
-                           </div>
-
-                    
-                        <!-- Submit Button -->
-                        <div class="form-group " >
-                            {{ form.submit(class="btn btn-primary") }}
-                        </div>
-                    </form>
-                    {% endif %}
-
                 </div>
             </div>
+            
+            <div class="login__block__body">
+                {% if show_auth_form %}
+                <form method="POST">
+                    {{ form.hidden_tag() }}
 
-
-
-            <!-- Register -->
-            <div class="login__block" id="l-register">
-                <div class="login__block__header">
-                    <i class="zmdi zmdi-account-circle"></i>
-                    Create an account
-
-                    <div class="actions actions--inverse login__block__actions">
-                        <div class="dropdown">
-                            <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item"></i>
-
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" data-sa-action="login-switch" data-sa-target="#l-login" href="#">Already have an account?</a>
-                                <a class="dropdown-item" data-sa-action="login-switch" data-sa-target="#l-forget-password" href="#">Forgot password?</a>
+                    <div class="form-group">
+                        {{ form.authotp(class="form-control", placeholder="Enter 2FA code") }}
+                        {% if form.authotp.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.authotp.errors %}
+                                    {{ error }}
+                                {% endfor %}
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="login__block__body">
-                    <div class="form-group">
-                        <input type="text" class="form-control text-center" placeholder="Name">
-                    </div>
-
-                    <div class="form-group form-group--centered">
-                        <input type="text" class="form-control text-center" placeholder="Email Address">
-                    </div>
-
-                    <div class="form-group form-group--centered">
-                        <input type="password" class="form-control text-center" placeholder="Password">
+                        {% endif %}
                     </div>
 
                     <div class="form-group">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input">
-                            <span class="custom-control-indicator"></span>
-                            <span class="custom-control-description">Accept the license agreement</span>
-                        </label>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="material-icons align-middle" style="font-size: 1.2rem; margin-right: 0.5rem;">verified_user</span>
+                            Verify Code
+                        </button>
                     </div>
+                </form>
+                {% else %}
+                <form method="POST">
+                    {{ form.hidden_tag() }}
 
-                    <a href="index-2.html" class="btn btn--icon login__block__btn"><i class="zmdi zmdi-plus"></i></a>
-                </div>
-            </div>
-
-            <!-- Forgot Password -->
-            <div class="login__block" id="l-forget-password">
-                <div class="login__block__header">
-                    <i class="zmdi zmdi-account-circle"></i>
-                    Forgot Password?
-
-                    <div class="actions actions--inverse login__block__actions">
-                        <div class="dropdown">
-                            <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item"></i>
-
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" data-sa-action="login-switch" data-sa-target="#l-login" href="#">Already have an account?</a>
-                                <a class="dropdown-item" data-sa-action="login-switch" data-sa-target="#l-register" href="#">Create an account</a>
+                    <div class="form-group">
+                        {{ form.userotp(class="form-control", placeholder="Enter OTP") }}
+                        {% if form.userotp.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.userotp.errors %}
+                                    {{ error }}
+                                {% endfor %}
                             </div>
-                        </div>
+                        {% endif %}
                     </div>
-                </div>
-
-                <div class="login__block__body">
-                    <p class="mb-5">Lorem ipsum dolor fringilla enim feugiat commodo sed ac lacus.</p>
 
                     <div class="form-group">
-                        <input type="text" class="form-control text-center" placeholder="Email Address">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="material-icons align-middle" style="font-size: 1.2rem; margin-right: 0.5rem;">verified_user</span>
+                            Verify OTP
+                        </button>
                     </div>
-
-                    <a href="index-2.html" class="btn btn--icon login__block__btn"><i class="zmdi zmdi-check"></i></a>
-                </div>
+                </form>
+                {% endif %}
             </div>
         </div>
+    </div>
 
-        <!-- Older IE warning message -->
-            <!--[if IE]>
-                <div class="ie-warning">
-                    <h1>Warning!!</h1>
-                    <p>You are using an outdated version of Internet Explorer, please upgrade to any of the following web browsers to access this website.</p>
-
-                    <div class="ie-warning__downloads">
-                        <a href="http://www.google.com/chrome">
-                            <img src="img/browsers/chrome.png" alt="">
-                        </a>
-
-                        <a href="https://www.mozilla.org/en-US/firefox/new">
-                            <img src="img/browsers/firefox.png" alt="">
-                        </a>
-
-                        <a href="http://www.opera.com">
-                            <img src="img/browsers/opera.png" alt="">
-                        </a>
-
-                        <a href="https://support.apple.com/downloads/safari">
-                            <img src="img/browsers/safari.png" alt="">
-                        </a>
-
-                        <a href="https://www.microsoft.com/en-us/windows/microsoft-edge">
-                            <img src="img/browsers/edge.png" alt="">
-                        </a>
-
-                        <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
-                            <img src="img/browsers/ie.png" alt="">
-                        </a>
-                    </div>
-                    <p>Sorry for the inconvenience!</p>
-                </div>
-            <![endif]-->
-
-        <!-- Javascript -->
-        <!-- Vendors -->
-        <script src="/static/vendors/bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="/static/vendors/bower_components/popper.js/dist/umd/popper.min.js"></script>
-        <script src="/static/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-
-        <!-- App functions and actions -->
-        <script src="/static/js/app.min.js"></script>
-    </body>
-
-<!--Designed By ALpha-->
+    <!-- Javascript -->
+    <!-- Vendors -->
+    <script src="/static/vendors/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/static/vendors/bower_components/popper.js/dist/umd/popper.min.js"></script>
+    <script src="/static/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    
+    <!-- App functions and actions -->
+    <script src="/static/js/app.min.js"></script>
+</body>
 </html>
