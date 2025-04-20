@@ -12,15 +12,24 @@
     <!-- Vendor styles -->
     <link rel="stylesheet" href="/static/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" href="/static/vendors/bower_components/animate.css/animate.min.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- App styles -->
     <link rel="stylesheet" href="/static/css/app.min.css">
    <style>
     /* Base styles */
     body {
-        background-color: #f8f9fa;
+        background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
         font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        color: white;
+        min-height: 100vh;
+        padding-top: 2rem;
     }
+    
+    /* Custom Colors */
+    .text-yellow-custom { color: #F8BC04 !important; }
+    .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
     
     /* Login container */
     .login {
@@ -31,18 +40,24 @@
     
     /* Login block */
     .login__block {
-        background: #ffffff;
+        background: linear-gradient(135deg, #1e1e1e, #252525);
         border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         overflow: hidden;
-        border: none;
+        border: 1px solid rgba(255, 255, 255, 0.05);
         transition: all 0.3s ease;
+    }
+    
+    .login__block:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        border-color: rgba(248, 188, 4, 0.2);
     }
     
     /* Login block header */
     .login__block__header {
-        background: linear-gradient(135deg, #6e8efb, #a777e3);
-        color: white;
+        background: linear-gradient(135deg, #F8BC04, #e6a905);
+        color: #1a1a1a;
         padding: 1.5rem;
         text-align: center;
         position: relative;
@@ -56,27 +71,29 @@
     
     .login__block__header p {
         font-size: 1.25rem;
-        font-weight: 500;
+        font-weight: 600;
         margin: 0;
     }
     
     /* Dropdown menu */
     .dropdown-menu {
-        border: none;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #252525, #2d2d2d);
+        border: 1px solid #333;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         border-radius: 8px;
         padding: 0.5rem 0;
     }
     
     .dropdown-item {
+        color: rgba(255, 255, 255, 0.8);
         padding: 0.5rem 1.5rem;
         font-size: 0.875rem;
         transition: all 0.2s;
     }
     
     .dropdown-item:hover {
-        background-color: #f8f9fa;
-        color: #6e8efb;
+        background-color: rgba(248, 188, 4, 0.1);
+        color: #F8BC04;
     }
     
     /* Login block body */
@@ -90,7 +107,9 @@
     }
     
     .form-control {
-        border: 1px solid #e0e0e0;
+        background-color: #1a1a1a;
+        border: 1px solid #333;
+        color: white;
         border-radius: 8px;
         padding: 0.75rem 1rem;
         font-size: 0.9375rem;
@@ -99,8 +118,10 @@
     }
     
     .form-control:focus {
-        border-color: #6e8efb;
-        box-shadow: 0 0 0 0.2rem rgba(110, 142, 251, 0.25);
+        border-color: #F8BC04;
+        box-shadow: 0 0 0 0.2rem rgba(248, 188, 4, 0.2);
+        background-color: #1a1a1a;
+        color: white;
     }
     
     .form-control.text-center {
@@ -119,35 +140,37 @@
         top: 50%;
         transform: translateY(-50%);
         cursor: pointer;
-        color: #adb5bd;
+        color: rgba(255, 255, 255, 0.5);
         transition: color 0.2s;
         font-size: 1.1rem;
     }
     
     .password-toggle:hover {
-        color: #6e8efb;
+        color: #F8BC04;
     }
     
     /* Button styles */
     .btn-primary {
-        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        background: linear-gradient(135deg, #F8BC04, #e6a905);
         border: none;
         border-radius: 8px;
         padding: 0.75rem;
-        font-weight: 500;
+        font-weight: 600;
+        color: #1a1a1a;
         letter-spacing: 0.5px;
         transition: all 0.3s;
-        box-shadow: 0 4px 6px rgba(110, 142, 251, 0.2);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     }
     
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 7px 14px rgba(110, 142, 251, 0.3);
+        box-shadow: 0 7px 14px rgba(0, 0, 0, 0.4);
+        color: #1a1a1a;
     }
     
     .btn-primary:disabled {
-        background: #e9ecef;
-        color: #adb5bd;
+        background: #333;
+        color: rgba(255, 255, 255, 0.5);
         transform: none;
         box-shadow: none;
         cursor: not-allowed;
@@ -163,41 +186,42 @@
         width: 1.1em;
         height: 1.1em;
         margin-top: 0.15em;
-        border: 1px solid #e0e0e0;
+        background-color: #1a1a1a;
+        border: 1px solid #333;
     }
     
     .form-check-input:checked {
-        background-color: #6e8efb;
-        border-color: #6e8efb;
+        background-color: #F8BC04;
+        border-color: #F8BC04;
     }
     
     .form-check-input:focus {
-        box-shadow: 0 0 0 0.2rem rgba(110, 142, 251, 0.25);
+        box-shadow: 0 0 0 0.2rem rgba(248, 188, 4, 0.25);
     }
     
     .form-check-label {
         font-size: 0.875rem;
-        color: #495057;
+        color: rgba(255, 255, 255, 0.8);
         margin-left: 0.25rem;
     }
     
     /* Terms link */
     .terms-link {
-        color: #6e8efb;
+        color: #F8BC04;
         text-decoration: none;
         font-weight: 500;
         transition: color 0.2s;
     }
     
     .terms-link:hover {
-        color: #4d5dfb;
+        color: #e6a905;
         text-decoration: underline;
     }
     
     /* Password strength meter */
     .password-strength {
         height: 6px;
-        background-color: #e9ecef;
+        background-color: #333;
         margin-top: 0.5rem;
         border-radius: 3px;
         overflow: hidden;
@@ -212,19 +236,19 @@
     /* Password requirements container */
     .password-requirements {
         font-size: 0.75rem;
-        color: #6c757d;
+        color: rgba(255, 255, 255, 0.6);
         margin-top: 0.5rem;
-        background: #f8f9fa;
+        background: #1a1a1a;
         padding: 0.75rem;
         border-radius: 6px;
-        border: 1px solid #e9ecef;
+        border: 1px solid #333;
     }
     
     .password-requirements-title {
         font-weight: 600;
         margin-bottom: 0.5rem;
         display: block;
-        color: #495057;
+        color: rgba(255, 255, 255, 0.8);
     }
     
     .password-requirements-list {
@@ -240,18 +264,18 @@
         align-items: center;
         padding: 0.25rem 0.5rem;
         border-radius: 12px;
-        background: #e9ecef;
+        background: #333;
         transition: all 0.3s ease;
     }
     
     .password-requirement.valid {
-        background: #e6f7eb;
+        background: rgba(40, 167, 69, 0.2);
         color: #28a745;
     }
     
     .password-requirement.invalid {
-        background: #e9ecef;
-        color: #6c757d;
+        background: #333;
+        color: rgba(255, 255, 255, 0.6);
     }
     
     .password-requirement-icon {
@@ -261,7 +285,7 @@
     
     /* Validation feedback */
     .is-invalid {
-        border-color: #dc3545;
+        border-color: #dc3545 !important;
     }
     
     .is-invalid:focus {
@@ -287,30 +311,36 @@
         border: none;
         border-radius: 8px;
         font-size: 0.875rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     
     .alert-success {
-        background-color: #d4edda;
-        color: #155724;
+        background-color: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+        border-left: 4px solid #28a745;
     }
     
     .alert-danger {
-        background-color: #f8d7da;
-        color: #721c24;
+        background-color: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+        border-left: 4px solid #dc3545;
     }
     
     .alert-warning {
-        background-color: #fff3cd;
-        color: #856404;
+        background-color: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+        border-left: 4px solid #ffc107;
     }
     
     .alert-info {
-        background-color: #d1ecf1;
-        color: #0c5460;
+        background-color: rgba(23, 162, 184, 0.2);
+        color: #17a2b8;
+        border-left: 4px solid #17a2b8;
     }
     
     .btn-close {
+        filter: invert(1);
+        opacity: 0.8;
         padding: 0.5rem;
         background-size: 0.75rem;
     }
@@ -338,6 +368,22 @@
             font-size: 0.7rem;
         }
     }
+
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
 </style>
 </head>
 
@@ -346,7 +392,7 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                <div class="alert alert-{{ category }} alert-dismissible fade show animate-fade-in-up" role="alert" style="max-width: 420px; margin: 0 auto 1.5rem;">
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="padding: 0.5rem;"></button>
                 </div>
@@ -354,7 +400,7 @@
         {% endif %}
     {% endwith %}
 
-    <div class="login">
+    <div class="login animate-fade-in-up" style="animation-delay: 0.1s;">
         <!-- Login -->
         <div class="login__block box active" id="l-login">
             <div class="login__block__header">
@@ -362,7 +408,7 @@
                 <p>Create your account</p>
                 <div class="actions actions--inverse login__block__actions">
                     <div class="dropdown">
-                        <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item"></i>
+                        <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item" style="color: #1a1a1a;"></i>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" data-sa-action="login-switch" data-sa-target="{{url_for('login_form')}}" href="#">Log in</a>
                             <a class="dropdown-item" data-sa-action="login-switch" data-sa-target="{{url_for('forgot_password')}}" href="#">Forgot password?</a>
@@ -478,7 +524,10 @@
 
                     <!-- Submit Button -->
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary w-100" id="submitButton" disabled>Register</button>
+                        <button type="submit" class="btn btn-primary w-100" id="submitButton" disabled>
+                            <span class="material-icons align-middle" style="font-size: 1.2rem; margin-right: 0.5rem;">person_add</span>
+                            Register
+                        </button>
                     </div>
                 </form>
             </div>
