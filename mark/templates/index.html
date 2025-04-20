@@ -1870,9 +1870,7 @@ document.getElementById('headerSearchInput').addEventListener('focus', function(
             <h2 class="text-xl font-semibold mb-6 text-[#f8bc04]">Quick Links</h2>
             <ul class="space-y-3 text-lg">
                 <li><a class="text-gray-400 hover:text-[#f8bc04]" href="/">Home</a></li>
-                <li><a class="text-gray-400 hover:text-[#f8bc04]" href="/about">About Us</a></li>
                 <li><a class="text-gray-400 hover:text-[#f8bc04]" href="/features">Features</a></li>
-                <li><a class="text-gray-400 hover:text-[#f8bc04]" href="/pricing">Pricing</a></li>
                 <li><a class="text-gray-400 hover:text-[#f8bc04]" href="/blog">Blog</a></li>
                 <li><a class="text-gray-400 hover:text-[#f8bc04]" href="/contact">Contact Us</a></li>
             </ul>
@@ -1882,12 +1880,10 @@ document.getElementById('headerSearchInput').addEventListener('focus', function(
         <div>
             <h2 class="text-xl font-semibold mb-6 text-[#f8bc04]">Resources</h2>
             <ul class="space-y-3 text-lg">
-                <li><a class="text-gray-400 hover:text-[#f8bc04]" href="/help-center">Help Center</a></li>
-                <li><a class="text-gray-400 hover:text-[#f8bc04]" href="/faq">FAQs</a></li>
-                <li><a class="text-gray-400 hover:text-[#f8bc04]" href="/security">Security</a></li>
-                <li><a class="text-gray-400 hover:text-[#f8bc04]" href="/privacy-policy">Privacy Policy</a></li>
-                <li><a class="text-gray-400 hover:text-[#f8bc04]" href="/terms-of-service">Terms of Service</a></li>
-                <li><a class="text-gray-400 hover:text-[#f8bc04]" href="/api-docs">API Documentation</a></li>
+                <li><a class="text-gray-400 hover:text-[#f8bc04]" href="{{url_for('help_center')}}">Help Center</a></li>
+                <li><a class="text-gray-400 hover:text-[#f8bc04]" href="{{url_for('security')}}">Security</a></li>
+                <li><a class="text-gray-400 hover:text-[#f8bc04]" href="{{url_for('privacy_policy')}}">Privacy Policy</a></li>
+                <li><a class="text-gray-400 hover:text-[#f8bc04]" href="{{url_for('terms')}}">Terms of Service</a></li>
             </ul>
         </div>
 
