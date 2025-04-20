@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}Terms of Service | CryptExpert{% endblock %}
+
+{% block head %}
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Custom Colors */
+        .text-yellow-custom { color: #F8BC04 !important; }
+        .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
+
+        /* Content Styling */
+        .terms-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .terms-section {
+            margin-bottom: 3rem;
+        }
+
+        .terms-card {
+            background: linear-gradient(135deg, #1e1e1e, #252525);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .terms-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .terms-list li {
+            margin-bottom: 1rem;
+        }
+
+        .terms-sublist {
+            list-style-type: lower-alpha;
+            padding-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="terms-content">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-white mb-4">Terms of Service</h1>
+            <p class="text-gray-400">Last updated: {{ datetime.now().strftime('%B %d, %Y') }}</p>
+        </div>
+
+        <!-- Introduction -->
+        <div class="terms-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">1. Introduction</h2>
+            </div>
+            <div class="terms-card">
+                <p class="text-gray-300 mb-4">
+                    Welcome to CryptExpert ("we," "our," or "us"). These Terms of Service ("Terms") govern your access to 
+                    and use of our website, services, and applications (collectively, the "Services").
+                </p>
+                <p class="text-gray-300">
+                    By accessing or using our Services, you agree to be bound by these Terms. If you disagree with any part 
+                    of the Terms, you may not access the Services.
+                </p>
+            </div>
+        </div>
+
+        <!-- Accounts -->
+        <div class="terms-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">2. Accounts</h2>
+            </div>
+            <div class="terms-card">
+                <ol class="terms-list text-gray-300">
+                    <li>
+                        <strong>Account Creation:</strong> To use certain features, you must register for an account. You agree to provide 
+                        accurate and complete information and to keep this information updated.
+                    </li>
+                    <li>
+                        <strong>Account Security:</strong> You are responsible for maintaining the confidentiality of your account 
+                        credentials and for all activities that occur under your account.
+                    </li>
+                    <li>
+                        <strong>Account Termination:</strong> We reserve the right to suspend or terminate your account at any time 
+                        for any reason, including violation of these Terms.
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Services -->
+        <div class="terms-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">3. Services</h2>
+            </div>
+            <div class="terms-card">
+                <ol class="terms-list text-gray-300">
+                    <li>
+                        <strong>Description:</strong> CryptExpert provides cryptocurrency portfolio tracking, market analysis, 
+                        and related services. We do not provide financial advice or brokerage services.
+                    </li>
+                    <li>
+                        <strong>API Connections:</strong> If you connect third-party exchange accounts, you understand that:
+                        <ul class="terms-sublist">
+                            <li>We only request read-only access where possible</li>
+                            <li>You are responsible for managing your API keys</li>
+                            <li>We are not liable for any actions taken by connected exchanges</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Changes to Services:</strong> We may modify or discontinue any Service at any time without notice.
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- User Responsibilities -->
+        <div class="terms-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">4. User Responsibilities</h2>
+            </div>
+            <div class="terms-card">
+                <ol class="terms-list text-gray-300">
+                    <li>
+                        You agree not to use the Services for any unlawful purpose or in violation of these Terms.
+                    </li>
+                    <li>
+                        You will not attempt to gain unauthorized access to any Service, other accounts, or computer systems.
+                    </li>
+                    <li>
+                        You will not use the Services to transmit any viruses or malicious code.
+                    </li>
+                    <li>
+                        You understand that cryptocurrency investments carry risk, and CryptExpert is not responsible 
+                        for any trading losses.
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Intellectual Property -->
+        <div class="terms-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">5. Intellectual Property</h2>
+            </div>
+            <div class="terms-card">
+                <ol class="terms-list text-gray-300">
+                    <li>
+                        The Services and their original content, features, and functionality are owned by CryptExpert 
+                        and are protected by international copyright, trademark, and other intellectual property laws.
+                    </li>
+                    <li>
+                        You may not modify, reproduce, distribute, or create derivative works based on our Services 
+                        without our express permission.
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Limitation of Liability -->
+        <div class="terms-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">6. Limitation of Liability</h2>
+            </div>
+            <div class="terms-card">
+                <p class="text-gray-300 mb-4">
+                    To the maximum extent permitted by law, CryptExpert shall not be liable for:
+                </p>
+                <ol class="terms-list text-gray-300">
+                    <li>Any indirect, incidental, special, consequential, or punitive damages</li>
+                    <li>Loss of profits, data, use, goodwill, or other intangible losses</li>
+                    <li>Damages resulting from:
+                        <ul class="terms-sublist">
+                            <li>Your access to or use of the Services</li>
+                            <li>Any unauthorized access to or use of our servers</li>
+                            <li>Any interruption or cessation of transmission to or from the Services</li>
+                            <li>Any bugs, viruses, or the like transmitted through the Services</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Governing Law -->
+        <div class="terms-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">7. Governing Law</h2>
+            </div>
+            <div class="terms-card">
+                <p class="text-gray-300">
+                    These Terms shall be governed by and construed in accordance with the laws of [Your Country/State], 
+                    without regard to its conflict of law provisions.
+                </p>
+            </div>
+        </div>
+
+        <!-- Changes to Terms -->
+        <div class="terms-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">8. Changes to Terms</h2>
+            </div>
+            <div class="terms-card">
+                <p class="text-gray-300">
+                    We reserve the right to modify these Terms at any time. We will provide notice of any changes by 
+                    posting the new Terms on this page and updating the "Last updated" date. Your continued use of the 
+                    Services after any changes constitutes acceptance of the new Terms.
+                </p>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="terms-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">9. Contact Information</h2>
+            </div>
+            <div class="terms-card">
+                <p class="text-gray-300">
+                    If you have any questions about these Terms, please contact us at legal@cryptexpert.com.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
