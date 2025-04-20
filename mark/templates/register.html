@@ -23,22 +23,24 @@
     
     <style>
     /* Base styles */
+  /* Base styles */
     body {
         background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
         font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         color: white;
         min-height: 100vh;
-        padding-top: 2rem;
+        padding: 1rem 0;
+        overflow-y: hidden;
     }
     
-    /* Custom Colors */
+     /* Custom Colors */
     .text-yellow-custom { color: #F8BC04 !important; }
     .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
     
     /* Login container */
     .login {
         max-width: 420px;
-        margin: 2rem auto;
+        margin: 0 auto;
         padding: 0 15px;
     }
     
@@ -51,27 +53,28 @@
         border: 1px solid rgba(255, 255, 255, 0.05);
     }
     
-    /* Login block header */
+  /* Login block header */
     .login__block__header {
         background: linear-gradient(135deg, #F8BC04, #e6a905);
         color: #1a1a1a;
-        padding: 1.5rem;
+        padding: 1rem;
         text-align: center;
         position: relative;
     }
     
     .login__block__header i {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
+        font-size: 2rem;
+        margin-bottom: 0.25rem;
         display: block;
     }
     
     .login__block__header p {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         font-weight: 600;
         margin: 0;
     }
     
+ 
     /* Dropdown menu */
     .dropdown-menu {
         background: linear-gradient(135deg, #252525, #2d2d2d);
@@ -95,21 +98,23 @@
     
     /* Login block body */
     .login__block__body {
-        padding: 1.5rem;
+        padding: 1rem;
+    }
+    /* Form styles */
+   /* Form styles - more compact */
+    .form-group {
+        margin-bottom: 1rem;
     }
     
-    /* Form styles */
-    .form-group {
-        margin-bottom: 1.25rem;
-    }
+  
     
     .form-control {
         background-color: #1a1a1a;
         border: 1px solid #333;
         color: white;
         border-radius: 8px;
-        padding: 0.75rem 1rem;
-        font-size: 0.9375rem;
+         padding: 0.6rem 1rem;
+        font-size: 0.9rem;
         transition: all 0.3s;
         height: auto;
     }
@@ -151,7 +156,7 @@
         background: linear-gradient(135deg, #F8BC04, #e6a905);
         border: none;
         border-radius: 8px;
-        padding: 0.75rem;
+        padding: 0.6rem;
         font-weight: 600;
         color: #1a1a1a;
         letter-spacing: 0.5px;
@@ -175,8 +180,8 @@
     
     /* Checkbox styles */
     .form-check {
-        margin-top: 0.75rem;
-        margin-bottom: 1.25rem;
+          margin-top: 0.5rem;
+        margin-bottom: 1rem;
     }
     
     .form-check-input {
@@ -232,18 +237,19 @@
     
     /* Password requirements container */
     .password-requirements {
-        font-size: 0.75rem;
         color: rgba(255, 255, 255, 0.6);
-        margin-top: 0.5rem;
+                font-size: 0.7rem;
+        padding: 0.5rem;
+        margin-top: 0.3rem;
+
         background: #1a1a1a;
-        padding: 0.75rem;
         border-radius: 6px;
         border: 1px solid #333;
     }
     
     .password-requirements-title {
         font-weight: 600;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
         display: block;
         color: rgba(255, 255, 255, 0.8);
     }
@@ -251,7 +257,7 @@
     .password-requirements-list {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
+        gap: 0.3rem;
         margin: 0;
         padding: 0;
     }
@@ -259,7 +265,8 @@
     .password-requirement {
         display: inline-flex;
         align-items: center;
-        padding: 0.25rem 0.5rem;
+  padding: 0.2rem 0.4rem;
+        font-size: 0.65rem;
         border-radius: 12px;
         background: #333;
         transition: all 0.3s ease;
@@ -300,7 +307,29 @@
     .is-invalid ~ .invalid-feedback {
         display: block;
     }
-    
+     /* Responsive adjustments for very small screens */
+    @media (max-width: 400px) {
+        .login__block__header {
+            padding: 0.8rem;
+        }
+        
+        .login__block__header i {
+            font-size: 1.8rem;
+        }
+        
+        .login__block__header p {
+            font-size: 1rem;
+        }
+        
+        .login__block__body {
+            padding: 0.8rem;
+        }
+        
+        .form-control {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.85rem;
+        }
+    }
     /* Responsive adjustments */
     @media (max-width: 576px) {
         .login {
