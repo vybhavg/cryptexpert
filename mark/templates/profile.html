@@ -422,7 +422,15 @@
                                     </div>
                                     <div>
                                         <div class="stat-label">Member Since</div>
-                                        <div class="stat-value">{{ current_user.created_at.strftime('%B %Y') }}</div>
+                                        <div class="stat-value">
+                                            {% if current_user.date_created %}
+                                                {{ current_user.date_created.strftime('%B %Y') }}
+                                            {% elif current_user.registered_on %}
+                                                {{ current_user.registered_on.strftime('%B %Y') }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -432,7 +440,13 @@
                                     </div>
                                     <div>
                                         <div class="stat-label">Last Login</div>
-                                        <div class="stat-value">{{ current_user.last_login.strftime('%Y-%m-%d %H:%M') if current_user.last_login else 'N/A' }}</div>
+                                        <div class="stat-value">
+                                            {% if current_user.last_login %}
+                                                {{ current_user.last_login.strftime('%Y-%m-%d %H:%M') }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                                 
