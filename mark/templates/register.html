@@ -15,162 +15,327 @@
 
     <!-- App styles -->
     <link rel="stylesheet" href="/static/css/app.min.css">
-    <style>
-        .alert {
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            border: 1px solid transparent;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-        }
-
-        .alert-success {
-            color: #155724;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-
-        .alert-danger {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
-
-        .alert-warning {
-            color: #856404;
-            background-color: #fff3cd;
-            border-color: #ffeeba;
-        }
-
-        .alert-info {
-            color: #0c5460;
-            background-color: #d1ecf1;
-            border-color: #bee5eb;
+   <style>
+    /* Base styles */
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+    
+    /* Login container */
+    .login {
+        max-width: 420px;
+        margin: 2rem auto;
+        padding: 0 15px;
+    }
+    
+    /* Login block */
+    .login__block {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    /* Login block header */
+    .login__block__header {
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+        position: relative;
+    }
+    
+    .login__block__header i {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .login__block__header p {
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin: 0;
+    }
+    
+    /* Dropdown menu */
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 0.5rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.5rem 1.5rem;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        color: #6e8efb;
+    }
+    
+    /* Login block body */
+    .login__block__body {
+        padding: 1.5rem;
+    }
+    
+    /* Form styles */
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-control {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.9375rem;
+        transition: all 0.3s;
+        height: auto;
+    }
+    
+    .form-control:focus {
+        border-color: #6e8efb;
+        box-shadow: 0 0 0 0.2rem rgba(110, 142, 251, 0.25);
+    }
+    
+    .form-control.text-center {
+        text-align: center;
+    }
+    
+    /* Password input container */
+    .password-input-container {
+        position: relative;
+    }
+    
+    /* Password toggle */
+    .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #adb5bd;
+        transition: color 0.2s;
+        font-size: 1.1rem;
+    }
+    
+    .password-toggle:hover {
+        color: #6e8efb;
+    }
+    
+    /* Button styles */
+    .btn-primary {
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 6px rgba(110, 142, 251, 0.2);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 7px 14px rgba(110, 142, 251, 0.3);
+    }
+    
+    .btn-primary:disabled {
+        background: #e9ecef;
+        color: #adb5bd;
+        transform: none;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+    
+    /* Checkbox styles */
+    .form-check {
+        margin-top: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-check-input {
+        width: 1.1em;
+        height: 1.1em;
+        margin-top: 0.15em;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .form-check-input:checked {
+        background-color: #6e8efb;
+        border-color: #6e8efb;
+    }
+    
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(110, 142, 251, 0.25);
+    }
+    
+    .form-check-label {
+        font-size: 0.875rem;
+        color: #495057;
+        margin-left: 0.25rem;
+    }
+    
+    /* Terms link */
+    .terms-link {
+        color: #6e8efb;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    
+    .terms-link:hover {
+        color: #4d5dfb;
+        text-decoration: underline;
+    }
+    
+    /* Password strength meter */
+    .password-strength {
+        height: 6px;
+        background-color: #e9ecef;
+        margin-top: 0.5rem;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    
+    .password-strength-bar {
+        height: 100%;
+        width: 0;
+        transition: width 0.4s ease, background-color 0.4s ease;
+    }
+    
+    /* Password requirement hints */
+    .password-hints {
+        font-size: 0.8125rem;
+        color: #6c757d;
+        margin-top: 0.5rem;
+    }
+    
+    .password-hints ul {
+        padding-left: 0;
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+        list-style-type: none;
+    }
+    
+    .password-hints li {
+        position: relative;
+        padding-left: 1.25rem;
+        margin-bottom: 0.25rem;
+        transition: all 0.3s;
+    }
+    
+    .password-hints li:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        transition: all 0.3s;
+    }
+    
+    .password-hints .valid {
+        color: #28a745;
+    }
+    
+    .password-hints .valid:before {
+        background-color: #28a745;
+        content: "✓";
+        color: white;
+        font-size: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .password-hints .invalid {
+        color: #6c757d;
+    }
+    
+    .password-hints .invalid:before {
+        background-color: #e9ecef;
+    }
+    
+    /* Validation feedback */
+    .is-invalid {
+        border-color: #dc3545;
+    }
+    
+    .is-invalid:focus {
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .invalid-feedback {
+        display: none;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.8125rem;
+        color: #dc3545;
+    }
+    
+    .is-invalid ~ .invalid-feedback {
+        display: block;
+    }
+    
+    /* Alert styles */
+    .alert {
+        padding: 0.875rem 1.25rem;
+        margin-bottom: 1.25rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    
+    .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    
+    .alert-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+    
+    .btn-close {
+        padding: 0.5rem;
+        background-size: 0.75rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+        .login {
+            margin: 1rem auto;
         }
         
-        /* Password requirement hints */
-        .password-hints {
-            font-size: 0.75rem;
-            color: #6c757d;
-            margin-top: 0.25rem;
+        .login__block__header {
+            padding: 1.25rem;
         }
         
-        .password-hints ul {
-            padding-left: 1.25rem;
-            margin-top: 0.25rem;
-            margin-bottom: 0;
-            list-style-type: none;
+        .login__block__body {
+            padding: 1.25rem;
         }
-        
-        .password-hints li {
-            position: relative;
-            padding-left: 1.5em;
-        }
-        
-        .password-hints li:before {
-            content: "•";
-            position: absolute;
-            left: 0;
-        }
-        
-        .valid {
-            color: #28a745;
-        }
-        
-        .invalid {
-            color: #dc3545;
-        }
-        
-        /* Validation feedback */
-        .is-invalid {
-            border-color: #dc3545;
-        }
-        
-        .invalid-feedback {
-            display: none;
-            width: 100%;
-            margin-top: 0.1rem;
-            font-size: 0.75rem;
-            color: #dc3545;
-        }
-        
-        .is-invalid ~ .invalid-feedback {
-            display: block;
-        }
-        
-        /* Form controls */
-        .form-control {
-            font-size: 0.875rem;
-            padding: 0.5rem 0.75rem;
-            height: auto;
-        }
-        
-        /* Form labels */
-        .form-check-label {
-            font-size: 0.8125rem;
-        }
-        
-        /* Terms link */
-        .terms-link {
-            font-size: 0.8125rem;
-        }
-        
-        /* Submit button */
-        .btn {
-            font-size: 0.875rem;
-            padding: 0.5rem;
-        }
-        
-        /* Header text */
-        .login__block__header p {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        /* Form group spacing */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        /* Checkbox alignment */
-        .form-check {
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .form-check-input {
-            margin-top: 0.15rem;
-        }
-        
-        /* Password strength meter */
-        .password-strength {
-            height: 5px;
-            background-color: #e9ecef;
-            margin-top: 0.5rem;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .password-strength-bar {
-            height: 100%;
-            width: 0;
-            transition: width 0.3s ease;
-        }
-        
-        /* Password visibility toggle */
-        .password-toggle {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #6c757d;
-        }
-        
-        .password-input-container {
-            position: relative;
-        }
-    </style>
+    }
+</style>
 </head>
 
 <body data-sa-theme="5">
