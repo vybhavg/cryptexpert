@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Help Center | CryptExpert{% endblock %}
+
+{% block head %}
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Custom Colors */
+        .text-yellow-custom { color: #F8BC04 !important; }
+        .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
+
+        /* Card Styling */
+        .help-card {
+            background: linear-gradient(135deg, #1e1e1e, #252525) !important;
+            border-radius: 0.75rem !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .help-card:hover {
+            transform: translateY(-3px) !important;
+            border-color: rgba(248, 188, 4, 0.2) !important;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-white mb-4">Help Center</h1>
+            <p class="text-gray-400 max-w-2xl mx-auto">Find answers to common questions and learn how to use CryptExpert effectively.</p>
+        </div>
+
+        <!-- How to Use CryptExpert Section -->
+        <div class="mb-16">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">How to Use CryptExpert</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card 1 -->
+                <div class="help-card p-6">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-yellow-400 bg-opacity-20 p-3 rounded-lg mr-4">
+                            <span class="material-icons text-yellow-custom">account_circle</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Account Setup</h3>
+                            <p class="text-gray-400">Learn how to create and secure your CryptExpert account.</p>
+                        </div>
+                    </div>
+                    <div class="pl-16">
+                        <button class="text-yellow-400 flex items-center text-sm font-medium" onclick="toggleAccordion('account-setup')">
+                            View Steps <span class="material-icons ml-1">expand_more</span>
+                        </button>
+                        <div id="account-setup" class="accordion-content mt-3 text-gray-300">
+                            <ol class="list-decimal pl-5 space-y-2">
+                                <li>Register with your email and create a strong password</li>
+                                <li>Complete the OTP verification process</li>
+                                <li>Set up two-factor authentication for extra security</li>
+                                <li>Customize your profile settings</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="help-card p-6">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-yellow-400 bg-opacity-20 p-3 rounded-lg mr-4">
+                            <span class="material-icons text-yellow-custom">account_balance_wallet</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Wallet Management</h3>
+                            <p class="text-gray-400">Connect and manage your exchange wallets securely.</p>
+                        </div>
+                    </div>
+                    <div class="pl-16">
+                        <button class="text-yellow-400 flex items-center text-sm font-medium" onclick="toggleAccordion('wallet-management')">
+                            View Steps <span class="material-icons ml-1">expand_more</span>
+                        </button>
+                        <div id="wallet-management" class="accordion-content mt-3 text-gray-300">
+                            <ol class="list-decimal pl-5 space-y-2">
+                                <li>Navigate to Wallet Management section</li>
+                                <li>Select your exchange (Binance, CoinDCX, WazirX)</li>
+                                <li>Enter your API keys (read-only recommended)</li>
+                                <li>View your balances and transaction history</li>
+                                <li>Set up automatic refresh intervals</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="help-card p-6">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-yellow-400 bg-opacity-20 p-3 rounded-lg mr-4">
+                            <span class="material-icons text-yellow-custom">trending_up</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">AI Price Predictor</h3>
+                            <p class="text-gray-400">Get AI-powered cryptocurrency price predictions.</p>
+                        </div>
+                    </div>
+                    <div class="pl-16">
+                        <button class="text-yellow-400 flex items-center text-sm font-medium" onclick="toggleAccordion('ai-predictor')">
+                            View Steps <span class="material-icons ml-1">expand_more</span>
+                        </button>
+                        <div id="ai-predictor" class="accordion-content mt-3 text-gray-300">
+                            <ol class="list-decimal pl-5 space-y-2">
+                                <li>Select a cryptocurrency pair (e.g., BTC/USDT)</li>
+                                <li>Choose your prediction timeframe</li>
+                                <li>View historical price analysis</li>
+                                <li>Get future price predictions with confidence intervals</li>
+                                <li>Save or export your predictions</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="help-card p-6">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-yellow-400 bg-opacity-20 p-3 rounded-lg mr-4">
+                            <span class="material-icons text-yellow-custom">forum</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Community Forum</h3>
+                            <p class="text-gray-400">Engage with the CryptExpert community.</p>
+                        </div>
+                    </div>
+                    <div class="pl-16">
+                        <button class="text-yellow-400 flex items-center text-sm font-medium" onclick="toggleAccordion('community-forum')">
+                            View Steps <span class="material-icons ml-1">expand_more</span>
+                        </button>
+                        <div id="community-forum" class="accordion-content mt-3 text-gray-300">
+                            <ol class="list-decimal pl-5 space-y-2">
+                                <li>Browse different discussion categories</li>
+                                <li>Create new threads or join existing discussions</li>
+                                <li>Reply to posts and mention other users with @username</li>
+                                <li>Upvote helpful content</li>
+                                <li>Follow topics to get notifications</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="mb-16">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="help-card p-6">
+                    <button class="w-full flex justify-between items-center" onclick="toggleAccordion('faq1')">
+                        <h3 class="text-lg font-semibold text-white">How do I reset my password?</h3>
+                        <span class="material-icons text-yellow-400">expand_more</span>
+                    </button>
+                    <div id="faq1" class="accordion-content mt-3 text-gray-300">
+                        <p>To reset your password:</p>
+                        <ol class="list-decimal pl-5 mt-2 space-y-1">
+                            <li>Click on "Forgot Password" on the login page</li>
+                            <li>Enter your registered email address</li>
+                            <li>Check your email for the password reset link</li>
+                            <li>Click the link and create a new password</li>
+                            <li>Log in with your new credentials</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="help-card p-6">
+                    <button class="w-full flex justify-between items-center" onclick="toggleAccordion('faq2')">
+                        <h3 class="text-lg font-semibold text-white">Is my API key information secure?</h3>
+                        <span class="material-icons text-yellow-400">expand_more</span>
+                    </button>
+                    <div id="faq2" class="accordion-content mt-3 text-gray-300">
+                        <p>Yes, we take security very seriously:</p>
+                        <ul class="list-disc pl-5 mt-2 space-y-1">
+                            <li>All API keys are encrypted using military-grade encryption</li>
+                            <li>We only request read-only permissions where possible</li>
+                            <li>Keys are never stored in plain text</li>
+                            <li>You can revoke access at any time</li>
+                            <li>We recommend using exchange-specific API keys with limited permissions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="help-card p-6">
+                    <button class="w-full flex justify-between items-center" onclick="toggleAccordion('faq3')">
+                        <h3 class="text-lg font-semibold text-white">How accurate are the AI predictions?</h3>
+                        <span class="material-icons text-yellow-400">expand_more</span>
+                    </button>
+                    <div id="faq3" class="accordion-content mt-3 text-gray-300">
+                        <p>Our AI predictions:</p>
+                        <ul class="list-disc pl-5 mt-2 space-y-1">
+                            <li>Are based on historical price patterns and market indicators</li>
+                            <li>Have an average accuracy of 75-85% for short-term predictions</li>
+                            <li>Should not be considered financial advice</li>
+                            <li>Work best when combined with your own research</li>
+                            <li>Include confidence indicators to help assess reliability</li>
+                        </ul>
+                        <p class="mt-2 text-yellow-400">Always do your own research before making trading decisions.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="help-card p-6">
+                    <button class="w-full flex justify-between items-center" onclick="toggleAccordion('faq4')">
+                        <h3 class="text-lg font-semibold text-white">Can I use CryptExpert on mobile?</h3>
+                        <span class="material-icons text-yellow-400">expand_more</span>
+                    </button>
+                    <div id="faq4" class="accordion-content mt-3 text-gray-300">
+                        <p>Yes! CryptExpert is fully responsive and works on:</p>
+                        <ul class="list-disc pl-5 mt-2 space-y-1">
+                            <li>Smartphones (iOS and Android)</li>
+                            <li>Tablets</li>
+                            <li>Desktop browsers</li>
+                        </ul>
+                        <p class="mt-2">For the best mobile experience:</p>
+                        <ol class="list-decimal pl-5 mt-1 space-y-1">
+                            <li>Use Chrome or Safari browsers</li>
+                            <li>Enable notifications for important alerts</li>
+                            <li>Add to your home screen for quick access</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Support -->
+        <div class="help-card p-8 text-center">
+            <span class="material-icons text-yellow-400 text-5xl mb-4">support_agent</span>
+            <h2 class="text-2xl font-bold text-white mb-2">Need More Help?</h2>
+            <p class="text-gray-400 mb-6">Our support team is available 24/7 to assist you.</p>
+            <a href="mailto:support@cryptexpert.com" class="inline-flex items-center px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-500 transition">
+                <span class="material-icons mr-2">email</span>
+                Contact Support
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleAccordion(id) {
+        const content = document.getElementById(id);
+        const icon = content.previousElementSibling.querySelector('.material-icons');
+        
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+            icon.textContent = 'expand_more';
+        } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+            icon.textContent = 'expand_less';
+        }
+    }
+</script>
+{% endblock %}
