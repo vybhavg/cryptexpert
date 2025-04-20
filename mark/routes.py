@@ -720,19 +720,43 @@ def search():
     if not query:
         return jsonify([])
 
-    # Search for partial matches first
-    results = CryptoAsset.query.filter(
-        (CryptoAsset.name.ilike(f"%{query}%")) | (CryptoAsset.symbol.ilike(f"%{query}%"))
-    ).limit(10).all()
+    try:
+        # Search for partial matches in name or symbol
+        results = CryptoAsset.query.filter(
+            (CryptoAsset.name.ilike(f"%{query}%")) | 
+            (CryptoAsset.symbol.ilike(f"%{query}%"))
+        ).limit(10).all()
 
-    # Format the results
-    response = [
-        {"name": f"{asset.symbol} - {asset.name}", "link": f"/charts?symbol={asset.symbol}USDT"}
-        for asset in results
-    ]
+        # Get current prices from Binance for matching symbols
+        binance_prices = get_specific_prices_from_binance()
+        price_map = {price['symbol'].replace('USDT', ''): price for price in binance_prices}
 
-    return jsonify(response)
+        # Format the results with price data
+        response = []
+        for asset in results:
+            price_data = price_map.get(asset.symbol.upper())
+            
+            result = {
+                "name": asset.name,
+                "symbol": asset.symbol,
+                "type": "crypto",
+                "link": asset.link,
+                "image": crypto_logos.get(asset.symbol.upper(), "/static/img/default-crypto.png")
+            }
+            
+            if price_data:
+                result.update({
+                    "price": float(price_data['price'].replace(',', '')),
+                    "price_change": float(price_data['priceChangePercent'])
+                })
+            
+            response.append(result)
 
+        return jsonify(response)
+
+    except Exception as e:
+        app.logger.error(f"Search error: {str(e)}")
+        return jsonify({"error": "Search failed"}), 500
 
 
 
