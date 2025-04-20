@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy | CryptExpert{% endblock %}
+
+{% block head %}
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Custom Colors */
+        .text-yellow-custom { color: #F8BC04 !important; }
+        .bg-dark-gradient { background: linear-gradient(135deg, #0f0f0f, #1a1a1a) !important; }
+
+        /* Content Styling */
+        .policy-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .policy-section {
+            margin-bottom: 3rem;
+        }
+
+        .policy-card {
+            background: linear-gradient(135deg, #1e1e1e, #252525);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .policy-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .policy-list li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="policy-content">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-white mb-4">Privacy Policy</h1>
+            <p class="text-gray-400">Last updated: {{ datetime.now().strftime('%B %d, %Y') }}</p>
+        </div>
+
+        <!-- Introduction -->
+        <div class="policy-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">Introduction</h2>
+            </div>
+            <div class="policy-card">
+                <p class="text-gray-300 mb-4">
+                    At CryptExpert, we are committed to protecting your privacy. This Privacy Policy explains how we collect, 
+                    use, disclose, and safeguard your information when you use our services.
+                </p>
+                <p class="text-gray-300">
+                    By accessing or using CryptExpert, you agree to the collection and use of information in accordance with 
+                    this policy. If you do not agree with our policies and practices, please do not use our services.
+                </p>
+            </div>
+        </div>
+
+        <!-- Information We Collect -->
+        <div class="policy-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">Information We Collect</h2>
+            </div>
+            <div class="policy-card">
+                <h3 class="text-xl font-semibold text-white mb-3">Personal Information</h3>
+                <p class="text-gray-300 mb-4">
+                    We may collect personal information that can identify you, such as:
+                </p>
+                <ul class="policy-list text-gray-300">
+                    <li>Name, email address, and contact information</li>
+                    <li>Account credentials (hashed and encrypted)</li>
+                    <li>Payment and transaction information</li>
+                    <li>Communications and support tickets</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold text-white mt-6 mb-3">Usage Data</h3>
+                <p class="text-gray-300 mb-4">
+                    We automatically collect certain information when you use our services:
+                </p>
+                <ul class="policy-list text-gray-300">
+                    <li>IP address and device information</li>
+                    <li>Browser type and version</li>
+                    <li>Pages visited and time spent</li>
+                    <li>Other diagnostic data</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold text-white mt-6 mb-3">Cryptocurrency Data</h3>
+                <p class="text-gray-300">
+                    If you connect exchange accounts, we may collect:
+                </p>
+                <ul class="policy-list text-gray-300">
+                    <li>Read-only trading data (with your permission)</li>
+                    <li>Portfolio and balance information</li>
+                    <li>Transaction history</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- How We Use Your Information -->
+        <div class="policy-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">How We Use Your Information</h2>
+            </div>
+            <div class="policy-card">
+                <p class="text-gray-300 mb-4">
+                    We use the collected information for various purposes:
+                </p>
+                <ul class="policy-list text-gray-300">
+                    <li>To provide and maintain our services</li>
+                    <li>To notify you about changes to our services</li>
+                    <li>To allow you to participate in interactive features</li>
+                    <li>To provide customer support</li>
+                    <li>To gather analysis or valuable information to improve our services</li>
+                    <li>To monitor the usage of our services</li>
+                    <li>To detect, prevent, and address technical issues</li>
+                    <li>To provide you with news and general information about our services</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Data Security -->
+        <div class="policy-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">Data Security</h2>
+            </div>
+            <div class="policy-card">
+                <p class="text-gray-300 mb-4">
+                    We implement industry-standard security measures to protect your data:
+                </p>
+                <ul class="policy-list text-gray-300">
+                    <li>End-to-end encryption for sensitive data</li>
+                    <li>Regular security audits and penetration testing</li>
+                    <li>Secure server infrastructure with firewalls</li>
+                    <li>Limited employee access to user data</li>
+                    <li>Two-factor authentication for all administrative access</li>
+                </ul>
+                <p class="text-gray-300 mt-4">
+                    While we strive to use commercially acceptable means to protect your personal information, 
+                    no method of transmission over the Internet or method of electronic storage is 100% secure.
+                </p>
+            </div>
+        </div>
+
+        <!-- Data Retention -->
+        <div class="policy-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">Data Retention</h2>
+            </div>
+            <div class="policy-card">
+                <p class="text-gray-300">
+                    We will retain your personal information only for as long as is necessary for the purposes set out in this Privacy Policy. 
+                    We will retain and use your information to the extent necessary to comply with our legal obligations, 
+                    resolve disputes, and enforce our policies.
+                </p>
+            </div>
+        </div>
+
+        <!-- Changes to This Policy -->
+        <div class="policy-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">Changes to This Policy</h2>
+            </div>
+            <div class="policy-card">
+                <p class="text-gray-300">
+                    We may update our Privacy Policy from time to time. We will notify you of any changes by posting 
+                    the new Privacy Policy on this page and updating the "Last updated" date. You are advised to review 
+                    this Privacy Policy periodically for any changes.
+                </p>
+            </div>
+        </div>
+
+        <!-- Contact Us -->
+        <div class="policy-section">
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-12 bg-yellow-400 mr-4"></div>
+                <h2 class="text-2xl font-bold text-white">Contact Us</h2>
+            </div>
+            <div class="policy-card">
+                <p class="text-gray-300 mb-4">
+                    If you have any questions about this Privacy Policy, please contact us:
+                </p>
+                <ul class="policy-list text-gray-300">
+                    <li>By email: privacy@cryptexpert.com</li>
+                    <li>Through our support portal</li>
+                    <li>By mail: CryptExpert Privacy Office, 123 Security Lane, Crypto City, CC 12345</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
