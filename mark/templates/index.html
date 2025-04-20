@@ -1772,46 +1772,96 @@ let currentPrices = {
     okx: [],
     coinbase: []
 };
+let isSwitching = false; // Flag to prevent switching during transitions
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize swipers
     initSwipers();
-    
-    // Set up exchange selector
     setupExchangeSelector();
-    
-    // Initial load with loading state
     showLoadingState();
     fetchPricesAndUpdateSwipers();
-    
-    // Set up periodic updates (without loading state)
     setInterval(fetchPricesOnly, 10000);
 });
 
 function setupExchangeSelector() {
     document.querySelectorAll('input[name="price-source"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            currentExchange = this.value;
+        radio.addEventListener('change', async function() {
+            if (isSwitching) return;
+            isSwitching = true;
+            
+            const newExchange = this.value;
+            if (newExchange === currentExchange) {
+                isSwitching = false;
+                return;
+            }
+            
+            // Add transition class
+            const oldSection = document.getElementById(`${currentExchange}-section`);
+            oldSection.classList.add('fade-out');
+            
+            await new Promise(resolve => setTimeout(resolve, 300)); // Wait for fade-out
             
             // Hide all sections
             document.getElementById('binance-section').style.display = 'none';
             document.getElementById('okx-section').style.display = 'none';
             document.getElementById('coinbase-section').style.display = 'none';
             
-            // Show selected section
-            document.getElementById(`${currentExchange}-section`).style.display = 'block';
+            // Show new section with fade-in
+            const newSection = document.getElementById(`${newExchange}-section`);
+            newSection.style.display = 'block';
+            newSection.classList.add('fade-in');
             
-            // If no data for this exchange, force load
+            // Update current exchange
+            currentExchange = newExchange;
+            
+            // Force reload if no data
             if (currentPrices[currentExchange].length === 0) {
                 showLoadingState();
-                fetchPricesAndUpdateSwipers();
+                await fetchPricesAndUpdateSwipers();
             }
+            
+            // Update the active swiper
+            updateActiveSwiper();
+            
+            // Remove transition classes
+            setTimeout(() => {
+                oldSection.classList.remove('fade-out');
+                newSection.classList.remove('fade-in');
+                isSwitching = false;
+            }, 300);
         });
     });
 }
 
+function updateActiveSwiper() {
+    switch(currentExchange) {
+        case 'binance':
+            binanceSwiper.update();
+            binanceSwiper.autoplay.start();
+            okxSwiper.autoplay.stop();
+            coinbaseSwiper.autoplay.stop();
+            break;
+        case 'okx':
+            okxSwiper.update();
+            okxSwiper.autoplay.start();
+            binanceSwiper.autoplay.stop();
+            coinbaseSwiper.autoplay.stop();
+            break;
+        case 'coinbase':
+            coinbaseSwiper.update();
+            coinbaseSwiper.autoplay.start();
+            binanceSwiper.autoplay.stop();
+            okxSwiper.autoplay.stop();
+            break;
+    }
+}
+
 function initSwipers() {
-    binanceSwiper = new Swiper(".swiper", {
+    // Destroy existing instances if they exist
+    if (binanceSwiper) binanceSwiper.destroy();
+    if (okxSwiper) okxSwiper.destroy();
+    if (coinbaseSwiper) coinbaseSwiper.destroy();
+    
+    binanceSwiper = new Swiper("#binance-section .swiper", {
         effect: "coverflow",
         grabCursor: true,
         centeredSlides: true,
@@ -1832,12 +1882,12 @@ function initSwipers() {
         },
         speed: 800,
         pagination: {
-            el: ".swiper-pagination",
+            el: "#binance-section .swiper-pagination",
             clickable: true
         }
     });
     
-    okxSwiper = new Swiper(".cmpswiper", {
+    okxSwiper = new Swiper("#okx-section .cmpswiper", {
         effect: "coverflow",
         grabCursor: true,
         centeredSlides: true,
@@ -1858,12 +1908,12 @@ function initSwipers() {
         },
         speed: 800,
         pagination: {
-            el: ".swiper-pagination",
+            el: "#okx-section .swiper-pagination",
             clickable: true
         }
     });
     
-    coinbaseSwiper = new Swiper(".csswiper", {
+    coinbaseSwiper = new Swiper("#coinbase-section .csswiper", {
         effect: "coverflow",
         grabCursor: true,
         centeredSlides: true,
@@ -1884,12 +1934,11 @@ function initSwipers() {
         },
         speed: 800,
         pagination: {
-            el: ".swiper-pagination",
+            el: "#coinbase-section .swiper-pagination",
             clickable: true
         }
     });
 }
-
 function showLoadingState() {
     const wrapper = document.querySelector(`#${currentExchange}-section .swiper-wrapper`);
     wrapper.innerHTML = `
@@ -1947,30 +1996,6 @@ async function fetchPricesOnly() {
         // Don't show error for periodic updates, only for initial load
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
