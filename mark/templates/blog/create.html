@@ -1,0 +1,62 @@
+<!-- templates/blog/create.html -->
+{% extends "base.html" %}
+
+{% block title %}Create Blog Post | CryptExpert{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-dark-gradient pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-white mb-8">Create New Blog Post</h1>
+        
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {{ form.hidden_tag() }}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    {{ form.title.label(class="block text-white mb-2") }}
+                    {{ form.title(class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:border-yellow-400 focus:ring-yellow-400") }}
+                </div>
+                
+                <div>
+                    {{ form.slug.label(class="block text-white mb-2") }}
+                    {{ form.slug(class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:border-yellow-400 focus:ring-yellow-400") }}
+                </div>
+            </div>
+            
+            <div>
+                {{ form.category_id.label(class="block text-white mb-2") }}
+                {{ form.category_id(class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:border-yellow-400 focus:ring-yellow-400") }}
+            </div>
+            
+            <div>
+                {{ form.excerpt.label(class="block text-white mb-2") }}
+                {{ form.excerpt(class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:border-yellow-400 focus:ring-yellow-400", rows=3) }}
+            </div>
+            
+            <div>
+                {{ form.featured_image.label(class="block text-white mb-2") }}
+                {{ form.featured_image(class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-yellow-400 file:text-gray-900 hover:file:bg-yellow-500") }}
+            </div>
+            
+            <div>
+                {{ form.content.label(class="block text-white mb-2") }}
+                {{ form.content(class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:border-yellow-400 focus:ring-yellow-400", rows=10) }}
+            </div>
+            
+            <div class="flex items-center">
+                {{ form.is_published(class="h-4 w-4 text-yellow-400 focus:ring-yellow-400 border-gray-700 rounded") }}
+                {{ form.is_published.label(class="ml-2 block text-white") }}
+            </div>
+            
+            <div class="flex justify-end space-x-4">
+                <a href="{{ url_for('blog_home') }}" class="px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-2 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-500 transition">
+                    Publish Post
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
