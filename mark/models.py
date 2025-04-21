@@ -137,16 +137,17 @@ class PostLike(db.Model):
 
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    post_id = db.Column(db.Integer, db.ForeignKey('forum_post.id'))
-    thread_id = db.Column(db.Integer, db.ForeignKey('forum_thread.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'))
+    post_id = db.Column(db.Integer, db.ForeignKey('forum_post.id', ondelete='CASCADE'))
+    thread_id = db.Column(db.Integer, db.ForeignKey('forum_thread.id', ondelete='CASCADE'))
     content = db.Column(db.String(500))
     is_read = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     notification_type = db.Column(db.String(20))  # 'mention', 'reply', 'like', etc.
 
-    user = db.relationship('User', foreign_keys=[user_id])
+    # Relationships with proper cascade behavior
+    user = db.relationship('User', foreign_keys=[user_id], backref='notifications')
     sender = db.relationship('User', foreign_keys=[sender_id])
     post = db.relationship('ForumPost')
     thread = db.relationship('ForumThread')
